@@ -51,7 +51,7 @@ class TestRecourses < Minitest::Test
     assert_equal '/contacts', Rails.application.routes.url_helpers.contacts_path
   end
 
-  private
+private
 
   def contact_routes
     Rails.application.routes.routes.select do |route|

@@ -123,6 +123,9 @@ above when they conflict.
 
 - Never comment a private method. The rule below is for the public surface; a
   private method earns its explanation from its name and its caller.
+- Indent `private` to match its `class` or `module`, not the `def`s under it, so
+  it stands out as a divider. Enforced by
+  `Layout/AccessModifierIndentation: EnforcedStyle: outdent`.
 - Precede every public class, module, constant and method declaration with a
   comment line saying what that object does. This narrows the baseline's
   "comment why, not what" rule: declarations get a *what*, and the *why* rule

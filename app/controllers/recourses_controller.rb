@@ -5,7 +5,7 @@ class RecoursesController < ActionController::Base
     @resources = resource_class.all
   end
 
-  private
+private
 
   def resource_class
     controller_name.classify.constantize

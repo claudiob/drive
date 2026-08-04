@@ -9,6 +9,9 @@ AllCops:
     # Rails rewrites this on every migration, so formatting it would not last.
     - test/dummy/db/schema.rb
 
+Layout/AccessModifierIndentation:
+  EnforcedStyle: outdent
+
 Layout/LineLength:
   Max: 100
 
