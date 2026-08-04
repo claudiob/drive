@@ -1,0 +1,6 @@
+<%# locals: (recourse: nil, heading: false) -%>
+<% %w[name phone created_at].each do |name| -%>
+  <%= column header: resource_column_title(name),
+             value: (resource_cell(recourse, name) unless heading),
+             heading: heading %>
+<% end -%>

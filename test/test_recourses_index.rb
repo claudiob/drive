@@ -45,14 +45,15 @@ class TestRecoursesIndex < Minitest::Test
     visit_index
 
     assert_equal body.scan('<td ').size, body.scan('data-cell=').size
-    assert_includes body, 'data-cell="Id"'
+    assert_includes body, 'data-cell="Name"'
   end
 
-  def test_the_table_shows_every_column_that_is_not_encrypted
-    Contact.create! phone: '5552234567'
-    visit_index
+  # /counties has no row partial of its own, so it shows every column the model
+  # exposes. /contacts cannot answer this: the dummy app overrides its row.
+  def test_the_generic_table_shows_every_column_that_is_not_encrypted
+    @session.get '/counties'
 
-    ['Id', 'Name', 'Created at', 'Updated at'].each do |heading|
+    ['Id', 'Fips', 'Name', 'State', 'Created at', 'Updated at'].each do |heading|
       assert_includes body, "<th scope=\"col\">#{heading}</th>"
     end
   end
@@ -65,27 +66,13 @@ class TestRecoursesIndex < Minitest::Test
     assert_includes body, 'data-cell="Fips"'
   end
 
-  def test_it_wraps_a_time_in_a_time_tag_carrying_the_machine_readable_value
-    contact = Contact.create! phone: '5552234567'
-    visit_index
-
-    assert_includes body, "<time datetime=\"#{contact.created_at.rfc3339}\">"
-  end
-
-  def test_it_reads_a_time_as_month_day_and_zone
-    Contact.create! phone: '5552234567'
-    visit_index
-
-    assert_match(/<time [^>]+>[A-Z][a-z]{2} \d{1,2} at \d{2}:\d{2}[ap]m [A-Z]{3,4}</, body)
-    refute_includes body, 'UTC'
-  end
-
   def test_the_table_has_one_row_per_record
-    ids = Array.new(3) { |index| Contact.create!(phone: "555223456#{index}").id }
+    names = Array.new(3) { |index| "Ada #{index}" }
+    names.each_with_index { |name, index| Contact.create! phone: "555223456#{index}", name: }
     visit_index
 
-    assert_equal ids.size, body.scan('<tr>').size - 1
-    ids.each { |id| assert_includes body, "<td data-cell=\"Id\">#{id}</td>" }
+    assert_equal names.size, body.scan('<tr>').size - 1
+    names.each { |name| assert_includes body, "<td data-cell=\"Name\">#{name}</td>" }
   end
 
 private

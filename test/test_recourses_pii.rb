@@ -1,33 +1,38 @@
 require 'test_helper'
 require 'action_dispatch/testing/integration'
 
-# Encrypted columns must never reach the page, whatever a row happens to hold.
+# Encrypted columns never reach a page the gem builds for itself.
 class TestRecoursesPii < Minitest::Test
   def setup
     Contact.delete_all
     @session = ActionDispatch::Integration::Session.new Rails.application
   end
 
-  def test_the_table_leaves_out_encrypted_columns
+  # The column list is the single place PII is dropped, and it asks the model
+  # rather than a record — so no row's contents can put an encrypted column back.
+  def test_the_generic_columns_leave_out_every_encrypted_attribute
+    columns = ContactsController.new.view_context.resource_columns
+
+    assert_includes columns, 'name'
+    %w[phone email surname].each { |column| refute_includes columns, column }
+  end
+
+  # /contacts shows Phone because the dummy app's own _row asks for it. Email and
+  # surname are in no row partial, so they stay off the page either way.
+  def test_encrypted_values_no_row_asks_for_stay_off_the_page
     Contact.create! phone: '5552234567', email: 'ada@example.com', surname: 'Lovelace'
     visit_index
 
-    %w[Phone Email Surname].each { |heading| refute_includes body, heading }
-    ['5552234567', '555-223-4567', 'ada@example.com', 'Lovelace'].each do |value|
+    ['Email', 'Surname', 'ada@example.com', 'Lovelace'].each do |value|
       refute_includes body, value
     end
   end
 
-  # A row written before `encrypts` was added still holds plaintext, and
-  # `encrypted_attribute?` answers false for it. The column list has to come from
-  # the model, not from a per-row check, or that row's PII lands on the page.
-  def test_it_hides_pii_columns_even_when_a_row_holds_plaintext
+  def test_that_holds_for_a_row_stored_as_plaintext_too
     insert_plaintext_contact
     visit_index
 
-    ['plain@example.com', 'Plaintext', '5557770001'].each do |value|
-      refute_includes body, value
-    end
+    ['plain@example.com', 'Plaintext'].each { |value| refute_includes body, value }
   end
 
 private

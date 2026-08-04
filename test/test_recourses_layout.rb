@@ -28,20 +28,23 @@ class TestRecoursesLayout < Minitest::Test
     assert_equal %w[contacts recourses application], ContactsController._prefixes
   end
 
-  # The dummy app owns states/_row.html.erb, so that one wins for /states.
+  # The dummy app owns contacts/_row.html.erb, so that one wins for /contacts:
+  # three columns of its choosing rather than every unencrypted one.
   def test_a_row_partial_the_host_owns_wins_over_the_gems
-    @session.get '/states'
-
-    assert_includes body, "data-view='host-row'"
-    assert_includes body, "<th scope='col'>State</th>"
-  end
-
-  def test_the_gems_row_partial_serves_a_resource_the_host_has_not_overridden
     Contact.create! phone: '5552234567'
     visit_index
 
-    assert_includes body, 'data-cell="Id"'
-    refute_includes body, 'host-row'
+    ['Name', 'Phone', 'Created at'].each do |heading|
+      assert_includes body, "<th scope=\"col\">#{heading}</th>"
+    end
+    ['Id', 'Updated at'].each { |heading| refute_includes body, heading }
+  end
+
+  def test_the_gems_row_partial_serves_a_resource_the_host_has_not_overridden
+    @session.get '/counties'
+
+    assert_includes body, 'data-cell="Fips"'
+    assert_includes body, '<th scope="col">Id</th>'
   end
 
 private
