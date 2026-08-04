@@ -42,6 +42,11 @@ before writing or editing any layout, view or partial.
   ciphertext helps nobody, and decrypting it into a list leaks it.
 - Column headings come from `human_attribute_name`, so a host app can rename
   one by translating the attribute.
+- A `belongs_to` currently shows its raw foreign key — `/counties` renders the
+  `State` column as `1`. Rendering the associated record instead needs
+  `includes` in the controller to stay within the one-count-one-select budget,
+  and that work is deferred. Do not reach through an association from a view in
+  the meantime.
 
 ## Links
 

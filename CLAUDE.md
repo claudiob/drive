@@ -161,6 +161,8 @@ above when they conflict.
 - Personal data is stored with Active Record Encryption: `encrypts :phone`,
   `:email`, `:surname`, `:street`. Suspect a column is personal? Ask before
   storing it in the clear.
+- `name` is not PII and is not encrypted. A first name on its own does not
+  identify anyone; a surname does. Asked and settled — do not encrypt it.
 - A column that is queried or must stay unique needs
   `encrypts :phone, deterministic: true`. Non-deterministic ciphertext differs
   every write, which silently defeats both a unique index and a uniqueness
@@ -196,6 +198,9 @@ above when they conflict.
 - The first two digits of a county's `fips` are its state's `fips`. That is the
   invariant to assert after backfilling, not just the row count.
 - Territories are left out, matching the states table.
+- The 3,143 rows live in `db/counties.txt`, not inside the migration. Migrations
+  are exempt from the file-length rule, so this is a decision rather than a
+  workaround: leave the data in the file and do not inline it.
 - The database enforces it too: unique index on `fips`, `null: false`, a
   five-digit check constraint, and a real foreign key to `states`.
 
