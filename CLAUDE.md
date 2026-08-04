@@ -135,6 +135,15 @@ above when they conflict.
   state the expectation.
 - Constants have no cop; keep them commented by hand.
 
+### Keep RuboCop current
+
+- `AllCops: NewCops: enable`. Cops added by a new RuboCop release are active
+  immediately rather than sitting pending; fix what they surface instead of
+  pinning the version.
+- `Gemspec/RequireMFA` is one of those, so the gemspec sets
+  `metadata['rubygems_mfa_required']` and publishing needs MFA on the RubyGems
+  account.
+
 ### Lines at most 100 characters
 
 - Hard limit of 100 characters per line, enforced by RuboCop's
