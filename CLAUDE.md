@@ -116,3 +116,11 @@ above when they conflict.
 - Never use `~>`. Use `>=` only where a minimum version is genuinely required,
   and otherwise give no constraint at all.
 - The same applies to `add_dependency` in the gemspec.
+
+### No frozen_string_literal comment
+
+- Never write `# frozen_string_literal: true`. No file gets a magic comment,
+  including generated ones — strip it from generator output.
+- Enforced by RuboCop: `Style/FrozenStringLiteralComment` is set to `never`.
+- Freeze individual constants explicitly instead (`FOO = [].freeze`), as the
+  baseline already says.
