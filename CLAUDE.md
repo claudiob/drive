@@ -195,6 +195,20 @@ above when they conflict.
   `metadata['rubygems_mfa_required']` and publishing needs MFA on the RubyGems
   account.
 
+### Fewest SQL queries to render a page
+
+- Rendering a page should issue as few queries as it can. Treat an extra query
+  as a defect, not a detail.
+- When checking whether a relation has records *and then looping over them*, use
+  `present?` and `blank?`, never `any?` and `empty?`. `blank?` runs the
+  `SELECT "contacts".*` that the loop needs anyway and caches it; `empty?` runs a
+  separate `SELECT 1 ... LIMIT 1` first, so the page costs two queries instead of
+  one.
+- `any?` and `empty?` are still right when nothing will be looped over.
+- Worth a test: assert the query count, so a later edit cannot quietly add one
+  back. `test_it_reads_the_records_with_a_single_query` does this by subscribing
+  to `sql.active_record`.
+
 ### As few parentheses as possible
 
 - Omit parentheses on a method call's arguments; keep the inner ones, where

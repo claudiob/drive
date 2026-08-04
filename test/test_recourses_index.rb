@@ -45,10 +45,27 @@ class TestRecoursesIndex < Minitest::Test
     ids.each { |id| assert_includes body, "<td>#{id}</td>" }
   end
 
+  def test_it_reads_the_records_with_a_single_query
+    Contact.create! phone: '5552234567'
+
+    assert_equal 1, contact_queries { visit_index }.size
+  end
+
 private
 
   def visit_index
     @session.get '/contacts'
+  end
+
+  def contact_queries
+    queries = []
+    subscription = ActiveSupport::Notifications.subscribe 'sql.active_record' do |*, payload|
+      queries << payload[:sql] if payload[:sql].include? 'FROM "contacts"'
+    end
+    yield
+    queries
+  ensure
+    ActiveSupport::Notifications.unsubscribe subscription
   end
 
   def body
