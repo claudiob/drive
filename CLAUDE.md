@@ -135,6 +135,23 @@ above when they conflict.
   state the expectation.
 - Constants have no cop; keep them commented by hand.
 
+### Phone numbers
+
+- A phone number is stored in a column named `phone`, holding exactly 10
+  digits, enforced in the database *and* in Rails.
+- In the database that means a check constraint, not just a length limit:
+  `add_check_constraint :table, "phone ~ '^[0-9]{10}$'"`.
+- In Rails it means the model includes a `Phonable` concern carrying both rules:
+
+      normalizes :phone, with: ->(phone) { phone.delete('^0-9').delete_prefix '1' }
+      validates :phone, format: { with: /\A[2-9]\d{2}[2-9]\d{6}\z/,
+                                  message: 'is not a valid phone number' },
+                        allow_nil: true
+
+- The concern's validation is `allow_nil`, so whether a phone is *required* is
+  the including model's decision — add `presence: true` there, not in the
+  concern.
+
 ### PostgreSQL, always
 
 - When an app needs a database, it is PostgreSQL. Never MySQL, never SQLite —
