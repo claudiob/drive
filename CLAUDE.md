@@ -222,6 +222,26 @@ above when they conflict.
 - This file stays the authority for code style. Where the two overlap, `STYLE.md`
   wins on markup and `CLAUDE.md` wins on Ruby.
 
+### No metaprogramming
+
+- Never call `send` or `public_send`. Reach the data directly instead:
+  `resource.attributes[column]`, not `resource.public_send column`.
+- No `define_method`, `method_missing`, `instance_variable_get` / `_set`, or
+  `eval` of any kind.
+- Two named exceptions, both of which *are* the gem rather than shortcuts inside
+  it. Do not cite them to justify a third:
+  - `Recourse::Controllers.define_missing` uses `Object.const_defined?` and
+    `Object.const_set class_name, Class.new(RecoursesController)`. Supplying a
+    controller the host never wrote is the whole point of `recourses`, and a
+    class whose name is only known at runtime cannot be defined any other way.
+  - `controller_name.classify.constantize` turns a route name into a model, in
+    the controller and in the helpers. Same reason: the mapping exists only at
+    runtime.
+- `test/dummy`'s states migration builds a throwaway `Class.new
+  ActiveRecord::Base` to insert rows without coupling to the `State` model.
+  That one is avoidable, but the migration has already run, and migrations are
+  never edited after shipping.
+
 ### Pass locals to partials explicitly
 
 - A partial never reads a controller's instance variables. Declare strict

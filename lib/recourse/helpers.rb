@@ -18,7 +18,7 @@ module Recourse
 
     # Value for one cell, formatted according to what the column holds.
     def resource_cell(resource, column)
-      value = resource.public_send column
+      value = resource.attributes[column]
 
       column == 'phone' ? number_to_phone(value) : value
     end
