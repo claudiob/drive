@@ -108,3 +108,11 @@ above when they conflict.
 - Keep the codebase free of content about ethics, religion, or politics —
   including comments, docs, error messages, test fixtures, and sample data.
 - `LICENSE.txt` is not covered by this: a license is a legal notice.
+
+### Gemfile ordering and version constraints
+
+- List gems alphabetically, in one block — no blank lines splitting the list,
+  since those read as separate groups.
+- Never use `~>`. Use `>=` only where a minimum version is genuinely required,
+  and otherwise give no constraint at all.
+- The same applies to `add_dependency` in the gemspec.
