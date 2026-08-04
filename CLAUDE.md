@@ -119,6 +119,22 @@ above when they conflict.
   there — what would break without it, not what the gem is.
 - The same applies to `add_dependency` in the gemspec.
 
+### Comment every public declaration
+
+- Precede every public class, module, constant and method declaration with a
+  comment line saying what that object does. This narrows the baseline's
+  "comment why, not what" rule: declarations get a *what*, and the *why* rule
+  still governs comments inside method bodies.
+- Say what it is for, not what the code plainly shows. `# Raised for every
+  failure the gem reports` earns its place; `# The Error class` does not.
+- A module reopened purely as a namespace in another file is not redeclared —
+  document it where it is defined.
+- Enforced by RuboCop: `Style/Documentation` for classes and modules,
+  `Style/DocumentationMethod` (off by default) for methods. Both skip `test/`,
+  matching RuboCop's own default, so test cases stay uncommented — their names
+  state the expectation.
+- Constants have no cop; keep them commented by hand.
+
 ### Lines at most 100 characters
 
 - Hard limit of 100 characters per line, enforced by RuboCop's

@@ -4,6 +4,11 @@ AllCops:
 Layout/LineLength:
   Max: 100
 
+Style/DocumentationMethod:
+  Enabled: true
+  Exclude:
+    - test/**/*
+
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never
 
