@@ -1,16 +1,25 @@
+<% columns = resource_columns %>
+
 <div class="table-responsive">
   <table class="table table-hover">
     <thead>
       <tr>
-        <th scope="col">ID</th>
+        <% columns.each do |column| %>
+          <th scope="col"><%= resource_column_title column %></th>
+        <% end %>
       </tr>
     </thead>
     <tbody>
       <% @resources.each do |resource| %>
         <tr>
-          <td><%= resource.id %></td>
+          <% columns.each do |column| %>
+            <td><%= resource.public_send column %></td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
   </table>
 </div>
+
+<%== @pagy.info_tag %>
+<%== @pagy.series_nav :bootstrap %>

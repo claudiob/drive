@@ -25,3 +25,19 @@ before writing or editing any layout, view or partial.
 - A `<table>` defaults to the hoverable accent, not the striped one:
   `class="table table-hover"`. Reach for `.table-striped` only when a specific
   table is better served by it.
+- A table of records shows every attribute that is not encrypted, one column
+  each — not just the id. Encrypted attributes are omitted entirely: showing
+  ciphertext helps nobody, and decrypting it into a list leaks it.
+- Column headings come from `human_attribute_name`, so a host app can rename
+  one by translating the attribute.
+
+## Pagination
+
+- Paginate with the `pagy` gem, never hand-rolled offsets.
+- The page limit defaults to 20.
+- Below the table, in this order: `@pagy.info_tag` for the item count, then
+  `@pagy.series_nav :bootstrap` for the links. Both need `<%==` rather than
+  `<%=`, since they return HTML.
+- Pass `limit:` explicitly and leave `max_limit` unset. Without `max_limit`,
+  pagy ignores a `?limit=` in the query string, so a visitor cannot ask for a
+  page of 100,000 rows.

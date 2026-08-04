@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'actionpack', '>= 8.1' # the routing DSL and controllers we extend
   spec.add_dependency 'activerecord', '>= 8.1' # reads the host app's resources
+  spec.add_dependency 'pagy', '>= 43.6' # paginates the index pages
   spec.add_dependency 'railties', '>= 8.1' # Rails::Engine and the generators
 
   # For more information and examples about making a new gem, check out our

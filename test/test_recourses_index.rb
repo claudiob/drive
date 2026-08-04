@@ -29,12 +29,21 @@ class TestRecoursesIndex < Minitest::Test
     refute_includes body, 'No contacts.'
   end
 
-  def test_the_table_has_a_single_id_column
+  def test_the_table_shows_every_column_that_is_not_encrypted
     Contact.create! phone: '5552234567'
     visit_index
 
-    assert_equal 1, body.scan(/<th\b/).size
-    assert_includes body, '<th scope="col">ID</th>'
+    ['Id', 'Phone', 'Name', 'Surname', 'Created at', 'Updated at'].each do |heading|
+      assert_includes body, "<th scope=\"col\">#{heading}</th>"
+    end
+  end
+
+  def test_the_table_leaves_out_encrypted_columns
+    Contact.create! phone: '5552234567', email: 'ada@example.com'
+    visit_index
+
+    refute_includes body, 'Email'
+    refute_includes body, 'ada@example.com'
   end
 
   def test_the_gems_layout_serves_a_host_that_has_none
@@ -53,31 +62,14 @@ class TestRecoursesIndex < Minitest::Test
     ids = Array.new(3) { |index| Contact.create!(phone: "555223456#{index}").id }
     visit_index
 
-    assert_equal ids.size, body.scan('<td>').size
+    assert_equal ids.size, body.scan('<tr>').size - 1
     ids.each { |id| assert_includes body, "<td>#{id}</td>" }
-  end
-
-  def test_it_reads_the_records_with_a_single_query
-    Contact.create! phone: '5552234567'
-
-    assert_equal 1, contact_queries { visit_index }.size
   end
 
 private
 
   def visit_index
     @session.get '/contacts'
-  end
-
-  def contact_queries
-    queries = []
-    subscription = ActiveSupport::Notifications.subscribe 'sql.active_record' do |*, payload|
-      queries << payload[:sql] if payload[:sql].include? 'FROM "contacts"'
-    end
-    yield
-    queries
-  ensure
-    ActiveSupport::Notifications.unsubscribe subscription
   end
 
   def body

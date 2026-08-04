@@ -2,5 +2,7 @@
 class Contact < ApplicationRecord
   include Phonable
 
+  encrypts :email
+
   validates :phone, presence: true, uniqueness: true
 end
