@@ -1,14 +1,16 @@
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @resources.each do |resource| %>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
       <tr>
-        <td><%= resource.id %></td>
+        <th scope="col">ID</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @resources.each do |resource| %>
+        <tr>
+          <td><%= resource.id %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

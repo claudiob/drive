@@ -17,15 +17,15 @@ class TestRecoursesIndex < Minitest::Test
   def test_it_renders_the_none_partial_when_there_are_no_records
     visit_index
 
-    assert_includes body, '<p>No contacts.</p>'
-    refute_includes body, '<table>'
+    assert_includes body, '<p class="fg-2">No contacts.</p>'
+    refute_includes body, '<table'
   end
 
   def test_it_renders_the_table_partial_when_there_are_records
     Contact.create! phone: '5552234567'
     visit_index
 
-    assert_includes body, '<table>'
+    assert_includes body, '<table class="table table-striped">'
     refute_includes body, 'No contacts.'
   end
 
@@ -33,8 +33,20 @@ class TestRecoursesIndex < Minitest::Test
     Contact.create! phone: '5552234567'
     visit_index
 
-    assert_equal 1, body.scan('<th>').size
-    assert_includes body, '<th>ID</th>'
+    assert_equal 1, body.scan(/<th\b/).size
+    assert_includes body, '<th scope="col">ID</th>'
+  end
+
+  def test_the_gems_layout_serves_a_host_that_has_none
+    visit_index
+
+    assert_includes body, 'bootstrap.min.css'
+    assert_includes body, 'bootstrap.bundle.min.js'
+    assert_includes body, 'family=Geist'
+  end
+
+  def test_it_looks_for_the_hosts_own_templates_before_its_own
+    assert_equal %w[contacts recourses application], ContactsController._prefixes
   end
 
   def test_the_table_has_one_row_per_record
