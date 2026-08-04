@@ -195,6 +195,12 @@ above when they conflict.
   `metadata['rubygems_mfa_required']` and publishing needs MFA on the RubyGems
   account.
 
+### I18n is deferred
+
+- User-facing strings stay plain English for now. This suspends the baseline's
+  "I18n for user-facing strings" rule until there are enough strings to be worth
+  a locale file — do not add one unprompted.
+
 ### Files at most 100 lines
 
 - No code file goes over 100 lines, counting blank and comment lines. When one

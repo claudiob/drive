@@ -1,5 +1,5 @@
 # Superclass of the controllers the gem defines when a host app has none.
-class RecoursesController < ActionController::Base
+class RecoursesController < ApplicationController
   helper Recourse::Helpers
 
   # Lists every record of the model the route is named after.

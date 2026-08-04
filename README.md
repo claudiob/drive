@@ -35,10 +35,11 @@ Anything you write yourself wins. Add `app/controllers/contacts_controller.rb`
 and Recourse leaves it alone; add `app/views/contacts/index.html.erb` and Rails
 renders yours instead of the one the gem ships.
 
-Pages render without a layout unless you give them one. Add
-`app/views/layouts/recourses.html.erb` and every Recourse page renders inside it
-— that is also where to `yield :title`, which each page sets to the name of the
-resource.
+Recourse's controllers inherit from your `ApplicationController`, so its pages
+render inside `app/views/layouts/application.html.erb` alongside the rest of your
+app, and go through whatever that base class already does. Each page sets its
+title with `content_for :title`, so put `yield :title` in that layout's `<title>`
+to see it.
 
 ## Development
 
