@@ -6,8 +6,14 @@ require_relative 'dummy/config/environment'
 
 require 'minitest/autorun'
 
-# The dummy app's database lives in memory, so it starts every run empty and the
-# migrations have to be applied before any model is touched.
+# Create the dummy app's database the first time the suite runs, then bring it up
+# to date. Both steps are no-ops on every run after that.
+begin
+  ActiveRecord::Base.lease_connection.verify!
+rescue ActiveRecord::NoDatabaseError
+  ActiveRecord::Tasks::DatabaseTasks.create_current
+end
+
 ActiveRecord::Migration.suppress_messages do
   ActiveRecord::MigrationContext.new(Rails.root.join('db/migrate')).migrate
 end

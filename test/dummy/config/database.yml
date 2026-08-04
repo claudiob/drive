@@ -1,3 +1,4 @@
 test:
-  adapter: sqlite3
-  database: ':memory:'
+  adapter: postgresql
+  database: recourse_dummy_test
+  encoding: unicode

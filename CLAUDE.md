@@ -135,6 +135,15 @@ above when they conflict.
   state the expectation.
 - Constants have no cop; keep them commented by hand.
 
+### PostgreSQL, always
+
+- When an app needs a database, it is PostgreSQL. Never MySQL, never SQLite —
+  including for test-only apps like `test/dummy`, and including cases where
+  SQLite would be less setup.
+- Running the test suite therefore needs a PostgreSQL server. `test/test_helper`
+  creates the database on first run, so `rake test` is still the only command
+  needed once the server is up.
+
 ### Keep RuboCop current
 
 - `AllCops: NewCops: enable`. Cops added by a new RuboCop release are active
