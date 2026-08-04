@@ -157,6 +157,20 @@ above when they conflict.
   those bounds.
 - Trivial patterns used once, like `%r{\Aexe/}`, stay inline.
 
+### The State model
+
+- A `State` model always represents the United States, and always has exactly
+  these three attributes, each non-null and unique: `code` (two capital
+  letters, `'CA'`), `fips` (two digits, `'06'`), `name` (`'California'`).
+- It always ships with a migration that creates the table *and* backfills it
+  from the official list, so an app never starts with an empty states table.
+  Source of truth: https://www2.census.gov/geo/docs/reference/state.txt
+- 51 rows: the 50 states plus the District of Columbia. Territories are not
+  states, so `PR`, `GU`, `VI`, `AS`, `MP` and `UM` are left out.
+- `fips` is a string, never an integer — `'06'` must keep its leading zero.
+- Enforce all of it in the database too: unique indexes, `null: false`,
+  `limit: 2`, and check constraints for the two-letter and two-digit shapes.
+
 ### Phone numbers
 
 - A phone number is stored in a column named `phone`, holding exactly 10

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_04_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_04_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,5 +23,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_000002) do
     t.datetime "updated_at", null: false
     t.index ["phone"], name: "index_contacts_on_phone", unique: true
     t.check_constraint "phone::text ~ '^[0-9]{10}$'::text", name: "contacts_phone_ten_digits"
+  end
+
+  create_table "states", force: :cascade do |t|
+    t.string "code", limit: 2, null: false
+    t.datetime "created_at", null: false
+    t.string "fips", limit: 2, null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_states_on_code", unique: true
+    t.index ["fips"], name: "index_states_on_fips", unique: true
+    t.index ["name"], name: "index_states_on_name", unique: true
+    t.check_constraint "code::text ~ '^[A-Z]{2}$'::text", name: "states_code_two_letters"
+    t.check_constraint "fips::text ~ '^[0-9]{2}$'::text", name: "states_fips_two_digits"
   end
 end

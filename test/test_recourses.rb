@@ -14,6 +14,14 @@ class TestRecourses < Minitest::Test
     assert_equal 200, @session.response.status
   end
 
+  def test_it_renders_a_view_the_host_app_owns_instead_of_the_gems
+    @session.get '/states'
+
+    assert_includes @session.response.body, 'data-view="host"'
+    assert_includes @session.response.body, '<title>States</title>'
+    refute_includes @session.response.body, '<table'
+  end
+
   def test_it_defines_the_controller_the_host_app_lacks
     assert_operator ContactsController, :<, RecoursesController
   end
