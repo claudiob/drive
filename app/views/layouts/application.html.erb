@@ -26,13 +26,13 @@
 
   <body>
     <nav class='navbar bg-1'>
-      <div class='container px-3 justify-content-start'>
+      <div class='container-fluid px-3 justify-content-start'>
         <%= render 'breadcrumb' %>
         <%= yield :actions %>
       </div>
     </nav>
 
-    <main class='container py-4 px-3 mx-auto'>
+    <main class='container-fluid py-4 px-3'>
       <%= yield %>
     </main>
 

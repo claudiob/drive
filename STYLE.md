@@ -12,7 +12,9 @@ before writing or editing any layout, view or partial.
   renames and removes plenty: responsive utilities are prefixed
   (`md:col-6`, not `col-md-6`), `.bg-light` / `.bg-dark` are gone in favour of
   the `.bg-1` / `.bg-2` scale, and `.text-body-secondary` is now `.fg-2`.
-- Still current from v5: `.container`, `.table`, `.table-responsive`, and
+- Page wrappers use `.container-fluid`, never `.container`. A table wants the
+  whole width on a desktop, not a centred column with margins either side.
+- Still current from v5: `.container-fluid`, `.table`, `.table-responsive`, and
   `data-bs-theme="light|dark"` for color modes — though `color-scheme: light
   dark` on `:root` follows the system by default, so most pages need no theme
   attribute at all.
