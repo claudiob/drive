@@ -1,9 +1,7 @@
 # Coding Guidelines
 
-**Scope:** This file is the authority for code style in this project. The
-HouseAccount org-level Claude guidelines are explicitly **not** in effect here;
-the baseline is standard community Ruby/Rails practice, plus the learned
-preferences recorded at the bottom.
+**Scope:** This file is the authority for code style in this project. The baseline is 
+standard community Ruby/Rails practice, plus the learned preferences recorded at the bottom.
 
 ## Ruby
 
@@ -11,14 +9,11 @@ preferences recorded at the bottom.
 - `snake_case` for methods/variables, `CamelCase` for classes/modules,
   `SCREAMING_SNAKE_CASE` for constants.
 - Predicate methods end in `?`; mutating/dangerous variants end in `!`.
-- Prefer double-quoted strings only when interpolating or escaping; single
-  quotes otherwise is also fine — be consistent within a file.
 - `do...end` for multi-line blocks, `{...}` for single-line blocks.
 - Guard clauses over nested conditionals. Return early.
 - Use `unless` for simple negatives; never `unless ... else`.
 - Prefer `&.`, `||=`, `Array()`, `Hash#fetch` with defaults, and keyword
   arguments over positional args once there are more than two.
-- Freeze mutable constants (`FOO = [].freeze`).
 - Keep methods short and single-purpose. Extract private methods freely.
 - Comment *why*, not *what*. Don't narrate the code.
 
@@ -93,8 +88,7 @@ above when they conflict.
 
 ### Single quotes by default
 
-- Always use single-quoted strings. This supersedes the baseline bullet above
-  that treats either style as acceptable.
+- Always use single-quoted strings.
 - Double quotes only when the string genuinely needs them: interpolation
   (`"#{name}"`) or escape sequences (`"\n"`, `"\x0"`).
 - Enforced by RuboCop: `Style/StringLiterals` and
@@ -337,9 +331,8 @@ above when they conflict.
 
 - Never write `# frozen_string_literal: true`. No file gets a magic comment,
   including generated ones — strip it from generator output.
-- Never call `.freeze` on a string, constant or not. This overrides the
-  baseline's "freeze mutable constants" bullet for strings; array and hash
-  constants are still worth freezing by hand.
+- Never call `.freeze` on a string, constant or not. Array and hash constants
+  are still worth freezing by hand.
 - Where a constant only names something, prefer a symbol over a string — it is
   immutable already, so the question does not arise.
 - Enforced by RuboCop: `Style/FrozenStringLiteralComment` is `never`, and

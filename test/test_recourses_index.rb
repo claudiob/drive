@@ -48,6 +48,14 @@ class TestRecoursesIndex < Minitest::Test
     end
   end
 
+  def test_the_layout_loads_turbo_and_opts_no_link_out_of_prefetching
+    Contact.create! phone: '5552234567'
+    visit_index
+
+    assert_includes body, '@hotwired/turbo'
+    refute_includes body, 'data-turbo'
+  end
+
   def test_the_gems_layout_serves_a_host_that_has_none
     visit_index
 

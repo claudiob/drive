@@ -31,6 +31,16 @@ before writing or editing any layout, view or partial.
 - Column headings come from `human_attribute_name`, so a host app can rename
   one by translating the attribute.
 
+## Links
+
+- Internal links go through Turbo, so navigation is a fetch and a swap rather
+  than a full page load. The layout loads Turbo from the CDN.
+- Turbo prefetches a link on `mouseenter`, so a page is already on its way
+  before the click lands. This is on by default in Turbo 8 — never add
+  `<meta name='turbo-prefetch' content='true'>` to restate it.
+- Do not put `data-turbo='false'` or `data-turbo-prefetch='false'` on an
+  internal link. Either one opts that link out of both behaviours.
+
 ## Phone numbers
 
 - A phone number shown to a user always goes through `number_to_phone`, so
