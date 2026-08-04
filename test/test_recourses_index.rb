@@ -17,7 +17,7 @@ class TestRecoursesIndex < Minitest::Test
   def test_it_renders_the_none_partial_when_there_are_no_records
     visit_index
 
-    assert_includes body, '<p class="fg-2">No contacts.</p>'
+    assert_includes body, "<p class='fg-2'>No contacts.</p>"
     refute_includes body, '<table'
   end
 
@@ -25,7 +25,7 @@ class TestRecoursesIndex < Minitest::Test
     Contact.create! phone: '5552234567'
     visit_index
 
-    assert_includes body, '<table class="table table-hover">'
+    assert_includes body, "<table class='table table-hover'>"
     refute_includes body, 'No contacts.'
   end
 
@@ -34,7 +34,7 @@ class TestRecoursesIndex < Minitest::Test
     visit_index
 
     ['Id', 'Phone', 'Name', 'Surname', 'Created at', 'Updated at'].each do |heading|
-      assert_includes body, "<th scope=\"col\">#{heading}</th>"
+      assert_includes body, "<th scope='col'>#{heading}</th>"
     end
   end
 

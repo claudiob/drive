@@ -99,6 +99,11 @@ above when they conflict.
   (`"#{name}"`) or escape sequences (`"\n"`, `"\x0"`).
 - Enforced by RuboCop: `Style/StringLiterals` and
   `Style/StringLiteralsInInterpolation` are both set to `single_quotes`.
+- This covers views too, `.html` and `.html.erb` included, and applies to HTML
+  attributes and CSS values as much as to Ruby: `<th scope='col'>`, not
+  `<th scope="col">`. RuboCop does not lint views, so this half is on us.
+- A Ruby string containing single quotes then *needs* double quotes, which is
+  why assertions on this markup read `"<table class='table table-hover'>"`.
 
 ### No code of conduct, no ideology
 

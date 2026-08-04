@@ -1,35 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <title><%= content_for(:title) || 'Recourse' %></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap">
-    <link rel="stylesheet"
-          href="https://v6-dev--twbs-bootstrap.netlify.app/docs/6.0/dist/css/bootstrap.min.css">
+    <link rel='preconnect' href='https://fonts.googleapis.com'>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap'>
+    <link rel='stylesheet'
+          href='https://v6-dev--twbs-bootstrap.netlify.app/docs/6.0/dist/css/bootstrap.min.css'>
 
     <style>
       :root {
-        --bs-body-font-family: "Geist", system-ui, sans-serif;
-        --bs-font-mono: "Geist Mono", ui-monospace, monospace;
+        --bs-body-font-family: 'Geist', system-ui, sans-serif;
+        --bs-font-mono: 'Geist Mono', ui-monospace, monospace;
       }
     </style>
   </head>
 
   <body>
-    <main class="container py-4 px-3 mx-auto">
+    <main class='container py-4 px-3 mx-auto'>
       <%= yield %>
     </main>
 
-    <script type="module"
-            src="https://v6-dev--twbs-bootstrap.netlify.app/docs/6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type='module'
+            src='https://v6-dev--twbs-bootstrap.netlify.app/docs/6.0/dist/js/bootstrap.bundle.min.js'></script>
   </body>
 </html>

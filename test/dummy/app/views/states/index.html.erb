@@ -1,7 +1,7 @@
 <% content_for :title, 'States' %>
 
-<ul class="list-group" data-view="host">
+<ul class='list-group' data-view='host'>
   <% @resources.each do |state| %>
-    <li class="list-group-item"><%= state.code %> &mdash; <%= state.name %></li>
+    <li class='list-group-item'><%= state.code %> &mdash; <%= state.name %></li>
   <% end %>
 </ul>

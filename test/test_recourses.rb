@@ -17,7 +17,7 @@ class TestRecourses < Minitest::Test
   def test_it_renders_a_view_the_host_app_owns_instead_of_the_gems
     @session.get '/states'
 
-    assert_includes @session.response.body, 'data-view="host"'
+    assert_includes @session.response.body, "data-view='host'"
     assert_includes @session.response.body, '<title>States</title>'
     refute_includes @session.response.body, '<table'
   end
