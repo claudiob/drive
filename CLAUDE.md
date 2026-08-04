@@ -185,6 +185,20 @@ above when they conflict.
 - Enforce all of it in the database too: unique indexes, `null: false`,
   `limit: 2`, and check constraints for the two-letter and two-digit shapes.
 
+### The County model
+
+- A `County` has a unique non-null 5-digit `fips` string, a non-null `name`, and
+  belongs to a `state`. `name` is deliberately *not* unique — more than twenty
+  states have a Washington County.
+- Creating a counties table always comes with a migration that backfills all
+  3,143 counties of the 50 states plus DC, each joined to the right `states` row.
+  Source: https://www2.census.gov/geo/docs/reference/codes2020/national_county2020.txt
+- The first two digits of a county's `fips` are its state's `fips`. That is the
+  invariant to assert after backfilling, not just the row count.
+- Territories are left out, matching the states table.
+- The database enforces it too: unique index on `fips`, `null: false`, a
+  five-digit check constraint, and a real foreign key to `states`.
+
 ### Phone numbers
 
 - A phone number is stored in a column named `phone`, holding exactly 10
@@ -319,6 +333,9 @@ above when they conflict.
   file, and skip comments and blanks by default.
 - `.md`, `.txt`, `.html` and `.erb` are exempt. Prose is not code, and a view
   is markup whose length is driven by the page, not by design choices.
+- Anything under `db/migrate/` is exempt. A migration that backfills a table is
+  as long as the data it carries, and splitting one to satisfy a line count
+  would be worse than leaving it long.
 
 ### Lines at most 100 characters
 

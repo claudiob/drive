@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_04_000004) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_04_000005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_000004) do
     t.string "surname"
     t.datetime "updated_at", null: false
     t.index ["phone"], name: "index_contacts_on_phone", unique: true
+  end
+
+  create_table "counties", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "fips", limit: 5, null: false
+    t.string "name", null: false
+    t.bigint "state_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fips"], name: "index_counties_on_fips", unique: true
+    t.index ["state_id"], name: "index_counties_on_state_id"
+    t.check_constraint "fips::text ~ '^[0-9]{5}$'::text", name: "counties_fips_five_digits"
   end
 
   create_table "states", force: :cascade do |t|
@@ -36,4 +47,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_000004) do
     t.check_constraint "code::text ~ '^[A-Z]{2}$'::text", name: "states_code_two_letters"
     t.check_constraint "fips::text ~ '^[0-9]{2}$'::text", name: "states_fips_two_digits"
   end
+
+  add_foreign_key "counties", "states"
 end

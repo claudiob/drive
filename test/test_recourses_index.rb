@@ -57,6 +57,14 @@ class TestRecoursesIndex < Minitest::Test
     end
   end
 
+  def test_it_serves_a_resource_that_belongs_to_another
+    @session.get '/counties'
+
+    assert_equal 200, @session.response.status
+    assert_includes body, '<th scope="col">State</th>'
+    assert_includes body, 'data-cell="Fips"'
+  end
+
   def test_the_table_has_one_row_per_record
     ids = Array.new(3) { |index| Contact.create!(phone: "555223456#{index}").id }
     visit_index
