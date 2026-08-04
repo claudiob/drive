@@ -79,3 +79,14 @@ above when they conflict.
 - All Rails libraries are required at `>= 8.1`. Write against current Rails
   APIs only.
 - Never add version checks, shims, or fallbacks for older Rails or Ruby.
+
+### Branch and commit per prompt
+
+- Before starting a code change, if the current branch is `main`, create a
+  branch first. Short name, lowercase words, underscores only — no dashes,
+  no slashes, no ticket prefixes (`git_conventions`, `dummy_app`).
+- If already on a branch other than `main`, keep working on it.
+- After completing the code change a prompt asked for, commit it. The subject
+  is a short summary of the prompt; the body is the full response given for
+  that prompt.
+- One prompt, one commit.
