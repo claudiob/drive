@@ -165,9 +165,9 @@ above when they conflict.
   `encrypts :phone, deterministic: true`. Non-deterministic ciphertext differs
   every write, which silently defeats both a unique index and a uniqueness
   validation — they will pass while duplicates pile up.
-- Encryption rules out a database check constraint on the value's shape:
-  ciphertext is not ten digits. Those checks move to the model alone, and that
-  is a real loss of the belt-and-braces rule, not an oversight.
+- Never constrain the *shape* of an encrypted value in the database. What is
+  stored is ciphertext, so only `null: false` and a unique index still mean
+  anything; the format belongs to the model.
 - Encrypted columns never appear in a generic table, so encrypting a column
   removes it from the index page. That is intended — see `STYLE.md`.
 
@@ -188,12 +188,12 @@ above when they conflict.
 ### Phone numbers
 
 - A phone number is stored in a column named `phone`, holding exactly 10
-  digits, enforced in the database *and* in Rails.
-- In the database that means a check constraint, not just a length limit:
-  `add_check_constraint :table, "phone ~ '^[0-9]{10}$'"` — but only where the
-  column is *not* encrypted. Encrypt it and the constraint has to go, because
-  the stored value is ciphertext.
-- In Rails it means the model includes a `Phonable` concern carrying both rules:
+  digits.
+- The database enforces `null: false` and a unique index. It does not check the
+  ten-digit shape — a phone is PII, so it is encrypted, and no constraint can
+  read ciphertext.
+- Rails is where the shape is enforced: the model includes a `Phonable` concern
+  carrying both rules:
 
       NORTH_AMERICAN_PHONES = /\A[2-9]\d{2}[2-9]\d{6}\z/
 
