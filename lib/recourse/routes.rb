@@ -1,11 +1,10 @@
 module Recourse
-  # Extends the config/routes.rb DSL, so `recourses` is available anywhere
-  # `resources` is.
+  # Extends the config/routes.rb DSL, so `recourses` works anywhere `resources` does.
   module Routes
-    # Draws everything `resources` draws, at the same paths and pointing at the
-    # same controllers. The extra routes it adds on top come later.
-    def recourses(...)
-      resources(...)
+    # Draws what `resources` draws, after supplying any controller the host lacks.
+    def recourses(*names, **, &)
+      names.each { |name| Controllers.define_missing(name) }
+      resources(*names, **, &)
     end
   end
 end

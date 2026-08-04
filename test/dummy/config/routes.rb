@@ -1,3 +1,4 @@
 Rails.application.routes.draw do
-  recourses :contacts
+  recourses :contacts, only: :index
+  recourses :echoes, only: :index
 end

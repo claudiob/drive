@@ -6,15 +6,15 @@ Add one line to `config/routes.rb` and Recourse draws the routes and serves the
 controllers and views needed to browse a resource. Nothing is written into your
 app — and when you want to customize a screen, you eject it.
 
-> **Status:** early development. The API below is the intended shape and is not
-> implemented yet.
+> **Status:** early development. The `index` action works; the other six actions
+> and the eject generator are not implemented yet.
 
 ## Installation
 
 Add the gem to your Gemfile:
 
 ```ruby
-gem "recourse"
+gem 'recourse'
 ```
 
 Then run `bundle install`.
@@ -24,16 +24,16 @@ Then run `bundle install`.
 ```ruby
 # config/routes.rb
 Rails.application.routes.draw do
-  recourses :posts
+  recourses :contacts, only: :index
 end
 ```
 
-To customize a view, eject it into your app — your copy takes precedence over
-the one the gem provides:
+With no `ContactsController` and no templates in your app, `/contacts` now lists
+the id of every `Contact`. Recourse supplies both the controller and the view.
 
-```bash
-rails generate recourse:views posts
-```
+Anything you write yourself wins. Add `app/controllers/contacts_controller.rb`
+and Recourse leaves it alone; add `app/views/contacts/index.html.erb` and Rails
+renders yours instead of the one the gem ships.
 
 ## Development
 

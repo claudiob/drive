@@ -1,41 +1,54 @@
 require 'test_helper'
 require 'action_dispatch/testing/integration'
 
-# What `recourses :contacts` in the dummy app's config/routes.rb draws.
+# What `recourses :contacts, only: :index` in the dummy app's routes.rb produces.
 class TestRecourses < Minitest::Test
   def setup
+    Contact.delete_all
     @session = ActionDispatch::Integration::Session.new(Rails.application)
   end
 
-  # The distinction that matters: a RoutingError would mean no route was drawn,
-  # while a NameError means the route is drawn and dispatching, and only the
-  # controller behind it is missing.
-  def test_visiting_the_index_reaches_a_controller_that_does_not_exist_yet
-    error = assert_raises NameError do
-      @session.get '/contacts'
-    end
+  def test_it_serves_the_index_without_the_host_app_owning_a_controller
+    @session.get '/contacts'
 
-    assert_equal 'uninitialized constant ContactsController', error.message
-    refute_kind_of ActionController::RoutingError, error
+    assert_equal 200, @session.response.status
   end
 
-  def test_the_index_route_points_at_the_unnamespaced_controller
-    index = contact_routes.find { |route| route.defaults[:action] == 'index' }
+  def test_the_index_lists_the_id_of_every_record
+    first = Contact.create!(phone: '5552234567')
+    second = Contact.create!(phone: '5552234568')
 
-    assert_equal 'contacts', index.defaults[:controller]
+    @session.get '/contacts'
+
+    assert_includes @session.response.body, "<li>#{first.id}</li>"
+    assert_includes @session.response.body, "<li>#{second.id}</li>"
   end
 
-  def test_it_draws_the_same_seven_actions_as_resources
-    actions = contact_routes.map { |route| route.defaults[:action] }.uniq
+  def test_the_index_lists_nothing_when_there_are_no_records
+    @session.get '/contacts'
 
-    assert_equal %w[create destroy edit index new show update], actions.sort
+    refute_includes @session.response.body, '<li>'
+  end
+
+  def test_it_defines_the_controller_the_host_app_lacks
+    assert_operator ContactsController, :<, Recourse::ResourcesController
+  end
+
+  def test_it_leaves_a_controller_the_host_app_owns_alone
+    @session.get '/echoes'
+
+    assert_equal 'the host app answered', @session.response.body
+    refute_operator EchoesController, :<, Recourse::ResourcesController
+  end
+
+  def test_it_forwards_options_to_resources
+    actions = contact_routes.map { |route| route.defaults[:action] }
+
+    assert_equal %w[index], actions
   end
 
   def test_it_leaves_the_paths_unprefixed
-    helpers = Rails.application.routes.url_helpers
-
-    assert_equal '/contacts', helpers.contacts_path
-    assert_equal '/contacts/1/edit', helpers.edit_contact_path(1)
+    assert_equal '/contacts', Rails.application.routes.url_helpers.contacts_path
   end
 
   private
