@@ -243,6 +243,9 @@ above when they conflict.
 - `Gemspec/RequireMFA` is one of those, so the gemspec sets
   `metadata['rubygems_mfa_required']` and publishing needs MFA on the RubyGems
   account.
+- `AllCops: SuggestExtensions: false`. Every run was ending with a nine-line
+  advert for `rubocop-minitest` and `rubocop-rake`; we are declining both, not
+  postponing them, so the suggestion is off rather than merely ignored.
 
 ### Design lives in STYLE.md
 

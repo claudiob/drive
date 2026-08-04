@@ -4,6 +4,7 @@ inherit_mode:
 
 AllCops:
   NewCops: enable
+  SuggestExtensions: false
   TargetRubyVersion: 3.2
   Exclude:
     # Rails rewrites this on every migration, so formatting it would not last.
