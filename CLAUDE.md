@@ -134,6 +134,9 @@ above when they conflict.
   matching RuboCop's own default, so test cases stay uncommented — their names
   state the expectation.
 - Constants have no cop; keep them commented by hand.
+- Keep these comments to a single line whenever possible. If one line cannot
+  carry it, cut the aside rather than the rule — the detail belongs in the
+  commit message. Multi-line is a last resort, not a default.
 
 ### Name non-trivial regular expressions
 

@@ -6,8 +6,7 @@ require_relative 'dummy/config/environment'
 
 require 'minitest/autorun'
 
-# Create the dummy app's database the first time the suite runs, then bring it up
-# to date. Both steps are no-ops on every run after that.
+# Create the database on first run, then migrate; both are no-ops afterwards.
 begin
   ActiveRecord::Base.lease_connection.verify!
 rescue ActiveRecord::NoDatabaseError
