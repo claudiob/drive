@@ -1,5 +1,3 @@
-<ul>
-  <% @resources.each do |resource| %>
-    <li><%= resource.id %></li>
-  <% end %>
-</ul>
+<% content_for :title, resources_name %>
+
+<%= render @resources.empty? ? 'none' : 'table' %>

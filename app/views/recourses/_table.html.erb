@@ -1,0 +1,14 @@
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @resources.each do |resource| %>
+      <tr>
+        <td><%= resource.id %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

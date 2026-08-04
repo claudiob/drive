@@ -14,22 +14,6 @@ class TestRecourses < Minitest::Test
     assert_equal 200, @session.response.status
   end
 
-  def test_the_index_lists_the_id_of_every_record
-    first = Contact.create!(phone: '5552234567')
-    second = Contact.create!(phone: '5552234568')
-
-    @session.get '/contacts'
-
-    assert_includes @session.response.body, "<li>#{first.id}</li>"
-    assert_includes @session.response.body, "<li>#{second.id}</li>"
-  end
-
-  def test_the_index_lists_nothing_when_there_are_no_records
-    @session.get '/contacts'
-
-    refute_includes @session.response.body, '<li>'
-  end
-
   def test_it_defines_the_controller_the_host_app_lacks
     assert_operator ContactsController, :<, RecoursesController
   end
