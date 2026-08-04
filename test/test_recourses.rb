@@ -15,14 +15,14 @@ class TestRecourses < Minitest::Test
       @session.get '/contacts'
     end
 
-    assert_equal 'uninitialized constant Administered::ContactsController', error.message
+    assert_equal 'uninitialized constant ContactsController', error.message
     refute_kind_of ActionController::RoutingError, error
   end
 
-  def test_the_index_route_points_at_the_namespaced_controller
+  def test_the_index_route_points_at_the_unnamespaced_controller
     index = contact_routes.find { |route| route.defaults[:action] == 'index' }
 
-    assert_equal 'administered/contacts', index.defaults[:controller]
+    assert_equal 'contacts', index.defaults[:controller]
   end
 
   def test_it_draws_the_same_seven_actions_as_resources
@@ -42,7 +42,7 @@ class TestRecourses < Minitest::Test
 
   def contact_routes
     Rails.application.routes.routes.select do |route|
-      route.defaults[:controller] == 'administered/contacts'
+      route.defaults[:controller] == 'contacts'
     end
   end
 end
