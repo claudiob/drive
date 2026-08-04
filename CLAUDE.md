@@ -247,6 +247,15 @@ above when they conflict.
 - This file stays the authority for code style. Where the two overlap, `STYLE.md`
   wins on markup and `CLAUDE.md` wins on Ruby.
 
+### Eastern time
+
+- `config.time_zone = 'Eastern Time (US & Canada)'`. That is what `Time.zone`
+  means, what a form reads, and what a timestamp renders as.
+- Storage stays UTC. Never touch `config.active_record.default_timezone` — the
+  database keeps UTC and Rails converts on the way in and out, so the app zone
+  is a display concern only.
+- A rule for apps we write. The gem never sets a host's time zone.
+
 ### Keep render lines out of the logs
 
 - An app's log never carries Action View's `Rendering ...` and `Rendered ...`

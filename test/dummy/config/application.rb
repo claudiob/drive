@@ -11,6 +11,7 @@ module Dummy
     config.root = File.expand_path '..', __dir__
     config.load_defaults 8.1
     config.secret_key_base = 'dummy_secret_key_base'
+    config.time_zone = 'Eastern Time (US & Canada)'
 
     # Action View logs a line per partial, which buries the request itself.
     config.action_view.logger = nil

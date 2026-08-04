@@ -65,6 +65,14 @@ class TestRecoursesIndex < Minitest::Test
     assert_includes body, 'data-cell="Fips"'
   end
 
+  def test_it_shows_timestamps_in_the_apps_time_zone
+    contact = Contact.create! phone: '5552234567'
+    visit_index
+
+    assert_includes body, "data-cell=\"Created at\">#{contact.created_at}</td>"
+    refute_includes body, 'UTC'
+  end
+
   def test_the_table_has_one_row_per_record
     ids = Array.new(3) { |index| Contact.create!(phone: "555223456#{index}").id }
     visit_index
