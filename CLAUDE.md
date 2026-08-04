@@ -195,6 +195,17 @@ above when they conflict.
   `metadata['rubygems_mfa_required']` and publishing needs MFA on the RubyGems
   account.
 
+### As few parentheses as possible
+
+- Omit parentheses on a method call's arguments; keep the inner ones, where
+  parsing needs them:
+
+      Object.const_set class_name, Class.new(RecoursesController)
+
+- Enforced by `Style/MethodCallWithArgsParentheses` with
+  `EnforcedStyle: omit_parentheses`. The cop is off by default, so it needs
+  `Enabled: true` as well as the style.
+
 ### I18n is deferred
 
 - User-facing strings stay plain English for now. This suspends the baseline's

@@ -5,7 +5,7 @@ require 'action_dispatch/testing/integration'
 class TestRecoursesIndex < Minitest::Test
   def setup
     Contact.delete_all
-    @session = ActionDispatch::Integration::Session.new(Rails.application)
+    @session = ActionDispatch::Integration::Session.new Rails.application
   end
 
   def test_it_titles_the_page_with_the_human_resource_name
@@ -22,7 +22,7 @@ class TestRecoursesIndex < Minitest::Test
   end
 
   def test_it_renders_the_table_partial_when_there_are_records
-    Contact.create!(phone: '5552234567')
+    Contact.create! phone: '5552234567'
     visit_index
 
     assert_includes body, '<table>'
@@ -30,7 +30,7 @@ class TestRecoursesIndex < Minitest::Test
   end
 
   def test_the_table_has_a_single_id_column
-    Contact.create!(phone: '5552234567')
+    Contact.create! phone: '5552234567'
     visit_index
 
     assert_equal 1, body.scan('<th>').size

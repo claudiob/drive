@@ -7,13 +7,13 @@ class TestPhonable < Minitest::Test
   end
 
   def test_it_strips_everything_that_is_not_a_digit
-    contact = Contact.new(phone: '(555) 223-4567')
+    contact = Contact.new phone: '(555) 223-4567'
 
     assert_equal '5552234567', contact.phone
   end
 
   def test_it_drops_a_leading_country_code
-    contact = Contact.new(phone: '+1 555 223 4567')
+    contact = Contact.new phone: '+1 555 223 4567'
 
     assert_equal '5552234567', contact.phone
   end
@@ -23,7 +23,7 @@ class TestPhonable < Minitest::Test
   end
 
   def test_it_rejects_fewer_than_ten_digits
-    contact = Contact.new(phone: '555223456')
+    contact = Contact.new phone: '555223456'
 
     refute_predicate contact, :valid?
     assert_includes contact.errors[:phone], 'is not a valid phone number'
@@ -44,10 +44,10 @@ class TestPhonable < Minitest::Test
   end
 
   def test_the_database_rejects_a_phone_that_is_not_ten_digits
-    contact = Contact.new(phone: '5552')
+    contact = Contact.new phone: '5552'
 
     assert_raises ActiveRecord::StatementInvalid do
-      contact.save!(validate: false)
+      contact.save! validate: false
     end
   end
 end

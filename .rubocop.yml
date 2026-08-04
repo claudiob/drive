@@ -23,6 +23,11 @@ Style/DocumentationMethod:
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never
 
+# Off by default; keeps parentheses only where parsing needs them.
+Style/MethodCallWithArgsParentheses:
+  Enabled: true
+  EnforcedStyle: omit_parentheses
+
 # Demands `.freeze` on string constants, which this project never does.
 Style/MutableConstant:
   Enabled: false

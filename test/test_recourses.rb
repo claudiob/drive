@@ -5,7 +5,7 @@ require 'action_dispatch/testing/integration'
 class TestRecourses < Minitest::Test
   def setup
     Contact.delete_all
-    @session = ActionDispatch::Integration::Session.new(Rails.application)
+    @session = ActionDispatch::Integration::Session.new Rails.application
   end
 
   def test_it_serves_the_index_without_the_host_app_owning_a_controller
