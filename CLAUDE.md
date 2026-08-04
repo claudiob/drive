@@ -220,9 +220,10 @@ above when they conflict.
 ### Pass locals to partials explicitly
 
 - A partial never reads a controller's instance variables. Declare strict
-  locals on its first line — `<%# locals: (resources:, pagy:) %>`, or
-  `<%# locals: () %>` when it takes none — and pass them at the call site:
-  `render 'table', resources: @resources, pagy: @pagy`.
+  locals on its first line — `<%# locals: (resources:, pagy:) %>` — and pass
+  them at the call site: `render 'table', resources: @resources, pagy: @pagy`.
+- A partial that takes no locals gets no comment at all. Never write
+  `<%# locals: () %>`.
 - A template rendered by an action may read instance variables. The rule is
   about partials, which should not depend on who rendered them.
 - Rails enforces this: omit a declared local and the render raises instead of
