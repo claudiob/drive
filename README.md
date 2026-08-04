@@ -35,6 +35,11 @@ Anything you write yourself wins. Add `app/controllers/contacts_controller.rb`
 and Recourse leaves it alone; add `app/views/contacts/index.html.erb` and Rails
 renders yours instead of the one the gem ships.
 
+Pages render without a layout unless you give them one. Add
+`app/views/layouts/recourses.html.erb` and every Recourse page renders inside it
+— that is also where to `yield :title`, which each page sets to the name of the
+resource.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then run

@@ -123,6 +123,10 @@ above when they conflict.
 
 - Never comment a private method. The rule below is for the public surface; a
   private method earns its explanation from its name and its caller.
+- Never put a method in a controller that only a view calls, and never reach for
+  `helper_method` to expose one. If a view needs it, it belongs in a helper
+  module or inline in the template. A controller's private methods are for the
+  controller's own work.
 - Indent `private` to match its `class` or `module`, not the `def`s under it, so
   it stands out as a divider. Enforced by
   `Layout/AccessModifierIndentation: EnforcedStyle: outdent`.
