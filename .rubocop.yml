@@ -1,6 +1,13 @@
+inherit_mode:
+  merge:
+    - Exclude
+
 AllCops:
   NewCops: enable
   TargetRubyVersion: 3.2
+  Exclude:
+    # Rails rewrites this on every migration, so formatting it would not last.
+    - test/dummy/db/schema.rb
 
 Layout/LineLength:
   Max: 100

@@ -1,4 +1,11 @@
-test:
+default: &default
   adapter: postgresql
-  database: recourse_dummy_test
   encoding: unicode
+
+development:
+  <<: *default
+  database: recourse_dummy_development
+
+test:
+  <<: *default
+  database: recourse_dummy_test
