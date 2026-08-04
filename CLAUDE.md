@@ -135,6 +135,16 @@ above when they conflict.
   state the expectation.
 - Constants have no cop; keep them commented by hand.
 
+### Name non-trivial regular expressions
+
+- A regular expression that is not obvious at a glance gets a named constant,
+  so the name explains the intent and the pattern is stated once.
+  `/\A[2-9]\d{2}[2-9]\d{6}\z/` becomes `NORTH_AMERICAN_PHONES`.
+- Put the constant on the class or module that owns the rule, and comment it
+  with what it accepts and rejects — the name says what, the comment says why
+  those bounds.
+- Trivial patterns used once, like `%r{\Aexe/}`, stay inline.
+
 ### Phone numbers
 
 - A phone number is stored in a column named `phone`, holding exactly 10
@@ -143,8 +153,10 @@ above when they conflict.
   `add_check_constraint :table, "phone ~ '^[0-9]{10}$'"`.
 - In Rails it means the model includes a `Phonable` concern carrying both rules:
 
+      NORTH_AMERICAN_PHONES = /\A[2-9]\d{2}[2-9]\d{6}\z/
+
       normalizes :phone, with: ->(phone) { phone.delete('^0-9').delete_prefix '1' }
-      validates :phone, format: { with: /\A[2-9]\d{2}[2-9]\d{6}\z/,
+      validates :phone, format: { with: NORTH_AMERICAN_PHONES,
                                   message: 'is not a valid phone number' },
                         allow_nil: true
 
