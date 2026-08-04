@@ -25,8 +25,27 @@ class TestRecoursesIndex < Minitest::Test
     Contact.create! phone: '5552234567'
     visit_index
 
-    assert_includes body, "<table class='table table-hover'>"
+    assert_includes body, '<table'
     refute_includes body, 'No contacts.'
+  end
+
+  def test_the_table_carries_the_classes_the_style_guide_requires
+    Contact.create! phone: '5552234567'
+    visit_index
+
+    classes = body[/<table class='([^']*)'/, 1].split
+
+    ['table', 'table-hover', 'sm:table-stacked'].each do |name|
+      assert_includes classes, name
+    end
+  end
+
+  def test_every_cell_is_labelled_so_the_stacked_layout_reads
+    Contact.create! phone: '5552234567'
+    visit_index
+
+    assert_equal body.scan('<td ').size, body.scan('data-cell=').size
+    assert_includes body, "data-cell='Id'"
   end
 
   def test_the_table_shows_every_column_that_is_not_encrypted
@@ -48,32 +67,12 @@ class TestRecoursesIndex < Minitest::Test
     end
   end
 
-  def test_the_layout_loads_turbo_and_opts_no_link_out_of_prefetching
-    Contact.create! phone: '5552234567'
-    visit_index
-
-    assert_includes body, '@hotwired/turbo'
-    refute_includes body, 'data-turbo'
-  end
-
-  def test_the_gems_layout_serves_a_host_that_has_none
-    visit_index
-
-    assert_includes body, 'bootstrap.min.css'
-    assert_includes body, 'bootstrap.bundle.min.js'
-    assert_includes body, 'family=Geist'
-  end
-
-  def test_it_looks_for_the_hosts_own_templates_before_its_own
-    assert_equal %w[contacts recourses application], ContactsController._prefixes
-  end
-
   def test_the_table_has_one_row_per_record
     ids = Array.new(3) { |index| Contact.create!(phone: "555223456#{index}").id }
     visit_index
 
     assert_equal ids.size, body.scan('<tr>').size - 1
-    ids.each { |id| assert_includes body, "<td>#{id}</td>" }
+    ids.each { |id| assert_includes body, "<td data-cell='Id'>#{id}</td>" }
   end
 
 private

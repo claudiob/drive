@@ -23,8 +23,15 @@ before writing or editing any layout, view or partial.
 ## Tables
 
 - A `<table>` defaults to the hoverable accent, not the striped one:
-  `class="table table-hover"`. Reach for `.table-striped` only when a specific
+  `class='table table-hover'`. Reach for `.table-striped` only when a specific
   table is better served by it.
+- Always add `.sm:table-stacked`, so rows become stacked blocks once the
+  container gets narrow.
+- Stacking needs two more things, or it degrades badly. The table must sit
+  inside a `.table-responsive` wrapper, which is the container query's
+  container. And every `<td>` needs `data-cell='<heading>'` — that is where the
+  labels in the stacked layout come from, so without it a narrow screen shows
+  values with nothing naming them.
 - A table of records shows every attribute that is not encrypted, one column
   each — not just the id. Encrypted attributes are omitted entirely: showing
   ciphertext helps nobody, and decrypting it into a list leaks it.

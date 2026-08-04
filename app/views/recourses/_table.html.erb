@@ -3,7 +3,7 @@
 <% columns = resource_columns %>
 
 <div class='table-responsive'>
-  <table class='table table-hover'>
+  <table class='table caption-top table-hover align-middle sm:table-stacked'>
     <thead>
       <tr>
         <% columns.each do |column| %>
@@ -15,7 +15,7 @@
       <% resources.each do |resource| %>
         <tr>
           <% columns.each do |column| %>
-            <td><%= resource_cell resource, column %></td>
+            <td data-cell='<%= resource_column_title column %>'><%= resource_cell resource, column %></td>
           <% end %>
         </tr>
       <% end %>
