@@ -7,6 +7,18 @@ require_relative 'recourse/engine'
 
 # Namespace for the gem: the routes.rb DSL and the screens it mounts.
 module Recourse
+  class << self
+    # Resources `recourses` has drawn, in the order config/routes.rb lists them.
+    attr_reader :declared
+  end
+
+  @declared = []
+
+  # Records a resource as declared, keeping order and ignoring a repeated draw.
+  def self.declare(name)
+    @declared << name.to_s unless @declared.include? name.to_s
+  end
+
   # Raised for every failure the gem reports, so hosts can rescue one type.
   class Error < StandardError; end
 end

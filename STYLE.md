@@ -40,6 +40,16 @@ before writing or editing any layout, view or partial.
   or the button would 404 or raise. Its classes are
   `btn theme-primary btn-sm btn-outline ms-3`.
 
+## The sidebar
+
+- Below the navbar, an `<aside>` sits to the left of the content holding a
+  vertical `ul.nav.flex-column` of links — one per resource `recourses` drew.
+- The order is the order `config/routes.rb` declares them, never sorted.
+- A resource appears only if its `index` action is routed. `recourses :drafts,
+  only: :new` draws no index, so it gets no link rather than a broken one.
+- Layout is `.row` with `aside.col-auto` and `main.col`, inside the page's
+  `.container-fluid`.
+
 ## Tables
 
 - A `<table>` defaults to the hoverable accent, not the striped one:

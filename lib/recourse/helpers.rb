@@ -22,9 +22,18 @@ module Recourse
     # Path to this resource's new page, or nil when there is not one to link to.
     def new_resource_path
       return unless controller.class.action_methods.include? 'new'
-      return unless routed_action? 'new'
+      return unless routed? controller.controller_path, 'new'
 
       url_for action: :new
+    end
+
+    # Sidebar entries as [title, path] pairs, in the order routes.rb declares them.
+    def sidebar_resources
+      Recourse.declared.filter_map do |name|
+        next unless routed? name, 'index'
+
+        [name.humanize, url_for(controller: "/#{name}", action: :index)]
+      end
     end
 
     # Columns the table shows: every attribute that is not encrypted.
@@ -60,9 +69,9 @@ module Recourse
       controller.controller_name.classify.constantize
     end
 
-    def routed_action?(action)
+    def routed?(controller_path, action)
       Rails.application.routes.routes.any? do |route|
-        route.defaults[:controller] == controller.controller_path &&
+        route.defaults[:controller] == controller_path &&
           route.defaults[:action] == action
       end
     end
