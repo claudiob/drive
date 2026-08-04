@@ -1,5 +1,12 @@
 <% content_for :title, resources_name %>
 
+<% if (new_path = new_resource_path) %>
+  <% content_for :actions do %>
+    <%= link_to "Add #{resource_name}", new_path,
+                class: 'btn theme-primary btn-sm btn-outline ms-3' %>
+  <% end %>
+<% end %>
+
 <% if @resources.blank? %>
   <%= render 'none' %>
 <% else %>

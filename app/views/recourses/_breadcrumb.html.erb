@@ -1,0 +1,16 @@
+<nav aria-label='breadcrumb'>
+  <ol class='breadcrumb mb-0'>
+    <% resource_breadcrumbs.each_with_index do |(title, path), index| %>
+      <% unless index.zero? %>
+        <li class='breadcrumb-divider'></li>
+      <% end %>
+      <% if path %>
+        <li class='breadcrumb-item'><%= link_to title, path, class: 'breadcrumb-link' %></li>
+      <% else %>
+        <li class='breadcrumb-item' aria-current='page'>
+          <span class='breadcrumb-link active'><%= title %></span>
+        </li>
+      <% end %>
+    <% end %>
+  </ol>
+</nav>

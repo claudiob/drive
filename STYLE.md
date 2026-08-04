@@ -20,6 +20,24 @@ before writing or editing any layout, view or partial.
   none, wired up per the CDN Quickstart: Geist and Geist Mono from Google
   Fonts, then Bootstrap's CSS, with the JS bundle as a module before `</body>`.
 
+## The navbar
+
+- Every page opens with a navbar holding a breadcrumb, then `yield :actions`,
+  both to the left.
+- The breadcrumb ends at the current page, and that last item is *not* a link:
+  a `<span class='breadcrumb-link active'>` inside an
+  `<li class='breadcrumb-item' aria-current='page'>`. Bootstrap's own example
+  uses an `<a>` there; we deliberately do not.
+- Earlier items are links, separated by empty `<li class='breadcrumb-divider'>`
+  elements — v6 draws the chevron from that element, not from a CSS `content`
+  string on `::before` as v5 did.
+- A view contributes buttons with `content_for :actions`; the layout only
+  yields. Nothing else belongs in the navbar.
+- An index offers `Add <resource>` only when there is somewhere to go: the
+  `new` route has to be drawn *and* the controller has to implement the action,
+  or the button would 404 or raise. Its classes are
+  `btn theme-primary btn-sm btn-outline ms-3`.
+
 ## Tables
 
 - A `<table>` defaults to the hoverable accent, not the striped one:
