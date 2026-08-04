@@ -65,11 +65,18 @@ class TestRecoursesIndex < Minitest::Test
     assert_includes body, 'data-cell="Fips"'
   end
 
-  def test_it_shows_timestamps_in_the_apps_time_zone
+  def test_it_wraps_a_time_in_a_time_tag_carrying_the_machine_readable_value
     contact = Contact.create! phone: '5552234567'
     visit_index
 
-    assert_includes body, "data-cell=\"Created at\">#{contact.created_at}</td>"
+    assert_includes body, "<time datetime=\"#{contact.created_at.rfc3339}\">"
+  end
+
+  def test_it_reads_a_time_as_month_day_and_zone
+    Contact.create! phone: '5552234567'
+    visit_index
+
+    assert_match(/<time [^>]+>[A-Z][a-z]{2} \d{1,2} at \d{2}:\d{2}[ap]m [A-Z]{3,4}</, body)
     refute_includes body, 'UTC'
   end
 

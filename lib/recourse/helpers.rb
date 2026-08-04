@@ -1,6 +1,9 @@
 module Recourse
   # View helpers for the pages the gem renders.
   module Helpers
+    # How a time reads on a page, e.g. 'Aug 4 at 03:47pm EDT'.
+    TIME_FORMAT = '%b %-d at %I:%M%P %Z'
+
     # Human, plural name of the resource on the page, e.g. 'Contacts'.
     def resources_name
       controller.controller_name.humanize
@@ -20,7 +23,10 @@ module Recourse
     def resource_cell(resource, column)
       value = resource.attributes[column]
 
-      column == 'phone' ? number_to_phone(value) : value
+      return time_tag value, value.strftime(TIME_FORMAT) if value.is_a? Time
+      return number_to_phone value if column == 'phone'
+
+      value
     end
 
     # One cell: a heading in the header row, a labelled value in every other.

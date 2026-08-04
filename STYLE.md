@@ -67,6 +67,21 @@ before writing or editing any layout, view or partial.
 - In a generic table this keys off the column being named `phone`, which is
   safe because that convention guarantees the name.
 
+## Times and dates
+
+- A time on a page reads `%b %-d at %I:%M%P %Z` — `Aug 4 at 07:16pm EDT` —
+  wrapped in a `<time>` tag carrying the machine-readable value:
+
+      <time datetime='2026-08-04T19:16:51-04:00'>Aug 4 at 07:16pm EDT</time>
+
+- Rails' `time_tag` builds both halves: `time_tag value,
+  value.strftime(TIME_FORMAT)`. Pass the text explicitly, or the helper reaches
+  for I18n instead.
+- The `datetime` attribute is `rfc3339`, so it carries seconds and the offset.
+  The visible text drops both; the attribute is what a machine reads.
+- Zone comes from `config.time_zone`, so `%Z` reads `EDT` or `EST` depending on
+  the date, never `UTC`.
+
 ## Pagination
 
 - Paginate with the `pagy` gem, never hand-rolled offsets.
