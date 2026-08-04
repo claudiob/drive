@@ -99,3 +99,12 @@ above when they conflict.
   (`"#{name}"`) or escape sequences (`"\n"`, `"\x0"`).
 - Enforced by RuboCop: `Style/StringLiterals` and
   `Style/StringLiteralsInInterpolation` are both set to `single_quotes`.
+
+### No code of conduct, no ideology
+
+- Never add a `CODE_OF_CONDUCT.md`, and never link to or mention one from the
+  README, gemspec, or any other file. Generators that create one (`bundle
+  gem`) have their output deleted.
+- Keep the codebase free of content about ethics, religion, or politics —
+  including comments, docs, error messages, test fixtures, and sample data.
+- `LICENSE.txt` is not covered by this: a license is a legal notice.
