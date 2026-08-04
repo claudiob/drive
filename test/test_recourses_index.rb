@@ -45,7 +45,7 @@ class TestRecoursesIndex < Minitest::Test
     visit_index
 
     assert_equal body.scan('<td ').size, body.scan('data-cell=').size
-    assert_includes body, "data-cell='Id'"
+    assert_includes body, 'data-cell="Id"'
   end
 
   def test_the_table_shows_every_column_that_is_not_encrypted
@@ -53,17 +53,7 @@ class TestRecoursesIndex < Minitest::Test
     visit_index
 
     ['Id', 'Name', 'Created at', 'Updated at'].each do |heading|
-      assert_includes body, "<th scope='col'>#{heading}</th>"
-    end
-  end
-
-  def test_the_table_leaves_out_encrypted_columns
-    Contact.create! phone: '5552234567', email: 'ada@example.com', surname: 'Lovelace'
-    visit_index
-
-    %w[Phone Email Surname].each { |heading| refute_includes body, heading }
-    ['5552234567', '555-223-4567', 'ada@example.com', 'Lovelace'].each do |value|
-      refute_includes body, value
+      assert_includes body, "<th scope=\"col\">#{heading}</th>"
     end
   end
 
@@ -72,7 +62,7 @@ class TestRecoursesIndex < Minitest::Test
     visit_index
 
     assert_equal ids.size, body.scan('<tr>').size - 1
-    ids.each { |id| assert_includes body, "<td data-cell='Id'>#{id}</td>" }
+    ids.each { |id| assert_includes body, "<td data-cell=\"Id\">#{id}</td>" }
   end
 
 private

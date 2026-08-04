@@ -23,6 +23,13 @@ module Recourse
       column == 'phone' ? number_to_phone(value) : value
     end
 
+    # One cell: a heading in the header row, a labelled value in every other.
+    def column(header:, value: nil, heading: false, **)
+      return tag.th(header, scope: :col, **) if heading
+
+      tag.td(value, 'data-cell': header, **)
+    end
+
   private
 
     def resource_model
