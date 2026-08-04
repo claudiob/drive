@@ -121,6 +121,8 @@ above when they conflict.
 
 ### Comment every public declaration
 
+- Never comment a private method. The rule below is for the public surface; a
+  private method earns its explanation from its name and its caller.
 - Precede every public class, module, constant and method declaration with a
   comment line saying what that object does. This narrows the baseline's
   "comment why, not what" rule: declarations get a *what*, and the *why* rule

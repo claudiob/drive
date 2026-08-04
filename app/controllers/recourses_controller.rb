@@ -7,7 +7,6 @@ class RecoursesController < ActionController::Base
 
   private
 
-  # The model behind the route: `recourses :contacts` reads Contact.
   def resource_class
     controller_name.classify.constantize
   end
