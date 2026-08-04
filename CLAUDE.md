@@ -233,6 +233,16 @@ above when they conflict.
 - This file stays the authority for code style. Where the two overlap, `STYLE.md`
   wins on markup and `CLAUDE.md` wins on Ruby.
 
+### Keep render lines out of the logs
+
+- An app's log never carries Action View's `Rendering ...` and `Rendered ...`
+  lines. One line per partial buries the request that matters — a 20-row table
+  rendering a row partial produces 20 of them.
+- Set `config.action_view.logger = nil` in `config/application.rb`. Everything
+  else stays: the request, the SQL, and the `Completed 200 OK` timing line,
+  which still reports view time.
+- This is a rule for apps we write. The gem never touches a host's logging.
+
 ### No metaprogramming
 
 - Never call `send` or `public_send`. Reach the data directly instead:

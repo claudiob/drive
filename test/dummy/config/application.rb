@@ -12,6 +12,9 @@ module Dummy
     config.load_defaults 8.1
     config.secret_key_base = 'dummy_secret_key_base'
 
+    # Action View logs a line per partial, which buries the request itself.
+    config.action_view.logger = nil
+
     # Throwaway keys, so a model can encrypt an attribute and prove it is hidden.
     config.active_record.encryption.primary_key = 'dummy_primary_key_for_the_dummy_app'
     config.active_record.encryption.deterministic_key = 'dummy_deterministic_key_for_dummy'
