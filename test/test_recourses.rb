@@ -19,7 +19,6 @@ class TestRecourses < Minitest::Test
 
     assert_includes @session.response.body, "data-view='host'"
     assert_includes @session.response.body, '<title>States</title>'
-    refute_includes @session.response.body, '<table'
   end
 
   def test_it_defines_the_controller_the_host_app_lacks

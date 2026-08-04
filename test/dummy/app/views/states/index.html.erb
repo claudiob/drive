@@ -1,7 +1,5 @@
 <% content_for :title, 'States' %>
 
-<ul class='list-group' data-view='host'>
-  <% @resources.each do |state| %>
-    <li class='list-group-item'><%= state.code %> &mdash; <%= state.name %></li>
-  <% end %>
-</ul>
+<p class='fg-2' data-view='host'>Listed by the host app's own template.</p>
+
+<%= render 'table', recourses: @resources, pagy: @pagy %>

@@ -27,6 +27,11 @@ before writing or editing any layout, view or partial.
   table is better served by it.
 - Always add `.sm:table-stacked`, so rows become stacked blocks once the
   container gets narrow.
+- Cells live in a `_row` partial, rendered with `heading: true` for the header
+  row and once per record below it. A host app overrides one table by defining
+  `app/views/<resources>/_row.html.erb`, which wins through the controller's
+  template prefixes — so keep everything cell-shaped in that partial and
+  nothing else.
 - Stacking needs two more things, or it degrades badly. The table must sit
   inside a `.table-responsive` wrapper, which is the container query's
   container. And every `<td>` needs `data-cell='<heading>'` — that is where the

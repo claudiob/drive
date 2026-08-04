@@ -35,6 +35,23 @@ Anything you write yourself wins. Add `app/controllers/contacts_controller.rb`
 and Recourse leaves it alone; add `app/views/contacts/index.html.erb` and Rails
 renders yours instead of the one the gem ships.
 
+The usual thing to override is a single row. Add
+`app/views/contacts/_row.html.erb` and Recourse's table renders yours for
+`/contacts` while every other resource keeps the default:
+
+```erb
+<%# locals: (recourse: nil, heading: false) -%>
+<% if heading %>
+  <th scope='col'>Contact</th>
+<% else %>
+  <td data-cell='Contact'><%= recourse.name %></td>
+<% end %>
+```
+
+The partial is rendered once for the header row with `heading: true` and no
+record, then once per record with `heading: false`. It builds the cells only —
+the table, the pagination and the layout stay Recourse's.
+
 Recourse's controllers inherit from your `ApplicationController`, so its pages
 render inside `app/views/layouts/application.html.erb` alongside the rest of your
 app, and go through whatever that base class already does. Each page sets its
