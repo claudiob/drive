@@ -7,7 +7,7 @@ module Recourse
       # const_defined? is true for a Zeitwerk autoload, so files on disk count too.
       return if Object.const_defined?(class_name)
 
-      Object.const_set(class_name, Class.new(ResourcesController))
+      Object.const_set(class_name, Class.new(RecoursesController))
     end
   end
 end

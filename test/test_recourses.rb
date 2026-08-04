@@ -31,14 +31,14 @@ class TestRecourses < Minitest::Test
   end
 
   def test_it_defines_the_controller_the_host_app_lacks
-    assert_operator ContactsController, :<, Recourse::ResourcesController
+    assert_operator ContactsController, :<, RecoursesController
   end
 
   def test_it_leaves_a_controller_the_host_app_owns_alone
     @session.get '/echoes'
 
     assert_equal 'the host app answered', @session.response.body
-    refute_operator EchoesController, :<, Recourse::ResourcesController
+    refute_operator EchoesController, :<, RecoursesController
   end
 
   def test_it_forwards_options_to_resources
