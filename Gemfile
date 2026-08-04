@@ -7,3 +7,4 @@ gem 'irb' # REPL that bin/console starts
 gem 'minitest' # test framework
 gem 'rake' # runs the default task: tests, then RuboCop
 gem 'rubocop' # lints against the conventions in CLAUDE.md
+gem 'sqlite3' # in-memory database the dummy app runs against
