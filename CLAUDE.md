@@ -142,10 +142,15 @@ above when they conflict.
 - Split long strings across lines with `\` continuations rather than letting a
   line run over.
 
-### No frozen_string_literal comment
+### Never freeze strings
 
 - Never write `# frozen_string_literal: true`. No file gets a magic comment,
   including generated ones — strip it from generator output.
-- Enforced by RuboCop: `Style/FrozenStringLiteralComment` is set to `never`.
-- Freeze individual constants explicitly instead (`FOO = [].freeze`), as the
-  baseline already says.
+- Never call `.freeze` on a string, constant or not. This overrides the
+  baseline's "freeze mutable constants" bullet for strings; array and hash
+  constants are still worth freezing by hand.
+- Where a constant only names something, prefer a symbol over a string — it is
+  immutable already, so the question does not arise.
+- Enforced by RuboCop: `Style/FrozenStringLiteralComment` is `never`, and
+  `Style/MutableConstant` is disabled because it demands `.freeze` on string
+  constants and cannot be told to skip them.

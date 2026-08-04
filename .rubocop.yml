@@ -12,6 +12,10 @@ Style/DocumentationMethod:
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never
 
+# Demands `.freeze` on string constants, which this project never does.
+Style/MutableConstant:
+  Enabled: false
+
 Style/StringLiterals:
   EnforcedStyle: single_quotes
 
