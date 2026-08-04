@@ -58,6 +58,15 @@ class TestRecoursesIndex < Minitest::Test
     end
   end
 
+  # Market has one column and no code of its own beyond the model.
+  def test_it_serves_a_resource_that_declares_nothing_but_a_name
+    Market.delete_all
+    @session.get '/markets'
+
+    assert_equal 200, @session.response.status
+    assert_includes body, "<p class='fg-2'>No markets.</p>"
+  end
+
   def test_it_serves_a_resource_that_belongs_to_another
     @session.get '/counties'
 

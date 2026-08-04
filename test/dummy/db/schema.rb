@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_04_000005) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_04_000006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,6 +33,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_000005) do
     t.index ["fips"], name: "index_counties_on_fips", unique: true
     t.index ["state_id"], name: "index_counties_on_state_id"
     t.check_constraint "fips::text ~ '^[0-9]{5}$'::text", name: "counties_fips_five_digits"
+  end
+
+  create_table "markets", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_markets_on_name", unique: true
   end
 
   create_table "states", force: :cascade do |t|
