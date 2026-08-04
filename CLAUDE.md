@@ -90,3 +90,12 @@ above when they conflict.
   is a short summary of the prompt; the body is the full response given for
   that prompt.
 - One prompt, one commit.
+
+### Single quotes by default
+
+- Always use single-quoted strings. This supersedes the baseline bullet above
+  that treats either style as acceptable.
+- Double quotes only when the string genuinely needs them: interpolation
+  (`"#{name}"`) or escape sequences (`"\n"`, `"\x0"`).
+- Enforced by RuboCop: `Style/StringLiterals` and
+  `Style/StringLiteralsInInterpolation` are both set to `single_quotes`.
