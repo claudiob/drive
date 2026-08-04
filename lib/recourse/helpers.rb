@@ -16,6 +16,13 @@ module Recourse
       resource_model.human_attribute_name column
     end
 
+    # Value for one cell, formatted according to what the column holds.
+    def resource_cell(resource, column)
+      value = resource.public_send column
+
+      column == 'phone' ? number_to_phone(value) : value
+    end
+
   private
 
     def resource_model

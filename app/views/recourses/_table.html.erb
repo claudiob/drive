@@ -15,7 +15,7 @@
       <% resources.each do |resource| %>
         <tr>
           <% columns.each do |column| %>
-            <td><%= resource.public_send column %></td>
+            <td><%= resource_cell resource, column %></td>
           <% end %>
         </tr>
       <% end %>
@@ -23,5 +23,9 @@
   </table>
 </div>
 
-<%== pagy.info_tag %>
-<%== pagy.series_nav :bootstrap %>
+<% if pagy %>
+  <div class='d-flex align-items-center'>
+    <div class='ps-2 flex-grow-1'><%== pagy.info_tag.gsub(/of (\d*?) in total/) { "of #{number_with_delimiter $1} in total" } %></div>
+    <div class='pe-2'><%== pagy.series_nav(:bootstrap, classes: 'pagination mb-0') if pagy.last > 1 %></div>
+  </div>
+<% end %>

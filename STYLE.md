@@ -31,6 +31,15 @@ before writing or editing any layout, view or partial.
 - Column headings come from `human_attribute_name`, so a host app can rename
   one by translating the attribute.
 
+## Phone numbers
+
+- A phone number shown to a user always goes through `number_to_phone`, so
+  `5552234567` reads as `555-223-4567`. Never print the stored digits raw.
+- Storage is unaffected: the column still holds ten bare digits, as `CLAUDE.md`
+  requires. The formatting is for reading only.
+- In a generic table this keys off the column being named `phone`, which is
+  safe because that convention guarantees the name.
+
 ## Pagination
 
 - Paginate with the `pagy` gem, never hand-rolled offsets.

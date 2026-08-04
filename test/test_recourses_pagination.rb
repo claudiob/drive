@@ -31,7 +31,7 @@ class TestRecoursesPagination < Minitest::Test
     visit_index
 
     assert_includes body, 'class="pagy-bootstrap series-nav"'
-    assert_includes body, '<ul class="pagination">'
+    assert_includes body, '<ul class="pagination'
     assert_includes body, 'href="/contacts?page=2"'
   end
 

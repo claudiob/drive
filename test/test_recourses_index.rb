@@ -38,6 +38,14 @@ class TestRecoursesIndex < Minitest::Test
     end
   end
 
+  def test_the_table_formats_a_phone_number_for_reading
+    Contact.create! phone: '5552234567'
+    visit_index
+
+    assert_includes body, '<td>555-223-4567</td>'
+    refute_includes body, '<td>5552234567</td>'
+  end
+
   def test_the_table_leaves_out_encrypted_columns
     Contact.create! phone: '5552234567', email: 'ada@example.com'
     visit_index
