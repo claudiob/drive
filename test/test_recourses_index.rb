@@ -25,7 +25,7 @@ class TestRecoursesIndex < Minitest::Test
     Contact.create! phone: '5552234567'
     visit_index
 
-    assert_includes body, '<table class="table table-striped">'
+    assert_includes body, '<table class="table table-hover">'
     refute_includes body, 'No contacts.'
   end
 

@@ -195,21 +195,13 @@ above when they conflict.
   `metadata['rubygems_mfa_required']` and publishing needs MFA on the RubyGems
   account.
 
-### Bootstrap 6 Alpha for all markup
+### Design lives in STYLE.md
 
-- Every layout, view and partial follows Bootstrap 6 Alpha conventions.
-  Reference: https://v6-dev--twbs-bootstrap.netlify.app/llms-full.txt
-- Check class names against those docs rather than recalling Bootstrap 5. v6
-  renames and removes plenty: responsive utilities are prefixed
-  (`md:col-6`, not `col-md-6`), `.bg-light` / `.bg-dark` are gone in favour of
-  the `.bg-1` / `.bg-2` scale, and `.text-body-secondary` is now `.fg-2`.
-- Still current from v5: `.container`, `.table`, `.table-striped`,
-  `.table-responsive`, and `data-bs-theme="light|dark"` for color modes —
-  though `color-scheme: light dark` on `:root` follows the system by default,
-  so most pages need no theme attribute at all.
-- The gem ships `app/views/layouts/application.html.erb` for hosts that have
-  none, wired up per the CDN Quickstart: Geist and Geist Mono from Google
-  Fonts, then Bootstrap's CSS, with the JS bundle as a module before `</body>`.
+- Every decision about how a page looks — Bootstrap conventions, class choices,
+  markup structure — is documented in `STYLE.md`, not here. Read that file
+  before writing or editing any layout, view or partial.
+- This file stays the authority for code style. Where the two overlap, `STYLE.md`
+  wins on markup and `CLAUDE.md` wins on Ruby.
 
 ### Fewest SQL queries to render a page
 
