@@ -14,5 +14,9 @@ module Dummy
 
     # Discard log output: a test run should not leave files behind.
     config.logger = ActiveSupport::Logger.new(IO::NULL)
+
+    # Let a failing request raise into the test rather than being turned into a
+    # 500 page, so tests can assert on the exception itself.
+    config.action_dispatch.show_exceptions = :none
   end
 end

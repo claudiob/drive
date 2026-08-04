@@ -1,3 +1,4 @@
+require_relative 'administered'
 require_relative 'recourse/version'
 require_relative 'recourse/engine'
 
