@@ -115,6 +115,8 @@ above when they conflict.
   since those read as separate groups.
 - Never use `~>`. Use `>=` only where a minimum version is genuinely required,
   and otherwise give no constraint at all.
+- Every gem carries a trailing comment on the same line saying why it is
+  there — what would break without it, not what the gem is.
 - The same applies to `add_dependency` in the gemspec.
 
 ### No frozen_string_literal comment
