@@ -191,6 +191,16 @@ above when they conflict.
   `metadata['rubygems_mfa_required']` and publishing needs MFA on the RubyGems
   account.
 
+### Files at most 100 lines
+
+- No code file goes over 100 lines, counting blank and comment lines. When one
+  gets close, split it — extract a class, a concern, a partial, a second test
+  case.
+- Enforced by `rake file_length`, part of the default task. RuboCop has no
+  file-length cop; `Metrics/ClassLength` and friends measure a class body, not a
+  file, and skip comments and blanks by default.
+- `.md` and `.txt` are exempt — this counts code, not prose.
+
 ### Lines at most 100 characters
 
 - Hard limit of 100 characters per line, enforced by RuboCop's
