@@ -159,9 +159,10 @@ above when they conflict.
       NORTH_AMERICAN_PHONES = /\A[2-9]\d{2}[2-9]\d{6}\z/
 
       normalizes :phone, with: ->(phone) { phone.delete('^0-9').delete_prefix '1' }
-      validates :phone, format: { with: NORTH_AMERICAN_PHONES,
-                                  message: 'is not a valid phone number' },
-                        allow_nil: true
+
+      with_options format: { with: NORTH_AMERICAN_PHONES, message: '...' } do
+        validates :phone, allow_nil: true
+      end
 
 - The concern's validation is `allow_nil`, so whether a phone is *required* is
   the including model's decision — add `presence: true` there, not in the
@@ -191,6 +192,13 @@ above when they conflict.
   `Layout/LineLength` (`Max: 100`, up from its default of 120).
 - Split long strings across lines with `\` continuations rather than letting a
   line run over.
+- When a method call would need three lines and hanging indentation just to fit,
+  hoist the long arguments into a Rails `with_options` block instead. Still
+  three lines, but every line starts at a normal indent:
+
+      with_options format: { with: SOME_PATTERN, message: 'is invalid' } do
+        validates :phone, allow_nil: true
+      end
 
 ### Never freeze strings
 

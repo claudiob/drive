@@ -7,8 +7,8 @@ module Phonable
 
   included do
     normalizes :phone, with: ->(phone) { phone.delete('^0-9').delete_prefix '1' }
-    validates :phone, format: { with: NORTH_AMERICAN_PHONES,
-                                message: 'is not a valid phone number' },
-                      allow_nil: true
+    with_options format: { with: NORTH_AMERICAN_PHONES, message: 'is not a valid phone number' } do
+      validates :phone, allow_nil: true
+    end
   end
 end
