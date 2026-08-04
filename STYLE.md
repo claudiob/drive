@@ -34,10 +34,10 @@ before writing or editing any layout, view or partial.
 ## Pagination
 
 - Paginate with the `pagy` gem, never hand-rolled offsets.
-- The page limit defaults to 20.
-- Below the table, in this order: `@pagy.info_tag` for the item count, then
-  `@pagy.series_nav :bootstrap` for the links. Both need `<%==` rather than
-  `<%=`, since they return HTML.
-- Pass `limit:` explicitly and leave `max_limit` unset. Without `max_limit`,
-  pagy ignores a `?limit=` in the query string, so a visitor cannot ask for a
-  page of 100,000 rows.
+- The page limit is 20, which is already pagy's own default — so never pass
+  `limit:` to restate it.
+- Below the table, in this order: `info_tag` for the item count, then
+  `series_nav :bootstrap` for the links. Both need `<%==` rather than `<%=`,
+  since they return HTML.
+- Leave `max_limit` unset. Without it pagy ignores a `?limit=` in the query
+  string, so a visitor cannot ask for a page of 100,000 rows.

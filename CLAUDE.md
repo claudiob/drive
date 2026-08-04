@@ -217,6 +217,20 @@ above when they conflict.
 - This file stays the authority for code style. Where the two overlap, `STYLE.md`
   wins on markup and `CLAUDE.md` wins on Ruby.
 
+### Pass locals to partials explicitly
+
+- A partial never reads a controller's instance variables. Declare strict
+  locals on its first line — `<%# locals: (resources:, pagy:) %>`, or
+  `<%# locals: () %>` when it takes none — and pass them at the call site:
+  `render 'table', resources: @resources, pagy: @pagy`.
+- A template rendered by an action may read instance variables. The rule is
+  about partials, which should not depend on who rendered them.
+- Rails enforces this: omit a declared local and the render raises instead of
+  quietly rendering a blank.
+- Where two branches need different locals, write `if`/`else` rather than
+  `render cond ? 'a' : 'b'` — a single call cannot pass the right locals to
+  both.
+
 ### Fewest SQL queries to render a page
 
 - Rendering a page should issue as few queries as it can. Treat an extra query

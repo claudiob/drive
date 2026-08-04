@@ -1,3 +1,7 @@
 <% content_for :title, resources_name %>
 
-<%= render @resources.blank? ? 'none' : 'table' %>
+<% if @resources.blank? %>
+  <%= render 'none' %>
+<% else %>
+  <%= render 'table', resources: @resources, pagy: @pagy %>
+<% end %>
