@@ -33,25 +33,19 @@ class TestRecoursesIndex < Minitest::Test
     Contact.create! phone: '5552234567'
     visit_index
 
-    ['Id', 'Phone', 'Name', 'Surname', 'Created at', 'Updated at'].each do |heading|
+    ['Id', 'Name', 'Created at', 'Updated at'].each do |heading|
       assert_includes body, "<th scope='col'>#{heading}</th>"
     end
   end
 
-  def test_the_table_formats_a_phone_number_for_reading
-    Contact.create! phone: '5552234567'
-    visit_index
-
-    assert_includes body, '<td>555-223-4567</td>'
-    refute_includes body, '<td>5552234567</td>'
-  end
-
   def test_the_table_leaves_out_encrypted_columns
-    Contact.create! phone: '5552234567', email: 'ada@example.com'
+    Contact.create! phone: '5552234567', email: 'ada@example.com', surname: 'Lovelace'
     visit_index
 
-    refute_includes body, 'Email'
-    refute_includes body, 'ada@example.com'
+    %w[Phone Email Surname].each { |heading| refute_includes body, heading }
+    ['5552234567', '555-223-4567', 'ada@example.com', 'Lovelace'].each do |value|
+      refute_includes body, value
+    end
   end
 
   def test_the_gems_layout_serves_a_host_that_has_none

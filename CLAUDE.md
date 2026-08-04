@@ -162,6 +162,21 @@ above when they conflict.
   those bounds.
 - Trivial patterns used once, like `%r{\Aexe/}`, stay inline.
 
+### Encrypt PII
+
+- Personal data is stored with Active Record Encryption: `encrypts :phone`,
+  `:email`, `:surname`, `:street`. Suspect a column is personal? Ask before
+  storing it in the clear.
+- A column that is queried or must stay unique needs
+  `encrypts :phone, deterministic: true`. Non-deterministic ciphertext differs
+  every write, which silently defeats both a unique index and a uniqueness
+  validation — they will pass while duplicates pile up.
+- Encryption rules out a database check constraint on the value's shape:
+  ciphertext is not ten digits. Those checks move to the model alone, and that
+  is a real loss of the belt-and-braces rule, not an oversight.
+- Encrypted columns never appear in a generic table, so encrypting a column
+  removes it from the index page. That is intended — see `STYLE.md`.
+
 ### The State model
 
 - A `State` model always represents the United States, and always has exactly
@@ -181,7 +196,9 @@ above when they conflict.
 - A phone number is stored in a column named `phone`, holding exactly 10
   digits, enforced in the database *and* in Rails.
 - In the database that means a check constraint, not just a length limit:
-  `add_check_constraint :table, "phone ~ '^[0-9]{10}$'"`.
+  `add_check_constraint :table, "phone ~ '^[0-9]{10}$'"` — but only where the
+  column is *not* encrypted. Encrypt it and the constraint has to go, because
+  the stored value is ciphertext.
 - In Rails it means the model includes a `Phonable` concern carrying both rules:
 
       NORTH_AMERICAN_PHONES = /\A[2-9]\d{2}[2-9]\d{6}\z/

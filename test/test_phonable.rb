@@ -42,12 +42,4 @@ class TestPhonable < Minitest::Test
     refute_predicate Contact.new(phone: '5550234567'), :valid?
     refute_predicate Contact.new(phone: '5551234567'), :valid?
   end
-
-  def test_the_database_rejects_a_phone_that_is_not_ten_digits
-    contact = Contact.new phone: '5552'
-
-    assert_raises ActiveRecord::StatementInvalid do
-      contact.save! validate: false
-    end
-  end
 end
