@@ -119,6 +119,13 @@ above when they conflict.
   there — what would break without it, not what the gem is.
 - The same applies to `add_dependency` in the gemspec.
 
+### Lines at most 100 characters
+
+- Hard limit of 100 characters per line, enforced by RuboCop's
+  `Layout/LineLength` (`Max: 100`, up from its default of 120).
+- Split long strings across lines with `\` continuations rather than letting a
+  line run over.
+
 ### No frozen_string_literal comment
 
 - Never write `# frozen_string_literal: true`. No file gets a magic comment,
