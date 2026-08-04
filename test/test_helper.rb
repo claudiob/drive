@@ -16,3 +16,7 @@ end
 ActiveRecord::Migration.suppress_messages do
   ActiveRecord::MigrationContext.new(Rails.root.join('db/migrate')).migrate
 end
+
+# Routes load lazily, and `recourses` defines controllers as it draws them, so a
+# test that never issues a request would otherwise not see them.
+Rails.application.reload_routes_unless_loaded
