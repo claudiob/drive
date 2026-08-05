@@ -29,6 +29,9 @@ module Recourse
 
         return time_tag value, value.strftime(TIME_FORMAT) if value.is_a? Time
         return number_to_phone value if column == 'phone'
+        # An array column would otherwise print its own inspect output, brackets and
+        # quotes and all, and an empty one would read `[]` rather than as empty.
+        return value.join ', ' if value.is_a? Array
 
         value
       end

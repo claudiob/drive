@@ -247,6 +247,42 @@ two is filed under the one a reader would look in first.
   metaprogramming on your own initiative, and never treat the places that
   already use it as permission to add another — ask instead.
 
+#### Both sides of an association
+
+- A `belongs_to` gets the matching `has_many` on the other model by default. A
+  foreign key is a relationship, and reading it from one side only is half the model.
+- `dependent:` follows what the child requires: `:destroy` where the child needs the
+  parent, `:nullify` where the association is optional. A `Job` cannot exist without
+  its `Location`, so deleting the location takes its jobs with it; a `Message` may
+  have no `Job`, so a deleted job leaves its messages standing.
+- `:destroy` rather than `:restrict_with_error` on purpose. An admin deleting a
+  record is entitled to delete the tree under it, and a `State` reaches a long way
+  down — counties, then their ZIPs, then locations, then jobs. The point of the
+  cascade is that they do not have to dismantle it by hand.
+- That reach is exactly why a delete action needs a modal that names what is about to
+  go, and how much of it. **When the destroy page gets built, ask Claudio about the
+  wording of that warning before designing it** — it has not been specified yet.
+- `has_many` takes one name, unlike `validates`. `has_many :counties, :markets`
+  does not declare two associations — it reads `:markets` as a scope and fails much
+  later with `undefined method 'arity' for an instance of Symbol`, from a view.
+- Neither side helps against `delete_all`, which is raw SQL and skips callbacks. A
+  test that clears a parent table still needs the children gone first.
+
+#### An enum is a Postgres type
+
+- An enum column is a native Postgres type, not an integer and not a bare string:
+  `create_enum :job_status, Job::STATUSES` and then
+  `t.enum :status, enum_type: :job_status, default: :draft, null: false`. The
+  database rejects a value the model has never heard of, and the column reads as the
+  word rather than as a number nobody can interpret.
+- The names live in a `STATUSES` constant on the model, one per line with a comment
+  saying what that state means, and the model declares
+  `enum :status, STATUSES.index_by(&:itself)`. The migration reads the same constant,
+  so the type and the model cannot drift at creation time.
+- An array column is `t.text :media_urls, array: true, default: [], null: false`.
+  The default and the null constraint together mean it is always an array, so
+  nothing has to ask whether it is nil before treating it as a list.
+
 #### Trailing comma on a multiline hash
 
 - A multiline hash ends its last entry with a comma, so adding an entry touches

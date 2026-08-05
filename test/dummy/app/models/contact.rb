@@ -2,6 +2,8 @@
 class Contact < ApplicationRecord
   include Emailable, Phonable
 
+  has_many :messages, dependent: :destroy
+
   encrypts :phone, deterministic: true
   encrypts :surname
 

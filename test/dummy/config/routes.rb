@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   recourses :sources, only: :index
   recourses :agents, only: %i[index new create]
   recourses :locations, only: %i[index new create]
+  recourses :jobs
+  recourses :messages
 
   # No index action, so no sidebar link.
   recourses :placeholders, only: []

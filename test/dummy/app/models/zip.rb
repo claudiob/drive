@@ -4,6 +4,7 @@ class ZIP < ApplicationRecord
 
   belongs_to :county
   belongs_to :market, optional: true
+  has_many :locations, dependent: :destroy
 
   validates :code, uniqueness: true, length: { is: 5 }, format: { with: /\A\d{5}\z/ }
   validates :code, :city, presence: true
