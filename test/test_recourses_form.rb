@@ -51,6 +51,7 @@ class TestRecoursesForm < Minitest::Test
     assert_includes body, 'type="color" name="market[color]"'
     assert_includes body, 'type="date" name="market[opens_on]"'
     assert_includes body, 'type="time" name="market[opens_at]"'
+    assert_includes body, 'type="datetime-local" name="market[audited_at]"'
     assert_includes body, 'type="text" name="market[name]"'
   end
 

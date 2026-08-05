@@ -13,6 +13,7 @@ module Recourse
         case column_type column
         when :date then form.date_field column, **options
         when :time then form.time_field column, **options
+        when :datetime then form.datetime_local_field column, **options
         else form.text_field column, **options
         end
       end
