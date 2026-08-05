@@ -10,5 +10,11 @@ module Recourse
     initializer 'recourse.routes' do
       ActionDispatch::Routing::Mapper.include Routes
     end
+
+    # Serves the vendored Bootstrap, since a host may run no asset pipeline at all.
+    # The prefix keeps its slash: without it `/recourses` would be served as a file.
+    initializer 'recourse.assets' do |app|
+      app.middleware.use Rack::Static, urls: %w[/recourse/], root: Engine.root.join('vendor')
+    end
   end
 end

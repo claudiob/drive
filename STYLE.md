@@ -19,8 +19,18 @@ before writing or editing any layout, view or partial.
   dark` on `:root` follows the system by default, so most pages need no theme
   attribute at all.
 - The gem ships `app/views/layouts/application.html.erb` for hosts that have
-  none, wired up per the CDN Quickstart: Geist and Geist Mono from Google
-  Fonts, then Bootstrap's CSS, with the JS bundle as a module before `</body>`.
+  none: Bootstrap's CSS in the head, the JS bundle as a module before `</body>`,
+  and Geist and Geist Mono from Google Fonts.
+- Bootstrap is *vendored*, not linked. `vendor/recourse/` holds
+  `bootstrap.min.css`, `bootstrap.bundle.min.js`, `bootstrap-icons.min.css` and
+  the two icon fonts, and the layout asks for `/recourse/…`. A CDN that moves or
+  goes down would otherwise take every page's styling with it, and the Bootstrap
+  6 CSS is served from a preview host rather than a release one.
+- The icon fonts are not optional extras. `bootstrap-icons.min.css` reaches for
+  `fonts/bootstrap-icons.woff2` beside itself, so vendoring the CSS alone leaves
+  every icon a blank box.
+- The engine serves them with `Rack::Static`, since a host may run no asset
+  pipeline at all — see CLAUDE.md, "Vendor what a page cannot render without".
 
 ## The navbar
 

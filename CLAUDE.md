@@ -343,6 +343,24 @@ two is filed under the one a reader would look in first.
   same line drawn for the logger and the time zone — so a control the gem draws
   outside a form builder, like the combobox, carries this markup itself.
 
+#### Vendor what a page cannot render without
+
+- A stylesheet or script a page cannot do without is vendored into the gem and
+  served from it, never linked to a CDN. A host that fails to reach the CDN gets
+  an unstyled page, and the Bootstrap 6 CSS in particular comes from a preview
+  host with no promise of staying put.
+- The files live in `vendor/recourse/`, and an engine initializer serves them with
+  `Rack::Static`. That is the framework's own middleware rather than a controller
+  action, and it assumes no asset pipeline, which a host may well not have.
+- Keep the slash on the prefix. `urls: %w[/recourse/]` matches on `start_with?`,
+  so `urls: %w[/recourse]` would answer `/recourses` with a 404 from the file
+  server before the router ever saw it — in this gem of all places.
+- Vendor whatever the vendored file itself asks for. `bootstrap-icons.min.css`
+  loads `fonts/bootstrap-icons.woff2` relative to itself, so the CSS without the
+  fonts renders every icon as a blank box.
+- Keep the copies byte-identical to what the CDN serves, so a later version can
+  be diffed against upstream. `git ls-files` puts them in the gem already.
+
 #### Seed data lives in migrations, so schema.rb cannot load a database
 
 - `config.active_record.dump_schema_after_migration = false`, so no `schema.rb`
