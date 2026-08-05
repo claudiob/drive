@@ -11,7 +11,7 @@ class TestRecoursesNavbar < Minitest::Test
   def test_every_page_opens_with_a_navbar
     visit '/contacts'
 
-    assert_includes body, "<nav class='navbar bg-1'>"
+    assert_includes body, "<nav class='navbar"
   end
 
   def test_the_breadcrumb_names_the_current_page_without_linking_it

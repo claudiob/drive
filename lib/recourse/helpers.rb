@@ -34,13 +34,18 @@ module Recourse
       safe_join [tag.i(class: "bi bi-#{icon}"), title], ' '
     end
 
-    # Sidebar entries as [title, path] pairs, in the order routes.rb declares them.
+    # Sidebar entries as [name, title, path], in the order routes.rb declares them.
     def sidebar_resources
       Recourse.declared.filter_map do |name|
         next unless routed? name, 'index'
 
-        [name.humanize, url_for(controller: "/#{name}", action: :index)]
+        [name, name.humanize, url_for(controller: "/#{name}", action: :index)]
       end
+    end
+
+    # True when a sidebar entry names the resource the page is showing.
+    def current_resource?(name)
+      name == controller.controller_name
     end
 
     # Columns the table shows: every attribute that is not encrypted.

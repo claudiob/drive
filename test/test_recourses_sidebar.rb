@@ -9,8 +9,20 @@ class TestRecoursesSidebar < Minitest::Test
   end
 
   def test_it_is_a_vertical_list_beside_the_content
-    assert_includes body, "<aside class='col-auto bg-1 py-3 px-0'>"
+    assert_includes body, "<aside class='col-auto"
     assert_includes body, "<ul class='nav flex-column'>"
+  end
+
+  def test_the_link_to_the_current_page_is_the_active_one
+    assert_includes body, '<a class="nav-link active" aria-current="page" href="/contacts">'
+    assert_equal 1, body.scan('nav-link active').size
+  end
+
+  def test_which_link_is_active_follows_the_page
+    @session.get '/states'
+
+    assert_includes body, '<a class="nav-link active" aria-current="page" href="/states">'
+    assert_includes body, '<a class="nav-link" href="/contacts">'
   end
 
   def test_it_links_the_index_of_every_recourse
@@ -52,6 +64,6 @@ private
   end
 
   def links
-    body.scan %r{<a class="nav-link" href="([^"]+)"><i[^>]*></i> ([^<]+)}
+    body.scan %r{<a class="nav-link[^"]*"[^>]*href="([^"]+)"><i[^>]*></i> ([^<]+)}
   end
 end

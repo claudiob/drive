@@ -76,6 +76,9 @@ before writing or editing any layout, view or partial.
 - Below the navbar, an `<aside>` sits to the left of the content holding a
   vertical `ul.nav.flex-column` of links — one per resource `recourses` drew.
 - The order is the order `config/routes.rb` declares them, never sorted.
+- The entry for the page being shown is `nav-link active` with
+  `aria-current='page'`. It is matched on the controller, not on the URL, so
+  `/contacts?page=2` still marks Contacts active.
 - A resource appears only if its `index` action is routed. `recourses :drafts,
   only: :new` draws no index, so it gets no link rather than a broken one.
 - Layout is `.row` with `aside.col-auto` and `main.col`, inside the page's
