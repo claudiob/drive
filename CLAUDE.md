@@ -211,8 +211,9 @@ above when they conflict.
 - Creating a counties table always comes with a migration that backfills all
   3,143 counties of the 50 states plus DC, each joined to the right `states` row.
   Source: https://www2.census.gov/geo/docs/reference/codes2020/national_county2020.txt
-- The first two digits of a county's `fips` are its state's `fips`. That is the
-  invariant to assert after backfilling, not just the row count.
+- The first two digits of a county's `fips` are its state's `fips`. Check that
+  after backfilling, not just the row count — by hand, since a migration does
+  not get a test.
 - Territories are left out, matching the states table.
 - The 3,143 rows live in `db/counties.txt`, not inside the migration. Migrations
   are exempt from the file-length rule, so this is a decision rather than a
@@ -235,8 +236,9 @@ above when they conflict.
   both, so the backfill normalizes on the way in, matching each identifier by its
   offset and DST rules: Detroit and the Kentucky zones to Eastern, Indiana's
   Eastern zones to `Indiana (East)`, Knox and Tell_City to Central, Boise to
-  Mountain, Anchorage and Nome to Alaska, Honolulu to Hawaii. A test asserts no
-  value survives that `ActiveSupport::TimeZone::MAPPING` does not name.
+  Mountain, Anchorage and Nome to Alaska, Honolulu to Hawaii. Nothing should
+  survive that `ActiveSupport::TimeZone::MAPPING` does not name — worth checking
+  by hand after a backfill, since a migration does not get a test.
 
 ### Seed data lives in migrations, so schema.rb cannot load a database
 
@@ -409,6 +411,23 @@ above when they conflict.
   gap. The Gemfile's `gemspec` directive loads it during bundler setup, before
   SimpleCov can start. Do not add `track_files` to pull it in — it would report
   as uncovered when in fact it runs.
+
+### As few tests as coverage needs
+
+- The suite exists to cover the code, so a test that can be deleted while
+  coverage stays at 100% is a test to delete. Write the smallest set that gets
+  there and stop.
+- Never add a test for lines the suite already covers, even to reach a *branch*
+  it misses. Line coverage is the whole budget.
+- Never test a migration. A backfill's row count, the values it wrote and the
+  invariants between them are data, and asserting them exercises no code of
+  ours. `TestState` was five such tests, so the whole class went, and
+  `TestCounty` and `TestZIP` with it.
+- A model that only declares validations, associations and encryption is in the
+  same position: nothing measured runs, so it gets no test file. That took
+  `TestPhonable` and `TestEmails` too.
+- This narrows the baseline's "every behavior change comes with a test": the
+  test comes with it only if it reaches a line nothing else does.
 
 ### Files at most 100 lines
 
