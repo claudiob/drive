@@ -344,6 +344,25 @@ before writing or editing any layout, view or partial.
   requires. The formatting is for reading only.
 - In a generic table this keys off the column being named `phone`, which is
   safe because that convention guarantees the name.
+- A phone *field* separates as it is typed, not only once it is stored. Every
+  `<input type='phone'>` carries the Stimulus controller that does it:
+
+      data-controller='phone'
+      data-action='keydown->phone#down input->phone#input'
+
+- The controller formats on `connect` too, so a form redrawn after a rejected
+  `create` shows the separators rather than the ten digits it was sent.
+- Because the value now carries separators, the `pattern` has to accept them or
+  the browser refuses to submit what it just helped type. A phone's pattern is
+  therefore `[2-9]\d{2}-[2-9]\d{2}-\d{4}` — the separated form of the model's
+  `NORTH_AMERICAN_PHONES`, keeping the rule that an area or exchange code cannot
+  start with 0 or 1. The server sees bare digits regardless, since `Phonable`
+  normalizes them away.
+- Never put a length validator on a phone. `maxlength` would come from it and cut
+  the value off at ten characters, three short of `555-555-5555`.
+- The `title` says `Please match the format 555-555-5555`, matching the
+  placeholder. Where a field has a canonical sample the title uses it rather than
+  a shape derived from the pattern, so the two never disagree.
 
 ## Times and dates
 

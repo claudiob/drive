@@ -1,12 +1,13 @@
 require_relative 'helpers/cells'
 require_relative 'helpers/constraints'
+require_relative 'helpers/examples'
 require_relative 'helpers/fields'
 require_relative 'helpers/navigation'
 
 module Recourse
   # View helpers for the pages the gem renders, and what the parts share.
   module Helpers
-    include Cells, Constraints, Fields, Navigation
+    include Cells, Constraints, Examples, Fields, Navigation
 
     # Bootstrap theme for each flash key, so a notice and an alert read apart.
     FLASH_THEMES = { 'notice' => 'theme-success', 'alert' => 'theme-danger' }

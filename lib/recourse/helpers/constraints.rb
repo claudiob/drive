@@ -5,41 +5,37 @@ module Recourse
       # Shown for a field whose shape has one canonical example.
       SAMPLE_PLACEHOLDERS = { 'phone' => '555-555-5555', 'email' => 'michael@example.com' }.freeze
 
-      # One token of a pattern and the `{n}` that may repeat it, so `\d{5}` reads
-      # as a single digit five times over rather than as five separate characters.
-      PATTERN_TOKENS = /(\\[dw]|\[[^\]]*\]|[^{])(?:\{(\d+),?\d*\})?/
+      # What the browser checks where the typed shape differs from the stored one: a
+      # phone is ten digits in the database but is typed with its separators.
+      DISPLAY_PATTERNS = { 'phone' => '[2-9]\d{2}-[2-9]\d{2}-\d{4}' }.freeze
 
-      # First character a bracket class offers, past the bracket and any negation.
-      CLASS_SAMPLE = /[^\[^]/
+      # Hands a phone field to the Stimulus controller that types its separators.
+      PHONE_CONTROLLER = {
+        controller: 'phone', action: 'keydown->phone#down input->phone#input',
+      }.freeze
 
       # Browser-side constraints, every one of them read from the validators.
       def field_html(column, type = nil)
-        pattern = column_pattern column
-        html = { maxlength: column_maximum(column), minlength: column_minimum(column), pattern: }
-        html[:title] = "Please match the format #{pattern_example pattern}" if pattern
-        html[:inputmode] = :numeric if numeric? column, pattern
-        html[:required] = true if required? column
-        html[:placeholder] = placeholder column, type
+        key = (type || column).to_s
+        pattern = DISPLAY_PATTERNS[key] || column_pattern(column)
 
-        html.compact
+        {
+          maxlength: column_maximum(column), minlength: column_minimum(column), pattern:,
+          title: title(key, pattern), placeholder: placeholder(column, type),
+          inputmode: (:numeric if numeric? column, pattern),
+          required: (true if required? column),
+          data: (PHONE_CONTROLLER if key == 'phone'),
+        }.compact
       end
 
     private
 
-      # An example of what the pattern accepts, so the browser can name the shape
-      # it wants instead of only saying that what was typed is wrong.
-      def pattern_example(pattern)
-        tokens = pattern.scan PATTERN_TOKENS
+      # The canonical sample where the field has one, so the title agrees with the
+      # placeholder; otherwise a shape read off the pattern itself.
+      def title(key, pattern)
+        return unless pattern
 
-        tokens.map { |token, count| pattern_sample(token) * (count || 1).to_i }.join
-      end
-
-      def pattern_sample(token)
-        return '0' if token == '\d'
-        return 'a' if token == '\w'
-        return token unless token.start_with? '['
-
-        token[CLASS_SAMPLE]
+        "Please match the format #{SAMPLE_PLACEHOLDERS[key] || pattern_example(pattern)}"
       end
 
       def column_maximum(column)

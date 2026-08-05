@@ -13,12 +13,14 @@ class TestRecoursesFields < Minitest::Test
 
   # The host's own `_fields` names both types, which beats the encrypted-column
   # rule, and the phone carries the only bracket class of any pattern in the app.
-  def test_a_host_names_the_types_and_a_pattern_shows_an_example_of_itself
+  def test_a_host_names_the_types_and_the_title_shows_the_format
     session = ActionDispatch::Integration::Session.new Rails.application
     session.get '/contacts/new'
     body = session.response.body
 
-    assert_includes body, 'title="Please match the format 2002000000"'
+    assert_includes body, 'pattern="[2-9]\d{2}-[2-9]\d{2}-\d{4}"'
+    assert_includes body, 'title="Please match the format 555-555-5555"'
+    assert_includes body, 'data-action="keydown-&gt;phone#down input-&gt;phone#input"'
     assert_match %r{placeholder="555-555-5555"[^>]*type="phone"}, body
     assert_match %r{placeholder="michael@example\.com"[^>]*type="email"}, body
   end

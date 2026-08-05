@@ -360,6 +360,16 @@ two is filed under the one a reader would look in first.
   fonts renders every icon as a blank box.
 - Keep the copies byte-identical to what the CDN serves, so a later version can
   be diffed against upstream. `git ls-files` puts them in the gem already.
+- Our own JavaScript is not vendored. It lives in `app/javascript/recourse/` and
+  is served at the same prefix: the first `Rack::Static` takes `cascade: true`, so
+  a path it has no file for falls through to the second rather than 404ing. That
+  keeps `vendor/` meaning "upstream's", which is what exempts it from the lint.
+- A Stimulus controller imports Stimulus by its served path, not by the bare
+  `@hotwired/stimulus` specifier. Resolving that name would need an import map,
+  and a host app may already ship one of its own.
+- Start the application in the `<head>`, and guard it with `window.Stimulus`.
+  Turbo re-runs body scripts on every visit, and a second application connects
+  every controller a second time.
 
 #### Seed data lives in migrations, so schema.rb cannot load a database
 
