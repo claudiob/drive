@@ -31,6 +31,18 @@ class TestRecoursesFields < Minitest::Test
     assert_includes body, '>ZIP</label>'
   end
 
+  def test_a_required_phone_shows_the_shape_it_expects
+    visit '/contacts/new'
+
+    assert_match %r{placeholder="555-555-5555"[^>]*name="contact\[phone\]"}, body
+  end
+
+  def test_a_required_email_shows_an_example_address
+    visit '/markets/new'
+
+    assert_match %r{placeholder="michael@example\.com"[^>]*name="market\[email\]"}, body
+  end
+
   def test_it_masks_an_encrypted_column
     visit '/contacts/new'
 

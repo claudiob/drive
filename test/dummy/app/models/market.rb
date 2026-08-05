@@ -3,5 +3,6 @@ class Market < ApplicationRecord
   has_many :zips, dependent: :nullify
 
   validates :name, presence: true, uniqueness: true
+  validates :email, presence: true
   validates :zip, format: { with: /\A\d{5}\z/ }, allow_blank: true
 end

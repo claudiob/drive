@@ -123,6 +123,9 @@ before writing or editing any layout, view or partial.
   Required is judged by the model's validators, not by `null: false` — and a
   `belongs_to` validates the association, so `state_id` counts as required
   through `:state`.
+- A required field shows the shape it expects instead: `555-555-5555` for a
+  phone, `michael@example.com` for an email. Every other required field has no
+  placeholder, since there is nothing useful to show.
 - The field type follows the column, and the rules are in this order: an
   encrypted column is a password field; one named `email` or `color` gets that
   input; a `date`, `time` or `datetime` column gets its own field, the last of
