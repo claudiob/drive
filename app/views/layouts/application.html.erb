@@ -4,6 +4,7 @@
 <%# would let content under the status bar with nothing holding it clear. %>
 <% native = defined? RubyNative -%>
 <% in_app = native && native_app? -%>
+<% native_index = in_app && controller.action_name == 'index' -%>
 <!DOCTYPE html>
 <html lang='en'>
   <head>
@@ -82,7 +83,15 @@
     <%# It reads `content_for :title` here rather than in the index template so a %>
     <%# host that writes its own index still gets a titled bar. Pull to refresh comes %>
     <%# with the bar — it is on unless a page passes `pull_to_refresh: false`. %>
-    <%= native_navbar_tag content_for(:title) if in_app && controller.action_name == 'index' %>
+    <%= native_navbar_tag content_for(:title) if native_index %>
+
+    <%# The "Add ..." link sits in the navbar, which a native page does not render, so %>
+    <%# the same route becomes a floating "+" above the tab bar. `new_resource_path` is %>
+    <%# nil unless the route is drawn and the controller implements the action, so a %>
+    <%# resource with no new page gets no button. %>
+    <% if native_index && (new_path = new_resource_path) %>
+      <%= native_fab_tag icons: { ios: 'plus', android: 'add' }, href: new_path %>
+    <% end %>
 
     <%= render 'flash' %>
 
