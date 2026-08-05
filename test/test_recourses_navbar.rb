@@ -31,7 +31,7 @@ class TestRecoursesNavbar < Minitest::Test
   def test_a_new_page_links_back_to_the_index_then_names_itself
     visit '/counties/new'
 
-    assert_includes body, '<a class="breadcrumb-link" href="/counties">'
+    assert_includes body, 'class="breadcrumb-link gap-2" href="/counties"'
     assert_includes body, "<span class='breadcrumb-link active'>New county</span>"
     assert_includes body, "<li class='breadcrumb-divider'></li>"
   end
@@ -40,6 +40,15 @@ class TestRecoursesNavbar < Minitest::Test
     visit '/counties/new'
 
     assert_includes body, 'href="/counties"><i class="bi bi-map"></i> Counties</a>'
+  end
+
+  # Both links are flex, but only .nav-link ships a gap, so the breadcrumb needs
+  # gap-2 to put its text the same distance from its icon.
+  def test_a_breadcrumb_link_spaces_its_icon_like_the_sidebar_does
+    visit '/counties/new'
+
+    assert_includes body, 'class="breadcrumb-link gap-2"'
+    assert_includes body, '<a class="nav-link" href="/states">'
   end
 
   # /counties is routed with :new and its controller implements it.

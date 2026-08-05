@@ -38,6 +38,16 @@ before writing or editing any layout, view or partial.
   `New county` as plain text.
 - A view contributes buttons with `content_for :actions`; the layout only
   yields. Nothing else belongs in the navbar.
+- A breadcrumb link and its sidebar twin line up vertically, which constrains
+  both. The `<nav class='navbar'>` carries no horizontal margin or padding of
+  its own, so both columns reduce to `container-fluid` (0.75rem) plus a link
+  padding of 0.75rem — the sidebar's own 0.75rem container padding is cancelled
+  by `.row`'s negative margin. Adding `px-*` or `mx-*` to the navbar shifts the
+  breadcrumb out of line by exactly that much.
+- `.breadcrumb-link` needs `gap-2`. Both link types are flex, but only
+  `.nav-link` ships a `gap`, and a whitespace-only text node is not a flex item
+  — so without it the breadcrumb's icon and text would touch while the
+  sidebar's sit 0.5rem apart.
 - An index offers `Add <resource>` only when there is somewhere to go: the
   `new` route has to be drawn *and* the controller has to implement the action,
   or the button would 404 or raise. Its classes are
