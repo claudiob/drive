@@ -2,3 +2,7 @@
 # no `tabs` list: omitting it hides the tab bar and launches straight at this path.
 app:
   entry_path: /contacts
+
+# The native app requires this block even though every key in it has a default.
+appearance:
+  theme: auto
