@@ -16,6 +16,15 @@ module Recourse
         combobox form, column, association
       end
 
+      # What the record a foreign key points at is called, rather than the id that
+      # points at it. `association` reads the target without naming a method for it.
+      def reference_cell(resource, association)
+        record = resource.association(association.name).reader
+        return unless record
+
+        record.attributes[association.klass.recourse_label.to_s]
+      end
+
       # Heading for a column, naming the attribute too where one has to be typed:
       # `ZIP code` rather than `ZIP`, since a code is what the field asks for.
       def reference_title(column, association)

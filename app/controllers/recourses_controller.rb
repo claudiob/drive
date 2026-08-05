@@ -9,7 +9,7 @@ class RecoursesController < ApplicationController
 
   # Lists one page of the model the route is named after.
   def index
-    @pagy, @resources = pagy resource_class.all
+    @pagy, @resources = pagy resource_scope
   end
 
   # Builds a blank record under the name Rails would use: @contact for contacts.
@@ -45,6 +45,14 @@ class RecoursesController < ApplicationController
   end
 
 private
+
+  # Every table cell that names a referenced record would otherwise be a query.
+  def resource_scope
+    names = resource_class.reflect_on_all_associations(:belongs_to).map(&:name)
+    return resource_class.all if names.empty?
+
+    resource_class.includes(*names)
+  end
 
   def find_resource
     assign resource_class.find(params.expect(:id))

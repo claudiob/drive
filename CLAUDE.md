@@ -113,6 +113,10 @@ two is filed under the one a reader would look in first.
   separate `SELECT 1 ... LIMIT 1` first, so the page costs two queries instead of
   one.
 - `any?` and `empty?` are still right when nothing will be looped over.
+- An index eager-loads every `belongs_to` its table can name, since each cell that
+  shows a referenced record would otherwise be a query of its own:
+  `resource_class.includes(*names)`. Twenty locations cost five queries rather than
+  forty-two, and the count no longer grows with the page.
 - Worth a test: assert the query count, so a later edit cannot quietly add one
   back. `test_it_costs_one_count_and_one_select` does this by subscribing to
   `sql.active_record`, and it is one of the two tests exempt from "as few tests
@@ -383,7 +387,10 @@ two is filed under the one a reader would look in first.
 - Reading it back is `recourse.attributes[label]`, not `public_send`, which "no
   metaprogramming" rules out.
 - Picking an encrypted column labels the option with its plaintext, since
-  `attributes` decrypts. That is a decision to make deliberately, not to fall into.
+  `attributes` decrypts. That is a decision to make deliberately, not to fall into,
+  and it reaches further than a form: a foreign-key column in a *table* shows the
+  same label, so an encrypted one appears on the index of every model that
+  references it. `resource_columns` only keeps a model's own encrypted columns out.
 - `recourse_typed_label?` asks whether that label has a length validator, which is
   what decides between typing a value and picking from a list. A length is the only
   honest signal available: it says the value is bounded, so a person can type it.

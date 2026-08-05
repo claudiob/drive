@@ -330,6 +330,13 @@ before writing or editing any layout, view or partial.
 
 - `column` also takes anything `tag` does — `class:`, `style:` — and passes it
   to both the `th` and the `td`.
+- A foreign-key column shows what the record it points at is called, not the id
+  that points at it: `/locations` heads a column `ZIP code` and fills it with
+  `00501`. The heading is the one the form uses for the same column, so a table
+  and its form never disagree about what a column is.
+- Those names cost one query per association rather than one per row, because the
+  index eager-loads every `belongs_to` the table can name. Twenty locations still
+  cost five queries.
 - The default row ends with an `Actions` column. Where the resource has an `edit`
   action each row links to it, and the link's content is the
   `<i class='bi bi-pencil-square'></i>` icon rather than the word. It carries

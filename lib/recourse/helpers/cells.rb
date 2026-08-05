@@ -22,6 +22,9 @@ module Recourse
 
       # Value for one cell, formatted according to what the column holds.
       def resource_cell(resource, column)
+        association = belongs_to_association column
+        return reference_cell resource, association if association
+
         value = resource.attributes[column]
 
         return time_tag value, value.strftime(TIME_FORMAT) if value.is_a? Time
