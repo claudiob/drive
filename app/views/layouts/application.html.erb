@@ -94,16 +94,16 @@
     <%# would only restate the default. `native_form_tag` marks the page so tapping %>
     <%# back after a successful submit skips it rather than reopening the form. %>
     <% if native_form %>
+      <%# Cancel leaves for the index rather than posting a `back` message. That %>
+      <%# message drives web-view history, which the docs reserve for a custom web %>
+      <%# header, and it does not reach the navigator holding the sheet. Visiting a %>
+      <%# page that belongs to the stack behind the sheet is what dismisses it. %>
+      <% cancel = Recourse.routed?(controller.controller_path, 'index') && url_for(action: :index) -%>
       <%= native_form_tag %>
       <%= native_navbar_tag content_for(:title) do |navbar| %>
-        <%= navbar.button 'Cancel', position: :leading, click: '#recourse-cancel' %>
+        <%= navbar.button 'Cancel', position: :leading, href: cancel if cancel %>
         <%= navbar.submit_button %>
       <% end %>
-
-      <%# What Cancel clicks. Closing the sheet is a native action rather than a URL, %>
-      <%# and this helper is what posts it, so the bar's button borrows this one the %>
-      <%# same way Save borrows the form's. Hidden, but `.click()` still reaches it. %>
-      <%= native_back_button_tag 'Cancel', id: 'recourse-cancel', class: 'native-hidden' %>
     <% end %>
 
     <%# The "Add ..." link sits in the navbar, which a native page does not render, so %>
