@@ -176,10 +176,11 @@ two is filed under the one a reader would look in first.
   that names the cause.
 - `ALLOWED_DOMAIN` keeps its leading `@`. Without it, `example.com` also admits
   `anyone@notexample.com`, which is the whole guard gone.
-- The sign-in page needs a layout with no breadcrumb and no sidebar. Both are for a
-  recourse, and the breadcrumb links to the controller's index, which a sign-in
-  controller does not have — with the gem's layout the page raises rather than
-  renders.
+- The sign-in page uses the same layout as everything else. It is the *breadcrumb*
+  that has to cope: a controller with no index has nowhere to link back to, so it
+  names itself once from its own title and stops. A second layout would have hidden
+  that gap rather than closed it, and every later non-recourse page would have needed
+  one too.
 - Name the sign-in route for itself, not `resource :agent, only: :new`. Where
   `recourses :agents` draws a `new` action the two collide on `new_agent`, the
   recourse wins it, and sign-in silently redirects to the form that creates an

@@ -2,7 +2,7 @@
 class RecoursesController < ApplicationController
   include Pagy::Method
 
-  helper Recourse::Helpers
+  # The helpers arrive from the engine, which gives them to every controller.
 
   # `find` raises RecordNotFound, so an id that names nothing answers 404.
   before_action :find_resource, only: %i[edit update]

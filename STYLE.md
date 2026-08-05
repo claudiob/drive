@@ -46,6 +46,14 @@ before writing or editing any layout, view or partial.
 - An index has one item, its own name. Any other page links back to the index
   first and then names itself: `/counties/new` reads `Counties` as a link, then
   `New county` as plain text.
+- A controller with *no* index gets one unlinked item too, reading whatever
+  `content_for :title` says — `/sign_in` shows `Signing in`. The link is what needs
+  an index to exist, so a page that is not a resource still gets a navbar rather
+  than a routing error.
+- The layout renders `recourses/breadcrumb`, `recourses/sidebar` and
+  `recourses/flash` by their full paths, not as `'breadcrumb'` and friends. A bare
+  name resolves through the *controller's* prefixes, which only include `recourses`
+  for a controller the gem defined, so the layout would break on any other one.
 - A view contributes buttons with `content_for :actions`; the layout only
   yields. Nothing else belongs in the navbar.
 - A breadcrumb link and its sidebar twin line up vertically, which constrains

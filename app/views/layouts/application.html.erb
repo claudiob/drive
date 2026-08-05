@@ -38,7 +38,7 @@
   <body class='d-flex flex-column min-vh-100'>
     <nav class='navbar border-bottom'>
       <div class='container-fluid px-3 justify-content-start'>
-        <%= render 'breadcrumb' %>
+        <%= render 'recourses/breadcrumb' %>
         <%= yield :actions %>
       </div>
     </nav>
@@ -47,7 +47,7 @@
       <div class='row flex-grow-1'>
         <%# A flex column so the sidebar can push its last item to the bottom. %>
         <aside class='col-auto border-end py-3 px-3 mx-0 d-flex flex-column'>
-          <%= render 'sidebar' %>
+          <%= render 'recourses/sidebar' %>
         </aside>
 
         <main class='col py-4 px-3'>
@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <%= render 'flash' %>
+    <%= render 'recourses/flash' %>
 
     <script type='module' src='https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.23/dist/turbo.es2017-esm.js'></script>
     <script type='module' src='/recourse/bootstrap.bundle.min.js'></script>

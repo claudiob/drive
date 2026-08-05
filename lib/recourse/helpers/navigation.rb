@@ -3,7 +3,11 @@ module Recourse
     # Helpers for the navbar and the sidebar.
     module Navigation
       # Trail to the current page as [title, path] pairs; a nil path is this page.
+      # A controller with no index has nowhere to link back to, so it names itself
+      # and stops — a sign-in page, say, which is not a resource at all.
       def resource_breadcrumbs
+        return [[breadcrumb_title, nil]] unless routed? controller.controller_path, 'index'
+
         leaf = breadcrumb_leaf
         return [[resources_name, nil]] unless leaf
 
@@ -29,7 +33,7 @@ module Recourse
       # Path that ends an agent's session, or nil where the app draws no such route.
       # That route's name is the one installed alongside Google sign-in, so this is a
       # convention rather than a guess, and its absence just hides the link.
-      def logout_path
+      def recourse_logout_path
         return unless routed? 'agents/sessions', 'destroy'
 
         url_for controller: '/agents/sessions', action: :destroy
@@ -57,6 +61,12 @@ module Recourse
       end
 
     private
+
+      # What a page with no index calls itself: the title it set, since there is no
+      # resource to name after. Falls back to the controller, which always answers.
+      def breadcrumb_title
+        content_for(:title).presence || resources_name
+      end
 
       # Only a page beneath the index names itself, and names what it is showing.
       def breadcrumb_leaf

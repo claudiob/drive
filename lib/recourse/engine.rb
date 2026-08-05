@@ -15,6 +15,15 @@ module Recourse
       ActionDispatch::Routing::Mapper.include Routes
     end
 
+    # Every controller, not only the ones this gem defines: a host with no layout of
+    # its own renders the gem's, and that layout calls these helpers whatever is
+    # serving the page — a sign-in controller included.
+    initializer 'recourse.helpers' do
+      ActiveSupport.on_load :action_controller_base do
+        helper Recourse::Helpers
+      end
+    end
+
     # Serves what a page needs, since a host may run no asset pipeline at all. The
     # prefix keeps its slash: without it `/recourses` would be served as a file.
     # Vendored files answer first and cascade, so our own JavaScript shares the URL.

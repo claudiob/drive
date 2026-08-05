@@ -67,10 +67,9 @@ Renaming it means re-registering it with Google.
 
 | File | Why |
 |---|---|
-| `app/controllers/unauthenticated_controller.rb` | Base class for pages a signed-out visitor may reach; picks a layout with no recourse chrome. |
+| `app/controllers/unauthenticated_controller.rb` | Base class for pages a signed-out visitor may reach. |
 | `app/controllers/unauthenticated/agents_controller.rb` | The callback: exchanges Google's code, checks the domain, signs in. |
 | `app/views/unauthenticated/agents/new.html.erb` | Shows an error if Google returned one. |
-| `app/views/layouts/unauthenticated.html.erb` | A layout without breadcrumb or sidebar, which would raise here. |
 | `app/controllers/concerns/administered.rb` | `include Administered` in a controller to require a signed-in agent. |
 | `app/controllers/agents/sessions_controller.rb` | Signing out. |
 | `app/models/current.rb` | `Current.agent` for the length of a request. |
