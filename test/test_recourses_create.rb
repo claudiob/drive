@@ -24,7 +24,7 @@ class TestRecoursesCreate < Minitest::Test
 
     assert_equal 422, @session.response.status
     assert_includes body, "<div class='toast theme-danger' role='alert'"
-    assert_includes body, "<div class='toast-body'>Market could not be created.</div>"
+    assert_includes body, "<span class='me-auto'>Market could not be created.</span>"
     assert_includes body, "class='form-control is-invalid combobox-toggle'"
     assert_includes body, "<small class='invalid-feedback' id='market_state_id_error'>Must exist"
     assert_includes body,

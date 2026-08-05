@@ -232,20 +232,26 @@ before writing or editing any layout, view or partial.
 - The variant is the flash key: `toast theme-success` for a notice, `toast
   theme-danger` for an alert, and a neutral `theme-primary` for a key a host
   invents. The theme goes on the `.toast` itself.
-- No `.toast-header`. The close button sits in the body instead, which is the
-  headerless shape from Bootstrap's own example:
+- The message goes in the *header*, and the body is kept but hidden:
 
       <div class='toast theme-success' role='alert' aria-live='assertive' aria-atomic='true'>
-        <div class='d-flex justify-content-between'>
-          <div class='toast-body'>Ada was created.</div>
-          <button type='button' class='btn-close me-3 m-auto' data-bs-dismiss='toast'
-                  aria-label='Close'></button>
+        <div class='toast-header border-0'>
+          <span class='me-auto'>Contact was created.</span>
+          <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='Close'></button>
         </div>
+        <div class='toast-body d-none'></div>
       </div>
 
-- `me-3 m-auto` on the close button is doing real work: v6 only gives
-  `.btn-close` its toast margins through `.toast-header .btn-close`, so a
-  headerless toast has to space its own.
+- That is what tints the whole toast. `.toast-header` takes its background from
+  `--bs-theme-bg-subtle` while `.toast` itself takes the plain body background, so
+  a message in the body would sit on white below a coloured strip. With the body
+  hidden the toast *is* the header, and the theme colours all of it.
+- `border-0` removes the header's `border-block-end`, which would otherwise rule a
+  line under the message with nothing beneath it.
+- `me-auto` on the message is what pushes the X to the right. Inside a header the
+  close button needs nothing else: v6 gives it margins through
+  `.toast-header .btn-close`, which a headerless toast would have had to supply
+  itself.
 - It autohides, which is the Toast default — nothing to declare.
 - The wording names the model, never the record: `Contact was created.` and
   `Contact could not be created.`, both from `model_name.human`. Interpolating the
