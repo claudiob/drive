@@ -111,10 +111,18 @@ before writing or editing any layout, view or partial.
 - The form is `form_with model:` plus one field per *editable* column — every
   column except `id`, `created_at` and `updated_at`. Encrypted columns are
   editable even though the table will not display them.
-- Each field is a `.form-label` and a `.form-control` inside `.mb-3`; the submit
-  is `btn btn-solid theme-primary`. In v6 the fill is a separate class from the
-  base: `.btn` sizes, `.btn-solid` / `.btn-outline` / `.btn-subtle` fill, and
-  `theme-*` colours.
+- Each field is a `.form-label` and a `.form-control` inside
+  `.mb-3.lg:col-6`, and the whole set sits in one `.row`. Two fields to a row on
+  a large viewport, stacked below it — a name or a phone number needs nowhere
+  near the full width of a page, so a form of full-width inputs reads as a
+  column of empty space.
+- The submit is `btn btn-solid theme-primary`. In v6 the fill is a separate class
+  from the base: `.btn` sizes, `.btn-solid` / `.btn-outline` / `.btn-subtle`
+  fill, and `theme-*` colours.
+- A field whose attribute is not required carries `placeholder='Optional'`.
+  Required is judged by the model's validators, not by `null: false` — and a
+  `belongs_to` validates the association, so `state_id` counts as required
+  through `:state`.
 - The field type follows the column, and the rules are in this order: an
   encrypted column is a password field; one named `email` or `color` gets that
   input; a `date`, `time` or `datetime` column gets its own field, the last of

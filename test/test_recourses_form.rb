@@ -37,6 +37,14 @@ class TestRecoursesForm < Minitest::Test
     assert_includes body, '<label class="form-label" for="county_state_id">State</label>'
   end
 
+  # Half-width fields pair up on a large viewport and stack below it.
+  def test_it_lays_the_fields_out_two_to_a_row
+    visit '/contacts/new'
+
+    assert_includes body, "<div class='row'>"
+    assert_equal 4, body.scan("<div class='mb-3 lg:col-6'>").size
+  end
+
   def test_it_offers_a_button_to_submit
     visit '/counties/new'
 
