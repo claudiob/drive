@@ -12,7 +12,7 @@ module Recourse
     'Prompts' => 'terminal', 'Providers' => 'briefcase',
     'Satisfaction questions' => 'emoji-smile', 'Searches' => 'search', 'Settings' => 'gear',
     'Sources' => 'signpost', 'Specialties' => 'award', 'Specialty matches' => 'award',
-    'States' => 'geo', 'Verticals' => 'bar-chart', 'ZIPs' => 'geo-alt-fill'
+    'States' => 'geo', 'Verticals' => 'bar-chart', 'ZIPs' => 'geo-alt-fill',
   }.freeze
 
   # Shown when a resource is not in the map, so a list of links stays aligned.

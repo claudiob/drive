@@ -30,8 +30,10 @@ class TestRecoursesSidebar < Minitest::Test
   end
 
   def test_every_link_is_preceded_by_an_icon
-    icons = { 'contacts' => 'person-rolodex', 'states' => 'geo', 'counties' => 'map',
-              'echoes' => 'soundwave', 'markets' => 'pin-map' }
+    icons = {
+      'contacts' => 'person-rolodex', 'states' => 'geo', 'counties' => 'map',
+      'echoes' => 'soundwave', 'markets' => 'pin-map',
+    }
 
     icons.each do |resource, icon|
       assert_includes body, %(href="/#{resource}"><i class="bi bi-#{icon}"></i>)
@@ -50,6 +52,6 @@ private
   end
 
   def links
-    body.scan(%r{<a class="nav-link" href="([^"]+)"><i[^>]*></i> ([^<]+)})
+    body.scan %r{<a class="nav-link" href="([^"]+)"><i[^>]*></i> ([^<]+)}
   end
 end

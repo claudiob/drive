@@ -329,6 +329,22 @@ above when they conflict.
   back. `test_it_reads_the_records_with_a_single_query` does this by subscribing
   to `sql.active_record`.
 
+### Trailing comma on a multiline hash
+
+- A multiline hash ends its last entry with a comma, so adding an entry touches
+  one line instead of two:
+
+      NAVIGATION_ICONS = {
+        'States' => 'geo', 'ZIPs' => 'geo-alt-fill',
+      }.freeze
+
+- Put the closing brace on its own line. With the brace trailing the last entry
+  the comma reads as `, }`, which is worse than either alternative.
+- Enforced by `Style/TrailingCommaInHashLiteral` with
+  `EnforcedStyleForMultiline: consistent_comma`. Not `comma` — that style
+  *forbids* the comma unless every entry sits on its own line, and ours share
+  lines.
+
 ### As few parentheses as possible
 
 - Omit parentheses on a method call's arguments; keep the inner ones, where
