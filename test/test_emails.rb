@@ -7,11 +7,15 @@ class TestEmails < Minitest::Test
   end
 
   def test_an_encrypted_email_column_stays_a_string
-    assert_includes Contact.encrypted_attributes, :email
-    assert_equal :string, Contact.columns_hash['email'].type
+    [Agent, Contact].each do |model|
+      assert_includes model.encrypted_attributes, :email
+      assert_equal :string, model.columns_hash['email'].type
+    end
   end
 
   def test_an_encrypted_email_normalizes_case_in_rails_rather_than_the_column
-    assert Contact.type_for_attribute(:email).downcase?
+    [Agent, Contact].each do |model|
+      assert model.type_for_attribute(:email).downcase?
+    end
   end
 end
