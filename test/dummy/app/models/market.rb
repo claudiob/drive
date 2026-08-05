@@ -4,5 +4,5 @@ class Market < ApplicationRecord
 
   validates :name, presence: true, uniqueness: true
   validates :email, presence: true
-  validates :zip, format: { with: /\A\d{5}\z/ }, allow_blank: true
+  validates :zip, format: { with: /\A\d{5}\z/ }, length: { is: 5 }, allow_blank: true
 end

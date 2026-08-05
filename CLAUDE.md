@@ -352,6 +352,11 @@ above when they conflict.
   `local_assigns[resource_key]`. And whether it is drawing the header row or a
   body row travels in `@recourse_headers`, set by `_table` before each render,
   which `column` reads. Both were asked for; neither is a pattern to copy.
+- The fields partial is the second exception, for the same two reasons. It is
+  handed the record under the runtime name so a host's `_fields` can declare
+  `<%# locals: (contact:) -%>`, while the gem's own cannot; and the form builder
+  travels in `@recourse_form`, set by `_form`, because `field :phone` is the
+  call site the host writes and threading a form through it would spoil that.
 
 ### Fewest SQL queries to render a page
 
@@ -495,6 +500,33 @@ above when they conflict.
   `Phonable` already draws for `phone`.
 - This sharpens the baseline's "concerns for genuinely shared behavior": a second
   identical declaration is the threshold, and anticipating one is not.
+
+### Ask the validators, not the schema
+
+- What a value is allowed to be is the model's business, so read it from the
+  validators. A length validator gives a field its `maxlength` and `minlength`, a
+  format validator its `pattern`, a numericality validator its numeric keyboard.
+  Never reach into `columns_hash` for a `limit` or for a type.
+- The schema and the validators disagree more often than it looks. A `limit: 5`
+  column with no length validator accepts four characters; an encrypted column's
+  limit describes ciphertext. Following the model keeps the browser saying what
+  the server will actually enforce.
+- Where no validator can answer — which of `date`, `time` and `datetime` an
+  attribute is — ask the model anyway, through `type_for_attribute`. It reports
+  what the model declares, so an `attribute :opens_on, :date` override counts,
+  and `columns_hash` still never appears.
+- Corollary for the database: a constraint the model does not also state is a
+  constraint the browser cannot show. Add the validator too.
+
+### Select only the columns a query displays
+
+- A query built to display something fetches those columns and no others.
+  The combobox of states shows a name per row and submits an id, so it reads
+  `State.select(:id, :name).order(:name)` — not `State.order(:name)`.
+- This sits alongside "fewest SQL queries to render a page": the count of
+  queries is one cost and the width of each is another.
+- It applies where the columns are known. A generic table hands the record to a
+  row partial that may touch anything, so it selects everything on purpose.
 
 ### List concerns alphabetically, on one line
 

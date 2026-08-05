@@ -126,16 +126,74 @@ before writing or editing any layout, view or partial.
 - A required field shows the shape it expects instead: `555-555-5555` for a
   phone, `michael@example.com` for an email. Every other required field has no
   placeholder, since there is nothing useful to show.
-- The field type follows the column, and the rules are in this order: an
-  encrypted column is a password field; one named `email` or `color` gets that
-  input; a `date`, `time` or `datetime` column gets its own field, the last of
-  those as `datetime-local`; everything else is text.
+- An explicit `type:` picks the sample on its own, required or not. `field :email,
+  type: :email` on an optional column shows `michael@example.com` rather than
+  `Optional`: the caller has said what the field is, and the sample is the more
+  useful of the two hints.
+- The field list is a `fields` partial of its own, so a host app can replace the
+  fields without rewriting `form_with` or the submit button. It renders one
+  `field` per editable column; a host writes the calls it wants by hand.
+- `field` takes the column name and two options: `label:` for the heading and
+  `type:` for the input. `field :phone, type: :phone` beats every rule below,
+  including the encrypted-column one — an explicit type is an instruction.
+- The field type otherwise follows the column, and the rules are in this order: a
+  foreign key is a combobox; an encrypted column is a password field; one named
+  `email` or `color` gets that input; a `date`, `time` or `datetime` attribute
+  gets its own field, the last of those as `datetime-local`; everything else is
+  text.
 - Encryption wins over the name, so an encrypted `email` is masked rather than
   typed as an email — protecting the value matters more than the keyboard.
-- Length and format travel to the browser: `maxlength` from the column limit,
-  `pattern` from a format validator with `\A` and `\z` stripped, since an HTML
-  pattern is anchored already. A digits-only pattern or an integer column also
-  gets `inputmode: 'numeric'`.
+- Length, format and numericality travel to the browser, and all three are read
+  from the model's *validators*, never from the column: `maxlength` and
+  `minlength` from a length validator's `maximum`, `minimum` or `is`, `pattern`
+  from a format validator with `\A` and `\z` stripped since an HTML pattern is
+  anchored already, and `inputmode: 'numeric'` from a numericality validator or
+  a digits-only pattern.
+- Always pass `size: nil`. Rails mirrors `maxlength` into `size`, and a
+  five-character box for a ZIP code undoes the width rule above.
+- Which input a `date`, `time` or `datetime` gets is the one thing no validator
+  can say, so it comes from `type_for_attribute` — the model's own attribute
+  type, which an `attribute` override still governs — and not from
+  `columns_hash`.
+
+## Comboboxes for foreign keys
+
+- A form never asks for a foreign key in a text field. `state_id` is a Bootstrap
+  combobox listing each `State` by `name`, in the "Search menu items" form, so a
+  list of fifty stays usable.
+- The markup is the toggle followed by its `.menu` **sibling** — the plugin finds
+  the menu with `SelectorEngine.next`, so anything between them breaks it:
+
+      <button class='form-control combobox-toggle' type='button' id='county_state_id'
+              data-bs-toggle='combobox' data-bs-name='county[state_id]'
+              data-bs-placeholder='Select a State…' data-bs-search='true'>
+        <span class='combobox-value'>Select a State…</span>
+        <i class='bi bi-chevron-down combobox-caret'></i>
+      </button>
+      <div class='menu'>
+        <div class='combobox-search'>
+          <input type='text' class='form-control combobox-search-input'
+                 placeholder='Search…' autocomplete='off' aria-label='Search…'>
+        </div>
+        <button class='menu-item' type='button' data-bs-value='1'>Alabama</button>
+        <div class='combobox-no-results d-none'>No results found</div>
+      </div>
+
+- `data-bs-name` is what makes it a form control: the plugin inserts a hidden
+  input of that name before the toggle and writes the chosen `data-bs-value`
+  into it. Never put `name=` on the toggle itself.
+- `data-bs-search='true'` enables filtering, but the search input has to be in
+  the markup — the plugin only wires up a `.combobox-search-input` it finds.
+- The toggle carries the `id` the label points at, which is legal because a
+  `<button>` is a labelable element. Use `form.field_id` and `form.field_name`
+  rather than spelling either out.
+- Bootstrap's example uses an inline SVG caret; ours is
+  `<i class='bi bi-chevron-down combobox-caret'></i>`. The class only needs
+  `flex-shrink` and a rotation, the icon font is already loaded, and the `<i>`
+  form is what every other icon on the page uses.
+- The placeholder doubles as the empty label: `Select a <Model>…`, from
+  `model_name.human` so a registered acronym survives. An optional association
+  says `Optional` instead, like any other optional field.
 
 ## Tables
 

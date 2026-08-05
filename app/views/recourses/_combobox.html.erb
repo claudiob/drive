@@ -1,0 +1,17 @@
+<%# locals: (name:, id:, placeholder:, recourses:) -%>
+<button class='form-control combobox-toggle' type='button' id='<%= id %>'
+        data-bs-toggle='combobox' data-bs-name='<%= name %>'
+        data-bs-placeholder='<%= placeholder %>' data-bs-search='true'>
+  <span class='combobox-value'><%= placeholder %></span>
+  <i class='bi bi-chevron-down combobox-caret'></i>
+</button>
+<div class='menu'>
+  <div class='combobox-search'>
+    <input type='text' class='form-control combobox-search-input' placeholder='Search…'
+           autocomplete='off' aria-label='Search…'>
+  </div>
+  <% recourses.each do |recourse| %>
+    <button class='menu-item' type='button' data-bs-value='<%= recourse.id %>'><%= recourse.name %></button>
+  <% end %>
+  <div class='combobox-no-results d-none'>No results found</div>
+</div>

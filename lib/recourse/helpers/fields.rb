@@ -1,83 +1,71 @@
 module Recourse
   module Helpers
-    # Chooses the form field a column deserves, and the HTML that constrains it.
+    # Chooses the form field a column deserves, and labels it.
     module Fields
-      # A field typed by what the column holds, not merely a text box.
-      def resource_field(form, column)
-        options = { class: 'form-control' }.merge field_html(column)
+      # One labelled field in the form's grid. `label:` overrides the heading and
+      # `type:` overrides the input the column would otherwise have chosen.
+      def field(name, **options)
+        column = name.to_s
+        label = options.fetch :label, resource_column_title(column)
 
+        tag.div class: 'mb-3 lg:col-6' do
+          safe_join [@recourse_form.label(column, label, class: 'form-label'),
+                     resource_field(@recourse_form, column, type: options[:type])]
+        end
+      end
+
+      # A field typed by what the column holds, not merely a text box.
+      def resource_field(form, column, type: nil)
+        association = belongs_to_association column
+        return combobox form, column, association if association
+
+        # Rails mirrors `maxlength` into `size`, which would shrink the box to it.
+        options = { class: 'form-control', size: nil }.merge field_html(column, type)
+
+        return form.text_field column, **options, type: type if type
         return form.password_field column, **options if encrypted_column? column
         return form.email_field column, **options if column == 'email'
         return form.color_field column, **options if column == 'color'
 
-        case column_type column
-        when :date then form.date_field column, **options
-        when :time then form.time_field column, **options
-        when :datetime then form.datetime_local_field column, **options
-        else form.text_field column, **options
-        end
-      end
-
-      # Browser-side constraints, taken from the column and its format validator.
-      def field_html(column)
-        pattern = column_pattern column
-        html = { maxlength: column_limit(column), pattern: }.compact
-        html[:inputmode] = :numeric if numeric? column, pattern
-        html[:placeholder] = placeholder column
-
-        html.compact
+        dated_field form, column, **options
       end
 
     private
+
+      def dated_field(form, column, **)
+        case attribute_type column
+        when :date then form.date_field column, **
+        when :time then form.time_field column, **
+        when :datetime then form.datetime_local_field column, **
+        else form.text_field column, **
+        end
+      end
+
+      # A foreign key is chosen from a list, so it gets a combobox of names. The
+      # query fetches the two columns the menu shows and nothing else.
+      def combobox(form, column, association)
+        render 'recourses/combobox', name: form.field_name(column),
+                                     id: form.field_id(column),
+                                     placeholder: combobox_placeholder(column, association),
+                                     recourses: association.klass.select(:id, :name).order(:name)
+      end
+
+      def belongs_to_association(column)
+        resource_model.reflect_on_all_associations(:belongs_to)
+                      .find { |one| one.foreign_key.to_s == column }
+      end
+
+      def combobox_placeholder(column, association)
+        placeholder(column, nil) || "Select a #{association.klass.model_name.human}…"
+      end
 
       def encrypted_column?(column)
         Array(resource_model.encrypted_attributes).map(&:to_s).include? column
       end
 
-      def column_type(column)
-        resource_model.columns_hash[column]&.type
-      end
-
-      def column_limit(column)
-        resource_model.columns_hash[column]&.limit
-      end
-
-      # An HTML pattern is anchored already, so \A and \z come off the Ruby one.
-      def column_pattern(column)
-        regexp = format_validator(column)&.options&.dig :with
-        return unless regexp
-
-        regexp.source.delete_prefix('\A').delete_suffix '\z'
-      end
-
-      def format_validator(column)
-        resource_model.validators_on(column).find { |one| one.options[:with].is_a? Regexp }
-      end
-
-      # An optional field says so; a required one shows the shape it expects.
-      def placeholder(column)
-        return 'Optional' unless required? column
-        return '555-555-5555' if column == 'phone'
-
-        'michael@example.com' if column == 'email'
-      end
-
-      # A belongs_to validates its association, not the column, so both are asked.
-      def required?(column)
-        presence_validated?(column) || presence_validated?(column.delete_suffix('_id'))
-      end
-
-      def presence_validated?(attribute)
-        resource_model.validators_on(attribute).any? ActiveModel::Validations::PresenceValidator
-      end
-
-      def numeric?(column, pattern)
-        digits_only?(pattern) || column_type(column) == :integer
-      end
-
-      # `\d` carries a letter, so it has to go before looking for real ones.
-      def digits_only?(pattern)
-        pattern.present? && !pattern.gsub('\d', '').match?(/[A-Za-z]/)
+      # The model's own attribute type, so an `attribute` override still counts.
+      def attribute_type(column)
+        resource_model.type_for_attribute(column).type
       end
     end
   end
