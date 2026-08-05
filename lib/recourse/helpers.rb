@@ -16,7 +16,9 @@ module Recourse
 
     # Trail to the current page as [title, path] pairs; a nil path is this page.
     def resource_breadcrumbs
-      [[resources_name, nil]]
+      return [[resources_name, nil]] unless controller.action_name == 'new'
+
+      [[resources_name, url_for(action: :index)], ["New #{resource_name}", nil]]
     end
 
     # Path to this resource's new page, or nil when there is not one to link to.

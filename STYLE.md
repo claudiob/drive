@@ -30,9 +30,12 @@ before writing or editing any layout, view or partial.
   a `<span class='breadcrumb-link active'>` inside an
   `<li class='breadcrumb-item' aria-current='page'>`. Bootstrap's own example
   uses an `<a>` there; we deliberately do not.
-- Earlier items are links, separated by empty `<li class='breadcrumb-divider'>`
-  elements — v6 draws the chevron from that element, not from a CSS `content`
-  string on `::before` as v5 did.
+- Earlier items are links and carry the resource icon, separated by empty
+  `<li class='breadcrumb-divider'>` elements — v6 draws the chevron from that
+  element, not from a CSS `content` string on `::before` as v5 did.
+- An index has one item, its own name. Any other page links back to the index
+  first and then names itself: `/counties/new` reads `Counties` as a link, then
+  `New county` as plain text.
 - A view contributes buttons with `content_for :actions`; the layout only
   yields. Nothing else belongs in the navbar.
 - An index offers `Add <resource>` only when there is somewhere to go: the

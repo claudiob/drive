@@ -5,7 +5,9 @@
         <li class='breadcrumb-divider'></li>
       <% end %>
       <% if path %>
-        <li class='breadcrumb-item'><%= link_to title, path, class: 'breadcrumb-link' %></li>
+        <li class='breadcrumb-item'>
+          <%= link_to resource_label(title), path, class: 'breadcrumb-link' %>
+        </li>
       <% else %>
         <li class='breadcrumb-item' aria-current='page'>
           <span class='breadcrumb-link active'><%= title %></span>
