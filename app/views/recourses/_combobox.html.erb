@@ -1,5 +1,5 @@
-<%# locals: (name:, id:, placeholder:, required:, recourses:) -%>
-<button class='form-control combobox-toggle' type='button' id='<%= id %>'
+<%# locals: (name:, id:, control:, placeholder:, required:, recourses:) -%>
+<button class='<%= control %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
         aria-required='<%= required %>'>

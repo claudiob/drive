@@ -207,6 +207,23 @@ before writing or editing any layout, view or partial.
   at runtime. So the requirement is announced, not enforced: the model's
   validation is still what rejects a blank.
 
+## Validation errors
+
+- A rejected `create` redraws the same page with `422`, never a redirect, so the
+  fields keep what was typed and the errors sit beside them.
+- The control that failed gains `is-invalid`, and the message follows it as
+  `<div class='invalid-feedback'>`. Both are needed: Bootstrap reveals the
+  feedback with `.is-invalid ~ .invalid-feedback`, so a feedback div on its own
+  stays hidden and an `is-invalid` on its own only reddens the border.
+- Because that selector is a *sibling* one, the feedback goes after the whole
+  control — for a combobox, after the `.menu`, not inside the toggle.
+- The message is the bare reason, sentence-cased: `Must exist`, `Can't be blank`.
+  The label above it already names the attribute, so a full message would repeat
+  it.
+- A `belongs_to` reports its error on the association, so a field for `state_id`
+  asks the record about both `state_id` and `state` — otherwise a missing state
+  reddens nothing.
+
 ## Tables
 
 - A `<table>` defaults to the hoverable accent, not the striped one:

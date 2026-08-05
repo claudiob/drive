@@ -1,6 +1,6 @@
 module Recourse
   module Helpers
-    # Chooses the form field a column deserves, and labels it.
+    # Chooses the form field a column deserves, labels it and reports its errors.
     module Fields
       # One labelled field in the form's grid. `label:` overrides the heading and
       # `type:` overrides the input the column would otherwise have chosen.
@@ -10,7 +10,8 @@ module Recourse
 
         tag.div class: 'mb-3 lg:col-6' do
           safe_join [@recourse_form.label(column, label, class: 'form-label'),
-                     resource_field(@recourse_form, column, type: options[:type])]
+                     resource_field(@recourse_form, column, type: options[:type]),
+                     invalid_feedback(column)].compact
         end
       end
 
@@ -20,7 +21,7 @@ module Recourse
         return combobox form, column, association if association
 
         # Rails mirrors `maxlength` into `size`, which would shrink the box to it.
-        options = { class: 'form-control', size: nil }.merge field_html(column, type)
+        options = { class: control_class(column), size: nil }.merge field_html(column, type)
 
         return form.text_field column, **options, type: type if type
         return form.password_field column, **options if encrypted_column? column
@@ -46,6 +47,7 @@ module Recourse
       def combobox(form, column, association)
         render 'recourses/combobox', name: form.field_name(column),
                                      id: form.field_id(column),
+                                     control: control_class(column),
                                      placeholder: combobox_placeholder(column, association),
                                      required: required?(column),
                                      recourses: association.klass.select(:id, :name).order(:name)
@@ -58,6 +60,27 @@ module Recourse
 
       def combobox_placeholder(column, association)
         placeholder(column, nil) || "Select a #{association.klass.model_name.human}…"
+      end
+
+      def control_class(column)
+        errors_on(column).any? ? 'form-control is-invalid' : 'form-control'
+      end
+
+      # Bootstrap only reveals this when it follows an `.is-invalid` sibling.
+      def invalid_feedback(column)
+        messages = errors_on column
+        return if messages.empty?
+
+        tag.div messages.to_sentence.upcase_first, class: 'invalid-feedback'
+      end
+
+      # A belongs_to reports on the association, so `state_id` asks about `state`.
+      def errors_on(column)
+        attribute = column.delete_suffix '_id'
+        messages = resource_record.errors[column]
+        return messages if attribute == column
+
+        messages + resource_record.errors[attribute]
       end
 
       def encrypted_column?(column)

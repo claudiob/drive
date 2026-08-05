@@ -20,6 +20,11 @@ module Recourse
     @declared << name.to_s unless @declared.include? name.to_s
   end
 
+  # Columns a user may set: the form offers these and `create` permits these.
+  def self.editable_columns(model)
+    model.column_names - %w[id created_at updated_at]
+  end
+
   # Raised for every failure the gem reports, so hosts can rescue one type.
   class Error < StandardError; end
 end

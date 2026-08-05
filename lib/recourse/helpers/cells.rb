@@ -10,9 +10,9 @@ module Recourse
         resource_model.column_names - Array(resource_model.encrypted_attributes).map(&:to_s)
       end
 
-      # Columns a form offers: everything a user can set, so no id and no timestamps.
+      # Columns a form offers, the same list `create` permits.
       def editable_columns
-        resource_model.column_names - %w[id created_at updated_at]
+        Recourse.editable_columns resource_model
       end
 
       # Heading for a column, which a host app can translate like any attribute.

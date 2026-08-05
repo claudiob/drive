@@ -8,6 +8,14 @@ module Recourse
   module Helpers
     include Cells, Constraints, Fields, Navigation
 
+    # Bootstrap theme for each flash key, so a notice and an alert read apart.
+    FLASH_THEMES = { 'notice' => 'theme-success', 'alert' => 'theme-danger' }
+
+    # Theme for one flash entry, falling back to a neutral one for a host's key.
+    def flash_theme(key)
+      FLASH_THEMES.fetch key.to_s, 'theme-primary'
+    end
+
     # Human, plural name of the resource on the page, e.g. 'Contacts'.
     def resources_name
       controller.controller_name.humanize
