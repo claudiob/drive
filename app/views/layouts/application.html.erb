@@ -55,6 +55,11 @@
       </div>
     </div>
 
+    <%# Tells a native shell to show its tab bar on this page: the config lists the %>
+    <%# tabs, this asks for them. Guarded because the helper only exists in a host %>
+    <%# that has ruby_native, and most hosts do not. %>
+    <%= native_tabs_tag if respond_to? :native_tabs_tag %>
+
     <%= render 'flash' %>
 
     <script type='module' src='https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.23/dist/turbo.es2017-esm.js'></script>
