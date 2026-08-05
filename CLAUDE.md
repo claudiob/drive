@@ -472,6 +472,20 @@ above when they conflict.
   `Style/MutableConstant` is disabled because it demands `.freeze` on string
   constants and cannot be told to skip them.
 
+### Shared behavior becomes a concern
+
+- When two models declare the same behavior word for word, extract it into a
+  concern instead of leaving the copy in place.
+  `encrypts :email, deterministic: true, downcase: true` stood in both `Contact`
+  and `Agent`, so it became `Emailable`.
+- Name the concern after the feature it carries, not after the models that want
+  it: `Emailable`, `Phonable`.
+- Only what the models genuinely share moves. `Contact`'s email is optional and
+  `Agent`'s is required, so `presence: true` stays in each model — the same line
+  `Phonable` already draws for `phone`.
+- This sharpens the baseline's "concerns for genuinely shared behavior": a second
+  identical declaration is the threshold, and anticipating one is not.
+
 ### Emails are citext
 
 - A plaintext email column is `citext`, never `string`. An address is
