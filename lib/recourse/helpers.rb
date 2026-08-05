@@ -19,6 +19,12 @@ module Recourse
       FLASH_THEMES.fetch key.to_s, 'theme-primary'
     end
 
+    # True when a native shell is asking, rather than a browser. Asks whether the
+    # helper is there rather than whether the gem is, since that is the precondition.
+    def native_shell?
+      respond_to?(:native_app?) && native_app?
+    end
+
     # Human, plural name of the resource on the page, e.g. 'Contacts'.
     def resources_name
       controller.controller_name.humanize

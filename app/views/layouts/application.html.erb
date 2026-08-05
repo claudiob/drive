@@ -3,8 +3,11 @@
 <%# measurable, and the class that spends them. `viewport-fit=cover` on its own %>
 <%# would let content under the status bar with nothing holding it clear. %>
 <% native = defined? RubyNative -%>
-<% in_app = native && native_app? -%>
+<% in_app = native_shell? -%>
+<%# `create` and `update` render the form again when a record is rejected, so they %>
+<%# count as form pages: otherwise a rejected submit would lose its Save button. %>
 <% native_index = in_app && controller.action_name == 'index' -%>
+<% native_form = in_app && controller.action_name.in?(%w[new create edit update]) -%>
 <!DOCTYPE html>
 <html lang='en'>
   <head>
@@ -84,6 +87,18 @@
     <%# host that writes its own index still gets a titled bar. Pull to refresh comes %>
     <%# with the bar — it is on unless a page passes `pull_to_refresh: false`. %>
     <%= native_navbar_tag content_for(:title) if native_index %>
+
+    <%# A form page puts its submit in the navigation bar instead of at the foot of %>
+    <%# the form. The bar's button clicks the web one, which is why that stays in the %>
+    <%# DOM under `native-hidden`. `submit_button` already reads "Save", so naming it %>
+    <%# would only restate the default. `native_form_tag` marks the page so tapping %>
+    <%# back after a successful submit skips it rather than reopening the form. %>
+    <% if native_form %>
+      <%= native_form_tag %>
+      <%= native_navbar_tag content_for(:title) do |navbar| %>
+        <%= navbar.submit_button %>
+      <% end %>
+    <% end %>
 
     <%# The "Add ..." link sits in the navbar, which a native page does not render, so %>
     <%# the same route becomes a floating "+" above the tab bar. `new_resource_path` is %>

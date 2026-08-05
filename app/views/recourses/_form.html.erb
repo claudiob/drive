@@ -5,5 +5,7 @@
     <%= render 'fields', resource_key => record %>
   </div>
 
-  <%= form.submit class: 'btn btn-solid theme-primary' %>
+  <%# Hidden rather than dropped in a native shell: the navigation bar's Save button %>
+  <%# works by clicking this one, and mirrors its disabled state while submitting. %>
+  <%= form.submit class: "btn btn-solid theme-primary#{' native-hidden' if native_shell?}" %>
 <% end %>
