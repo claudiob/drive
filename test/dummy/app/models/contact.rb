@@ -3,7 +3,7 @@ class Contact < ApplicationRecord
   include Phonable
 
   encrypts :phone, deterministic: true
-  encrypts :email
+  encrypts :email, downcase: true
   encrypts :surname
 
   validates :phone, presence: true, uniqueness: true

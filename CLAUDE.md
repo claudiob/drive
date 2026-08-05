@@ -450,3 +450,19 @@ above when they conflict.
 - Enforced by RuboCop: `Style/FrozenStringLiteralComment` is `never`, and
   `Style/MutableConstant` is disabled because it demands `.freeze` on string
   constants and cannot be told to skip them.
+
+### Emails are citext
+
+- A plaintext email column is `citext`, never `string`. An address is
+  case-insensitive in practice, so `Ada@example.com` and `ada@example.com` are
+  the same one, and the column type is what makes comparison and a unique index
+  agree with that.
+- citext arrives with its extension, so a migration runs
+  `enable_extension 'citext'` before the first citext column is created.
+- Nothing else is then needed: no `LOWER(email)` expression index, and no
+  downcasing on the way in.
+- An *encrypted* email column is not citext — the same reasoning as the rest of
+  "Encrypt PII". What is stored is ciphertext, so a case-insensitive column
+  compares the wrong bytes and could reject two genuinely different addresses.
+  Normalize in Rails instead: `encrypts :email, downcase: true`, adding
+  `deterministic: true` where the column must stay unique or be queried.
