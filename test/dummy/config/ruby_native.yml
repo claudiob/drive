@@ -2,6 +2,9 @@
 # the entry point follow config/routes.rb rather than repeating it. JSON is valid
 # YAML, which is how a computed list of tabs fits on one line.
 app:
+  # Native screen transitions and a native navigation bar, in place of web
+  # navigation. The layout hides its own navbar and sidebar to make room.
+  mode: advanced
   entry_path: <%= Recourse.entry_path %>
 
 tabs: <%= Recourse.tabs.to_json %>

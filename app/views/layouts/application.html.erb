@@ -1,9 +1,15 @@
+<%# Three things below are for a native shell and pointless without one, so they %>
+<%# travel together: the safe-area stylesheet, the viewport that makes its insets %>
+<%# measurable, and the class that spends them. `viewport-fit=cover` on its own %>
+<%# would let content under the status bar with nothing holding it clear. %>
+<% native = defined? RubyNative -%>
+<% in_app = native && native_app? -%>
 <!DOCTYPE html>
 <html lang='en'>
   <head>
     <meta charset='utf-8'>
     <title><%= content_for(:title) || 'Recourse' %></title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name='viewport' content='width=device-width, initial-scale=1<%= ', viewport-fit=cover' if native %>'>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -14,6 +20,7 @@
     <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap'>
     <link rel='stylesheet' href='/recourse/bootstrap.min.css'>
     <link rel='stylesheet' href='/recourse/bootstrap-icons.min.css'>
+    <%= stylesheet_link_tag :ruby_native if native %>
 
     <script type='module'>
       import { Application } from '/recourse/stimulus.js'
@@ -36,20 +43,29 @@
   </head>
 
   <body class='d-flex flex-column min-vh-100'>
-    <nav class='navbar border-bottom'>
-      <div class='container-fluid px-3 justify-content-start'>
-        <%= render 'breadcrumb' %>
-        <%= yield :actions %>
-      </div>
-    </nav>
+    <%# In a native shell both of these are already there, natively: the navigation %>
+    <%# bar carries the title and the back button, and the tab bar carries the links %>
+    <%# the sidebar would. Rendering them again would only duplicate them. %>
+    <% unless in_app %>
+      <nav class='navbar border-bottom'>
+        <div class='container-fluid px-3 justify-content-start'>
+          <%= render 'breadcrumb' %>
+          <%= yield :actions %>
+        </div>
+      </nav>
+    <% end %>
 
     <div class='container-fluid flex-grow-1 d-flex'>
       <div class='row flex-grow-1'>
-        <aside class='col-auto border-end py-3 px-3 mx-0'>
-          <%= render 'sidebar' %>
-        </aside>
+        <% unless in_app %>
+          <aside class='col-auto border-end py-3 px-3 mx-0'>
+            <%= render 'sidebar' %>
+          </aside>
+        <% end %>
 
-        <main class='col py-4 px-3'>
+        <%# The native navigation bar is translucent, so without this the first row %>
+        <%# of the page reads through it. The inset is exactly the bar's height. %>
+        <main class='col py-4 px-3<%= ' native-inset-top' if in_app %>'>
           <%= yield %>
         </main>
       </div>

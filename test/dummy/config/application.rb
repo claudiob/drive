@@ -4,7 +4,9 @@ require 'action_controller/railtie'
 require 'active_record/railtie'
 
 # No `Bundler.require` here, so an engine that a Gemfile line would load elsewhere
-# has to be named: without this, `/native/config.json` is a 404.
+# has to be named: without this, `/native/config.json` is a 404. Propshaft comes
+# first because ruby_native only registers its stylesheet if `config.assets` exists.
+require 'propshaft'
 require 'ruby_native'
 
 require 'recourse'
