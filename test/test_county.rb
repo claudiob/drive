@@ -3,7 +3,7 @@ require 'test_helper'
 # The list the counties migration backfilled, and how it joined to states.
 class TestCounty < Minitest::Test
   def test_it_backfilled_every_county
-    assert_equal 3143, County.count
+    assert_equal 3144, County.count
   end
 
   def test_it_stores_the_official_fips_and_name

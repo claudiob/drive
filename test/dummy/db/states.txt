@@ -1,0 +1,51 @@
+1|AL|01|Alabama
+2|AK|02|Alaska
+3|AZ|04|Arizona
+4|AR|05|Arkansas
+5|CA|06|California
+6|CO|08|Colorado
+7|CT|09|Connecticut
+8|DE|10|Delaware
+9|DC|11|District of Columbia
+10|FL|12|Florida
+11|GA|13|Georgia
+12|HI|15|Hawaii
+13|ID|16|Idaho
+14|IL|17|Illinois
+15|IN|18|Indiana
+16|IA|19|Iowa
+17|KS|20|Kansas
+18|KY|21|Kentucky
+19|LA|22|Louisiana
+20|ME|23|Maine
+21|MD|24|Maryland
+22|MA|25|Massachusetts
+23|MI|26|Michigan
+24|MN|27|Minnesota
+25|MS|28|Mississippi
+26|MO|29|Missouri
+27|MT|30|Montana
+28|NE|31|Nebraska
+29|NV|32|Nevada
+30|NH|33|New Hampshire
+31|NJ|34|New Jersey
+32|NM|35|New Mexico
+33|NY|36|New York
+34|NC|37|North Carolina
+35|ND|38|North Dakota
+36|OH|39|Ohio
+37|OK|40|Oklahoma
+38|OR|41|Oregon
+39|PA|42|Pennsylvania
+40|RI|44|Rhode Island
+41|SC|45|South Carolina
+42|SD|46|South Dakota
+43|TN|47|Tennessee
+44|TX|48|Texas
+45|UT|49|Utah
+46|VT|50|Vermont
+47|VA|51|Virginia
+48|WA|53|Washington
+49|WV|54|West Virginia
+50|WI|55|Wisconsin
+51|WY|56|Wyoming

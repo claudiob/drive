@@ -28,7 +28,7 @@ class TestRecoursesSidebar < Minitest::Test
   def test_it_links_the_index_of_every_recourse
     expected = [['/contacts', 'Contacts'], ['/states', 'States'],
                 ['/counties', 'Counties'], ['/echoes', 'Echoes'],
-                ['/markets', 'Markets']]
+                ['/markets', 'Markets'], ['/zips', 'ZIPs']]
 
     assert_equal expected, links
   end
@@ -37,14 +37,14 @@ class TestRecoursesSidebar < Minitest::Test
   def test_it_follows_the_order_routes_declare_rather_than_a_sort
     titles = links.map(&:last)
 
-    assert_equal %w[Contacts States Counties Echoes Markets], titles
+    assert_equal %w[Contacts States Counties Echoes Markets ZIPs], titles
     refute_equal titles.sort, titles
   end
 
   def test_every_link_is_preceded_by_an_icon
     icons = {
       'contacts' => 'person-rolodex', 'states' => 'geo', 'counties' => 'map',
-      'echoes' => 'soundwave', 'markets' => 'pin-map',
+      'echoes' => 'soundwave', 'markets' => 'pin-map', 'zips' => 'geo-alt-fill',
     }
 
     icons.each do |resource, icon|

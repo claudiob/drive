@@ -1,6 +1,6 @@
-# Creates the counties table and backfills every county of the United States.
+# Creates the counties table and backfills it from db/counties.txt.
 class CreateCounties < ActiveRecord::Migration[8.1]
-  # Every county as fips|name|state_fips, from the Census national_county file.
+  # id|state_id|fips|name for every county the host app knows.
   COUNTIES = 'db/counties.txt'
 
   def change
@@ -20,15 +20,15 @@ class CreateCounties < ActiveRecord::Migration[8.1]
 private
 
   def backfill
-    state_ids = select_all('select fips, id from states').rows.to_h
     values = File.readlines(Rails.root.join(COUNTIES), chomp: true).map do |line|
-      fips, name, state_fips = line.split '|'
-      "(#{quote fips}, #{quote name}, #{state_ids.fetch state_fips}, now(), now())"
+      id, state_id, fips, name = line.split '|'
+      "(#{id}, #{state_id}, #{quote fips}, #{quote name}, now(), now())"
     end
 
     execute <<~SQL.squish
-      insert into counties (fips, name, state_id, created_at, updated_at)
+      insert into counties (id, state_id, fips, name, created_at, updated_at)
       values #{values.join ', '}
     SQL
+    execute "select setval('counties_id_seq', (select max(id) from counties))"
   end
 end

@@ -220,6 +220,29 @@ above when they conflict.
 - The database enforces it too: unique index on `fips`, `null: false`, a
   five-digit check constraint, and a real foreign key to `states`.
 
+### The ZIP model
+
+- A `ZIP` has a unique non-null 5-digit `code`, a non-null `city`, a non-null
+  `time_zone`, belongs to a `county`, and optionally belongs to a `market`.
+- The class is `ZIP`, not `Zip`, because the acronym is registered. Register the
+  plural too — `inflect.acronym 'ZIPs'` — or every heading reads `Zips`.
+- Creating a zips table always comes with a migration that backfills it: every
+  ZIP, matched to the county it mostly belongs to and the main city in it.
+- `time_zone` holds whatever the source gives. Ours mixes Rails zone names with
+  IANA identifiers; both resolve through `ActiveSupport::TimeZone[]`, and a test
+  asserts every distinct value does.
+
+### Seed data lives in migrations, so schema.rb cannot load a database
+
+- `test/dummy/db/schema.rb` is gitignored, and that is load-bearing. Rails loads
+  it into an empty database and stamps every version at or below its own as
+  already migrated — which silently skips the backfills, leaving the tables
+  empty and the next foreign key failing.
+- Build a database with `db:migrate` from zero. Never `db:schema:load`, and be
+  wary of `db:prepare` for the same reason.
+- `db:drop` will not drop a database with open connections and reports success
+  anyway; `dropdb --force` is the reliable reset.
+
 ### Phone numbers
 
 - A phone number is stored in a column named `phone`, holding exactly 10
