@@ -5,9 +5,7 @@ require_relative 'helpers/navigation'
 module Recourse
   # View helpers for the pages the gem renders, and what the parts share.
   module Helpers
-    include Cells
-    include Fields
-    include Navigation
+    include Cells, Fields, Navigation
 
     # Human, plural name of the resource on the page, e.g. 'Contacts'.
     def resources_name

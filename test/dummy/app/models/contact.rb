@@ -1,7 +1,6 @@
 # Someone the host app can reach, identified by a unique 10-digit phone number.
 class Contact < ApplicationRecord
-  include Emailable
-  include Phonable
+  include Emailable, Phonable
 
   encrypts :phone, deterministic: true
   encrypts :surname

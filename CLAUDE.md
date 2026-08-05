@@ -486,6 +486,18 @@ above when they conflict.
 - This sharpens the baseline's "concerns for genuinely shared behavior": a second
   identical declaration is the threshold, and anticipating one is not.
 
+### List concerns alphabetically, on one line
+
+- Concerns are included in alphabetical order: `include Emailable, Phonable`,
+  never the other way round.
+- One `include` carries the whole list. Give each its own statement only when
+  the single line would not fit, and then keep the order.
+- Enforced by `Style/MixinGrouping` with `EnforcedStyle: grouped`. Its default
+  is `separated`, which demands the opposite, so the setting is not optional.
+- `include A, B` inserts them in reverse, so `A` ends up ahead of `B` in
+  `ancestors`. It only matters when both define the same method, which two
+  concerns that were extracted for being distinct features should not.
+
 ### Emails are citext
 
 - A plaintext email column is `citext`, never `string`. An address is
