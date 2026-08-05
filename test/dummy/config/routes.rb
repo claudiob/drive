@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   recourses :states, only: :index
   recourses :counties, only: :index
   recourses :echoes, only: :index
-  recourses :markets, only: %i[index new create]
+  recourses :markets, only: %i[index new create edit update]
   recourses :zips, only: :index
   recourses :sources, only: :index
   recourses :agents, only: %i[index new create]

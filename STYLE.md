@@ -118,6 +118,13 @@ before writing or editing any layout, view or partial.
 
 - The gem serves `new.html.erb`: it sets `:title` to `New <resource>` and
   renders the `form` partial, passing the record explicitly under its own name.
+- It serves `edit.html.erb` the same way, titled after the record instead — the
+  value of whatever its model's `recourse_label` names, so a market reads
+  `Chicago`. Both render the *same* `form` partial, so a host that writes one
+  `_fields.html.erb` gets it on both pages and never writes a second.
+- After a rejected update the title shows what was typed, not what is stored,
+  because the record already carries the submitted values. Blanking the label
+  blanks the title.
 - The form is `form_with model:` plus one field per *editable* column — every
   column except `id`, `created_at` and `updated_at`. Encrypted columns are
   editable even though the table will not display them.
@@ -323,6 +330,13 @@ before writing or editing any layout, view or partial.
 
 - `column` also takes anything `tag` does — `class:`, `style:` — and passes it
   to both the `th` and the `td`.
+- The default row ends with an `Actions` column. Where the resource has an `edit`
+  action each row links to it, and the link's content is the
+  `<i class='bi bi-pencil-square'></i>` icon rather than the word. It carries
+  `aria-label='Edit'`, since an icon on its own says nothing to a screen reader.
+- The column is there either way, empty for a resource that only has an index.
+  A host that writes its own `_row` decides for itself: the gem's row is the only
+  one that adds it.
 - The record arrives under its own name, `contact:` for contacts, so a host
   partial declares `<%# locals: (contact:) -%>`. It is rendered once for the
   header row with that local set to nil, so never assume it is present outside

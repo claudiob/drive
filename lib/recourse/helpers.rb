@@ -39,6 +39,11 @@ module Recourse
       controller.view_assigns[resource_key.to_s]
     end
 
+    # What the record on the page is called, by whatever its model labels it with.
+    def resource_record_label
+      resource_record.attributes[resource_model.recourse_label.to_s]
+    end
+
   private
 
     def resource_model

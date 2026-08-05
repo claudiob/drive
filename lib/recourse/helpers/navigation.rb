@@ -4,9 +4,18 @@ module Recourse
     module Navigation
       # Trail to the current page as [title, path] pairs; a nil path is this page.
       def resource_breadcrumbs
-        return [[resources_name, nil]] unless controller.action_name.in? %w[new create]
+        leaf = breadcrumb_leaf
+        return [[resources_name, nil]] unless leaf
 
-        [[resources_name, url_for(action: :index)], ["New #{resource_name}", nil]]
+        [[resources_name, url_for(action: :index)], [leaf, nil]]
+      end
+
+      # Pencil linking to a record's edit page, or nothing when there is not one.
+      def edit_resource_link(record)
+        path = edit_resource_path record
+        return unless path
+
+        link_to tag.i(class: 'bi bi-pencil-square'), path, aria: { label: 'Edit' }
       end
 
       # Path to this resource's new page, or nil when there is not one to link to.
@@ -36,6 +45,23 @@ module Recourse
       # True when a sidebar entry names the resource the page is showing.
       def current_resource?(name)
         name == controller.controller_name
+      end
+
+    private
+
+      # Only a page beneath the index names itself, and names what it is showing.
+      def breadcrumb_leaf
+        case controller.action_name
+        when 'new', 'create' then "New #{resource_name}"
+        when 'edit', 'update' then resource_record_label
+        end
+      end
+
+      def edit_resource_path(record)
+        return unless controller.class.action_methods.include? 'edit'
+        return unless routed? controller.controller_path, 'edit'
+
+        url_for action: :edit, id: record
       end
     end
   end

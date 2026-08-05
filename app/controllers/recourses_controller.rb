@@ -4,6 +4,9 @@ class RecoursesController < ApplicationController
 
   helper Recourse::Helpers
 
+  # `find` raises RecordNotFound, so an id that names nothing answers 404.
+  before_action :find_resource, only: %i[edit update]
+
   # Lists one page of the model the route is named after.
   def index
     @pagy, @resources = pagy resource_class.all
@@ -27,9 +30,28 @@ class RecoursesController < ApplicationController
     end
   end
 
+  # Shows the form for the record the id names, which is already known to exist.
+  def edit; end
+
+  # Saves changes to a record, then shows the index again or redraws the form.
+  def update
+    if @recourse.update resource_params
+      flash.notice = "#{human_name} was updated."
+      redirect_to url_for(action: :index), status: :see_other
+    else
+      flash.now.alert = "#{human_name} could not be updated."
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
 private
 
+  def find_resource
+    assign resource_class.find(params.expect(:id))
+  end
+
   def assign(record)
+    @recourse = record
     instance_variable_set "@#{controller_name.singularize}", record
   end
 

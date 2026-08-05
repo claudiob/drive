@@ -2,3 +2,4 @@
 <% resource_columns.each do |name| -%>
   <%= column header: resource_column_title(name) do %><%= resource_cell record, name %><% end %>
 <% end -%>
+<%= column header: 'Actions' do %><%= edit_resource_link record %><% end %>
