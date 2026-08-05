@@ -399,6 +399,14 @@ two is filed under the one a reader would look in first.
   form asks for it under the foreign key's own name, so no host model needs a
   virtual attribute and strong parameters need no special case.
 
+#### Git ignores a built gem
+
+- `*.gem` is gitignored. `rake build` puts one under `/pkg/`, which was already
+  ignored, but `gem build` leaves it in the working directory, where `git add -A`
+  would sweep up a megabyte of binary release artifact.
+- Nothing is lost by hiding it. `spec.files` reads `git ls-files`, so a build is
+  never packaged inside the next one either way.
+
 #### Vendor what a page cannot render without
 
 - A stylesheet or script a page cannot do without is vendored into the gem and
