@@ -10,6 +10,7 @@ module Recourse
         pattern = column_pattern column
         html = { maxlength: column_maximum(column), minlength: column_minimum(column), pattern: }
         html[:inputmode] = :numeric if numeric? column, pattern
+        html[:required] = true if required? column
         html[:placeholder] = placeholder column, type
 
         html.compact

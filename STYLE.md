@@ -123,6 +123,13 @@ before writing or editing any layout, view or partial.
   Required is judged by the model's validators, not by `null: false` — and a
   `belongs_to` validates the association, so `state_id` counts as required
   through `:state`.
+- A required attribute also gets a required *field*: `required` on the input, so
+  the browser turns the form back before the server ever sees it. It is the same
+  judgement the placeholder makes, from the same validators — the two are
+  readings of one fact and never disagree.
+- Worth knowing before there is an `edit` action: a required encrypted attribute
+  is a required password field, and a password field renders empty, so editing a
+  record would demand the value be retyped. Revisit the rule then, not now.
 - A required field shows the shape it expects instead: `555-555-5555` for a
   phone, `michael@example.com` for an email. Every other required field has no
   placeholder, since there is nothing useful to show.
@@ -194,6 +201,11 @@ before writing or editing any layout, view or partial.
 - The placeholder doubles as the empty label: `Select a <Model>…`, from
   `model_name.human` so a registered acronym survives. An optional association
   says `Optional` instead, like any other optional field.
+- A required association carries `aria-required` on the toggle rather than
+  `required`. The toggle is a `<button>`, which `required` does not apply to, and
+  the hidden input that would take it is not in the markup — the plugin writes it
+  at runtime. So the requirement is announced, not enforced: the model's
+  validation is still what rejects a blank.
 
 ## Tables
 

@@ -47,6 +47,7 @@ module Recourse
         render 'recourses/combobox', name: form.field_name(column),
                                      id: form.field_id(column),
                                      placeholder: combobox_placeholder(column, association),
+                                     required: required?(column),
                                      recourses: association.klass.select(:id, :name).order(:name)
       end
 
