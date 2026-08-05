@@ -3,6 +3,6 @@ class County < ApplicationRecord
   belongs_to :state
   has_many :zips, dependent: :restrict_with_error
 
-  validates :fips, presence: true, uniqueness: true, format: { with: /\A\d{5}\z/ }
-  validates :name, presence: true
+  validates :fips, :name, presence: true
+  validates :fips, uniqueness: true, length: { is: 5 }, format: { with: /\A\d{5}\z/ }
 end

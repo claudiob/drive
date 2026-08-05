@@ -23,7 +23,8 @@ class TestRecoursesCreate < Minitest::Test
     @session.post '/counties', params: { county: { fips: '9', name: '' } }
 
     assert_equal 422, @session.response.status
-    assert_includes body, "<div class='alert theme-danger mb-4' role='alert'>County could not be"
+    assert_includes body, "<div class='toast theme-danger' role='alert'"
+    assert_includes body, "<div class='toast-body'>County could not be created.</div>"
     assert_includes body, "class='form-control is-invalid combobox-toggle'"
     assert_includes body, '<div class="invalid-feedback">Must exist</div>'
     assert_includes body, '<div class="invalid-feedback">Can&#39;t be blank</div>'

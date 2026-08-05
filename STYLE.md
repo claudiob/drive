@@ -207,6 +207,36 @@ before writing or editing any layout, view or partial.
   at runtime. So the requirement is announced, not enforced: the model's
   validation is still what rejects a blank.
 
+## Flash messages
+
+- A flash is a Toast, never an inline alert, in a
+  `.toast-container.position-fixed.bottom-0.end-0.p-3` at the end of `<body>`.
+  `.toast-container` is `position: absolute` in v6, so `position-fixed` is not
+  optional — without it the toast scrolls away with the page.
+- The variant is the flash key: `toast theme-success` for a notice, `toast
+  theme-danger` for an alert, and a neutral `theme-primary` for a key a host
+  invents. The theme goes on the `.toast` itself.
+- No `.toast-header`. The close button sits in the body instead, which is the
+  headerless shape from Bootstrap's own example:
+
+      <div class='toast theme-success' role='alert' aria-live='assertive' aria-atomic='true'>
+        <div class='d-flex justify-content-between'>
+          <div class='toast-body'>Ada was created.</div>
+          <button type='button' class='btn-close me-3 m-auto' data-bs-dismiss='toast'
+                  aria-label='Close'></button>
+        </div>
+      </div>
+
+- `me-3 m-auto` on the close button is doing real work: v6 only gives
+  `.btn-close` its toast margins through `.toast-header .btn-close`, so a
+  headerless toast has to space its own.
+- It autohides, which is the Toast default — nothing to declare.
+- Toasts need JavaScript twice over. `.toast:not(.show)` is `display: none`, so
+  one has to be shown, and the autohide timer only starts when it is. The layout
+  imports `Toast` from the bundle and calls `show()` on every `.toast` it finds.
+  `data-bs-dismiss='toast'` needs the component loaded too, so the X is dead
+  without it.
+
 ## Validation errors
 
 - A rejected `create` redraws the same page with `422`, never a redirect, so the
