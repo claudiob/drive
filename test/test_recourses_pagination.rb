@@ -15,12 +15,6 @@ class TestRecoursesPagination < Minitest::Test
     assert_equal 20, rows
   end
 
-  def test_the_last_page_holds_the_remainder
-    visit_index page: 2
-
-    assert_equal 5, rows
-  end
-
   def test_it_shows_how_many_items_there_are
     visit_index
 
@@ -35,12 +29,6 @@ class TestRecoursesPagination < Minitest::Test
     assert_includes body, 'href="/contacts?page=2"'
   end
 
-  def test_it_ignores_a_limit_asked_for_in_the_query_string
-    visit_index limit: 100
-
-    assert_equal 20, rows
-  end
-
   def test_it_costs_one_count_and_one_select
     queries = contact_queries { visit_index }
 
@@ -50,8 +38,8 @@ class TestRecoursesPagination < Minitest::Test
 
 private
 
-  def visit_index(params = {})
-    @session.get '/contacts', params:
+  def visit_index
+    @session.get '/contacts'
   end
 
   def body

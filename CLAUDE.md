@@ -39,6 +39,12 @@ standard community Ruby/Rails practice, plus the learned preferences recorded at
 
 ## Testing
 
+- Never test another library. `validates :name, presence: true` is Rails'
+  behavior, already tested in Rails, so a test asserting a blank name is
+  invalid tests nothing of ours. Same for a unique index raising, or pagy
+  splitting 25 rows across two pages.
+- Test our data, our wiring, our own methods: what a backfill contains, what a
+  helper returns, what markup a view produces, how many queries a page costs.
 - Every behavior change comes with a test.
 - Test behavior and public interfaces, not private implementation details.
 - Descriptive test names that state the expected outcome.
@@ -339,6 +345,16 @@ above when they conflict.
 - User-facing strings stay plain English for now. This suspends the baseline's
   "I18n for user-facing strings" rule until there are enough strings to be worth
   a locale file — do not add one unprompted.
+
+### Coverage stays at 100%
+
+- `simplecov` starts at the very top of `test/test_helper.rb`, before anything
+  else is required, with `minimum_coverage 100`. Below that the suite fails.
+- `/test/` is filtered out: the dummy app is a fixture, not shipped code.
+- `lib/recourse/version.rb` is not measured, and that is expected rather than a
+  gap. The Gemfile's `gemspec` directive loads it during bundler setup, before
+  SimpleCov can start. Do not add `track_files` to pull it in — it would report
+  as uncovered when in fact it runs.
 
 ### Files at most 100 lines
 

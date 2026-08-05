@@ -1,3 +1,11 @@
+require 'simplecov'
+
+# Started before anything else is required, or the gem's own files load untracked.
+SimpleCov.start do
+  add_filter '/test/'
+  minimum_coverage 100
+end
+
 ENV['RAILS_ENV'] = 'test'
 
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
