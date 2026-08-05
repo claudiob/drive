@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   recourses :echoes, only: :index
   recourses :markets, only: %i[index new]
   recourses :zips, only: :index
+  recourses :sources, only: %i[index new]
 
   # No index action, so no sidebar link.
   recourses :placeholders, only: :new
