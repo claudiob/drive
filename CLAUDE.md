@@ -153,6 +153,7 @@ two is filed under the one a reader would look in first.
   every row. `downcase: true` is what earns the case-insensitivity the citext
   column would have given, and it is what keeps a unique index honest: without
   it two spellings of one address encrypt to two different values.
+
 ### SECURITY
 
 #### Encrypt PII
