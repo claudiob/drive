@@ -1,0 +1,4 @@
+# Read by the native app on launch. Contacts is the whole app for now, so there is
+# no `tabs` list: omitting it hides the tab bar and launches straight at this path.
+app:
+  entry_path: /contacts
