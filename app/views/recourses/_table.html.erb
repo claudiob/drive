@@ -23,8 +23,12 @@
 <% end %>
 
 <% if pagy %>
-  <div class='d-flex align-items-center'>
-    <div class='ps-2 flex-grow-1'><%== pagy.info_tag.gsub(/of (\d*?) in total/) { "of #{number_with_delimiter $1} in total" } %></div>
-    <div class='pe-2'><%== pagy.series_nav(:bootstrap, classes: 'pagination mb-0') if pagy.last > 1 %></div>
+  <%# Stacked below 576px and a row above it: the count and a nine-item series do not %>
+  <%# share 375px, and this pair sits outside `.table-responsive`, so anything too %>
+  <%# wide here scrolls the page itself rather than the table. `flex-wrap` covers the %>
+  <%# narrowest case, where the series alone is wider than the screen. %>
+  <div class='d-flex flex-column sm:flex-row align-items-center gap-2'>
+    <div class='ps-2 sm:flex-grow-1'><%== pagy.info_tag.gsub(/of (\d*?) in total/) { "of #{number_with_delimiter $1} in total" } %></div>
+    <div class='pe-2'><%== pagy.series_nav(:bootstrap, classes: 'pagination flex-wrap justify-content-center mb-0') if pagy.last > 1 %></div>
   </div>
 <% end %>

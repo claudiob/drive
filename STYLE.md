@@ -433,3 +433,15 @@ before writing or editing any layout, view or partial.
   since they return HTML.
 - Leave `max_limit` unset. Without it pagy ignores a `?limit=` in the query
   string, so a visitor cannot ask for a page of 100,000 rows.
+- The count and the links share one row from 576px up and stack below it:
+  `d-flex flex-column sm:flex-row`, with `sm:flex-grow-1` on the count so it only
+  pushes the links right once the two are side by side. Kept on one row they
+  overflow a phone, and this pair sits *outside* `.table-responsive`, so anything
+  too wide here scrolls the whole page rather than just the table.
+- The series itself takes `flex-wrap justify-content-center`. `.pagination` is a
+  flex row that does not wrap, and a nine-item series holding a four-digit page
+  number is wider than a 375px screen on its own, so stacking alone does not save
+  it.
+- Both are a reason to check a table's widest case rather than its first page.
+  `/zips` splits 40,965 rows into 2,049 pages, which is what makes the series that
+  wide; a two-page table would never have shown the problem.
