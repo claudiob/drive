@@ -63,9 +63,11 @@
           </aside>
         <% end %>
 
-        <%# The native navigation bar is translucent, so without this the first row %>
-        <%# of the page reads through it. The inset is exactly the bar's height. %>
-        <main class='col py-4 px-3<%= ' native-inset-top' if in_app %>'>
+        <%# The web view runs behind both native bars, so the page needs clearing at %>
+        <%# both ends: the translucent navigation bar at the top, and the tab bar at %>
+        <%# the bottom, which otherwise covers the last row and takes its taps. The %>
+        <%# insets are the bars' real heights and stack with the padding already here. %>
+        <main class='col py-4 px-3<%= ' native-inset' if in_app %>'>
           <%= yield %>
         </main>
       </div>
