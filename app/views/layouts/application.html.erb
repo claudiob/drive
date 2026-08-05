@@ -78,7 +78,8 @@
 
     <%# Titles the native navigation bar after the page, in plain text with no icon. %>
     <%# It reads `content_for :title` here rather than in the index template so a %>
-    <%# host that writes its own index still gets a titled bar. %>
+    <%# host that writes its own index still gets a titled bar. Pull to refresh comes %>
+    <%# with the bar — it is on unless a page passes `pull_to_refresh: false`. %>
     <%= native_navbar_tag content_for(:title) if in_app && controller.action_name == 'index' %>
 
     <%= render 'flash' %>
