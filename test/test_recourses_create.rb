@@ -13,7 +13,7 @@ class TestRecoursesCreate < Minitest::Test
 
     assert_equal 303, @session.response.status
     assert_includes @session.response.headers['Location'], '/contacts'
-    assert_includes @session.request.flash[:notice], 'was created.'
+    assert_equal 'Contact was created.', @session.request.flash[:notice]
     assert_equal 'Ada', Contact.sole.name
   end
 

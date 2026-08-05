@@ -237,6 +237,10 @@ before writing or editing any layout, view or partial.
   `.btn-close` its toast margins through `.toast-header .btn-close`, so a
   headerless toast has to space its own.
 - It autohides, which is the Toast default — nothing to declare.
+- The wording names the model, never the record: `Contact was created.` and
+  `Contact could not be created.`, both from `model_name.human`. Interpolating the
+  record instead prints `#<Contact:0x000000012b6febc8>`, because Active Record
+  leaves `to_s` as Object's.
 - Toasts need JavaScript twice over. `.toast:not(.show)` is `display: none`, so
   one has to be shown, and the autohide timer only starts when it is. The layout
   imports `Toast` from the bundle and calls `show()` on every `.toast` it finds.

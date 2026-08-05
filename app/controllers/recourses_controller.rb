@@ -19,10 +19,10 @@ class RecoursesController < ApplicationController
     record = assign resource_class.new(resource_params)
 
     if record.save
-      flash.notice = "#{record} was created."
+      flash.notice = "#{human_name} was created."
       redirect_to url_for(action: :index), status: :see_other
     else
-      flash.now.alert = "#{resource_class.model_name.human} could not be created."
+      flash.now.alert = "#{human_name} could not be created."
       render :new, status: :unprocessable_entity
     end
   end
@@ -35,6 +35,10 @@ private
 
   def resource_class
     controller_name.classify.constantize
+  end
+
+  def human_name
+    resource_class.model_name.human
   end
 
   def resource_params
