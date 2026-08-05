@@ -1,4 +1,4 @@
-<%# locals: (name:, id:, invalid:, feedback:, placeholder:, required:, recourses:) -%>
+<%# locals: (name:, id:, invalid:, feedback:, label:, placeholder:, required:, recourses:) -%>
 <button class='form-control<%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
@@ -12,7 +12,7 @@
            autocomplete='off' aria-label='Search…'>
   </div>
   <% recourses.each do |recourse| %>
-    <button class='menu-item' type='button' data-bs-value='<%= recourse.id %>'><%= recourse.name %></button>
+    <button class='menu-item' type='button' data-bs-value='<%= recourse.id %>'><%= recourse.attributes[label] %></button>
   <% end %>
   <div class='combobox-no-results d-none'>No results found</div>
 </div>

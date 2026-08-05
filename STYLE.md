@@ -80,7 +80,7 @@ before writing or editing any layout, view or partial.
       'Conversations' => 'chat-dots', 'Counties' => 'map', 'CRM' => 'plugin',
       'Echoes' => 'soundwave', 'Episodes' => 'collection-play',
       'Evaluations' => 'speedometer2', 'Franchises' => 'shop', 'Home' => 'house',
-      'Logout' => 'box-arrow-right', 'Markets' => 'pin-map',
+      'Locations' => 'geo-alt', 'Logout' => 'box-arrow-right', 'Markets' => 'pin-map',
       'Offer questions' => 'gift', 'Optimizations' => 'sliders',
       'Platforms' => 'plugin', 'Profile' => 'person-circle',
       'Prompts' => 'terminal', 'Providers' => 'briefcase',
@@ -184,6 +184,14 @@ before writing or editing any layout, view or partial.
 - A form never asks for a foreign key in a text field. `state_id` is a Bootstrap
   combobox listing each `State` by `name`, in the "Search menu items" form, so a
   list of fifty stays usable.
+- What each option reads is the model's own `recourse_label` — `name` by default,
+  `code` for a ZIP, `email` for an Agent. See CLAUDE.md, "Every model says how it
+  is labelled".
+- The menu holds every row, so it is only as usable as the table is small. The
+  ZIP combobox on `/locations/new` is 40,965 options and 3.3 MB of HTML: the
+  search box finds one instantly, but the page pays for all of them up front.
+  Bootstrap filters what is already in the DOM, so there is no cheaper option
+  short of a server-side search.
 - The markup is the toggle followed by its `.menu` **sibling** — the plugin finds
   the menu with `SelectorEngine.next`, so anything between them breaks it:
 

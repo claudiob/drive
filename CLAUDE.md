@@ -343,6 +343,25 @@ two is filed under the one a reader would look in first.
   same line drawn for the logger and the time zone — so a control the gem draws
   outside a form builder, like the combobox, carries this markup itself.
 
+#### Every model says how it is labelled
+
+- A model answers `recourse_label` with the column a combobox shows for one of its
+  records. `Recourse::Recoursive` supplies `:name`, and every Active Record model
+  is extended with it through `ActiveSupport.on_load :active_record`, so most
+  models need say nothing at all.
+- A model whose identity is not a `name` overrides it — `:code` for a ZIP, `:email`
+  for an Agent — but never in the model body. It `include`s its own `Recoursive`
+  concern, in `app/models/zip/recoursive.rb`, which overrides inside
+  `class_methods do`. The default arrives by `extend`, so only a class method can
+  replace it.
+- The label is what gets selected: `select(:id, label).order(label)`, per "select
+  only the columns a query displays". So it has to be a real column, not a method —
+  a method would not survive the `SELECT`.
+- Reading it back is `recourse.attributes[label]`, not `public_send`, which "no
+  metaprogramming" rules out.
+- Picking an encrypted column labels the option with its plaintext, since
+  `attributes` decrypts. That is a decision to make deliberately, not to fall into.
+
 #### Vendor what a page cannot render without
 
 - A stylesheet or script a page cannot do without is vendored into the gem and

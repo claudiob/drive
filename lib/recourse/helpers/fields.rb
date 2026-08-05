@@ -46,13 +46,15 @@ module Recourse
       # its own work: `field_error_proc` only ever sees a form builder's own tags.
       def combobox(form, column, association)
         messages = errors_on column
+        label = association.klass.recourse_label
         render 'recourses/combobox', name: form.field_name(column),
                                      id: form.field_id(column),
                                      invalid: messages.any?,
                                      feedback: messages.to_sentence.upcase_first.presence,
+                                     label: label.to_s,
                                      placeholder: combobox_placeholder(column, association),
                                      required: required?(column),
-                                     recourses: association.klass.select(:id, :name).order(:name)
+                                     recourses: association.klass.select(:id, label).order(label)
       end
 
       def belongs_to_association(column)
