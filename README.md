@@ -6,15 +6,15 @@ Add one line to `config/routes.rb` and Recourse draws the routes and serves the
 controllers and views needed to browse a resource. Nothing is written into your
 app — and when you want to customize a screen, you eject it.
 
-> **Status:** early development. The `index` action works; the other six actions
-> and the eject generator are not implemented yet.
+> **Status:** early development. `index`, `new`, `create`, `edit` and `update`
+> work; `show`, `destroy` and the eject generator are not implemented yet.
 
 ## Installation
 
 Add the gem to your Gemfile:
 
 ```ruby
-gem 'recourse'
+gem 'drive'
 ```
 
 Then run `bundle install`.
