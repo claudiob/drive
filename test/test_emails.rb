@@ -18,4 +18,11 @@ class TestEmails < Minitest::Test
       assert model.type_for_attribute(:email).downcase?
     end
   end
+
+  # Deterministic whether or not the column is unique or queried yet.
+  def test_an_encrypted_email_is_deterministic
+    [Agent, Contact].each do |model|
+      assert model.type_for_attribute(:email).deterministic?
+    end
+  end
 end

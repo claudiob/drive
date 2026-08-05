@@ -464,5 +464,11 @@ above when they conflict.
 - An *encrypted* email column is not citext — the same reasoning as the rest of
   "Encrypt PII". What is stored is ciphertext, so a case-insensitive column
   compares the wrong bytes and could reject two genuinely different addresses.
-  Normalize in Rails instead: `encrypts :email, downcase: true`, adding
-  `deterministic: true` where the column must stay unique or be queried.
+  Normalize in Rails instead, always with both options:
+  `encrypts :email, deterministic: true, downcase: true`.
+- `deterministic: true` is not conditional on the column being unique or
+  queried *today*. An address is the natural handle for finding a record, so it
+  will be looked up eventually, and switching afterwards means re-encrypting
+  every row. `downcase: true` is what earns the case-insensitivity the citext
+  column would have given, and it is what keeps a unique index honest: without
+  it two spellings of one address encrypt to two different values.
