@@ -3,6 +3,10 @@ require_relative 'boot'
 require 'action_controller/railtie'
 require 'active_record/railtie'
 
+# No `Bundler.require` here, so an engine that a Gemfile line would load elsewhere
+# has to be named: without this, `/native/config.json` is a 404.
+require 'ruby_native'
+
 require 'recourse'
 
 module Dummy
