@@ -337,13 +337,15 @@ before writing or editing any layout, view or partial.
 - Those names cost one query per association rather than one per row, because the
   index eager-loads every `belongs_to` the table can name. Twenty locations still
   cost five queries.
-- The default row ends with an `Actions` column. Where the resource has an `edit`
-  action each row links to it, and the link's content is the
-  `<i class='bi bi-pencil-square'></i>` icon rather than the word. It carries
-  `aria-label='Edit'`, since an icon on its own says nothing to a screen reader.
+- Every table ends with an `Actions` column, and `_table` adds it rather than
+  `_row`. That is the whole point of putting it there: a host that writes its own
+  row still gets the column, appended after whatever columns that row defines, so
+  `/contacts` reads `Name | Phone | Created at | Actions`.
+- Where the resource has an `edit` action each row links to it, and the link's
+  content is the `<i class='bi bi-pencil-square'></i>` icon rather than the word.
+  It carries `aria-label='Edit'`, since an icon alone says nothing to a screen
+  reader.
 - The column is there either way, empty for a resource that only has an index.
-  A host that writes its own `_row` decides for itself: the gem's row is the only
-  one that adds it.
 - The record arrives under its own name, `contact:` for contacts, so a host
   partial declares `<%# locals: (contact:) -%>`. It is rendered once for the
   header row with that local set to nil, so never assume it is present outside

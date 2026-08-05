@@ -2,4 +2,3 @@
 <% resource_columns.each do |name| -%>
   <%= column header: reference_title(name, belongs_to_association(name)) do %><%= resource_cell record, name %><% end %>
 <% end -%>
-<%= column header: 'Actions' do %><%= edit_resource_link record %><% end %>

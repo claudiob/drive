@@ -6,6 +6,7 @@
         <tr>
           <% @recourse_headers = true %>
           <%= render 'row', resource_key => nil %>
+          <%= column header: 'Actions' %>
         </tr>
       </thead>
       <tbody>
@@ -13,6 +14,7 @@
         <% recourses.each do |recourse| %>
           <tr>
             <%= render 'row', resource_key => recourse %>
+            <%= column header: 'Actions' do %><%= edit_resource_link recourse %><% end %>
           </tr>
         <% end %>
       </tbody>
