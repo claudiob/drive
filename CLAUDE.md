@@ -364,8 +364,9 @@ above when they conflict.
   one.
 - `any?` and `empty?` are still right when nothing will be looped over.
 - Worth a test: assert the query count, so a later edit cannot quietly add one
-  back. `test_it_reads_the_records_with_a_single_query` does this by subscribing
-  to `sql.active_record`.
+  back. `test_it_costs_one_count_and_one_select` does this by subscribing to
+  `sql.active_record`, and it is one of the two tests exempt from "as few tests
+  as coverage needs".
 
 ### Trailing comma on a multiline hash
 
@@ -427,7 +428,16 @@ above when they conflict.
   same position: nothing measured runs, so it gets no test file. That took
   `TestPhonable` and `TestEmails` too.
 - This narrows the baseline's "every behavior change comes with a test": the
-  test comes with it only if it reaches a line nothing else does.
+  test comes with it only if it reaches a line nothing else does. The suite it
+  leaves is small on purpose — six tests for 146 lines.
+- Two kinds of assertion are exempt, because a covered line cannot stand in for
+  them. How many queries a page costs, and whether an encrypted column reaches
+  the page: both run exactly the same lines whether they hold or not, so
+  coverage stays green while the behavior breaks. The PII leak that prompted the
+  second exemption printed an address at 100%.
+- Nothing else is exempt. Markup, titles, breadcrumbs, icons, pagination links
+  and the order of the sidebar are all asserted by whichever test happens to
+  render the page, and no test is added to pin them down further.
 
 ### Files at most 100 lines
 
