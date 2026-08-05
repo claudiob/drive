@@ -5,10 +5,18 @@ module Recourse
       # Shown for a field whose shape has one canonical example.
       SAMPLE_PLACEHOLDERS = { 'phone' => '555-555-5555', 'email' => 'michael@example.com' }.freeze
 
+      # One token of a pattern and the `{n}` that may repeat it, so `\d{5}` reads
+      # as a single digit five times over rather than as five separate characters.
+      PATTERN_TOKENS = /(\\[dw]|\[[^\]]*\]|[^{])(?:\{(\d+),?\d*\})?/
+
+      # First character a bracket class offers, past the bracket and any negation.
+      CLASS_SAMPLE = /[^\[^]/
+
       # Browser-side constraints, every one of them read from the validators.
       def field_html(column, type = nil)
         pattern = column_pattern column
         html = { maxlength: column_maximum(column), minlength: column_minimum(column), pattern: }
+        html[:title] = "Please match the format #{pattern_example pattern}" if pattern
         html[:inputmode] = :numeric if numeric? column, pattern
         html[:required] = true if required? column
         html[:placeholder] = placeholder column, type
@@ -17,6 +25,22 @@ module Recourse
       end
 
     private
+
+      # An example of what the pattern accepts, so the browser can name the shape
+      # it wants instead of only saying that what was typed is wrong.
+      def pattern_example(pattern)
+        tokens = pattern.scan PATTERN_TOKENS
+
+        tokens.map { |token, count| pattern_sample(token) * (count || 1).to_i }.join
+      end
+
+      def pattern_sample(token)
+        return '0' if token == '\d'
+        return 'a' if token == '\w'
+        return token unless token.start_with? '['
+
+        token[CLASS_SAMPLE]
+      end
 
       def column_maximum(column)
         length_options(column).values_at(:maximum, :is).compact.first

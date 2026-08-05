@@ -156,6 +156,12 @@ before writing or editing any layout, view or partial.
   from a format validator with `\A` and `\z` stripped since an HTML pattern is
   anchored already, and `inputmode: 'numeric'` from a numericality validator or
   a digits-only pattern.
+- A field with a `pattern` also carries a `title` showing the shape it wants:
+  `\d{5}` gives `title='Please match the format 00000'`. Without one the browser
+  says only that the value does not match, which tells nobody what would. The
+  example is read off the pattern — `\d` becomes a digit, `\w` a letter, a bracket
+  class its first character, and `{n}` repeats — so the phone's
+  `[2-9]\d{2}[2-9]\d{6}` reads as `2002000000`.
 - Always pass `size: nil`. Rails mirrors `maxlength` into `size`, and a
   five-character box for a ZIP code undoes the width rule above.
 - Which input a `date`, `time` or `datetime` gets is the one thing no validator

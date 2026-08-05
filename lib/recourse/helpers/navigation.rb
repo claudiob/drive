@@ -4,7 +4,7 @@ module Recourse
     module Navigation
       # Trail to the current page as [title, path] pairs; a nil path is this page.
       def resource_breadcrumbs
-        return [[resources_name, nil]] unless controller.action_name == 'new'
+        return [[resources_name, nil]] unless controller.action_name.in? %w[new create]
 
         [[resources_name, url_for(action: :index)], ["New #{resource_name}", nil]]
       end

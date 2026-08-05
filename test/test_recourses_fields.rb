@@ -11,6 +11,18 @@ class TestRecoursesFields < Minitest::Test
                  session.response.body
   end
 
+  # The host's own `_fields` names both types, which beats the encrypted-column
+  # rule, and the phone carries the only bracket class of any pattern in the app.
+  def test_a_host_names_the_types_and_a_pattern_shows_an_example_of_itself
+    session = ActionDispatch::Integration::Session.new Rails.application
+    session.get '/contacts/new'
+    body = session.response.body
+
+    assert_includes body, 'title="Please match the format 2002000000"'
+    assert_match %r{placeholder="555-555-5555"[^>]*type="phone"}, body
+    assert_match %r{placeholder="michael@example\.com"[^>]*type="email"}, body
+  end
+
   # The plugin builds the hidden input Rails reads from `data-bs-name`, so there
   # is no `name=` on the toggle and no text field for the foreign key at all.
   def test_a_belongs_to_column_becomes_a_combobox_of_names
