@@ -3,13 +3,15 @@
   <table class='table caption-top table-hover align-middle sm:table-stacked'>
     <thead>
       <tr>
-        <%= render 'row', heading: true %>
+        <% @recourse_headers = true %>
+        <%= render 'row', resource_key => nil %>
       </tr>
     </thead>
     <tbody>
+      <% @recourse_headers = false %>
       <% recourses.each do |recourse| %>
         <tr>
-          <%= render 'row', recourse: recourse %>
+          <%= render 'row', resource_key => recourse %>
         </tr>
       <% end %>
     </tbody>

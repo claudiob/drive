@@ -304,6 +304,12 @@ above when they conflict.
 - Where two branches need different locals, write `if`/`else` rather than
   `render cond ? 'a' : 'b'` — a single call cannot pass the right locals to
   both.
+- The row partial is the deliberate exception, and it breaks the rule twice.
+  Its record arrives under a name computed at runtime (`contact:`, `state:`),
+  so the gem's own `_row` cannot declare strict locals and reads
+  `local_assigns[resource_key]`. And whether it is drawing the header row or a
+  body row travels in `@recourse_headers`, set by `_table` before each render,
+  which `column` reads. Both were asked for; neither is a pattern to copy.
 
 ### Fewest SQL queries to render a page
 

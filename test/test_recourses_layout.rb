@@ -42,7 +42,7 @@ class TestRecoursesLayout < Minitest::Test
     visit_index
 
     ['Name', 'Phone', 'Created at'].each do |heading|
-      assert_includes body, "<th scope=\"col\">#{heading}</th>"
+      assert_match %r{<th scope="col"[^>]*>#{heading}</th>}, body
     end
     ['Id', 'Updated at'].each { |heading| refute_includes body, heading }
   end

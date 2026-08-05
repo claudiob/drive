@@ -1,6 +1,12 @@
-<%# locals: (recourse: nil, heading: false) -%>
-<% %w[name phone created_at].each do |name| -%>
-  <%= column header: resource_column_title(name),
-             value: (resource_cell(recourse, name) unless heading),
-             heading: heading %>
-<% end -%>
+<%# locals: (contact:) -%>
+<%= column header: 'Name' do %>
+  <%= contact.name %>
+<% end %>
+
+<%= column header: 'Phone' do %>
+  <%= number_to_phone contact.phone %>
+<% end %>
+
+<%= column header: 'Created at', class: 'text-nowrap' do %>
+  <%= resource_cell contact, 'created_at' %>
+<% end %>

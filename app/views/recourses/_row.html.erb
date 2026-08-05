@@ -1,6 +1,4 @@
-<%# locals: (recourse: nil, heading: false) -%>
+<% record = local_assigns[resource_key] -%>
 <% resource_columns.each do |name| -%>
-  <%= column header: resource_column_title(name),
-             value: (resource_cell(recourse, name) unless heading),
-             heading: heading %>
+  <%= column header: resource_column_title(name) do %><%= resource_cell record, name %><% end %>
 <% end -%>

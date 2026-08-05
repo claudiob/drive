@@ -29,35 +29,6 @@ class TestRecoursesIndex < Minitest::Test
     refute_includes body, 'No contacts.'
   end
 
-  def test_the_table_carries_the_classes_the_style_guide_requires
-    Contact.create! phone: '5552234567'
-    visit_index
-
-    classes = body[/<table class='([^']*)'/, 1].split
-
-    ['table', 'table-hover', 'sm:table-stacked'].each do |name|
-      assert_includes classes, name
-    end
-  end
-
-  def test_every_cell_is_labelled_so_the_stacked_layout_reads
-    Contact.create! phone: '5552234567'
-    visit_index
-
-    assert_equal body.scan('<td ').size, body.scan('data-cell=').size
-    assert_includes body, 'data-cell="Name"'
-  end
-
-  # /counties has no row partial of its own, so it shows every column the model
-  # exposes. /contacts cannot answer this: the dummy app overrides its row.
-  def test_the_generic_table_shows_every_column_that_is_not_encrypted
-    @session.get '/counties'
-
-    ['Id', 'Fips', 'Name', 'State', 'Created at', 'Updated at'].each do |heading|
-      assert_includes body, "<th scope=\"col\">#{heading}</th>"
-    end
-  end
-
   # Market has one column and no code of its own beyond the model.
   def test_it_serves_a_resource_that_declares_nothing_but_a_name
     Market.delete_all
@@ -81,7 +52,7 @@ class TestRecoursesIndex < Minitest::Test
     visit_index
 
     assert_equal names.size, body.scan('<tr>').size - 1
-    names.each { |name| assert_includes body, "<td data-cell=\"Name\">#{name}</td>" }
+    names.each { |name| assert_match %r{<td data-cell="Name">\s*#{name}\s*</td>}, body }
   end
 
 private

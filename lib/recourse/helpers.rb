@@ -70,11 +70,16 @@ module Recourse
       value
     end
 
-    # One cell: a heading in the header row, a labelled value in every other.
-    def column(header:, value: nil, heading: false, **)
-      return tag.th(header, scope: :col, **) if heading
+    # One cell: a heading in the header row, the block's output in every other.
+    def column(header:, **, &)
+      return tag.th(header, scope: :col, **) if @recourse_headers
 
-      tag.td(value, 'data-cell': header, **)
+      tag.td(capture(&), 'data-cell': header, **)
+    end
+
+    # Local name a row partial receives its record under, e.g. :contact.
+    def resource_key
+      controller.controller_name.singularize.to_sym
     end
 
   private

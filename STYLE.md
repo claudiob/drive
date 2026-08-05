@@ -111,8 +111,20 @@ before writing or editing any layout, view or partial.
   table is better served by it.
 - Always add `.sm:table-stacked`, so rows become stacked blocks once the
   container gets narrow.
-- Cells live in a `_row` partial, rendered with `heading: true` for the header
-  row and once per record below it. A host app overrides one table by defining
+- Cells live in a `_row` partial, one `column` call each, with the content in a
+  block:
+
+      <%= column header: 'Phone' do %>
+        <%= number_to_phone contact.phone %>
+      <% end %>
+
+- `column` also takes anything `tag` does — `class:`, `style:` — and passes it
+  to both the `th` and the `td`.
+- The record arrives under its own name, `contact:` for contacts, so a host
+  partial declares `<%# locals: (contact:) -%>`. It is rendered once for the
+  header row with that local set to nil, so never assume it is present outside
+  a `column` block.
+- A host app overrides one table by defining
   `app/views/<resources>/_row.html.erb`, which wins through the controller's
   template prefixes — so keep everything cell-shaped in that partial and
   nothing else.
