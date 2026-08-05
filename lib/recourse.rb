@@ -28,16 +28,38 @@ module Recourse
     end
   end
 
-  # Index path of the first `recourses` that draws one, so a client needing a single
-  # entry point never has to name a path itself. Nil when no recourse has an index.
-  def self.entry_path
+  # Most tabs a native tab bar shows before iOS folds the rest into a "More" tab.
+  TAB_LIMIT = 5
+
+  # Recourses with an index, in the order routes.rb declares them.
+  def self.indexed
     # Rails 8 draws routes on first use, which is later than a boot-time caller. Not
     # `reload_routes_unless_loaded`: that is `initialized? && ...`, so during an
     # `after_initialize` it answers false and draws nothing.
     Rails.application.routes_reloader.execute_unless_loaded
-    name = declared.find { |resource| routed? resource, 'index' }
-    return unless name
+    declared.select { |resource| routed? resource, 'index' }
+  end
 
+  # Index path of the first `recourses` that draws one, so a client needing a single
+  # entry point never has to name a path itself. Nil when no recourse has an index.
+  def self.entry_path
+    name = indexed.first
+
+    index_path name if name
+  end
+
+  # A tab per recourse a native tab bar has room for, titled and iconed as the
+  # sidebar titles and icons the same resource.
+  def self.tabs
+    indexed.first(TAB_LIMIT).map do |name|
+      title = name.humanize
+
+      { title:, path: index_path(name), icon: NATIVE_ICONS.fetch(title, FALLBACK_NATIVE_ICON) }
+    end
+  end
+
+  # Path of a recourse's index page.
+  def self.index_path(name)
     Rails.application.routes.url_helpers.url_for controller: "/#{name}", action: :index,
                                                  only_path: true
   end

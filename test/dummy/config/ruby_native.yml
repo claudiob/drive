@@ -1,8 +1,10 @@
-# Read by the native app on launch, and rendered as ERB first — so the entry point
-# follows config/routes.rb rather than repeating it. There is no `tabs` list, which
-# hides the tab bar and launches straight at the first recourse that has an index.
+# Read by the native app on launch, and rendered as ERB first — so the tab bar and
+# the entry point follow config/routes.rb rather than repeating it. JSON is valid
+# YAML, which is how a computed list of tabs fits on one line.
 app:
   entry_path: <%= Recourse.entry_path %>
+
+tabs: <%= Recourse.tabs.to_json %>
 
 # The native app requires this block even though every key in it has a default.
 appearance:

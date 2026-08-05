@@ -18,4 +18,26 @@ module Recourse
 
   # Shown when a resource is not in the map, so a list of links stays aligned.
   FALLBACK_ICON = 'circle'
+
+  # The same titles again as SF Symbols, for a native tab bar. Deliberately plain
+  # symbols that have shipped for years: a name iOS does not know draws nothing.
+  NATIVE_ICONS = {
+    'Agents' => 'person.text.rectangle', 'Answers' => 'questionmark.circle',
+    'Apps' => 'macwindow', 'Assessments' => 'checklist', 'Bookings' => 'calendar',
+    'Brands' => 'building.2', 'Campaigns' => 'megaphone', 'Contacts' => 'person.2',
+    'Contract' => 'doc.text', 'Conversations' => 'bubble.left.and.bubble.right',
+    'Counties' => 'map', 'CRM' => 'puzzlepiece', 'Echoes' => 'waveform',
+    'Episodes' => 'play.rectangle', 'Evaluations' => 'speedometer', 'Franchises' => 'bag',
+    'Home' => 'house', 'Locations' => 'mappin.and.ellipse', 'Logout' => 'arrow.right.square',
+    'Markets' => 'mappin.circle', 'Offer questions' => 'gift',
+    'Optimizations' => 'slider.horizontal.3', 'Platforms' => 'puzzlepiece',
+    'Profile' => 'person.crop.circle', 'Prompts' => 'terminal', 'Providers' => 'briefcase',
+    'Satisfaction questions' => 'face.smiling', 'Searches' => 'magnifyingglass',
+    'Settings' => 'gearshape', 'Sources' => 'signpost.right', 'Specialties' => 'rosette',
+    'Specialty matches' => 'rosette', 'States' => 'globe', 'Verticals' => 'chart.bar',
+    'ZIPs' => 'mappin',
+  }.freeze
+
+  # Shown for a title the native map does not name, so a tab still has an icon.
+  FALLBACK_NATIVE_ICON = 'circle'
 end
