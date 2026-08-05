@@ -278,9 +278,11 @@ two is filed under the one a reader would look in first.
 - `AllCops: NewCops: enable`. Cops added by a new RuboCop release are active
   immediately rather than sitting pending; fix what they surface instead of
   pinning the version.
-- `Gemspec/RequireMFA` is one of those, so the gemspec sets
-  `metadata['rubygems_mfa_required']` and publishing needs MFA on the RubyGems
-  account.
+- Enabling every new cop is not the same as accepting every new cop. One can be
+  declined outright, in `.rubocop.yml` with the reason beside it.
+  `Gemspec/RequireMFA` is: whether a push needs MFA is settled on the RubyGems
+  account, not asserted in the gem's own metadata, so the gemspec carries no
+  `rubygems_mfa_required` and the cop is off rather than merely satisfied.
 - `AllCops: SuggestExtensions: false`. Every run was ending with a nine-line
   advert for `rubocop-minitest` and `rubocop-rake`; we are declining both, not
   postponing them, so the suggestion is off rather than merely ignored.

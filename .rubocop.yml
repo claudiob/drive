@@ -10,6 +10,11 @@ AllCops:
     # Rails rewrites this on every migration, so formatting it would not last.
     - test/dummy/db/schema.rb
 
+# Declining `rubygems_mfa_required`: whether a push needs MFA is settled on the
+# RubyGems account, not asserted in the gem's own metadata.
+Gemspec/RequireMFA:
+  Enabled: false
+
 Layout/AccessModifierIndentation:
   EnforcedStyle: outdent
 
