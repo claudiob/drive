@@ -226,18 +226,25 @@ above when they conflict.
   `time_zone`, belongs to a `county`, and optionally belongs to a `market`.
 - The class is `ZIP`, not `Zip`, because the acronym is registered. Register the
   plural too — `inflect.acronym 'ZIPs'` — or every heading reads `Zips`.
+- Registering the plural renames more than headings: Rails camelizes a migration
+  filename to find its class, so `create_zips.rb` must define `CreateZIPs`. It
+  only breaks on a migrate from zero, which is why a reset is the real test.
 - Creating a zips table always comes with a migration that backfills it: every
   ZIP, matched to the county it mostly belongs to and the main city in it.
-- `time_zone` holds whatever the source gives. Ours mixes Rails zone names with
-  IANA identifiers; both resolve through `ActiveSupport::TimeZone[]`, and a test
-  asserts every distinct value does.
+- `time_zone` holds a Rails zone name, never an IANA identifier. The source mixes
+  both, so the backfill normalizes on the way in, matching each identifier by its
+  offset and DST rules: Detroit and the Kentucky zones to Eastern, Indiana's
+  Eastern zones to `Indiana (East)`, Knox and Tell_City to Central, Boise to
+  Mountain, Anchorage and Nome to Alaska, Honolulu to Hawaii. A test asserts no
+  value survives that `ActiveSupport::TimeZone::MAPPING` does not name.
 
 ### Seed data lives in migrations, so schema.rb cannot load a database
 
-- `test/dummy/db/schema.rb` is gitignored, and that is load-bearing. Rails loads
-  it into an empty database and stamps every version at or below its own as
-  already migrated — which silently skips the backfills, leaving the tables
-  empty and the next foreign key failing.
+- `config.active_record.dump_schema_after_migration = false`, so no `schema.rb`
+  is ever written. Gitignoring it is not enough: it regenerates on every migrate
+  and then Rails loads it into the next empty database, stamping every version at
+  or below its own as already migrated — silently skipping the backfills and
+  leaving the tables empty for the next foreign key to trip over.
 - Build a database with `db:migrate` from zero. Never `db:schema:load`, and be
   wary of `db:prepare` for the same reason.
 - `db:drop` will not drop a database with open connections and reports success

@@ -13,6 +13,9 @@ module Dummy
     config.secret_key_base = 'dummy_secret_key_base'
     config.time_zone = 'Eastern Time (US & Canada)'
 
+    # No schema.rb: loading one stamps the backfills as done and skips the data.
+    config.active_record.dump_schema_after_migration = false
+
     # Action View logs a line per partial, which buries the request itself.
     config.action_view.logger = nil
 

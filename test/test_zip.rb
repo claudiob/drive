@@ -18,13 +18,14 @@ class TestZIP < Minitest::Test
     assert_equal 'Holtsville', ZIP.find_by(code: '00501').city
   end
 
-  # The source mixes Rails zone names with IANA identifiers; both must resolve,
-  # or Time.use_zone raises on whichever rows carry the other kind.
-  def test_every_time_zone_resolves
+  # The source mixed Rails zone names with IANA identifiers, and the backfill
+  # normalizes them, so a stray 'America/Detroit' would land here.
+  def test_every_time_zone_is_a_rails_zone_name
     zones = ZIP.distinct.pluck :time_zone
 
-    assert_operator zones.size, :>, 20
-    zones.each { |zone| assert ActiveSupport::TimeZone[zone], "#{zone} does not resolve" }
+    assert_equal 8, zones.size
+    assert_empty zones - ActiveSupport::TimeZone::MAPPING.keys
+    assert_empty zones.grep(%r{/})
   end
 
   def test_it_holds_no_leftovers_from_the_seed_files
