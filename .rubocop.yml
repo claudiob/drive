@@ -48,6 +48,9 @@ Style/StringLiterals:
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: single_quotes
 
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
 # Not `comma`: that style forbids the comma unless each entry is on its own line.
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma

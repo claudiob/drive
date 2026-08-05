@@ -4,7 +4,7 @@ class Job < ApplicationRecord
 
   # The statuses a job moves through. The job...
   STATUSES = [
-    :draft # ... has been written down and nothing more (default)
+    :draft, # ... has been written down and nothing more (default)
   ]
 
   belongs_to :location

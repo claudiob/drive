@@ -9,8 +9,10 @@ module Recourse
         label = options.fetch :label, reference_title(column, belongs_to_association(column))
 
         tag.div class: 'mb-3 lg:col-6' do
-          safe_join [@recourse_form.label(column, label, class: 'form-label'),
-                     resource_field(@recourse_form, column, type: options[:type])]
+          safe_join [
+            @recourse_form.label(column, label, class: 'form-label'),
+            resource_field(@recourse_form, column, type: options[:type]),
+          ]
         end
       end
 

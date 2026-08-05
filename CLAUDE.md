@@ -283,18 +283,31 @@ two is filed under the one a reader would look in first.
   The default and the null constraint together mean it is always an array, so
   nothing has to ask whether it is nil before treating it as a list.
 
-#### Trailing comma on a multiline hash
+#### Trailing comma on a multiline hash or array
 
-- A multiline hash ends its last entry with a comma, so adding an entry touches
-  one line instead of two:
+- A multiline hash or array ends its last entry with a comma, so adding an entry
+  touches one line instead of two:
 
       NAVIGATION_ICONS = {
         'States' => 'geo', 'ZIPs' => 'geo-alt-fill',
       }.freeze
 
-- Put the closing brace on its own line. With the brace trailing the last entry
-  the comma reads as `, }`, which is worse than either alternative.
-- Enforced by `Style/TrailingCommaInHashLiteral` with
+      STATUSES = [
+        :draft, # ... has been written down and nothing more (default)
+      ]
+
+- Put the closing brace or bracket on its own line. With it trailing the last entry
+  the comma reads as `, }`, which is worse than either alternative — and this is what
+  decides how to break a literal that only spans lines because it is long. Give it
+  the closing line rather than leaving `,]` at the end of the last entry:
+
+      safe_join [
+        @recourse_form.label(column, label, class: 'form-label'),
+        resource_field(@recourse_form, column, type: options[:type]),
+      ]
+
+- Enforced by `Style/TrailingCommaInHashLiteral` and
+  `Style/TrailingCommaInArrayLiteral`, both with
   `EnforcedStyleForMultiline: consistent_comma`. Not `comma` — that style
   *forbids* the comma unless every entry sits on its own line, and ours share
   lines.
