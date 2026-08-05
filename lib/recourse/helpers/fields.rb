@@ -23,6 +23,7 @@ module Recourse
         pattern = column_pattern column
         html = { maxlength: column_limit(column), pattern: }.compact
         html[:inputmode] = :numeric if numeric? column, pattern
+        html[:placeholder] = 'Optional' unless required? column
 
         html
       end
@@ -51,6 +52,15 @@ module Recourse
 
       def format_validator(column)
         resource_model.validators_on(column).find { |one| one.options[:with].is_a? Regexp }
+      end
+
+      # A belongs_to validates its association, not the column, so both are asked.
+      def required?(column)
+        presence_validated?(column) || presence_validated?(column.delete_suffix('_id'))
+      end
+
+      def presence_validated?(attribute)
+        resource_model.validators_on(attribute).any? ActiveModel::Validations::PresenceValidator
       end
 
       def numeric?(column, pattern)
