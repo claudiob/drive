@@ -21,6 +21,27 @@ module Recourse
     @declared << name.to_s unless @declared.include? name.to_s
   end
 
+  # True when config/routes.rb drew this action for this controller.
+  def self.routed?(controller_path, action)
+    Rails.application.routes.routes.any? do |route|
+      route.defaults[:controller] == controller_path && route.defaults[:action] == action
+    end
+  end
+
+  # Index path of the first `recourses` that draws one, so a client needing a single
+  # entry point never has to name a path itself. Nil when no recourse has an index.
+  def self.entry_path
+    # Rails 8 draws routes on first use, which is later than a boot-time caller. Not
+    # `reload_routes_unless_loaded`: that is `initialized? && ...`, so during an
+    # `after_initialize` it answers false and draws nothing.
+    Rails.application.routes_reloader.execute_unless_loaded
+    name = declared.find { |resource| routed? resource, 'index' }
+    return unless name
+
+    Rails.application.routes.url_helpers.url_for controller: "/#{name}", action: :index,
+                                                 only_path: true
+  end
+
   # Columns a user may set: the form offers these and `create` permits these.
   def self.editable_columns(model)
     model.column_names - %w[id created_at updated_at]

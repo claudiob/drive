@@ -1,7 +1,8 @@
-# Read by the native app on launch. Contacts is the whole app for now, so there is
-# no `tabs` list: omitting it hides the tab bar and launches straight at this path.
+# Read by the native app on launch, and rendered as ERB first — so the entry point
+# follows config/routes.rb rather than repeating it. There is no `tabs` list, which
+# hides the tab bar and launches straight at the first recourse that has an index.
 app:
-  entry_path: /contacts
+  entry_path: <%= Recourse.entry_path %>
 
 # The native app requires this block even though every key in it has a default.
 appearance:
