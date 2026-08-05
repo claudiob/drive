@@ -27,6 +27,13 @@ module Recourse
       url_for action: :new
     end
 
+    # Label for a link to a resource: its icon, then its title.
+    def resource_label(title)
+      icon = NAVIGATION_ICONS.fetch title, FALLBACK_ICON
+
+      safe_join [tag.i(class: "bi bi-#{icon}"), title], ' '
+    end
+
     # Sidebar entries as [title, path] pairs, in the order routes.rb declares them.
     def sidebar_resources
       Recourse.declared.filter_map do |name|

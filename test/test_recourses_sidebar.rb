@@ -29,6 +29,15 @@ class TestRecoursesSidebar < Minitest::Test
     refute_equal titles.sort, titles
   end
 
+  def test_every_link_is_preceded_by_an_icon
+    icons = { 'contacts' => 'person-rolodex', 'states' => 'geo', 'counties' => 'map',
+              'echoes' => 'soundwave', 'markets' => 'pin-map' }
+
+    icons.each do |resource, icon|
+      assert_includes body, %(href="/#{resource}"><i class="bi bi-#{icon}"></i>)
+    end
+  end
+
   def test_it_skips_a_recourse_that_has_no_index_action
     assert_includes Recourse.declared, 'placeholders'
     refute_includes links.flatten, '/placeholders'
@@ -41,6 +50,6 @@ private
   end
 
   def links
-    body.scan(/<a class="nav-link" href="([^"]+)">([^<]+)/)
+    body.scan(%r{<a class="nav-link" href="([^"]+)"><i[^>]*></i> ([^<]+)})
   end
 end

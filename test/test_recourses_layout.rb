@@ -13,6 +13,7 @@ class TestRecoursesLayout < Minitest::Test
 
     assert_includes body, 'bootstrap.min.css'
     assert_includes body, 'bootstrap.bundle.min.js'
+    assert_includes body, 'bootstrap-icons@1.13.1/font/bootstrap-icons.min.css'
     assert_includes body, 'family=Geist'
   end
 

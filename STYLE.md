@@ -40,6 +40,37 @@ before writing or editing any layout, view or partial.
   or the button would 404 or raise. Its classes are
   `btn theme-primary btn-sm btn-outline ms-3`.
 
+## Icons on resource links
+
+- A link to a resource is preceded by a Bootstrap Icon, using the `<i>` form:
+  `<i class='bi bi-person-rolodex'></i> Contacts`. The layout loads
+  `bootstrap-icons@1.13.1`.
+- Pick the icon by the displayed title, from this map. It is duplicated in
+  `lib/recourse/icons.rb`, which is what the code reads — change both together.
+- An unlisted title falls back to `circle`, so a column of links stays aligned.
+  Add a real entry rather than leaving the fallback in place.
+
+      'Agents' => 'robot', 'Answers' => 'question-circle', 'Apps' => 'window',
+      'Assessments' => 'clipboard-check', 'Bookings' => 'calendar-check',
+      'Brands' => 'buildings', 'Campaigns' => 'megaphone',
+      'Contacts' => 'person-rolodex', 'Contract' => 'file-earmark-check',
+      'Conversations' => 'chat-dots', 'Counties' => 'map', 'CRM' => 'plugin',
+      'Echoes' => 'soundwave', 'Episodes' => 'collection-play',
+      'Evaluations' => 'speedometer2', 'Franchises' => 'shop', 'Home' => 'house',
+      'Logout' => 'box-arrow-right', 'Markets' => 'pin-map',
+      'Offer questions' => 'gift', 'Optimizations' => 'sliders',
+      'Platforms' => 'plugin', 'Profile' => 'person-circle',
+      'Prompts' => 'terminal', 'Providers' => 'briefcase',
+      'Satisfaction questions' => 'emoji-smile', 'Searches' => 'search',
+      'Settings' => 'gear', 'Sources' => 'signpost', 'Specialties' => 'award',
+      'Specialty matches' => 'award', 'States' => 'geo',
+      'Verticals' => 'bar-chart', 'ZIPs' => 'geo-alt-fill'
+
+- `Home` maps to `house`: Bootstrap Icons has no `home`, so that entry would
+  have rendered an empty box.
+- Icons go on *links*. The breadcrumb's current-page item is not a link, so it
+  carries no icon.
+
 ## The sidebar
 
 - Below the navbar, an `<aside>` sits to the left of the content holding a

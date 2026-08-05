@@ -1,6 +1,7 @@
 require 'pagy'
 
 require_relative 'recourse/version'
+require_relative 'recourse/icons'
 require_relative 'recourse/controllers'
 require_relative 'recourse/helpers'
 require_relative 'recourse/engine'
