@@ -104,6 +104,20 @@ before writing or editing any layout, view or partial.
 - `min-height` rather than `height`, so short pages fill the window without a
   scrollbar and long ones still scroll.
 
+## Forms
+
+- The gem serves `new.html.erb`: it sets `:title` to `New <resource>` and
+  renders the `form` partial, passing the record explicitly under its own name.
+- The form is `form_with model:` plus one field per *editable* column — every
+  column except `id`, `created_at` and `updated_at`. Encrypted columns are
+  editable even though the table will not display them.
+- Each field is a `.form-label` and a `.form-control` inside `.mb-3`; the submit
+  is `btn btn-solid theme-primary`. In v6 the fill is a separate class from the
+  base: `.btn` sizes, `.btn-solid` / `.btn-outline` / `.btn-subtle` fill, and
+  `theme-*` colours.
+- Every field is a text field for now. A date or boolean column deserves better,
+  and that is the first thing to fix when one appears.
+
 ## Tables
 
 - A `<table>` defaults to the hoverable accent, not the striped one:

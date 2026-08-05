@@ -1,0 +1,11 @@
+<% record = local_assigns[resource_key] -%>
+<%= form_with model: record do |form| %>
+  <% editable_columns.each do |name| %>
+    <div class='mb-3'>
+      <%= form.label name, resource_column_title(name), class: 'form-label' %>
+      <%= form.text_field name, class: 'form-control' %>
+    </div>
+  <% end %>
+
+  <%= form.submit class: 'btn btn-solid theme-primary' %>
+<% end %>
