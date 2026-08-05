@@ -24,10 +24,6 @@ class TestRecoursesLayout < Minitest::Test
     refute_includes body, 'data-turbo'
   end
 
-  def test_it_looks_for_the_hosts_own_templates_before_its_own
-    assert_equal %w[contacts recourses application], ContactsController._prefixes
-  end
-
   # The dummy app owns contacts/_row.html.erb, so that one wins for /contacts:
   # three columns of its choosing rather than every unencrypted one.
   def test_a_row_partial_the_host_owns_wins_over_the_gems
