@@ -396,6 +396,11 @@ two is filed under the one a reader would look in first.
 - Anything under `db/migrate/` is exempt. A migration that backfills a table is
   as long as the data it carries, and splitting one to satisfy a line count
   would be worse than leaving it long.
+- So is anything under `vendor/`. Upstream's formatting is not ours to fix, and a
+  vendored font is not even text — `File.readlines` on a `.woff2` reports
+  thousands of lines that mean nothing.
+- The task reads `git ls-files`, so an untracked file is invisible to it. A green
+  run before `git add` proves nothing about what the commit will contain.
 
 #### Lines at most 100 characters
 

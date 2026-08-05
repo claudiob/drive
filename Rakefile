@@ -13,14 +13,16 @@ MAX_FILE_LINES = 100
 # Prose and markup are exempt: docs, the license, and views of any length.
 EXEMPT_EXTENSIONS = %w[.erb .html .md .txt].freeze
 
-# Migrations are exempt too: a backfill is as long as the data it carries.
-MIGRATIONS = 'db/migrate/'
+# Two directories are exempt: a backfill is as long as the data it carries, and
+# upstream's formatting is not ours to fix.
+EXEMPT_DIRECTORIES = %w[db/migrate/ vendor/].freeze
 
 desc "Fail if any code file is longer than #{MAX_FILE_LINES} lines"
 task :file_length do
   files = `git ls-files -z`.split "\x0"
   code = files.reject do |file|
-    EXEMPT_EXTENSIONS.include?(File.extname(file)) || file.include?(MIGRATIONS)
+    EXEMPT_EXTENSIONS.include?(File.extname(file)) ||
+      EXEMPT_DIRECTORIES.any? { |directory| file.include? directory }
   end
   too_long = code.select { |file| File.readlines(file).size > MAX_FILE_LINES }
 

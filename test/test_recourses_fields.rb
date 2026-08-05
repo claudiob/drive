@@ -27,11 +27,11 @@ class TestRecoursesFields < Minitest::Test
   # is no `name=` on the toggle and no text field for the foreign key at all.
   def test_a_belongs_to_column_becomes_a_combobox_of_names
     session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/counties/new'
+    session.get '/markets/new'
     body = session.response.body
 
-    assert_includes body, "data-bs-toggle='combobox' data-bs-name='county[state_id]'"
+    assert_includes body, "data-bs-toggle='combobox' data-bs-name='market[state_id]'"
     assert_includes body, "data-bs-value='#{State.find_by!(code: 'AL').id}'>Alabama</button>"
-    refute_includes body, 'name="county[state_id]"'
+    refute_includes body, 'name="market[state_id]"'
   end
 end

@@ -20,17 +20,17 @@ class TestRecoursesCreate < Minitest::Test
   # A missing state fails `belongs_to`, which reports on :state, not :state_id, so
   # the message reaches the combobox only because both names are asked.
   def test_it_redraws_the_form_with_the_errors_beside_the_fields
-    @session.post '/counties', params: { county: { fips: '9', name: '' } }
+    @session.post '/markets', params: { market: { name: '', email: '' } }
 
     assert_equal 422, @session.response.status
     assert_includes body, "<div class='toast theme-danger' role='alert'"
-    assert_includes body, "<div class='toast-body'>County could not be created.</div>"
+    assert_includes body, "<div class='toast-body'>Market could not be created.</div>"
     assert_includes body, "class='form-control is-invalid combobox-toggle'"
-    assert_includes body, "<small class='invalid-feedback' id='county_state_id_error'>Must exist"
+    assert_includes body, "<small class='invalid-feedback' id='market_state_id_error'>Must exist"
     assert_includes body,
-                    '<input aria-describedby="county_name_error" class="is-invalid form-control"'
+                    '<input aria-describedby="market_name_error" class="is-invalid form-control"'
     assert_includes body,
-                    '<small class="invalid-feedback" id="county_name_error">Can&#39;t be blank'
+                    '<small class="invalid-feedback" id="market_name_error">Can&#39;t be blank'
   end
 
 private
