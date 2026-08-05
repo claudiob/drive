@@ -76,6 +76,11 @@
     <%# that has ruby_native, and most hosts do not. %>
     <%= native_tabs_tag if respond_to? :native_tabs_tag %>
 
+    <%# Titles the native navigation bar after the page, in plain text with no icon. %>
+    <%# It reads `content_for :title` here rather than in the index template so a %>
+    <%# host that writes its own index still gets a titled bar. %>
+    <%= native_navbar_tag content_for(:title) if in_app && controller.action_name == 'index' %>
+
     <%= render 'flash' %>
 
     <script type='module' src='https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.23/dist/turbo.es2017-esm.js'></script>
