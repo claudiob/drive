@@ -21,6 +21,16 @@ class TestRecourses < Minitest::Test
     assert_includes @session.response.body, '<title>States</title>'
   end
 
+  # The dummy app's counties/new.html.erb reads @county, so rendering it at all
+  # proves the action set that name rather than a generic one.
+  def test_the_new_action_builds_a_blank_record_under_the_rails_name
+    @session.get '/counties/new'
+
+    assert_equal 200, @session.response.status
+    assert_includes @session.response.body, "data-record='County'"
+    assert_includes @session.response.body, "data-persisted='false'"
+  end
+
   def test_it_defines_the_controller_the_host_app_lacks
     assert_operator ContactsController, :<, RecoursesController
   end

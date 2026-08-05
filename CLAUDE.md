@@ -295,6 +295,11 @@ above when they conflict.
   - `controller_name.classify.constantize` turns a route name into a model, in
     the controller and in the helpers. Same reason: the mapping exists only at
     runtime.
+  - `RecoursesController#new` uses `instance_variable_set "@#{singular}"`, so a
+    host's `new.html.erb` can read `@contact` the way it would in any Rails app.
+    A dynamically named instance variable cannot be set any other way. Flagged
+    for review rather than assumed: the alternative is a generic `@resource`,
+    which would break `form_with model: @contact`.
 - `test/dummy`'s states migration builds a throwaway `Class.new
   ActiveRecord::Base` to insert rows without coupling to the `State` model.
   That one is avoidable, but the migration has already run, and migrations are

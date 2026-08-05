@@ -9,6 +9,11 @@ class RecoursesController < ApplicationController
     @pagy, @resources = pagy resource_class.all
   end
 
+  # Builds a blank record under the name Rails would use: @contact for contacts.
+  def new
+    instance_variable_set "@#{controller_name.singularize}", resource_class.new
+  end
+
 private
 
   def resource_class
