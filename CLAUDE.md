@@ -284,26 +284,11 @@ above when they conflict.
 
 - Never call `send` or `public_send`. Reach the data directly instead:
   `resource.attributes[column]`, not `resource.public_send column`.
-- No `define_method`, `method_missing`, `instance_variable_get` / `_set`, or
-  `eval` of any kind.
-- Two named exceptions, both of which *are* the gem rather than shortcuts inside
-  it. Do not cite them to justify a third:
-  - `Recourse::Controllers.define_missing` uses `Object.const_defined?` and
-    `Object.const_set class_name, Class.new(RecoursesController)`. Supplying a
-    controller the host never wrote is the whole point of `recourses`, and a
-    class whose name is only known at runtime cannot be defined any other way.
-  - `controller_name.classify.constantize` turns a route name into a model, in
-    the controller and in the helpers. Same reason: the mapping exists only at
-    runtime.
-  - `RecoursesController#new` uses `instance_variable_set "@#{singular}"`, so a
-    host's `new.html.erb` can read `@contact` the way it would in any Rails app.
-    A dynamically named instance variable cannot be set any other way. Flagged
-    for review rather than assumed: the alternative is a generic `@resource`,
-    which would break `form_with model: @contact`.
-- `test/dummy`'s states migration builds a throwaway `Class.new
-  ActiveRecord::Base` to insert rows without coupling to the `State` model.
-  That one is avoidable, but the migration has already run, and migrations are
-  never edited after shipping.
+- No `define_method`, `method_missing`, `instance_variable_get` / `_set`,
+  `const_set`, `constantize`, or `eval` of any kind.
+- The single exception is an explicit instruction to use it. Never reach for
+  metaprogramming on your own initiative, and never treat the places that
+  already use it as permission to add another — ask instead.
 
 ### Pass locals to partials explicitly
 
