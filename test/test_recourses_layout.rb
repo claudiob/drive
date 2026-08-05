@@ -17,6 +17,16 @@ class TestRecoursesLayout < Minitest::Test
     assert_includes body, 'family=Geist'
   end
 
+  # The sidebar's border only reaches the bottom if all three grow, so these
+  # classes are structure rather than decoration.
+  def test_the_content_row_fills_the_viewport_below_the_navbar
+    visit_index
+
+    assert_match %r{<body class='[^']*\bmin-vh-100\b}, body
+    assert_match %r{<div class='container-fluid[^']*\bflex-grow-1\b}, body
+    assert_match %r{<div class='row[^']*\bflex-grow-1\b}, body
+  end
+
   def test_it_loads_turbo_and_opts_no_link_out_of_prefetching
     Contact.create! phone: '5552234567'
     visit_index

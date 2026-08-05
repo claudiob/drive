@@ -26,7 +26,7 @@
     </style>
   </head>
 
-  <body>
+  <body class='d-flex flex-column min-vh-100'>
     <nav class='navbar border-bottom px-3 mx-2'>
       <div class='container-fluid px-3 justify-content-start'>
         <%= render 'breadcrumb' %>
@@ -34,8 +34,8 @@
       </div>
     </nav>
 
-    <div class='container-fluid'>
-      <div class='row'>
+    <div class='container-fluid flex-grow-1 d-flex'>
+      <div class='row flex-grow-1'>
         <aside class='col-auto border-end py-3 px-3 mx-0'>
           <%= render 'sidebar' %>
         </aside>

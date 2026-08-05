@@ -86,6 +86,13 @@ before writing or editing any layout, view or partial.
   only: :new` draws no index, so it gets no link rather than a broken one.
 - Layout is `.row` with `aside.col-auto` and `main.col`, inside the page's
   `.container-fluid`.
+- The aside's border runs to the bottom of the window. That takes a chain of
+  three: `body.d-flex.flex-column.min-vh-100`, then
+  `.container-fluid.flex-grow-1.d-flex`, then `.row.flex-grow-1`. The aside
+  stretches because `.row` is a flex container and Bootstrap leaves
+  `align-items` unset, so items default to `stretch`.
+- `min-height` rather than `height`, so short pages fill the window without a
+  scrollbar and long ones still scroll.
 
 ## Tables
 
