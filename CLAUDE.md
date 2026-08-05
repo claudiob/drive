@@ -402,7 +402,9 @@ above when they conflict.
 
 - `simplecov` starts at the very top of `test/test_helper.rb`, before anything
   else is required, with `minimum_coverage 100`. Below that the suite fails.
-- `/test/` is filtered out: the dummy app is a fixture, not shipped code.
+- `skip '/test/'` leaves the dummy app out: it is a fixture, not shipped code.
+  Never `add_filter` — SimpleCov deprecated it in favour of `skip`, same
+  arguments and same behaviour, and it warns on every run until changed.
 - `lib/recourse/version.rb` is not measured, and that is expected rather than a
   gap. The Gemfile's `gemspec` directive loads it during bundler setup, before
   SimpleCov can start. Do not add `track_files` to pull it in — it would report

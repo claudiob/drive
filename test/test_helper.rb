@@ -2,7 +2,7 @@ require 'simplecov'
 
 # Started before anything else is required, or the gem's own files load untracked.
 SimpleCov.start do
-  add_filter '/test/'
+  skip '/test/'
   minimum_coverage 100
 end
 
