@@ -320,6 +320,29 @@ two is filed under the one a reader would look in first.
 - Corollary for the database: a constraint the model does not also state is a
   constraint the browser cannot show. Add the validator too.
 
+#### Match Bootstrap with field_error_proc
+
+- Wherever Bootstrap is the CSS framework, set
+  `config.action_view.field_error_proc`. Rails' default wraps a rejected field in
+  `<div class='field_with_errors'>`, which Bootstrap styles not at all: no red
+  border, and the message nowhere on the page.
+- The proc adds `is-invalid` to the control and follows it with a
+  `<small class='invalid-feedback'>`, which is the pair Bootstrap needs — its
+  `.is-invalid ~ .invalid-feedback` reveals one only next to the other.
+- Guard on the control's class, not on the tag's type. A label carries
+  `form-label` and falls straight through, and so does anything else without a
+  `form-control`. Guarding on `instance.is_a? ActionView::Helpers::Tags::Label`
+  instead leaves `html_tag.index 'form-control'` returning nil for every other
+  kind of tag, and `insert nil` raises.
+- The proc is `instance_exec`'d on the view, so `tag` and `safe_join` are in
+  scope — no need to write markup as a string.
+- Which is just as well, because `insert` on a SafeBuffer escapes what it is
+  given: an attribute spliced in by hand arrives as `&#39;`. Build it with
+  `tag.attributes` and join it with `safe_join`.
+- A rule for apps we write. The gem never sets a host's Action View config, the
+  same line drawn for the logger and the time zone — so a control the gem draws
+  outside a form builder, like the combobox, carries this markup itself.
+
 #### Seed data lives in migrations, so schema.rb cannot load a database
 
 - `config.active_record.dump_schema_after_migration = false`, so no `schema.rb`

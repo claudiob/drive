@@ -26,8 +26,11 @@ class TestRecoursesCreate < Minitest::Test
     assert_includes body, "<div class='toast theme-danger' role='alert'"
     assert_includes body, "<div class='toast-body'>County could not be created.</div>"
     assert_includes body, "class='form-control is-invalid combobox-toggle'"
-    assert_includes body, '<div class="invalid-feedback">Must exist</div>'
-    assert_includes body, '<div class="invalid-feedback">Can&#39;t be blank</div>'
+    assert_includes body, "<small class='invalid-feedback' id='county_state_id_error'>Must exist"
+    assert_includes body,
+                    '<input aria-describedby="county_name_error" class="is-invalid form-control"'
+    assert_includes body,
+                    '<small class="invalid-feedback" id="county_name_error">Can&#39;t be blank'
   end
 
 private

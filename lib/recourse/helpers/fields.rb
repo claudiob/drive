@@ -10,8 +10,7 @@ module Recourse
 
         tag.div class: 'mb-3 lg:col-6' do
           safe_join [@recourse_form.label(column, label, class: 'form-label'),
-                     resource_field(@recourse_form, column, type: options[:type]),
-                     invalid_feedback(column)].compact
+                     resource_field(@recourse_form, column, type: options[:type])]
         end
       end
 
@@ -21,7 +20,7 @@ module Recourse
         return combobox form, column, association if association
 
         # Rails mirrors `maxlength` into `size`, which would shrink the box to it.
-        options = { class: control_class(column), size: nil }.merge field_html(column, type)
+        options = { class: 'form-control', size: nil }.merge field_html(column, type)
 
         return form.text_field column, **options, type: type if type
         return form.password_field column, **options if encrypted_column? column
@@ -43,11 +42,14 @@ module Recourse
       end
 
       # A foreign key is chosen from a list, so it gets a combobox of names. The
-      # query fetches the two columns the menu shows and nothing else.
+      # query fetches the two columns the menu shows and nothing else. Errors are
+      # its own work: `field_error_proc` only ever sees a form builder's own tags.
       def combobox(form, column, association)
+        messages = errors_on column
         render 'recourses/combobox', name: form.field_name(column),
                                      id: form.field_id(column),
-                                     control: control_class(column),
+                                     invalid: messages.any?,
+                                     feedback: messages.to_sentence.upcase_first.presence,
                                      placeholder: combobox_placeholder(column, association),
                                      required: required?(column),
                                      recourses: association.klass.select(:id, :name).order(:name)
@@ -60,18 +62,6 @@ module Recourse
 
       def combobox_placeholder(column, association)
         placeholder(column, nil) || "Select a #{association.klass.model_name.human}…"
-      end
-
-      def control_class(column)
-        errors_on(column).any? ? 'form-control is-invalid' : 'form-control'
-      end
-
-      # Bootstrap only reveals this when it follows an `.is-invalid` sibling.
-      def invalid_feedback(column)
-        messages = errors_on column
-        return if messages.empty?
-
-        tag.div messages.to_sentence.upcase_first, class: 'invalid-feedback'
       end
 
       # A belongs_to reports on the association, so `state_id` asks about `state`.

@@ -19,6 +19,21 @@ module Dummy
     # Action View logs a line per partial, which buries the request itself.
     config.action_view.logger = nil
 
+    # Bootstrap wants `is-invalid` on the control and the message beside it, which
+    # Rails' default `field_with_errors` wrapper gives neither. Labels pass through.
+    config.action_view.field_error_proc = proc do |html_tag, instance|
+      next html_tag unless html_tag.include? 'form-control'
+
+      described = "#{html_tag[/id="([^"]*)"/, 1]}_error"
+      # A SafeBuffer escapes whatever is inserted, so the attribute is built safe.
+      aria = safe_join [' ', tag.attributes('aria-describedby': described)]
+      html_tag.insert html_tag.index('form-control'), 'is-invalid '
+      html_tag.insert html_tag.index(' '), aria
+      messages = instance.error_message.to_sentence.upcase_first
+
+      safe_join [html_tag, tag.small(messages, class: 'invalid-feedback', id: described)]
+    end
+
     # Throwaway keys, so a model can encrypt an attribute and prove it is hidden.
     config.active_record.encryption.primary_key = 'dummy_primary_key_for_the_dummy_app'
     config.active_record.encryption.deterministic_key = 'dummy_deterministic_key_for_dummy'

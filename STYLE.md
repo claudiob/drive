@@ -242,11 +242,17 @@ before writing or editing any layout, view or partial.
 - A rejected `create` redraws the same page with `422`, never a redirect, so the
   fields keep what was typed and the errors sit beside them.
 - The control that failed gains `is-invalid`, and the message follows it as
-  `<div class='invalid-feedback'>`. Both are needed: Bootstrap reveals the
-  feedback with `.is-invalid ~ .invalid-feedback`, so a feedback div on its own
-  stays hidden and an `is-invalid` on its own only reddens the border.
+  `<small class='invalid-feedback'>`. Both are needed: Bootstrap reveals the
+  feedback with `.is-invalid ~ .invalid-feedback`, so a feedback element on its
+  own stays hidden and an `is-invalid` on its own only reddens the border.
 - Because that selector is a *sibling* one, the feedback goes after the whole
   control — for a combobox, after the `.menu`, not inside the toggle.
+- Nothing writes that markup by hand. `config.action_view.field_error_proc` does
+  it for every field a form builder draws — see CLAUDE.md, "Match Bootstrap with
+  field_error_proc".
+- The combobox is the exception, because it is a partial rather than a form
+  builder tag, so `field_error_proc` never sees it. It adds its own `is-invalid`
+  and its own `.invalid-feedback`.
 - The message is the bare reason, sentence-cased: `Must exist`, `Can't be blank`.
   The label above it already names the attribute, so a full message would repeat
   it.
