@@ -1,0 +1,91 @@
+/* Grouped inset cards: the shape iOS gives Settings, the Contacts lists screen and
+   any short list of rows. */
+
+.group {
+  margin-block-end: 32px;
+}
+
+.group__header {
+  margin: 0 0 7px;
+  padding-inline: calc(var(--gutter) * 2);
+  color: var(--label-2);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.card {
+  margin-inline: var(--gutter);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--leading) 1fr auto auto;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: var(--gutter);
+  color: var(--label);
+}
+
+.row:active {
+  background: var(--fill);
+}
+
+.card > .row:first-child { border-radius: 10px 10px 0 0; }
+.card > .row:last-child { border-radius: 0 0 10px 10px; }
+
+/* iOS insets a row separator past the leading slot, so it starts under the text
+   rather than under the icon. A pseudo-element, because a border would not inset. */
+.row + .row::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: calc(var(--gutter) + var(--leading)) 0;
+  block-size: .5px;
+  background: var(--separator);
+}
+
+/* The leading slot. An icon, an avatar or an unread dot all centre in the same box. */
+.row__leading {
+  display: grid;
+  place-items: center;
+  inline-size: var(--leading);
+  justify-items: start;
+}
+
+.row__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 29px;
+  block-size: 29px;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 17px;
+}
+
+.row__dot {
+  inline-size: 10px;
+  block-size: 10px;
+  border-radius: 50%;
+  background: var(--tint);
+}
+
+.row__title {
+  padding-block: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row__detail {
+  padding-inline-start: 8px;
+  color: var(--label-2);
+}
+
+.row__chevron {
+  padding-inline-start: 6px;
+  color: var(--label-3);
+  font-size: 14px;
+}

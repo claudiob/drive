@@ -1,0 +1,22 @@
+<% content_for :title, 'Jobs' %>
+
+<h1 class='title'>Jobs</h1>
+
+<% if @resources.blank? %>
+  <p class='empty'>No jobs yet.</p>
+<% else %>
+  <div class='group'>
+    <div class='card'>
+      <% @resources.each do |job| %>
+        <%= link_to job_path(job), class: 'row' do %>
+          <span class='row__leading'>
+            <span class='row__icon' style='background: #ff9500'>&#9874;</span>
+          </span>
+          <span class='row__title'><%= job.title %></span>
+          <span class='row__detail'><%= job.location.city %></span>
+          <span class='row__chevron'>&rsaquo;</span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

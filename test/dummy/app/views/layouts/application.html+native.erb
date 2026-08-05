@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <%# Read by Hotwire Native for the navigation bar's title, so every screen sets it. %>
+    <title><%= content_for(:title) || 'Drive' %></title>
+    <%# viewport-fit=cover is load-bearing: without it every env(safe-area-inset-*)
+        evaluates to zero and nothing clears the tab bar or the home indicator. %>
+    <meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover'>
+    <meta name='color-scheme' content='light dark'>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# No Bootstrap and no webfont here. This shell follows Apple's HIG, not the
+        admin console's, and the system font is the one the platform draws with. %>
+    <link rel='stylesheet' href='/native/base.css'>
+    <link rel='stylesheet' href='/native/lists.css'>
+  </head>
+
+  <body>
+    <main class='screen'><%= yield %></main>
+
+    <script type='module' src='https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.23/dist/turbo.es2017-esm.js'></script>
+  </body>
+</html>

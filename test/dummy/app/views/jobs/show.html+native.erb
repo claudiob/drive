@@ -1,0 +1,21 @@
+<% content_for :title, @job.title %>
+
+<h1 class='title'><%= @job.title %></h1>
+
+<div class='group'>
+  <div class='card'>
+    <div class='row'>
+      <span class='row__leading'></span>
+      <span class='row__title'>Status</span>
+      <span class='row__detail'><%= @job.status.humanize %></span>
+      <span></span>
+    </div>
+
+    <div class='row'>
+      <span class='row__leading'></span>
+      <span class='row__title'>Location</span>
+      <span class='row__detail'><%= @job.location.city %></span>
+      <span></span>
+    </div>
+  </div>
+</div>
