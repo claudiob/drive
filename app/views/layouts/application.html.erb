@@ -96,8 +96,14 @@
     <% if native_form %>
       <%= native_form_tag %>
       <%= native_navbar_tag content_for(:title) do |navbar| %>
+        <%= navbar.button 'Cancel', position: :leading, click: '#recourse-cancel' %>
         <%= navbar.submit_button %>
       <% end %>
+
+      <%# What Cancel clicks. Closing the sheet is a native action rather than a URL, %>
+      <%# and this helper is what posts it, so the bar's button borrows this one the %>
+      <%# same way Save borrows the form's. Hidden, but `.click()` still reaches it. %>
+      <%= native_back_button_tag 'Cancel', id: 'recourse-cancel', class: 'native-hidden' %>
     <% end %>
 
     <%# The "Add ..." link sits in the navbar, which a native page does not render, so %>
