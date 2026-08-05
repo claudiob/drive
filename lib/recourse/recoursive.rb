@@ -5,6 +5,12 @@ module Recourse
   module Recoursive
     # Column a combobox shows for a record, and selects alongside its id.
     def recourse_label = :name
+
+    # True when the label has a length, so it is short enough to be typed and a
+    # form can ask for the value instead of listing every record to pick from.
+    def recourse_typed_label?
+      validators_on(recourse_label).any? ActiveModel::Validations::LengthValidator
+    end
   end
 end
 

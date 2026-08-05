@@ -14,16 +14,18 @@ module Recourse
         controller: 'phone', action: 'keydown->phone#down input->phone#input',
       }.freeze
 
-      # Browser-side constraints, every one of them read from the validators.
-      def field_html(column, type = nil)
+      # Browser-side constraints, every one read from the validators of `model` —
+      # which is the page's model unless a field asks about another one's attribute.
+      def field_html(column, type = nil, model = resource_model)
         key = (type || column).to_s
-        pattern = DISPLAY_PATTERNS[key] || column_pattern(column)
+        pattern = DISPLAY_PATTERNS[key] || column_pattern(model, column)
 
         {
-          maxlength: column_maximum(column), minlength: column_minimum(column), pattern:,
-          title: title(key, pattern), placeholder: placeholder(column, type),
-          inputmode: (:numeric if numeric? column, pattern),
-          required: (true if required? column),
+          maxlength: length_option(model, column, :maximum),
+          minlength: length_option(model, column, :minimum), pattern:,
+          title: title(key, pattern), placeholder: placeholder(model, column, type),
+          inputmode: (:numeric if numeric? model, column, pattern),
+          required: (true if required? model, column),
           data: (PHONE_CONTROLLER if key == 'phone'),
         }.compact
       end
@@ -38,21 +40,18 @@ module Recourse
         "Please match the format #{SAMPLE_PLACEHOLDERS[key] || pattern_example(pattern)}"
       end
 
-      def column_maximum(column)
-        length_options(column).values_at(:maximum, :is).compact.first
+      def length_option(model, column, bound)
+        length_options(model, column).values_at(bound, :is).compact.first
       end
 
-      def column_minimum(column)
-        length_options(column).values_at(:minimum, :is).compact.first
-      end
-
-      def length_options(column)
-        validator(column, ActiveModel::Validations::LengthValidator)&.options || {}
+      def length_options(model, column)
+        validator(model, column, ActiveModel::Validations::LengthValidator)&.options || {}
       end
 
       # An HTML pattern is anchored already, so \A and \z come off the Ruby one.
-      def column_pattern(column)
-        regexp = validator(column, ActiveModel::Validations::FormatValidator)&.options&.dig :with
+      def column_pattern(model, column)
+        shape = validator model, column, ActiveModel::Validations::FormatValidator
+        regexp = shape&.options&.dig :with
         return unless regexp
 
         regexp.source.delete_prefix('\A').delete_suffix '\z'
@@ -60,25 +59,26 @@ module Recourse
 
       # An explicit type states what the field is, so it picks the sample; without
       # one a required field shows the shape it expects and an optional one says so.
-      def placeholder(column, type)
+      def placeholder(model, column, type)
         sample = SAMPLE_PLACEHOLDERS[(type || column).to_s]
-        return sample if sample && (type || required?(column))
+        return sample if sample && (type || required?(model, column))
 
-        'Optional' unless required? column
+        'Optional' unless required? model, column
       end
 
       # A belongs_to validates its association, not the column, so both are asked.
-      def required?(column)
-        presence_validated?(column) || presence_validated?(column.delete_suffix('_id'))
+      def required?(model, column)
+        presence_validated?(model, column) ||
+          presence_validated?(model, column.delete_suffix('_id'))
       end
 
-      def presence_validated?(attribute)
-        validator(attribute, ActiveModel::Validations::PresenceValidator).present?
+      def presence_validated?(model, attribute)
+        validator(model, attribute, ActiveModel::Validations::PresenceValidator).present?
       end
 
-      def numeric?(column, pattern)
+      def numeric?(model, column, pattern)
         digits_only?(pattern) ||
-          validator(column, ActiveModel::Validations::NumericalityValidator).present?
+          validator(model, column, ActiveModel::Validations::NumericalityValidator).present?
       end
 
       # `\d` carries a letter, so it has to go before looking for real ones.
@@ -86,8 +86,8 @@ module Recourse
         pattern.present? && !pattern.gsub('\d', '').match?(/[A-Za-z]/)
       end
 
-      def validator(attribute, kind)
-        resource_model.validators_on(attribute).find { |one| one.is_a? kind }
+      def validator(model, attribute, kind)
+        model.validators_on(attribute).find { |one| one.is_a? kind }
       end
     end
   end

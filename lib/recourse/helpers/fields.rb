@@ -1,12 +1,12 @@
 module Recourse
   module Helpers
-    # Chooses the form field a column deserves, labels it and reports its errors.
+    # Chooses the form field a column deserves, and labels it.
     module Fields
       # One labelled field in the form's grid. `label:` overrides the heading and
       # `type:` overrides the input the column would otherwise have chosen.
       def field(name, **options)
         column = name.to_s
-        label = options.fetch :label, resource_column_title(column)
+        label = options.fetch :label, reference_title(column, belongs_to_association(column))
 
         tag.div class: 'mb-3 lg:col-6' do
           safe_join [@recourse_form.label(column, label, class: 'form-label'),
@@ -17,7 +17,7 @@ module Recourse
       # A field typed by what the column holds, not merely a text box.
       def resource_field(form, column, type: nil)
         association = belongs_to_association column
-        return combobox form, column, association if association
+        return reference_field form, column, association if association
 
         # Rails mirrors `maxlength` into `size`, which would shrink the box to it.
         options = { class: 'form-control', size: nil }.merge field_html(column, type)
@@ -39,40 +39,6 @@ module Recourse
         when :datetime then form.datetime_local_field column, **
         else form.text_field column, **
         end
-      end
-
-      # A foreign key is chosen from a list, so it gets a combobox of names. The
-      # query fetches the two columns the menu shows and nothing else. Errors are
-      # its own work: `field_error_proc` only ever sees a form builder's own tags.
-      def combobox(form, column, association)
-        messages = errors_on column
-        label = association.klass.recourse_label
-        render 'recourses/combobox', name: form.field_name(column),
-                                     id: form.field_id(column),
-                                     invalid: messages.any?,
-                                     feedback: messages.to_sentence.upcase_first.presence,
-                                     label: label.to_s,
-                                     placeholder: combobox_placeholder(column, association),
-                                     required: required?(column),
-                                     recourses: association.klass.select(:id, label).order(label)
-      end
-
-      def belongs_to_association(column)
-        resource_model.reflect_on_all_associations(:belongs_to)
-                      .find { |one| one.foreign_key.to_s == column }
-      end
-
-      def combobox_placeholder(column, association)
-        placeholder(column, nil) || "Select a #{association.klass.model_name.human}…"
-      end
-
-      # A belongs_to reports on the association, so `state_id` asks about `state`.
-      def errors_on(column)
-        attribute = column.delete_suffix '_id'
-        messages = resource_record.errors[column]
-        return messages if attribute == column
-
-        messages + resource_record.errors[attribute]
       end
 
       def encrypted_column?(column)

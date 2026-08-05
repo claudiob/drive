@@ -33,6 +33,22 @@ class TestRecoursesCreate < Minitest::Test
                     '<small class="invalid-feedback" id="market_name_error">Can&#39;t be blank'
   end
 
+  # A ZIP is typed rather than picked, because its code has a length, so `create`
+  # looks the record up by that code and reports one that matches nothing.
+  def test_it_resolves_a_typed_reference_and_rejects_one_that_matches_nothing
+    Location.delete_all
+    code = ZIP.first!.code
+    @session.post '/locations', params: { location: { zip_id: code } }
+
+    assert_equal code, Location.sole.zip.code
+
+    @session.post '/locations', params: { location: { zip_id: '00000' } }
+
+    assert_includes body, '>ZIP code</label>'
+    assert_includes body, 'maxlength="5" minlength="5" pattern="\d{5}"'
+    assert_match %r{value="00000".*id="location_zip_id_error">Must exist}m, body
+  end
+
 private
 
   def body

@@ -181,9 +181,22 @@ before writing or editing any layout, view or partial.
 
 ## Comboboxes for foreign keys
 
-- A form never asks for a foreign key in a text field. `state_id` is a Bootstrap
-  combobox listing each `State` by `name`, in the "Search menu items" form, so a
-  list of fifty stays usable.
+- A form asks for a foreign key one of two ways, and which one is the label's
+  decision. Where the label has a *length validator* it is short enough to type,
+  so the field asks for the value; otherwise it is a combobox to pick from.
+- A typed reference names both: the label reads `ZIP code`, not `ZIP`, since a
+  code is what the field wants. It takes the shape of that attribute —
+  `maxlength`, `minlength`, `pattern`, `title`, `inputmode` — from the model the
+  attribute belongs to, but takes *required* from the association that needs it,
+  which is the page's model and not the other one's.
+- This is what keeps a form from being enormous. `/locations/new` was 3.3 MB when
+  its ZIP was a combobox of 40,965 options; typing the code instead makes it
+  6.4 KB. A combobox is right for fifty states and wrong for forty thousand ZIPs.
+- A value that matches no record leaves the foreign key nil, so `belongs_to`
+  reports `Must exist` beside the field, and the field keeps what was typed. That
+  value comes from `params`, not from the record — nothing was ever assigned to it.
+- `state_id` is still a Bootstrap combobox listing each `State` by `name`, in the
+  "Search menu items" form, so a list of fifty stays usable.
 - What each option reads is the model's own `recourse_label` — `name` by default,
   `code` for a ZIP, `email` for an Agent. See CLAUDE.md, "Every model says how it
   is labelled".

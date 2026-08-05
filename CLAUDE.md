@@ -384,6 +384,12 @@ two is filed under the one a reader would look in first.
   metaprogramming" rules out.
 - Picking an encrypted column labels the option with its plaintext, since
   `attributes` decrypts. That is a decision to make deliberately, not to fall into.
+- `recourse_typed_label?` asks whether that label has a length validator, which is
+  what decides between typing a value and picking from a list. A length is the only
+  honest signal available: it says the value is bounded, so a person can type it.
+- A typed label is looked up on the way in — `ZIP.find_by code: '90210'` — and the
+  form asks for it under the foreign key's own name, so no host model needs a
+  virtual attribute and strong parameters need no special case.
 
 #### Vendor what a page cannot render without
 
