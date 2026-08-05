@@ -115,8 +115,17 @@ before writing or editing any layout, view or partial.
   is `btn btn-solid theme-primary`. In v6 the fill is a separate class from the
   base: `.btn` sizes, `.btn-solid` / `.btn-outline` / `.btn-subtle` fill, and
   `theme-*` colours.
-- Every field is a text field for now. A date or boolean column deserves better,
-  and that is the first thing to fix when one appears.
+- The field type follows the column, and the rules are in this order: an
+  encrypted column is a password field; one named `email` or `color` gets that
+  input; a `date` or `time` column gets its own field; everything else is text.
+- Encryption wins over the name, so an encrypted `email` is masked rather than
+  typed as an email — protecting the value matters more than the keyboard.
+- Length and format travel to the browser: `maxlength` from the column limit,
+  `pattern` from a format validator with `\A` and `\z` stripped, since an HTML
+  pattern is anchored already. A digits-only pattern or an integer column also
+  gets `inputmode: 'numeric'`.
+- A `datetime` column falls through to a text field. Nothing needs one yet;
+  it is the next gap to fill.
 
 ## Tables
 

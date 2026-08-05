@@ -162,6 +162,16 @@ above when they conflict.
   those bounds.
 - Trivial patterns used once, like `%r{\Aexe/}`, stay inline.
 
+### Spell acronyms as acronyms
+
+- An acronym is written in capitals wherever it appears: ZIP code, not Zip code;
+  PIN, not Pin. That covers prose, comments, class names and labels alike.
+- When a model or column names one, register it so Rails agrees:
+  `inflect.acronym 'ZIP'` in `config/initializers/inflections.rb`. Without it
+  `human_attribute_name` renders `Zip` and every heading and label is wrong.
+- Registering it also fixes `camelize`, so `zip_code` becomes `ZIPCode` rather
+  than `ZipCode` — worth knowing before naming a class after one.
+
 ### Encrypt PII
 
 - Personal data is stored with Active Record Encryption: `encrypts :phone`,

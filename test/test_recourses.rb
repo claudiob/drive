@@ -32,10 +32,10 @@ class TestRecourses < Minitest::Test
     refute_operator EchoesController, :<, RecoursesController
   end
 
+  # Contacts is drawn without options and gets all seven; states asks for one.
   def test_it_forwards_options_to_resources
-    actions = contact_routes.map { |route| route.defaults[:action] }
-
-    assert_equal %w[index], actions
+    assert_equal %w[create destroy edit index new show update], actions_for('contacts')
+    assert_equal %w[index], actions_for('states')
   end
 
   def test_it_leaves_the_paths_unprefixed
@@ -44,9 +44,11 @@ class TestRecourses < Minitest::Test
 
 private
 
-  def contact_routes
-    Rails.application.routes.routes.select do |route|
-      route.defaults[:controller] == 'contacts'
+  def actions_for(controller)
+    routes = Rails.application.routes.routes.select do |route|
+      route.defaults[:controller] == controller
     end
+
+    routes.map { |route| route.defaults[:action] }.uniq.sort
   end
 end

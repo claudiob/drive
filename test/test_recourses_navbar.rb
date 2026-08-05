@@ -59,11 +59,11 @@ class TestRecoursesNavbar < Minitest::Test
     assert_includes body, 'href="/counties/new">Add county</a>'
   end
 
-  # /contacts is routed `only: :index`, so there is nothing to link to.
+  # /states is routed `only: :index`, so there is nothing to link to.
   def test_it_offers_no_new_link_when_the_resource_has_none
-    visit '/contacts'
+    visit '/states'
 
-    refute_includes body, 'Add contact'
+    refute_includes body, 'Add state'
     refute_includes body, 'btn theme-primary'
   end
 

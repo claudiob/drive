@@ -3,7 +3,7 @@
   <% editable_columns.each do |name| %>
     <div class='mb-3'>
       <%= form.label name, resource_column_title(name), class: 'form-label' %>
-      <%= form.text_field name, class: 'form-control' %>
+      <%= resource_field form, name %>
     </div>
   <% end %>
 

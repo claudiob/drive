@@ -1,10 +1,12 @@
 require_relative 'helpers/cells'
+require_relative 'helpers/fields'
 require_relative 'helpers/navigation'
 
 module Recourse
-  # View helpers for the pages the gem renders, and what both halves share.
+  # View helpers for the pages the gem renders, and what the parts share.
   module Helpers
     include Cells
+    include Fields
     include Navigation
 
     # Human, plural name of the resource on the page, e.g. 'Contacts'.
