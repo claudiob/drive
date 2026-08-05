@@ -11,8 +11,10 @@
     <input type='text' class='form-control combobox-search-input' placeholder='Search…'
            autocomplete='off' aria-label='Search…'>
   </div>
-  <% recourses.each do |recourse| %>
-    <button class='menu-item' type='button' data-bs-value='<%= recourse.id %>'><%= recourse.attributes[label] %></button>
+  <% cache recourses do %>
+    <% recourses.each do |recourse| %>
+      <button class='menu-item' type='button' data-bs-value='<%= recourse.id %>'><%= recourse.attributes[label] %></button>
+    <% end %>
   <% end %>
   <div class='combobox-no-results d-none'>No results found</div>
 </div>

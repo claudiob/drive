@@ -80,6 +80,29 @@ two is filed under the one a reader would look in first.
   creates the database on first run, so `rake test` is still the only command
   needed once the server is up.
 
+#### Cache a query or a fragment that repeats
+
+- Reach for `Rails.cache` wherever the same rows would be read or the same markup
+  re-rendered. An index table and the option list behind a combobox are both
+  cached; `/locations/new` costs six queries cold and three warm, and the
+  40,965-row `SELECT` behind its ZIP menu is one of the three that go.
+- Key a fragment on the *relation*, `cache recourses do`, never on a hand-rolled
+  string. Rails builds the key from a digest of the SQL — so a different page of
+  the same table is a different key — and pairs it with a version from the row
+  count and the newest `updated_at`, so nothing has to remember to expire it.
+- That version check is itself a `SELECT COUNT(*), MAX(updated_at)`, and it is the
+  price of never serving a stale menu. Keying on `recourses.cache_key` instead
+  skips it and queries nothing at all, at the cost of a list that never notices a
+  new row — only worth it behind an `expires_in`, and only for data that may lag.
+- The check is free where the relation is already loaded, which is why the index
+  costs nothing extra: `blank?` loads it before the table renders, so the version
+  is counted in Ruby. Another reason to prefer `blank?` over `empty?`.
+- Cache the table, not the pagination around it. The nav changes with the page and
+  is cheap to draw.
+- A cache that is off in tests is a cache nobody tests. The dummy app sets
+  `config.cache_store = :memory_store` for the test environment: caching stays on,
+  and the run leaves no files behind.
+
 #### Fewest SQL queries to render a page
 
 - Rendering a page should issue as few queries as it can. Treat an extra query

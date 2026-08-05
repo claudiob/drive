@@ -1,22 +1,24 @@
 <%# locals: (recourses:, pagy:) %>
-<div class='table-responsive'>
-  <table class='table caption-top table-hover align-middle sm:table-stacked'>
-    <thead>
-      <tr>
-        <% @recourse_headers = true %>
-        <%= render 'row', resource_key => nil %>
-      </tr>
-    </thead>
-    <tbody>
-      <% @recourse_headers = false %>
-      <% recourses.each do |recourse| %>
+<% cache recourses do %>
+  <div class='table-responsive'>
+    <table class='table caption-top table-hover align-middle sm:table-stacked'>
+      <thead>
         <tr>
-          <%= render 'row', resource_key => recourse %>
+          <% @recourse_headers = true %>
+          <%= render 'row', resource_key => nil %>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody>
+        <% @recourse_headers = false %>
+        <% recourses.each do |recourse| %>
+          <tr>
+            <%= render 'row', resource_key => recourse %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
 
 <% if pagy %>
   <div class='d-flex align-items-center'>
