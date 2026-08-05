@@ -8,3 +8,14 @@
     </li>
   <% end %>
 </ul>
+
+<%# Last in the sidebar and pinned to the foot of it, which is why the aside is a %>
+<%# flex column. A DELETE, so it needs Turbo to issue the method rather than a GET. %>
+<% if (path = logout_path) %>
+  <ul class='nav flex-column mt-auto'>
+    <li class='nav-item'>
+      <%= link_to resource_label('Logout'), path,
+                  class: 'nav-link', data: { turbo_method: :delete } %>
+    </li>
+  </ul>
+<% end %>

@@ -156,6 +156,38 @@ two is filed under the one a reader would look in first.
 
 ### SECURITY
 
+#### An Agent model comes with Google sign-in
+
+- Wherever a model called `Agent` is created, install Google OAuth sign-in for
+  agents alongside it: the routes, the controllers, and the instructions the
+  developer then has to act on. An `Agent` is a person who administers the app, so
+  the model is never the whole feature.
+- The code is fountain's, ported: `Unauthenticated::AgentsController#new` as the
+  redirect URI, `app/views/unauthenticated/agents/new.html.erb` showing an error if
+  Google returned one, an `Administered` concern that requires a session,
+  `Agents::SessionsController#destroy` to sign out, `Current.agent`,
+  `administrate_as` on `ApplicationController`, and the `yt-auth` gem configured
+  from `Rails.application.credentials.dig(:google_oauth, ...)`.
+- Three things are the developer's, and the install is not finished until they have
+  been told all three: narrow `ALLOWED_DOMAIN` to their own domain, put the client
+  id and secret in Rails credentials, and register the redirect URI under
+  *Authorized redirect URIs* in the Google Cloud Console. The third is the one that
+  gets forgotten, and it fails as `redirect_uri_mismatch` rather than as anything
+  that names the cause.
+- `ALLOWED_DOMAIN` keeps its leading `@`. Without it, `example.com` also admits
+  `anyone@notexample.com`, which is the whole guard gone.
+- The sign-in page needs a layout with no breadcrumb and no sidebar. Both are for a
+  recourse, and the breadcrumb links to the controller's index, which a sign-in
+  controller does not have — with the gem's layout the page raises rather than
+  renders.
+- Name the sign-in route for itself, not `resource :agent, only: :new`. Where
+  `recourses :agents` draws a `new` action the two collide on `new_agent`, the
+  recourse wins it, and sign-in silently redirects to the form that creates an
+  agent instead of to the callback.
+- Set `mock_auth_email` in development only. It stands in for the round trip to
+  Google, so the flow can be walked with no keys at all; anywhere else it signs in
+  anyone at all.
+
 #### Encrypt PII
 
 - Personal data is stored with Active Record Encryption: `encrypts :phone`,

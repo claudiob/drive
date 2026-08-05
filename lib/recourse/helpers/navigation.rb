@@ -26,6 +26,15 @@ module Recourse
         url_for action: :new
       end
 
+      # Path that ends an agent's session, or nil where the app draws no such route.
+      # That route's name is the one installed alongside Google sign-in, so this is a
+      # convention rather than a guess, and its absence just hides the link.
+      def logout_path
+        return unless routed? 'agents/sessions', 'destroy'
+
+        url_for controller: '/agents/sessions', action: :destroy
+      end
+
       # Label for a link to a resource: its icon, then its title.
       def resource_label(title)
         icon = NAVIGATION_ICONS.fetch title, FALLBACK_ICON

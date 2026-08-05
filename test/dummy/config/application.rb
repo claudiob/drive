@@ -3,6 +3,10 @@ require_relative 'boot'
 require 'action_controller/railtie'
 require 'active_record/railtie'
 
+# No `Bundler.require` here, so a gem a Gemfile line would load elsewhere has to be
+# named: without this, `config/initializers/yt_auth.rb` cannot see `Yt`.
+require 'yt/auth'
+
 require 'recourse'
 
 module Dummy
