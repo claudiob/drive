@@ -453,6 +453,23 @@ two is filed under the one a reader would look in first.
   form asks for it under the foreign key's own name, so no host model needs a
   virtual attribute and strong parameters need no special case.
 
+#### What a gem always ships
+
+- Every gem carries `bin/console` and `bin/setup`, whatever else it has. One lets
+  a reader try the library in a REPL with it already required; the other gets a
+  clone to a working state in one command. A gem that needs a paragraph of README
+  to try out has neither.
+- Every gem carries a `CHANGELOG.md`, and a release is not made until it has been
+  written. An entry says which of three a change is — a **fix**, a **feature**, or
+  a **breaking change** — because that is what tells the reader whether they can
+  take it, and it is what decides the version.
+- The version follows from the entry, not the other way round. Semantic
+  Versioning: a fix bumps the patch, a feature bumps the minor, a breaking change
+  bumps the major. Deciding the number first and describing it afterwards is how
+  a minor release quietly breaks somebody.
+- Keep an `## [Unreleased]` heading at the top to collect entries as they land, so
+  a release is a rename rather than an act of remembering.
+
 #### Git ignores a built gem
 
 - `*.gem` is gitignored. `rake build` puts one under `/pkg/`, which was already
