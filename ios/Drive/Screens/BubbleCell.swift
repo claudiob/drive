@@ -46,6 +46,12 @@ final class BubbleCell: UITableViewCell {
         fatalError("Use init(style:reuseIdentifier:) instead.")
     }
 
+    /// Where the bubble sits inside the cell, so a context menu can hug it rather than
+    /// lifting the whole width of the row.
+    var bubbleFrame: CGRect {
+        bubble.convert(bubble.bounds, to: self)
+    }
+
     func show(_ message: Bubble) {
         body.text = message.body
         body.textColor = message.inbound ? .label : .white

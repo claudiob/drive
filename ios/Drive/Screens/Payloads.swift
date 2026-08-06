@@ -86,5 +86,6 @@ struct Bubble: Decodable, Hashable {
 /// What `/contacts/:id/messages.json` answers.
 struct Conversation: Decodable {
     let title: String
+    let unread: Int
     let messages: [Bubble]
 }

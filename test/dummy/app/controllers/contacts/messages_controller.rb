@@ -8,6 +8,9 @@ module Contacts
 
       render json: {
         title: contact.display_name,
+        # What the back button counts: conversations still waiting, not this one's
+        # messages.
+        unread: Contact.with_unread.count,
         messages: contact.messages.order(:created_at).map { |message| bubble message },
       }
     end

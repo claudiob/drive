@@ -1,17 +1,21 @@
 import HotwireNative
 import UIKit
 
-/// A conversation opened from the Messages tab: the same bubbles the compose sheet
-/// shows, on a screen of their own with the contact's name in the bar.
-final class ConversationViewController: UITableViewController, PathConfigurationIdentifiable {
+/// A conversation opened from the Messages tab: bubbles above, the message bar below.
+/// Not a `UITableViewController`, because that owns the whole view and leaves nowhere
+/// to pin the bar.
+final class ConversationViewController: UIViewController, PathConfigurationIdentifiable {
     static var pathConfigurationIdentifier: String { "conversation" }
 
     private let url: URL
+    private let table = UITableView(frame: .zero, style: .plain)
+    private let bar = MessageBar()
+    var messages: [Bubble] = []
 
     init(url: URL, navigator: Navigator?) {
         self.url = url
 
-        super.init(style: .plain)
+        super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
@@ -19,30 +23,71 @@ final class ConversationViewController: UITableViewController, PathConfiguration
         fatalError("Use init(url:navigator:) instead.")
     }
 
-    private var messages: [Bubble] = []
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.register(BubbleCell.self, forCellReuseIdentifier: "bubble")
-        tableView.separatorStyle = .none
-        tableView.allowsSelection = false
+        view.backgroundColor = .systemBackground
+        navigationItem.hidesBackButton = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "video"),
+            primaryAction: UIAction { _ in }
+        )
 
+        lay()
+        load()
+    }
+
+    private func lay() {
+        table.dataSource = self
+        table.delegate = self
+        table.register(BubbleCell.self, forCellReuseIdentifier: "bubble")
+        table.separatorStyle = .none
+        table.allowsSelection = false
+        table.keyboardDismissMode = .interactive
+
+        for child in [table, bar] {
+            child.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(child)
+        }
+
+        NSLayoutConstraint.activate([
+            table.topAnchor.constraint(equalTo: view.topAnchor),
+            table.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            table.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            table.bottomAnchor.constraint(equalTo: bar.topAnchor),
+            bar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            // The keyboard guide sits at the safe area while the keyboard is down, so
+            // one constraint covers both states.
+            bar.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor)
+        ])
+    }
+
+    private func load() {
         Task { @MainActor in
             guard let thread: Conversation = await NativeList.fetch(url) else { return }
 
             navigationItem.title = thread.title
+            navigationItem.leftBarButtonItem = BackButton.item(
+                unread: thread.unread,
+                tint: view.tintColor,
+                action: UIAction { [weak self] _ in
+                    self?.navigationController?.popViewController(animated: true)
+                }
+            )
+
             messages = thread.messages
-            tableView.reloadData()
+            table.reloadData()
         }
     }
+}
 
-    override func tableView(_ table: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension ConversationViewController: UITableViewDataSource {
+    func tableView(_ table: UITableView, numberOfRowsInSection section: Int) -> Int {
         messages.count
     }
 
-    override func tableView(_ table: UITableView,
-                            cellForRowAt path: IndexPath) -> UITableViewCell {
+    func tableView(_ table: UITableView, cellForRowAt path: IndexPath) -> UITableViewCell {
         let cell = table.dequeueReusableCell(withIdentifier: "bubble", for: path)
         (cell as? BubbleCell)?.show(messages[path.row])
 
