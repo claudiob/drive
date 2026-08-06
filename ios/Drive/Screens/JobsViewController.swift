@@ -14,33 +14,16 @@ final class JobsViewController: UICollectionViewController, PathConfigurationIde
     weak var navigator: Navigator?
     var jobs: [[Job]] = [[], []]
 
-    /// `valueCell` is the title-left, detail-right style the system lists use, and the
-    /// disclosure accessory is the real chevron rather than a glyph of our own.
-    let cell = UICollectionView.CellRegistration<UICollectionViewListCell, Job> {
-        cell, _, job in
-        var content = UIListContentConfiguration.valueCell()
-        content.text = job.title
-        content.secondaryText = job.city
-        content.image = UIImage(systemName: "hammer.fill")
-        cell.contentConfiguration = content
-        cell.accessories = [.disclosureIndicator()]
-    }
-
-    /// The extra-prominent header is the large bold one the App Store uses over each of
-    /// its groups; the chevron rides in the text so it follows the words rather than
-    /// sitting out at the trailing edge.
-    let header = UICollectionView
-        .SupplementaryRegistration<UICollectionViewListCell>(
-            elementKind: UICollectionView.elementKindSectionHeader
-        ) { view, _, path in
-            var content = UIListContentConfiguration.extraProminentInsetGroupedHeader()
-            content.attributedText = JobsViewController.titled(JobsViewController.groups[path.section])
-            view.contentConfiguration = content
-        }
+    // Built here rather than declared inline: a registration must exist before the
+    // callback that dequeues it, and UIKit aborts on one made lazily inside it.
+    let cell: UICollectionView.CellRegistration<UICollectionViewListCell, Job>
+    let header: UICollectionView.SupplementaryRegistration<UICollectionViewListCell>
 
     init(url: URL, navigator: Navigator?) {
         self.url = url
         self.navigator = navigator
+        cell = Self.makeCell()
+        header = Self.makeHeader()
 
         var list = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
         list.headerMode = .supplementary
