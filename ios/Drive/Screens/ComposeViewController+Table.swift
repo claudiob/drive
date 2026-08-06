@@ -2,12 +2,12 @@ import UIKit
 
 /// The matches. Both lines are tinted, the way Messages shows a pickable contact, and
 /// the given name is weighted apart from the family name as it is in Contacts.
-extension ComposeViewController {
-    override func tableView(_ table: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension ComposeViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ table: UITableView, numberOfRowsInSection section: Int) -> Int {
         recipient == nil ? matches.count : rows.count
     }
 
-    override func tableView(_ table: UITableView,
+    func tableView(_ table: UITableView,
                             cellForRowAt path: IndexPath) -> UITableViewCell {
         if recipient != nil {
             guard case let .bubble(message) = rows[path.row] else {
@@ -40,7 +40,7 @@ extension ComposeViewController {
         return cell
     }
 
-    override func tableView(_ table: UITableView, didSelectRowAt path: IndexPath) {
+    func tableView(_ table: UITableView, didSelectRowAt path: IndexPath) {
         table.deselectRow(at: path, animated: true)
 
         guard recipient == nil else { return }

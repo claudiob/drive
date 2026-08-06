@@ -21,7 +21,9 @@ extension ComposeViewController {
         field.text = contact.name
         field.isLocked = true
         matches = []
-        tableView.reloadData()
+        // There is somebody to send to now, so the bar has something to do.
+        bar.isHidden = false
+        table.reloadData()
 
         // A number nobody is known by has no thread to fetch — it starts empty.
         guard !contact.path.isEmpty else { return }
@@ -31,8 +33,7 @@ extension ComposeViewController {
                   let thread: Conversation = await NativeList.fetch(target) else { return }
 
             rows = ConversationRow.rows(thread.messages)
-            tableView.reloadData()
-            tableView.separatorStyle = .none
+            table.reloadData()
         }
     }
 
@@ -41,6 +42,7 @@ extension ComposeViewController {
         rows = []
         field.text = ""
         field.isLocked = false
-        tableView.reloadData()
+        bar.isHidden = true
+        table.reloadData()
     }
 }
