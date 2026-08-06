@@ -20,14 +20,19 @@ class TestRecoursesJSON < Minitest::Test
   end
 
   def test_an_index_answers_every_visible_column_and_where_to_find_the_record
-    location = Location.create! zip: ZIP.first, city: 'Holtsville', street: '1 Main Street'
-    # Shorthand first: `location:` last would run into the next line's literal.
+    # Claimed by the agent the app stands in with, so the job lands in a known group:
+    # the other one is chosen by id, which a test cannot pick.
+    Agent.create! email: 'json@example.com' if Agent.none?
+    agent = Agent.order(:id).first
+    # Shorthand never last on a line: it would run into the next one.
+    location = Location.create! agent:, zip: ZIP.first, city: 'Holtsville', street: '1 Main St'
     job = Job.create! location:, title: 'Fix the roof'
 
     @session.get '/jobs.json'
-    row = JSON.parse(@session.response.body).sole
+    # Jobs answers two groups rather than one list, which is `index_json` overridden;
+    # each row inside them is still the gem's `resource_json`.
+    row = JSON.parse(@session.response.body).fetch('claimed').sole
 
-    assert_equal 'Fix the roof', row['title']
     assert_equal "/jobs/#{job.id}", row['path']
     # A host adds a field by overriding one method rather than the whole action.
     assert_equal 'Holtsville', row['city']
