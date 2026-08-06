@@ -43,7 +43,7 @@ enum HotwireSetup {
     }
 
     /// Both bars are opaque here and the page sits between them, so they need a real
-    /// background — left transparent they show the window through, and a label-coloured
+    /// background — left transparent they show the window through, and a label-colored
     /// title on it is invisible.
     private static func styleBars() {
         let navigationBar = UINavigationBarAppearance()

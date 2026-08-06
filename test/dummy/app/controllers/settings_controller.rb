@@ -1,5 +1,5 @@
 # The Settings tab, shaped like iOS Settings: an account row, then grouped cards of
-# rows with a coloured icon apiece.
+# rows with a colored icon apiece.
 class SettingsController < ApplicationController
   # Icon and tint per row, as SF Symbol names — the native screen draws them, so this
   # is not the Bootstrap Icons map the console uses.

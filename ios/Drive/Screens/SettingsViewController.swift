@@ -2,11 +2,11 @@ import HotwireNative
 import UIKit
 
 /// The Settings tab, shaped like iOS Settings: an account row, then grouped cards whose
-/// rows each carry a glyph in a coloured rounded square.
+/// rows each carry a glyph in a colored rounded square.
 final class SettingsViewController: UITableViewController, PathConfigurationIdentifiable {
     static var pathConfigurationIdentifier: String { "settings" }
 
-    /// The tints Rails names, as the system colours rather than hexes of our own.
+    /// The tints Rails names, as the system colors rather than hexes of our own.
     private static let tints: [String: UIColor] = [
         "blue": .systemBlue, "green": .systemGreen, "gray": .systemGray,
         "indigo": .systemIndigo, "orange": .systemOrange, "red": .systemRed,

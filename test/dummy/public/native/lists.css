@@ -47,7 +47,7 @@
   background: var(--separator);
 }
 
-/* The leading slot. An icon, an avatar or an unread dot all centre in the same box. */
+/* The leading slot. An icon, an avatar or an unread dot all center in the same box. */
 .row__leading {
   display: grid;
   place-items: center;

@@ -43,7 +43,7 @@ enum Glyphs {
     /// rows that have neither aligned with those that do.
     static let slot: CGFloat = 28
 
-    /// A symbol centred in the slot, or an empty slot when there is no symbol.
+    /// A symbol centered in the slot, or an empty slot when there is no symbol.
     static func leading(_ symbol: String?, tint: UIColor = .label) -> UIImage {
         let size = CGSize(width: slot, height: slot)
 
@@ -60,7 +60,7 @@ enum Glyphs {
         }.withRenderingMode(.alwaysOriginal)
     }
 
-    /// The unread dot, centred in that same slot.
+    /// The unread dot, centered in that same slot.
     static var dot: UIImage {
         UIGraphicsImageRenderer(size: CGSize(width: slot, height: slot)).image { context in
             UIColor.systemBlue.setFill()

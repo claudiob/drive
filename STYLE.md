@@ -13,7 +13,7 @@ before writing or editing any layout, view or partial.
   (`md:col-6`, not `col-md-6`), `.bg-light` / `.bg-dark` are gone in favour of
   the `.bg-1` / `.bg-2` scale, and `.text-body-secondary` is now `.fg-2`.
 - Page wrappers use `.container-fluid`, never `.container`. A table wants the
-  whole width on a desktop, not a centred column with margins either side.
+  whole width on a desktop, not a centered column with margins either side.
 - Still current from v5: `.container-fluid`, `.table`, `.table-responsive`, and
   `data-bs-theme="light|dark"` for color modes — though `color-scheme: light
   dark` on `:root` follows the system by default, so most pages need no theme
@@ -142,7 +142,7 @@ before writing or editing any layout, view or partial.
   column of empty space.
 - The submit is `btn btn-solid theme-primary`. In v6 the fill is a separate class
   from the base: `.btn` sizes, `.btn-solid` / `.btn-outline` / `.btn-subtle`
-  fill, and `theme-*` colours.
+  fill, and `theme-*` colors.
 - A field whose attribute is not required carries `placeholder='Optional'`.
   Required is judged by the model's validators, not by `null: false` — and a
   `belongs_to` validates the association, so `state_id` counts as required
@@ -279,8 +279,8 @@ before writing or editing any layout, view or partial.
 
 - That is what tints the whole toast. `.toast-header` takes its background from
   `--bs-theme-bg-subtle` while `.toast` itself takes the plain body background, so
-  a message in the body would sit on white below a coloured strip. With the body
-  hidden the toast *is* the header, and the theme colours all of it.
+  a message in the body would sit on white below a colored strip. With the body
+  hidden the toast *is* the header, and the theme colors all of it.
 - `border-0` removes the header's `border-block-end`, which would otherwise rule a
   line under the message with nothing beneath it.
 - `me-auto` on the message is what pushes the X to the right. Inside a header the
@@ -385,7 +385,7 @@ before writing or editing any layout, view or partial.
   before the click lands. This is on by default in Turbo 8 — never add
   `<meta name='turbo-prefetch' content='true'>` to restate it.
 - Do not put `data-turbo='false'` or `data-turbo-prefetch='false'` on an
-  internal link. Either one opts that link out of both behaviours.
+  internal link. Either one opts that link out of both behaviors.
 
 ## Phone numbers
 

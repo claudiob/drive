@@ -2,7 +2,7 @@ import HotwireNative
 import UIKit
 
 /// Puts the buttons a page declares into the real navigation bar, and clicks the page's
-/// own element when one is tapped — so the behaviour stays in the HTML and only the
+/// own element when one is tapped — so the behavior stays in the HTML and only the
 /// chrome is native.
 final class NavButtonsComponent: BridgeComponent {
     override class var name: String { "nav-buttons" }

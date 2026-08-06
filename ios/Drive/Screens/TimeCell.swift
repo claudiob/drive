@@ -1,6 +1,6 @@
 import UIKit
 
-/// The centred timestamp that heads a block of messages.
+/// The centered timestamp that heads a block of messages.
 final class TimeCell: UITableViewCell {
     private let caption = UILabel()
 

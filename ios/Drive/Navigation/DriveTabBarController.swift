@@ -1,7 +1,7 @@
 import HotwireNative
 import UIKit
 
-/// The tab bar, plus the one behaviour every Apple app has and the library does not:
+/// The tab bar, plus the one behavior every Apple app has and the library does not:
 /// tapping the tab you are already on returns you to its root.
 final class DriveTabBarController: HotwireTabBarController {
     private let tabSelection = TabSelectionDelegate()

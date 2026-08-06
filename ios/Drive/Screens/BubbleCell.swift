@@ -1,6 +1,6 @@
 import UIKit
 
-/// One message in a conversation. Heard from the contact it sits left in grey; sent by
+/// One message in a conversation. Heard from the contact it sits left in gray; sent by
 /// the agent it sits right in blue, with a tick reporting whether it arrived.
 final class BubbleCell: UITableViewCell {
     private let body = UILabel()

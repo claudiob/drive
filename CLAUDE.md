@@ -203,7 +203,7 @@ two is filed under the one a reader would look in first.
   else is required, with `minimum_coverage 100`. Below that the suite fails.
 - `skip '/test/'` leaves the dummy app out: it is a fixture, not shipped code.
   Never `add_filter` — SimpleCov deprecated it in favour of `skip`, same
-  arguments and same behaviour, and it warns on every run until changed.
+  arguments and same behavior, and it warns on every run until changed.
 - `lib/recourse/version.rb` is not measured, and that is expected rather than a
   gap. The Gemfile's `gemspec` directive loads it during bundler setup, before
   SimpleCov can start. Do not add `track_files` to pull it in — it would report
@@ -731,6 +731,19 @@ two is filed under the one a reader would look in first.
   database keeps UTC and Rails converts on the way in and out, so the app zone
   is a display concern only.
 - A rule for apps we write. The gem never sets a host's time zone.
+
+#### American English, everywhere
+
+- The English is American. Write `color`, `gray`, `behavior`, `center`, `license`,
+  `normalize`, `organize`, `recognize` — never the British spelling of any of them.
+- This covers everything written, not just code — identifiers, comments, commit
+  messages, documentation, CSS values, and the words on a page.
+- It is a design rule as much as a coding one. A table heading spelled one way
+  beside a button spelled the other is the tell that nobody chose either.
+- Proper nouns are exempt, because they are not spellings we get to pick. Centre
+  County keeps its `re`, and so does every place name in `db/counties.txt`.
+- Nothing enforces it, so it is on us. The endings to watch are `-our`, `-re` and
+  `-ise`, plus the one that is neither, `grey`.
 
 #### I18n is deferred
 

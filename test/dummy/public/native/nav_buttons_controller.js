@@ -1,7 +1,7 @@
 import { BridgeComponent } from '/vendor/hotwire-native-bridge.js'
 
 // Hands the page's own buttons to the native navigation bar, and clicks the element
-// back when one is tapped — so the behaviour stays in the HTML and only the chrome is
+// back when one is tapped — so the behavior stays in the HTML and only the chrome is
 // native. In a browser, where no native side answers, the buttons stay as they are.
 export default class extends BridgeComponent {
   static component = 'nav-buttons'

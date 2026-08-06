@@ -8,7 +8,7 @@ final class DriveWebViewController: HotwireWebViewController {
         super.viewDidLoad()
 
         // `VisitableViewController` sets plain white, which is wrong in dark mode.
-        // The grouped grey is what every screen here sits on.
+        // The grouped gray is what every screen here sits on.
         view.backgroundColor = .systemGroupedBackground
         navigationItem.largeTitleDisplayMode = .never
 
