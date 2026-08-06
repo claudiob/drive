@@ -51,8 +51,11 @@ module Recourse
         }
       end
 
+      # `meanings`, not `concepts`: the latter counts every synonym a model name might
+      # arrive under, and offering both `house` and `home` drawing the same glyph is
+      # noise to choose from. Actions are absent from it too — nothing has a Close.
       def icon_concepts
-        Unicon.concepts.map { |concept| [concept, Unicon[concept][:bootstrap]] }
+        Unicon.meanings.map { |concept| [concept, Unicon[concept][:bootstrap]] }
       end
 
       # Only the columns the menu shows, plus the icon where the model keeps one.
