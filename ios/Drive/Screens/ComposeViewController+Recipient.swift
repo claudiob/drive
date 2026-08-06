@@ -18,8 +18,7 @@ extension ComposeViewController {
     /// conversation with them — all without leaving the sheet.
     func choose(_ contact: ContactCard) {
         recipient = contact
-        field.text = contact.name
-        field.isLocked = true
+        field.hold(contact.name)
         matches = []
         // There is somebody to send to now, so the bar has something to do.
         bar.isHidden = false
@@ -40,8 +39,7 @@ extension ComposeViewController {
     func release() {
         recipient = nil
         rows = []
-        field.text = ""
-        field.isLocked = false
+        field.clear()
         bar.isHidden = true
         table.reloadData()
     }
