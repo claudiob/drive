@@ -18,6 +18,10 @@ final class DriveNavigatorDelegate: NSObject, NavigatorDelegate {
             .acceptCustom(ContactsViewController(url: url, navigator: navigator))
         case MessagesViewController.pathConfigurationIdentifier:
             .acceptCustom(MessagesViewController(url: url, navigator: navigator))
+        case ConversationViewController.pathConfigurationIdentifier:
+            .acceptCustom(ConversationViewController(url: url, navigator: navigator))
+        case ComposeViewController.pathConfigurationIdentifier:
+            .acceptCustom(ComposeViewController(url: url, navigator: navigator))
         case SettingsViewController.pathConfigurationIdentifier:
             .acceptCustom(SettingsViewController(url: url, navigator: navigator))
         default:

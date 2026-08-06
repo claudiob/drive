@@ -17,7 +17,7 @@ private
     {
       id: message.id, author: contact.display_name, initials: contact.initials,
       preview: preview(message), date: message.created_at.strftime(DATE_FORMAT),
-      unread: message.unread_count.positive?, path: contact_path(contact),
+      unread: message.unread_count.positive?, path: contact_messages_path(contact),
       readPath: contact_read_path(contact),
     }
   end

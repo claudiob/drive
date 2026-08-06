@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   recourses :contacts do
     # Toggling a conversation read is a nested resource, not an action on contacts.
     resource :read, module: :contacts, only: %i[create destroy]
+    resources :messages, module: :contacts, only: :index
   end
   recourses :states, only: :index
   recourses :counties, only: :index

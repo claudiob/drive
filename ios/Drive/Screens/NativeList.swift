@@ -18,6 +18,19 @@ enum NativeList {
         URL(string: path, relativeTo: url)?.absoluteURL
     }
 
+    /// `+1 (585) 384-2934`, which is how iOS writes a number. The web writes
+    /// `585-384-2934` and keeps its own rule; this formatting is the app's alone.
+    static func phone(_ text: String) -> String {
+        let digits = text.filter(\.isNumber)
+        guard digits.count == 10 else { return text }
+
+        let area = digits.prefix(3)
+        let exchange = digits.dropFirst(3).prefix(3)
+        let line = digits.suffix(4)
+
+        return "+1 (\(area)) \(exchange)-\(line)"
+    }
+
     /// Trailing text followed by a chevron. A cell draws `accessoryView` or
     /// `accessoryType`, never both, so rows that need each supply the pair themselves.
     static func detail(_ text: String) -> UIView {

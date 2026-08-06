@@ -74,3 +74,17 @@ struct SettingsPage: Decodable {
     let account: Account?
     let groups: [Group]
 }
+
+/// One message in a conversation.
+struct Bubble: Decodable, Hashable {
+    let id: Int
+    let body: String
+    let inbound: Bool
+    let time: String
+}
+
+/// What `/contacts/:id/messages.json` answers.
+struct Conversation: Decodable {
+    let title: String
+    let messages: [Bubble]
+}

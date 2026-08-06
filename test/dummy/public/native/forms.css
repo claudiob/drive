@@ -1,10 +1,7 @@
 /* The gem's forms are Bootstrap markup, and this shell loads no Bootstrap. Styled here
    as an iOS grouped form instead: a stack of inset cards, one field to a row. */
 
-.row {
-  display: block;
-  margin: 0;
-}
+.row { display: block; margin: 0; }
 
 .mb-3 {
   margin-inline: var(--gutter);
@@ -32,14 +29,8 @@
   appearance: none;
 }
 
-.form-control::placeholder {
-  color: var(--label-3);
-}
-
-.form-control:focus {
-  outline: 2px solid var(--tint);
-  outline-offset: -2px;
-}
+.form-control::placeholder { color: var(--label-3); }
+.form-control:focus, .is-invalid { outline: 2px solid var(--tint); outline-offset: -2px; }
 
 /* A combobox is a button plus the menu that follows it, so it has to look like the
    inputs above it while behaving like a row that opens something. */
@@ -50,9 +41,7 @@
   text-align: start;
 }
 
-.combobox-caret {
-  color: var(--label-3);
-}
+.combobox-caret { color: var(--label-3); }
 
 .menu {
   margin-block-start: 6px;
@@ -63,9 +52,7 @@
   overflow-y: auto;
 }
 
-.menu[hidden], .d-none {
-  display: none;
-}
+.menu[hidden], .d-none { display: none; }
 
 .menu-item {
   display: block;
@@ -91,10 +78,7 @@
   font: 600 17px -apple-system, system-ui, sans-serif;
 }
 
-.is-invalid {
-  outline: 2px solid #ff3b30;
-  outline-offset: -2px;
-}
+.is-invalid { outline-color: #ff3b30; }
 
 .invalid-feedback {
   display: block;

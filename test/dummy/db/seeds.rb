@@ -63,4 +63,9 @@ Contact.order(:id).limit(12).each_with_index do |contact, index|
     # Every other conversation stays unread, so the dot and the smart list show.
     message.read_at = Time.current if index.even?
   end
+
+  # A reply from the agent, so a thread has both sides to draw.
+  Message.find_or_create_by! contact:, content: 'Thanks — I will take a look today.' do |message|
+    message.inbound = false
+  end
 end
