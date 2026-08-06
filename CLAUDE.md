@@ -381,6 +381,9 @@ two is filed under the one a reader would look in first.
   is a short summary of the prompt; the body is the full response given for
   that prompt.
 - One prompt, one commit.
+- **No trailers naming who wrote it.** No `Co-Authored-By`, no session link, no
+  tool credit. Git already records an author, and a message repeating it in
+  different words is noise in every `git log` from here on.
 
 #### Ask the validators, not the schema
 
