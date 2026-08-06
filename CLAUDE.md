@@ -518,6 +518,9 @@ two is filed under the one a reader would look in first.
   file, and skip comments and blanks by default.
 - `.md`, `.txt`, `.html` and `.erb` are exempt. Prose is not code, and a view
   is markup whose length is driven by the page, not by design choices.
+- `.pbxproj` is exempt for the same reason. An Xcode project file is a manifest
+  that spends three entries per source file, so its length counts the app's
+  files rather than saying anything about how they are written.
 - Anything under `db/migrate/` is exempt. A migration that backfills a table is
   as long as the data it carries, and splitting one to satisfy a line count
   would be worse than leaving it long.
