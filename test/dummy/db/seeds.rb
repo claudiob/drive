@@ -20,7 +20,10 @@ agents = Agent.order(:id).first 2
 
 # Four locations, the first two claimed, so the Lists screen has both kinds to count.
 locations = ZIP.order(:code).limit(4).each_with_index.map do |zip, index|
-  location = Location.find_or_create_by! zip:, street: "#{100 + index} Main Street" do |record|
+  # Found by its ZIP alone: `street` is encrypted non-deterministically, so a
+  # `find_or_create_by` on it matches nothing ever and quietly creates a row a run.
+  location = Location.find_or_create_by! zip: do |record|
+    record.street = "#{100 + index} Main Street"
     record.city = zip.city
   end
 
@@ -54,8 +57,17 @@ end
 # A contact with no name, to prove the '#' section and the phone fallback.
 Contact.find_or_create_by! phone: '5552999999'
 
-Job.find_or_create_by! title: 'Replace the water heater', location: locations.first
-Job.find_or_create_by! title: 'Repaint the porch', location: locations.second
+JOBS = [
+  'Replace the water heater', 'Repaint the porch', 'Regrade the driveway',
+  'Service the furnace', 'Reseal the deck', 'Replace the garage door',
+  'Clear the gutters', 'Rewire the basement',
+]
+
+# Spread across the locations, so some belong to a claimed one and some do not — and
+# `needing_attention` splits them again by id, which is the placeholder rule.
+JOBS.each_with_index do |title, index|
+  Job.find_or_create_by! title:, location: locations[index % locations.size]
+end
 
 Contact.order(:id).limit(12).each_with_index do |contact, index|
   Message.find_or_create_by! contact:, content: "Hi, it's #{contact.name || 'me'}." do |message|

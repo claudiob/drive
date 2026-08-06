@@ -18,6 +18,8 @@ class Contact < ApplicationRecord
 
   validates :phone, presence: true, uniqueness: true
 
+  # PLACEHOLDER, like `Job.needing_attention`: the real rule is not decided yet.
+  scope :needing_attention, -> { where 'contacts.id % 2 = 0' }
   scope :alphabetical, -> { order NAMED_FIRST, INITIAL, :name, :id }
   scope :with_unread, -> { where id: Message.unread.select(:contact_id) }
   # Nobody signed in claims nobody, rather than every unclaimed contact.

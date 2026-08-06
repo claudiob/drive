@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   # and neither belongs in the desktop sidebar.
   resources :lists, only: :index
   resources :places, only: :index
+  resources :badges, only: :index
   resource :settings, only: :show, controller: :settings
 
   # No index action, so no sidebar link.

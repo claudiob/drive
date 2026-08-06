@@ -22,6 +22,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
 
         tabBarController.load(HotwireTab.all(baseURL: AppConfiguration.baseURL))
+        Badges.apply(to: tabBarController, from: AppConfiguration.baseURL)
 
         #if DEBUG
             // Opens straight onto a tab, so a screenshot or a debug run can reach one
