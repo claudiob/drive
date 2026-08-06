@@ -11,7 +11,7 @@ final class ComposeViewController: UITableViewController, PathConfigurationIdent
     weak var navigator: Navigator?
     private var contacts: [ContactCard] = []
     var matches: [ContactCard] = []
-    var messages: [Bubble] = []
+    var rows: [ConversationRow] = []
     var recipient: ContactCard?
     let field = ComposeField()
 
@@ -38,6 +38,7 @@ final class ComposeViewController: UITableViewController, PathConfigurationIdent
 
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "match")
         tableView.register(BubbleCell.self, forCellReuseIdentifier: "bubble")
+        tableView.register(TimeCell.self, forCellReuseIdentifier: "time")
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .interactive
         field.onChange = { [weak self] query in self?.narrow(to: query) }

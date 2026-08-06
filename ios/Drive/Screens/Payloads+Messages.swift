@@ -41,7 +41,10 @@ struct Bubble: Decodable, Hashable {
     let id: Int
     let body: String
     let inbound: Bool
-    let time: String
+    /// Sent as ISO 8601 and formatted on the device, so "Today" means the reader's
+    /// today and the clock follows their locale rather than the server's.
+    let sentAt: String
+    let delivered: Bool
 }
 
 /// What `/contacts/:id/messages.json` answers.

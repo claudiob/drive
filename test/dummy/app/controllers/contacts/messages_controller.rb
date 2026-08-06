@@ -20,7 +20,8 @@ module Contacts
     def bubble(message)
       {
         id: message.id, body: message.content.presence || 'Attachment',
-        inbound: message.inbound, time: message.created_at.strftime('%-l:%M %p'),
+        inbound: message.inbound, sentAt: message.created_at.iso8601,
+        delivered: message.delivered_at.present?,
       }
     end
   end

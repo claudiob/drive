@@ -12,7 +12,7 @@ extension ConversationViewController: UITableViewDelegate {
     func tableView(_ table: UITableView,
                    contextMenuConfigurationForRowAt path: IndexPath,
                    point: CGPoint) -> UIContextMenuConfiguration? {
-        let message = messages[path.row]
+        guard case let .bubble(message) = rows[path.row] else { return nil }
 
         return UIContextMenuConfiguration(identifier: path as NSCopying) { _ in
             UIMenu(children: [Self.tapbackMenu, Self.actions(for: message)])

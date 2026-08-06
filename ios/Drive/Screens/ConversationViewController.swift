@@ -10,7 +10,7 @@ final class ConversationViewController: UIViewController, PathConfigurationIdent
     private let url: URL
     private let table = UITableView(frame: .zero, style: .plain)
     private let bar = MessageBar()
-    var messages: [Bubble] = []
+    var rows: [ConversationRow] = []
 
     init(url: URL, navigator: Navigator?) {
         self.url = url
@@ -39,6 +39,7 @@ final class ConversationViewController: UIViewController, PathConfigurationIdent
         table.dataSource = self
         table.delegate = self
         table.register(BubbleCell.self, forCellReuseIdentifier: "bubble")
+        table.register(TimeCell.self, forCellReuseIdentifier: "time")
         table.separatorStyle = .none
         table.allowsSelection = false
         table.keyboardDismissMode = .interactive
@@ -92,7 +93,7 @@ final class ConversationViewController: UIViewController, PathConfigurationIdent
                 }
             )
 
-            messages = thread.messages
+            rows = ConversationRow.rows(thread.messages)
             table.reloadData()
         }
     }

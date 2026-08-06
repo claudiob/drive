@@ -65,7 +65,12 @@ Contact.order(:id).limit(12).each_with_index do |contact, index|
   end
 
   # A reply from the agent, so a thread has both sides to draw.
-  Message.find_or_create_by! contact:, content: 'Thanks — I will take a look today.' do |message|
+  said = 'Thanks — I will take a look today.'
+  reply = Message.find_or_create_by! contact:, content: said do |message|
     message.inbound = false
   end
+
+  # Set outside the block, which only runs on create: every other reply is delivered,
+  # so the tick shows in both of its states however often this is run.
+  reply.update! delivered_at: index.even? ? Time.current : nil
 end

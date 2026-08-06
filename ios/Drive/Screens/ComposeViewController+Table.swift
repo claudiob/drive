@@ -4,14 +4,21 @@ import UIKit
 /// the given name is weighted apart from the family name as it is in Contacts.
 extension ComposeViewController {
     override func tableView(_ table: UITableView, numberOfRowsInSection section: Int) -> Int {
-        recipient == nil ? matches.count : messages.count
+        recipient == nil ? matches.count : rows.count
     }
 
     override func tableView(_ table: UITableView,
                             cellForRowAt path: IndexPath) -> UITableViewCell {
         if recipient != nil {
+            guard case let .bubble(message) = rows[path.row] else {
+                let cell = table.dequeueReusableCell(withIdentifier: "time", for: path)
+                if case let .time(caption) = rows[path.row] { (cell as? TimeCell)?.show(caption) }
+
+                return cell
+            }
+
             let cell = table.dequeueReusableCell(withIdentifier: "bubble", for: path)
-            (cell as? BubbleCell)?.show(messages[path.row])
+            (cell as? BubbleCell)?.show(message)
 
             return cell
         }
@@ -54,7 +61,7 @@ extension ComposeViewController {
             guard let target = NativeList.url("\(contact.path)/messages", like: url),
                   let thread: Conversation = await NativeList.fetch(target) else { return }
 
-            messages = thread.messages
+            rows = ConversationRow.rows(thread.messages)
             tableView.reloadData()
             tableView.separatorStyle = .none
         }
@@ -62,7 +69,7 @@ extension ComposeViewController {
 
     func release() {
         recipient = nil
-        messages = []
+        rows = []
         field.text = ""
         field.isLocked = false
         tableView.reloadData()

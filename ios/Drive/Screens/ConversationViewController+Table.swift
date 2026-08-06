@@ -3,13 +3,21 @@ import UIKit
 /// The bubbles themselves. Split from the controller so neither file outgrows a read.
 extension ConversationViewController: UITableViewDataSource {
     func tableView(_ table: UITableView, numberOfRowsInSection section: Int) -> Int {
-        messages.count
+        rows.count
     }
 
     func tableView(_ table: UITableView, cellForRowAt path: IndexPath) -> UITableViewCell {
-        let cell = table.dequeueReusableCell(withIdentifier: "bubble", for: path)
-        (cell as? BubbleCell)?.show(messages[path.row])
+        switch rows[path.row] {
+        case let .time(caption):
+            let cell = table.dequeueReusableCell(withIdentifier: "time", for: path)
+            (cell as? TimeCell)?.show(caption)
 
-        return cell
+            return cell
+        case let .bubble(message):
+            let cell = table.dequeueReusableCell(withIdentifier: "bubble", for: path)
+            (cell as? BubbleCell)?.show(message)
+
+            return cell
+        }
     }
 }
