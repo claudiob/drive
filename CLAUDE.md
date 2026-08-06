@@ -561,6 +561,22 @@ two is filed under the one a reader would look in first.
 - This sharpens the baseline's "concerns for genuinely shared behavior": a second
   identical declaration is the threshold, and anticipating one is not.
 
+#### Indent `when` inside a `case`
+
+- On a multi-line `case`, `when` and `else` sit one level in from `case` and `end`:
+
+      case params[:list]
+        when 'unread' then Contact.with_unread
+        when 'claimed' then Contact.claimed_by Current.agent
+        else Contact.all
+      end
+
+- Enforced by `Layout/CaseIndentation` with `EnforcedStyle: end` **and**
+  `IndentOneStep: true`. Neither alone is enough: the default aligns `when` with
+  `case`, and `end` alone aligns it with `end` rather than indenting it.
+- `Layout/ElseAlignment` then follows `when` on its own, so `else` needs no
+  setting of its own.
+
 #### As few parentheses as possible
 
 - Omit parentheses on a method call's arguments; keep the inner ones, where

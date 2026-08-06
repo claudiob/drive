@@ -20,6 +20,15 @@
 		1A000000000000000000003A /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000002A /* Job.swift */; };
 		1A000000000000000000003B /* JobsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000002B /* JobsViewController.swift */; };
 		1A000000000000000000003C /* DriveNavigatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000002C /* DriveNavigatorDelegate.swift */; };
+		1A0000000000000000000140 /* NativeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000040 /* NativeList.swift */; };
+		1A0000000000000000000141 /* Payloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000041 /* Payloads.swift */; };
+		1A0000000000000000000142 /* Glyphs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000042 /* Glyphs.swift */; };
+		1A0000000000000000000143 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000043 /* ContactsViewController.swift */; };
+		1A0000000000000000000144 /* ContactsViewController+Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000044 /* ContactsViewController+Table.swift */; };
+		1A0000000000000000000145 /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000045 /* MessagesViewController.swift */; };
+		1A0000000000000000000146 /* MessagesViewController+Swipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000046 /* MessagesViewController+Swipe.swift */; };
+		1A0000000000000000000147 /* ListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000047 /* ListsViewController.swift */; };
+		1A0000000000000000000148 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000048 /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +46,15 @@
 		1A000000000000000000002A /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		1A000000000000000000002B /* JobsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsViewController.swift; sourceTree = "<group>"; };
 		1A000000000000000000002C /* DriveNavigatorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveNavigatorDelegate.swift; sourceTree = "<group>"; };
+		1A0000000000000000000040 /* NativeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NativeList.swift"; sourceTree = "<group>"; };
+		1A0000000000000000000041 /* Payloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payloads.swift"; sourceTree = "<group>"; };
+		1A0000000000000000000042 /* Glyphs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Glyphs.swift"; sourceTree = "<group>"; };
+		1A0000000000000000000043 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactsViewController.swift"; sourceTree = "<group>"; };
+		1A0000000000000000000044 /* ContactsViewController+Table.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactsViewController+Table.swift"; sourceTree = "<group>"; };
+		1A0000000000000000000045 /* MessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessagesViewController.swift"; sourceTree = "<group>"; };
+		1A0000000000000000000046 /* MessagesViewController+Swipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessagesViewController+Swipe.swift"; sourceTree = "<group>"; };
+		1A0000000000000000000047 /* ListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListsViewController.swift"; sourceTree = "<group>"; };
+		1A0000000000000000000048 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsViewController.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +123,15 @@
 			children = (
 				1A000000000000000000002A /* Job.swift */,
 				1A000000000000000000002B /* JobsViewController.swift */,
+				1A0000000000000000000040 /* NativeList.swift */,
+				1A0000000000000000000041 /* Payloads.swift */,
+				1A0000000000000000000042 /* Glyphs.swift */,
+				1A0000000000000000000043 /* ContactsViewController.swift */,
+				1A0000000000000000000044 /* ContactsViewController+Table.swift */,
+				1A0000000000000000000045 /* MessagesViewController.swift */,
+				1A0000000000000000000046 /* MessagesViewController+Swipe.swift */,
+				1A0000000000000000000047 /* ListsViewController.swift */,
+				1A0000000000000000000048 /* SettingsViewController.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -212,6 +239,15 @@
 				1A0000000000000000000038 /* NavButtonsComponent.swift in Sources */,
 				1A000000000000000000003C /* DriveNavigatorDelegate.swift in Sources */,
 				1A000000000000000000003B /* JobsViewController.swift in Sources */,
+				1A0000000000000000000140 /* NativeList.swift in Sources */,
+				1A0000000000000000000141 /* Payloads.swift in Sources */,
+				1A0000000000000000000142 /* Glyphs.swift in Sources */,
+				1A0000000000000000000143 /* ContactsViewController.swift in Sources */,
+				1A0000000000000000000144 /* ContactsViewController+Table.swift in Sources */,
+				1A0000000000000000000145 /* MessagesViewController.swift in Sources */,
+				1A0000000000000000000146 /* MessagesViewController+Swipe.swift in Sources */,
+				1A0000000000000000000147 /* ListsViewController.swift in Sources */,
+				1A0000000000000000000148 /* SettingsViewController.swift in Sources */,
 				1A000000000000000000003A /* Job.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

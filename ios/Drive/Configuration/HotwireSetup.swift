@@ -23,7 +23,8 @@ enum HotwireSetup {
         ])
 
         Hotwire.config.applicationUserAgentPrefix = "Drive iOS;"
-        Hotwire.config.showDoneButtonOnModals = true
+        // Cancel is added per screen instead, on the trailing side.
+        Hotwire.config.showDoneButtonOnModals = false
         Hotwire.config.backButtonDisplayMode = .minimal
 
         // The tab bar stays put on a pushed screen. Hiding it would change

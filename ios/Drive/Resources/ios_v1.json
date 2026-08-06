@@ -14,12 +14,48 @@
     },
     {
       "patterns": [
+        "^/contacts(\\?.*)?$"
+      ],
+      "properties": {
+        "view_controller": "contacts"
+      },
+      "comment": "Drawn natively from /contacts.json with UIKit's own list."
+    },
+    {
+      "patterns": [
+        "^/settings$"
+      ],
+      "properties": {
+        "view_controller": "settings"
+      },
+      "comment": "Drawn natively from /settings.json with UIKit's own list."
+    },
+    {
+      "patterns": [
+        "^/messages$"
+      ],
+      "properties": {
+        "view_controller": "messages"
+      },
+      "comment": "Drawn natively from /messages.json with UIKit's own list."
+    },
+    {
+      "patterns": [
+        "^/lists$"
+      ],
+      "properties": {
+        "view_controller": "lists"
+      },
+      "comment": "Drawn natively from /lists.json with UIKit's own list."
+    },
+    {
+      "patterns": [
         "^/jobs$"
       ],
       "properties": {
         "view_controller": "jobs"
       },
-      "comment": "Drawn natively with UIKit's inset-grouped list, from /jobs.json."
+      "comment": "Drawn natively from /jobs.json with UIKit's own list."
     },
     {
       "patterns": [

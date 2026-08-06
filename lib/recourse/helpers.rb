@@ -51,10 +51,7 @@ module Recourse
     end
 
     def routed?(controller_path, action)
-      Rails.application.routes.routes.any? do |route|
-        route.defaults[:controller] == controller_path &&
-          route.defaults[:action] == action
-      end
+      Recourse.routed? controller_path, action
     end
   end
 end

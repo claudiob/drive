@@ -1,0 +1,104 @@
+/* The gem's forms are Bootstrap markup, and this shell loads no Bootstrap. Styled here
+   as an iOS grouped form instead: a stack of inset cards, one field to a row. */
+
+.row {
+  display: block;
+  margin: 0;
+}
+
+.mb-3 {
+  margin-inline: var(--gutter);
+  margin-block-end: 18px;
+}
+
+.form-label {
+  display: block;
+  margin-block-end: 6px;
+  padding-inline-start: 4px;
+  color: var(--label-2);
+  font-size: 13px;
+}
+
+.form-control {
+  inline-size: 100%;
+  min-block-size: 44px;
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--label);
+  font: 17px -apple-system, system-ui, sans-serif;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-control::placeholder {
+  color: var(--label-3);
+}
+
+.form-control:focus {
+  outline: 2px solid var(--tint);
+  outline-offset: -2px;
+}
+
+/* A combobox is a button plus the menu that follows it, so it has to look like the
+   inputs above it while behaving like a row that opens something. */
+.combobox-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: start;
+}
+
+.combobox-caret {
+  color: var(--label-3);
+}
+
+.menu {
+  margin-block-start: 6px;
+  padding: 6px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  max-block-size: 40vh;
+  overflow-y: auto;
+}
+
+.menu[hidden], .d-none {
+  display: none;
+}
+
+.menu-item {
+  display: block;
+  inline-size: 100%;
+  padding: 11px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--tint);
+  font-size: 17px;
+  text-align: start;
+}
+
+.btn {
+  display: block;
+  inline-size: calc(100% - var(--gutter) * 2);
+  margin: 24px var(--gutter);
+  min-block-size: 50px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--tint);
+  color: #fff;
+  font: 600 17px -apple-system, system-ui, sans-serif;
+}
+
+.is-invalid {
+  outline: 2px solid #ff3b30;
+  outline-offset: -2px;
+}
+
+.invalid-feedback {
+  display: block;
+  margin: 6px 4px 0;
+  color: #ff3b30;
+  font-size: 13px;
+}

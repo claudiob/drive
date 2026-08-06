@@ -22,5 +22,21 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
 
         tabBarController.load(HotwireTab.all(baseURL: AppConfiguration.baseURL))
+
+        #if DEBUG
+            // Opens straight onto a tab, so a screenshot or a debug run can reach one
+            // without tapping. Programmatic selection does not call the delegate, so
+            // the navigator has to be started by hand.
+            if let tab = ProcessInfo.processInfo.environment["DRIVE_TAB"],
+               let index = Int(tab) {
+                tabBarController.selectedIndex = index
+                tabBarController.activeNavigator.start()
+
+                if let path = ProcessInfo.processInfo.environment["DRIVE_ROUTE"],
+                   let target = URL(string: path, relativeTo: AppConfiguration.baseURL) {
+                    tabBarController.activeNavigator.route(target.absoluteURL)
+                }
+            }
+        #endif
     }
 }

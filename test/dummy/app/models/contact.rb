@@ -20,7 +20,8 @@ class Contact < ApplicationRecord
 
   scope :alphabetical, -> { order NAMED_FIRST, INITIAL, :name, :id }
   scope :with_unread, -> { where id: Message.unread.select(:contact_id) }
-  scope :claimed_by, ->(agent) { where id: claimed_by_ids(agent) }
+  # Nobody signed in claims nobody, rather than every unclaimed contact.
+  scope :claimed_by, ->(agent) { agent ? where(id: claimed_by_ids(agent)) : none }
   # `NOT IN` would answer nothing at all if the subquery held a NULL. It cannot:
   # `homes.contact_id` is `null: false`.
   scope :unclaimed, -> { where.not id: claimed_ids }
@@ -33,5 +34,21 @@ class Contact < ApplicationRecord
   # Contact ids any agent at all has claimed, which is what leaves the rest unclaimed.
   def self.claimed_ids
     Home.joins(:location).where.not(locations: { agent_id: nil }).select :contact_id
+  end
+
+  # What to call a contact on screen: their name, or their number when they have none.
+  def display_name
+    [name, surname].compact_blank.join(' ').presence ||
+      ActiveSupport::NumberHelper.number_to_phone(phone)
+  end
+
+  # The one or two letters an avatar circle shows.
+  def initials
+    [name, surname].compact_blank.map(&:first).join.upcase.presence || '#'
+  end
+
+  # The section a contact files under, matching what `INITIAL` computes in SQL.
+  def initial
+    name.to_s.match?(/\A[A-Za-z]/) ? name.first.upcase : '#'
   end
 end

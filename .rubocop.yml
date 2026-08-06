@@ -18,6 +18,10 @@ Gemspec/RequireMFA:
 Layout/AccessModifierIndentation:
   EnforcedStyle: outdent
 
+Layout/CaseIndentation:
+  EnforcedStyle: end
+  IndentOneStep: true
+
 Layout/LineLength:
   Max: 100
 

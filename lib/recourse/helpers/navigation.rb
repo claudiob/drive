@@ -52,8 +52,8 @@ module Recourse
       # Only a page beneath the index names itself, and names what it is showing.
       def breadcrumb_leaf
         case controller.action_name
-        when 'new', 'create' then "New #{resource_name}"
-        when 'edit', 'update' then resource_record_label
+          when 'new', 'create' then "New #{resource_name}"
+          when 'edit', 'update' then resource_record_label
         end
       end
 

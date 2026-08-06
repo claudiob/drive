@@ -36,10 +36,10 @@ module Recourse
 
       def dated_field(form, column, **)
         case attribute_type column
-        when :date then form.date_field column, **
-        when :time then form.time_field column, **
-        when :datetime then form.datetime_local_field column, **
-        else form.text_field column, **
+          when :date then form.date_field column, **
+          when :time then form.time_field column, **
+          when :datetime then form.datetime_local_field column, **
+          else form.text_field column, **
         end
       end
 

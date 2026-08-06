@@ -25,9 +25,9 @@ module Recourse
 
       def pattern_sample(token)
         case token
-        when '\d' then '0'
-        when CLASS_TOKEN then token[CLASS_SAMPLE]
-        else token
+          when '\d' then '0'
+          when CLASS_TOKEN then token[CLASS_SAMPLE]
+          else token
         end
       end
     end

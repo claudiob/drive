@@ -7,7 +7,7 @@ module Recourse
 
       # Columns the table shows: every attribute that is not encrypted.
       def resource_columns
-        resource_model.column_names - Array(resource_model.encrypted_attributes).map(&:to_s)
+        Recourse.visible_columns resource_model
       end
 
       # Columns a form offers, the same list `create` permits.

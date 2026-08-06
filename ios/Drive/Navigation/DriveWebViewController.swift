@@ -19,4 +19,20 @@ final class DriveWebViewController: HotwireWebViewController {
         edgesForExtendedLayout = []
         extendedLayoutIncludesOpaqueBars = false
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        // A sheet is dismissed with Cancel on the trailing side, the way Apple's own
+        // are. The library offers a Done button instead, which reads wrong on a form
+        // that has its own submit.
+        guard presentingViewController != nil,
+              navigationItem.rightBarButtonItem == nil
+        else { return }
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            systemItem: .cancel,
+            primaryAction: UIAction { [weak self] _ in self?.dismiss(animated: true) }
+        )
+    }
 }

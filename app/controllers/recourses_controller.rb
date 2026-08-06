@@ -1,15 +1,20 @@
 # Superclass of the controllers the gem defines when a host app has none.
 class RecoursesController < ApplicationController
-  include Pagy::Method
+  include Pagy::Method, Recourse::Data, Recourse::Parameters
 
   helper Recourse::Helpers
 
   # `find` raises RecordNotFound, so an id that names nothing answers 404.
   before_action :find_resource, only: %i[edit update]
 
-  # Lists one page of the model the route is named after.
+  # Lists one page of the model the route is named after, as a page or as data.
   def index
     @pagy, @resources = pagy resource_scope
+
+    respond_to do |format|
+      format.html
+      format.json { render json: index_json }
+    end
   end
 
   # Builds a blank record under the name Rails would use: @contact for contacts.
@@ -75,22 +80,5 @@ private
     permitted = Recourse.editable_columns resource_class
 
     resolve_references params.expect(controller_name.singularize.to_sym => permitted)
-  end
-
-  # A foreign key whose label is typed arrives as that label, so it is looked up
-  # here. Nothing found leaves the key nil, and `belongs_to` reports it missing.
-  def resolve_references(attributes)
-    resource_class.reflect_on_all_associations(:belongs_to).each do |association|
-      key = association.foreign_key.to_s
-      next unless attributes.key?(key) && association.klass.recourse_typed_label?
-
-      attributes[key] = reference_id association, attributes[key]
-    end
-
-    attributes
-  end
-
-  def reference_id(association, label)
-    association.klass.find_by(association.klass.recourse_label => label)&.id
   end
 end
