@@ -42,7 +42,7 @@ final class AddressSearchViewController: UITableViewController, UISearchBarDeleg
     }
 
     func searchBar(_ bar: UISearchBar, textDidChange text: String) {
-        // One request per pause, not per keystroke: the previous task is cancelled
+        // One request per pause, not per keystroke: the previous task is canceled
         // before the next is given time to start.
         typing?.cancel()
         typing = Task { @MainActor in

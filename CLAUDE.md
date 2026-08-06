@@ -74,114 +74,89 @@ two is filed under the one a reader would look in first.
 #### PostgreSQL, always
 
 - When an app needs a database, it is PostgreSQL. Never MySQL, never SQLite —
-  including for test-only apps like `test/dummy`, and including cases where
-  SQLite would be less setup.
-- Running the test suite therefore needs a PostgreSQL server. `test/test_helper`
-  creates the database on first run, so `rake test` is still the only command
-  needed once the server is up.
+  `test/dummy` included, and even where SQLite would be less setup.
+- So the suite needs a running PostgreSQL. `test/test_helper` creates the
+  database on first run, so `rake test` is still the only command.
 
 #### Cache a query or a fragment that repeats
 
-- Reach for `Rails.cache` wherever the same rows would be read or the same markup
-  re-rendered. An index table and the option list behind a combobox are both
-  cached; `/locations/new` costs six queries cold and three warm, and the
-  40,965-row `SELECT` behind its ZIP menu is one of the three that go.
-- Key a fragment on the *relation*, `cache recourses do`, never on a hand-rolled
-  string. Rails builds the key from a digest of the SQL — so a different page of
-  the same table is a different key — and pairs it with a version from the row
-  count and the newest `updated_at`, so nothing has to remember to expire it.
-- That version check is itself a `SELECT COUNT(*), MAX(updated_at)`, and it is the
-  price of never serving a stale menu. Keying on `recourses.cache_key` instead
-  skips it and queries nothing at all, at the cost of a list that never notices a
-  new row — only worth it behind an `expires_in`, and only for data that may lag.
-- The check is free where the relation is already loaded, which is why the index
-  costs nothing extra: `blank?` loads it before the table renders, so the version
-  is counted in Ruby. Another reason to prefer `blank?` over `empty?`.
-- Cache the table, not the pagination around it. The nav changes with the page and
-  is cheap to draw.
+- Reach for `Rails.cache` wherever the same rows would be read or the same
+  markup re-rendered.
+- Key a fragment on the *relation* — `cache recourses do` — never on a
+  hand-rolled string. Rails digests the SQL and pairs it with a version from
+  the row count and newest `updated_at`, so nothing has to expire it.
+- That version check costs a `SELECT COUNT(*), MAX(updated_at)`, and it is the
+  price of never serving a stale menu. `recourses.cache_key` skips the check
+  and queries nothing, at the cost of never noticing a new row — only behind an
+  `expires_in`, and only for data that may lag.
+- A list with no relation behind it has no version to check, so key it on a
+  digest of the list itself. A fixed string goes stale the moment the list
+  changes, which is silent: `Digest::SHA256.hexdigest Unicon.icons.join(',')`.
+- The check is free where the relation is already loaded, which is why an index
+  costs nothing extra: `blank?` loads it before the table renders. One more
+  reason to prefer `blank?` over `empty?`.
+- Cache the table, not the pagination around it.
 - A cache that is off in tests is a cache nobody tests. The dummy app sets
-  `config.cache_store = :memory_store` for the test environment: caching stays on,
-  and the run leaves no files behind.
+  `config.cache_store = :memory_store` for test.
 
 #### Fewest SQL queries to render a page
 
-- Rendering a page should issue as few queries as it can. Treat an extra query
-  as a defect, not a detail.
-- When checking whether a relation has records *and then looping over them*, use
-  `present?` and `blank?`, never `any?` and `empty?`. `blank?` runs the
-  `SELECT "contacts".*` that the loop needs anyway and caches it; `empty?` runs a
-  separate `SELECT 1 ... LIMIT 1` first, so the page costs two queries instead of
-  one.
+- Treat an extra query as a defect, not a detail.
+- Checking whether a relation has records *and then looping over them*: use
+  `present?` / `blank?`, never `any?` / `empty?`. `blank?` runs the `SELECT`
+  the loop needs anyway; `empty?` adds a `SELECT 1 ... LIMIT 1` first.
 - `any?` and `empty?` are still right when nothing will be looped over.
-- An index eager-loads every `belongs_to` its table can name, since each cell that
-  shows a referenced record would otherwise be a query of its own:
-  `resource_class.includes(*names)`. Twenty locations cost five queries rather than
-  forty-two, and the count no longer grows with the page.
-- Worth a test: assert the query count, so a later edit cannot quietly add one
-  back. `test_it_costs_one_count_and_one_select` does this by subscribing to
-  `sql.active_record`, and it is one of the two tests exempt from "as few tests
-  as coverage needs".
+- An index eager-loads every `belongs_to` its table can name —
+  `resource_class.includes(*names)` — or each referenced cell is its own query.
+  Twenty locations: five queries, not forty-two.
+- Assert the query count in a test, so a later edit cannot add one back. See
+  `test_it_costs_one_count_and_one_select`.
 
 #### Select only the columns a query displays
 
-- A query built to display something fetches those columns and no others.
-  The combobox of states shows a name per row and submits an id, so it reads
-  `State.select(:id, :name).order(:name)` — not `State.order(:name)`.
-- This sits alongside "fewest SQL queries to render a page": the count of
-  queries is one cost and the width of each is another.
-- It applies where the columns are known. A generic table hands the record to a
-  row partial that may touch anything, so it selects everything on purpose.
+- A query built to display something fetches those columns and no others:
+  `State.select(:id, :name).order(:name)`, not `State.order(:name)`.
+- The count of queries is one cost; the width of each is another.
+- Only where the columns are known. A generic table hands the record to a row
+  partial that may touch anything, so it selects everything on purpose.
 
 #### Emails are citext
 
-- A plaintext email column is `citext`, never `string`. An address is
-  case-insensitive in practice, so `Ada@example.com` and `ada@example.com` are
-  the same one, and the column type is what makes comparison and a unique index
-  agree with that.
-- citext arrives with its extension, so a migration runs
-  `enable_extension 'citext'` before the first citext column is created.
-- Nothing else is then needed: no `LOWER(email)` expression index, and no
-  downcasing on the way in.
-- An *encrypted* email column is not citext — the same reasoning as the rest of
-  "Encrypt PII". What is stored is ciphertext, so a case-insensitive column
-  compares the wrong bytes and could reject two genuinely different addresses.
-  Normalize in Rails instead, always with both options:
-  `encrypts :email, deterministic: true, downcase: true`.
-- `deterministic: true` is not conditional on the column being unique or
-  queried *today*. An address is the natural handle for finding a record, so it
-  will be looked up eventually, and switching afterwards means re-encrypting
-  every row. `downcase: true` is what earns the case-insensitivity the citext
-  column would have given, and it is what keeps a unique index honest: without
-  it two spellings of one address encrypt to two different values.
+- A plaintext email column is `citext`, never `string` — that is what makes
+  comparison and a unique index agree that `Ada@` and `ada@` are one address.
+  Run `enable_extension 'citext'` before the first such column.
+- Nothing else needed: no `LOWER(email)` index, no downcasing on the way in.
+- An *encrypted* email column is not citext: it holds ciphertext, so a
+  case-insensitive column compares the wrong bytes. Normalize in Rails, always
+  with both options: `encrypts :email, deterministic: true, downcase: true`.
+- `deterministic: true` is not conditional on the column being queried *today* —
+  an address is the natural handle for finding a record, and switching later
+  means re-encrypting every row. `downcase: true` is what keeps a unique index
+  honest: without it two spellings encrypt to two values.
 
 ### SECURITY
 
 #### Encrypt PII
 
-- Personal data is stored with Active Record Encryption: `encrypts :phone`,
-  `:email`, `:surname`, `:street`. Suspect a column is personal? Ask before
-  storing it in the clear.
-- `name` is not PII and is not encrypted. A first name on its own does not
-  identify anyone; a surname does. Asked and settled — do not encrypt it.
-- A column that is queried or must stay unique needs
-  `encrypts :phone, deterministic: true`. Non-deterministic ciphertext differs
-  every write, which silently defeats both a unique index and a uniqueness
-  validation — they will pass while duplicates pile up.
-- Never constrain the *shape* of an encrypted value in the database. What is
-  stored is ciphertext, so only `null: false` and a unique index still mean
-  anything; the format belongs to the model.
-- Encrypted columns never appear in a generic table, so encrypting a column
-  removes it from the index page. That is intended — see `STYLE.md`.
+- Personal data uses Active Record Encryption: `encrypts :phone`, `:email`,
+  `:surname`, `:street`. Suspect a column is personal? Ask before storing it
+  in the clear.
+- `name` is not PII and is not encrypted. A first name alone identifies nobody;
+  a surname does. Asked and settled.
+- A column that is queried or must stay unique needs `deterministic: true`.
+  Non-deterministic ciphertext differs every write, silently defeating both a
+  unique index and a uniqueness validation — they pass while duplicates pile up.
+- Never constrain the *shape* of an encrypted value in the database. Only
+  `null: false` and a unique index still mean anything; format is the model's.
+- Encrypting a column removes it from every generic table. Intended — see
+  `STYLE.md`.
 
 #### Phone numbers
 
-- A phone number is stored in a column named `phone`, holding exactly 10
-  digits.
-- The database enforces `null: false` and a unique index. It does not check the
-  ten-digit shape — a phone is PII, so it is encrypted, and no constraint can
-  read ciphertext.
-- Rails is where the shape is enforced: the model includes a `Phonable` concern
-  carrying both rules:
+- A `phone` column holds exactly 10 digits, with `null: false` and a unique
+  index. The database cannot check the shape: a phone is PII, so it is
+  encrypted.
+- The shape is Rails', in a `Phonable` concern:
 
       NORTH_AMERICAN_PHONES = /\A[2-9]\d{2}[2-9]\d{6}\z/
 
@@ -191,9 +166,8 @@ two is filed under the one a reader would look in first.
         validates :phone, allow_nil: true
       end
 
-- The concern's validation is `allow_nil`, so whether a phone is *required* is
-  the including model's decision — add `presence: true` there, not in the
-  concern.
+- The concern is `allow_nil`, so whether a phone is *required* is the including
+  model's call — `presence: true` there, not in the concern.
 
 ### TESTING
 
@@ -202,104 +176,81 @@ two is filed under the one a reader would look in first.
 - `simplecov` starts at the very top of `test/test_helper.rb`, before anything
   else is required, with `minimum_coverage 100`. Below that the suite fails.
 - `skip '/test/'` leaves the dummy app out: it is a fixture, not shipped code.
-  Never `add_filter` — SimpleCov deprecated it in favour of `skip`, same
-  arguments and same behavior, and it warns on every run until changed.
-- `lib/recourse/version.rb` is not measured, and that is expected rather than a
-  gap. The Gemfile's `gemspec` directive loads it during bundler setup, before
-  SimpleCov can start. Do not add `track_files` to pull it in — it would report
-  as uncovered when in fact it runs.
+  Never `add_filter` — deprecated in favor of `skip`, and it warns every run.
+- `lib/recourse/version.rb` is not measured, and that is expected: the Gemfile's
+  `gemspec` directive loads it before SimpleCov starts. Do not add
+  `track_files` — it would report as uncovered when in fact it runs.
 
 #### As few tests as coverage needs
 
-- The suite exists to cover the code, so a test that can be deleted while
-  coverage stays at 100% is a test to delete. Write the smallest set that gets
-  there and stop.
-- Never add a test for lines the suite already covers, even to reach a *branch*
-  it misses. Line coverage is the whole budget.
-- Never test a migration. A backfill's row count, the values it wrote and the
-  invariants between them are data, and asserting them exercises no code of
-  ours. `TestState` was five such tests, so the whole class went, and
-  `TestCounty` and `TestZIP` with it.
-- A model that only declares validations, associations and encryption is in the
-  same position: nothing measured runs, so it gets no test file. That took
-  `TestPhonable` and `TestEmails` too.
-- This narrows the baseline's "every behavior change comes with a test": the
-  test comes with it only if it reaches a line nothing else does. The suite it
-  leaves is small on purpose — six tests for 146 lines.
-- Two kinds of assertion are exempt, because a covered line cannot stand in for
-  them. How many queries a page costs, and whether an encrypted column reaches
-  the page: both run exactly the same lines whether they hold or not, so
-  coverage stays green while the behavior breaks. The PII leak that prompted the
-  second exemption printed an address at 100%.
-- Nothing else is exempt. Markup, titles, breadcrumbs, icons, pagination links
-  and the order of the sidebar are all asserted by whichever test happens to
-  render the page, and no test is added to pin them down further.
+- A test that can be deleted while coverage stays at 100% is a test to delete.
+  Write the smallest set that gets there and stop.
+- Never add a test for lines already covered, even to reach a *branch* that is
+  missed. Line coverage is the whole budget.
+- Never test a migration: a backfill's row count and values are data, and
+  asserting them exercises no code of ours.
+- A model that only declares validations, associations and encryption gets no
+  test file — nothing measured runs.
+- This narrows "every behavior change comes with a test": the test comes with it
+  only if it reaches a line nothing else does.
+- Two assertions are exempt, because a covered line cannot stand in for them:
+  how many queries a page costs, and whether an encrypted column reaches the
+  page. Both run identical lines whether they hold or not, so coverage stays
+  green while the behavior breaks — a PII leak printed an address at 100%.
+- Nothing else is exempt. Markup, titles, breadcrumbs, icons, pagination and
+  sidebar order are asserted by whichever test renders the page.
 
 ### MAINTAINABILITY
 
 #### No metaprogramming
 
-- Never call `send` or `public_send`. Reach the data directly instead:
-  `resource.attributes[column]`, not `resource.public_send column`.
+- Never `send` or `public_send`. Reach the data directly:
+  `resource.attributes[column]`.
 - No `define_method`, `method_missing`, `instance_variable_get` / `_set`,
-  `const_set`, `constantize`, or `eval` of any kind.
-- The single exception is an explicit instruction to use it. Never reach for
-  metaprogramming on your own initiative, and never treat the places that
-  already use it as permission to add another — ask instead.
+  `const_set`, `constantize`, or `eval`.
+- The one exception is an explicit instruction. Never on your own initiative,
+  and existing uses are not permission to add another — ask.
 
 #### Both sides of an association
 
-- A `belongs_to` gets the matching `has_many` on the other model by default. A
-  foreign key is a relationship, and reading it from one side only is half the model.
-- `dependent:` follows what the child requires: `:destroy` where the child needs the
-  parent, `:nullify` where the association is optional. A `Job` cannot exist without
-  its `Location`, so deleting the location takes its jobs with it; a `Message` may
-  have no `Job`, so a deleted job leaves its messages standing.
-- `:destroy` rather than `:restrict_with_error` on purpose. An admin deleting a
-  record is entitled to delete the tree under it, and a `State` reaches a long way
-  down — counties, then their ZIPs, then locations, then jobs. The point of the
-  cascade is that they do not have to dismantle it by hand.
-- That reach is exactly why a delete action needs a modal that names what is about to
-  go, and how much of it. **When the destroy page gets built, ask Claudio about the
-  wording of that warning before designing it** — it has not been specified yet.
+- A `belongs_to` gets the matching `has_many` by default. Reading a foreign key
+  from one side only is half the model.
+- `dependent:` follows what the child requires: `:destroy` where it needs the
+  parent (a `Job` without its `Location`), `:nullify` where optional (a
+  `Message` may have no `Job`).
+- `:destroy`, not `:restrict_with_error`. An admin deleting a record is entitled
+  to the tree under it, and a `State` reaches counties → ZIPs → locations →
+  jobs. The cascade exists so nobody dismantles that by hand.
+- Which is why a delete needs a modal naming what will go, and how much.
+  **Ask Claudio about that wording before designing the destroy page.**
 - `has_many` takes one name, unlike `validates`. `has_many :counties, :markets`
-  does not declare two associations — it reads `:markets` as a scope and fails much
-  later with `undefined method 'arity' for an instance of Symbol`, from a view.
-- Neither side helps against `delete_all`, which is raw SQL and skips callbacks. A
-  test that clears a parent table still needs the children gone first.
+  reads `:markets` as a scope and fails later with `undefined method 'arity'`.
+- Neither side helps against `delete_all`, which is raw SQL and skips callbacks.
+  A test clearing a parent table still needs the children gone first.
 
 #### An enum is a Postgres type
 
-- An enum column is a native Postgres type, not an integer and not a bare string:
-  `create_enum :job_status, Job::STATUSES` and then
-  `t.enum :status, enum_type: :job_status, default: :draft, null: false`. The
-  database rejects a value the model has never heard of, and the column reads as the
-  word rather than as a number nobody can interpret.
-- The names live in a `STATUSES` constant on the model, one per line with a comment
-  saying what that state means, and the model declares
-  `enum :status, STATUSES.index_by(&:itself)`. The migration reads the same constant,
-  so the type and the model cannot drift at creation time.
-- An array column is `t.text :media_urls, array: true, default: [], null: false`.
-  The default and the null constraint together mean it is always an array, so
-  nothing has to ask whether it is nil before treating it as a list.
+- Native type, not an integer and not a bare string:
+  `create_enum :job_status, Job::STATUSES`, then
+  `t.enum :status, enum_type: :job_status, default: :draft, null: false`.
+- Names live in a `STATUSES` constant on the model, one per line with a comment
+  saying what that state means; the model declares
+  `enum :status, STATUSES.index_by(&:itself)`. The migration reads the same
+  constant, so type and model cannot drift.
+- An array column is `t.text :media_urls, array: true, default: [], null: false`
+  — always an array, so nothing has to check for nil first.
 
 #### Trailing comma on a multiline hash or array
 
-- A multiline hash or array ends its last entry with a comma, so adding an entry
-  touches one line instead of two:
+- The last entry ends with a comma, so adding one touches one line:
 
       NAVIGATION_ICONS = {
         'States' => 'geo', 'ZIPs' => 'geo-alt-fill',
       }.freeze
 
-      STATUSES = [
-        :draft, # ... has been written down and nothing more (default)
-      ]
-
-- Put the closing brace or bracket on its own line. With it trailing the last entry
-  the comma reads as `, }`, which is worse than either alternative — and this is what
-  decides how to break a literal that only spans lines because it is long. Give it
-  the closing line rather than leaving `,]` at the end of the last entry:
+- The closing brace or bracket goes on its own line — `, }` reads worse than
+  either alternative. This is also what decides how to break a literal that
+  spans lines only because it is long:
 
       safe_join [
         @recourse_form.label(column, label, class: 'form-label'),
@@ -307,263 +258,221 @@ two is filed under the one a reader would look in first.
       ]
 
 - Enforced by `Style/TrailingCommaInHashLiteral` and
-  `Style/TrailingCommaInArrayLiteral`, both with
-  `EnforcedStyleForMultiline: consistent_comma`. Not `comma` — that style
-  *forbids* the comma unless every entry sits on its own line, and ours share
-  lines.
+  `...InArrayLiteral`, both `EnforcedStyleForMultiline: consistent_comma`. Not
+  `comma`, which forbids it unless every entry is on its own line.
 
 #### Keep render lines out of the logs
 
-- An app's log never carries Action View's `Rendering ...` and `Rendered ...`
-  lines. One line per partial buries the request that matters — a 20-row table
-  rendering a row partial produces 20 of them.
-- Set `config.action_view.logger = nil` in `config/application.rb`. Everything
-  else stays: the request, the SQL, and the `Completed 200 OK` timing line,
-  which still reports view time.
-- This is a rule for apps we write. The gem never touches a host's logging.
+- Set `config.action_view.logger = nil` in `config/application.rb`. Action
+  View's `Rendered ...` line per partial buries the request that matters.
+- Everything else stays: request, SQL, and `Completed 200 OK` with view time.
+- A rule for apps we write. The gem never touches a host's logging.
 
 #### Keep RuboCop current
 
-- `AllCops: NewCops: enable`. Cops added by a new RuboCop release are active
-  immediately rather than sitting pending; fix what they surface instead of
-  pinning the version.
-- Enabling every new cop is not the same as accepting every new cop. One can be
-  declined outright, in `.rubocop.yml` with the reason beside it.
-  `Gemspec/RequireMFA` is: whether a push needs MFA is settled on the RubyGems
-  account, not asserted in the gem's own metadata, so the gemspec carries no
-  `rubygems_mfa_required` and the cop is off rather than merely satisfied.
-- `AllCops: SuggestExtensions: false`. Every run was ending with a nine-line
-  advert for `rubocop-minitest` and `rubocop-rake`; we are declining both, not
-  postponing them, so the suggestion is off rather than merely ignored.
+- `AllCops: NewCops: enable`. Fix what a new release surfaces; never pin.
+- Enabling every new cop is not accepting every new cop. Decline one outright in
+  `.rubocop.yml` with the reason beside it. `Gemspec/RequireMFA` is declined:
+  MFA is settled on the RubyGems account, not asserted in gem metadata.
+- `AllCops: SuggestExtensions: false`. We decline `rubocop-minitest` and
+  `rubocop-rake` rather than postpone them.
 
 #### Gemfile ordering and version constraints
 
-- List gems alphabetically, in one block — no blank lines splitting the list,
-  since those read as separate groups.
-- Never use `~>`. Use `>=` only where a minimum version is genuinely required,
-  and otherwise give no constraint at all.
-- Every gem carries a trailing comment on the same line saying why it is
-  there — what would break without it, not what the gem is.
-- The same applies to `add_dependency` in the gemspec.
+- Alphabetical, one block, no blank lines — those read as separate groups.
+- Never `~>`. Use `>=` only where a minimum is genuinely required, otherwise no
+  constraint at all.
+- Every gem carries a trailing comment saying why it is there — what would break
+  without it, not what the gem is. Same for `add_dependency` in the gemspec.
 
 #### No code of conduct, no ideology
 
-- Never add a `CODE_OF_CONDUCT.md`, and never link to or mention one from the
-  README, gemspec, or any other file. Generators that create one (`bundle
-  gem`) have their output deleted.
-- Keep the codebase free of content about ethics, religion, or politics —
-  including comments, docs, error messages, test fixtures, and sample data.
-- `LICENSE.txt` is not covered by this: a license is a legal notice.
+- Never add a `CODE_OF_CONDUCT.md`, and never link to one. Delete it from
+  generator output.
+- Keep the codebase free of ethics, religion and politics — comments, docs,
+  error messages, fixtures and sample data alike.
+- `LICENSE.txt` is exempt: a license is a legal notice.
 
 #### Target Rails 8.1+
 
-- All Rails libraries are required at `>= 8.1`. Write against current Rails
-  APIs only.
-- Never add version checks, shims, or fallbacks for older Rails or Ruby.
+- All Rails libraries at `>= 8.1`. Write against current APIs only.
+- Never add version checks, shims or fallbacks for older Rails or Ruby.
 
 #### No static typing
 
-- Never write Ruby type signatures, and never add a strong-typing tool.
-- No RBS: no `sig/` directory, no `.rbs` files. `bundle gem` creates one —
-  delete it.
-- No Sorbet: no `# typed:` sigils, no `sig { ... }` blocks, no `T.let` /
-  `T.nilable` / `T.must`, no `srb` or `tapioca`.
-- Never add these gems: `sorbet`, `sorbet-runtime`, `rbs`, `steep`, `tapioca`.
-- Convey intent through clear names, short methods, and tests instead.
+- Never write type signatures, never add a typing tool.
+- No RBS: no `sig/`, no `.rbs`. `bundle gem` creates one — delete it.
+- No Sorbet: no `# typed:` sigils, `sig { }` blocks, `T.let` / `T.nilable` /
+  `T.must`, `srb` or `tapioca`.
+- Never add: `sorbet`, `sorbet-runtime`, `rbs`, `steep`, `tapioca`.
+- Convey intent through clear names, short methods and tests.
 
 #### Branch and commit per prompt
 
-- Before starting a code change, if the current branch is `main`, create a
-  branch first. Short name, lowercase words, underscores only — no dashes,
-  no slashes, no ticket prefixes (`git_conventions`, `dummy_app`).
-- If already on a branch other than `main`, keep working on it.
-- After completing the code change a prompt asked for, commit it. The subject
-  is a short summary of the prompt; the body is the full response given for
-  that prompt.
-- One prompt, one commit.
+- If the current branch is `main`, branch before starting. Short name, lowercase
+  words, underscores only — `git_conventions`, `dummy_app`. Already on a branch:
+  stay on it.
+- Commit when the prompt's change is done. Subject summarizes the prompt; body
+  is the full response given for it. One prompt, one commit.
 - **No trailers naming who wrote it.** No `Co-Authored-By`, no session link, no
-  tool credit. Git already records an author, and a message repeating it in
-  different words is noise in every `git log` from here on.
+  tool credit — git already records an author.
 
 #### Ask the validators, not the schema
 
-- What a value is allowed to be is the model's business, so read it from the
-  validators. A length validator gives a field its `maxlength` and `minlength`, a
-  format validator its `pattern`, a numericality validator its numeric keyboard.
-  Never reach into `columns_hash` for a `limit` or for a type.
-- The schema and the validators disagree more often than it looks. A `limit: 5`
-  column with no length validator accepts four characters; an encrypted column's
-  limit describes ciphertext. Following the model keeps the browser saying what
-  the server will actually enforce.
-- Where no validator can answer — which of `date`, `time` and `datetime` an
-  attribute is — ask the model anyway, through `type_for_attribute`. It reports
-  what the model declares, so an `attribute :opens_on, :date` override counts,
-  and `columns_hash` still never appears.
-- Corollary for the database: a constraint the model does not also state is a
-  constraint the browser cannot show. Add the validator too.
+- What a value may be is the model's business. A length validator gives a field
+  its `maxlength`, a format validator its `pattern`, a numericality validator
+  its numeric keyboard. Never read `columns_hash` for a `limit` or a type.
+- Schema and validators disagree more often than it looks: a `limit: 5` column
+  with no length validator accepts four characters, and an encrypted column's
+  limit describes ciphertext.
+- Where no validator can answer — `date` vs `time` vs `datetime` — ask
+  `type_for_attribute`, so an `attribute :opens_on, :date` override counts.
+- Corollary: a database constraint the model does not also state is one the
+  browser cannot show. Add the validator too.
 
 #### Match Bootstrap with field_error_proc
 
-- Wherever Bootstrap is the CSS framework, set
-  `config.action_view.field_error_proc`. Rails' default wraps a rejected field in
-  `<div class='field_with_errors'>`, which Bootstrap styles not at all: no red
-  border, and the message nowhere on the page.
+- Wherever Bootstrap is the framework, set
+  `config.action_view.field_error_proc`. Rails' default `field_with_errors`
+  wrapper gets no Bootstrap styling at all: no red border, no message.
 - The proc adds `is-invalid` to the control and follows it with a
-  `<small class='invalid-feedback'>`, which is the pair Bootstrap needs — its
-  `.is-invalid ~ .invalid-feedback` reveals one only next to the other.
-- Guard on the control's class, not on the tag's type. A label carries
-  `form-label` and falls straight through, and so does anything else without a
-  `form-control`. Guarding on `instance.is_a? ActionView::Helpers::Tags::Label`
-  instead leaves `html_tag.index 'form-control'` returning nil for every other
-  kind of tag, and `insert nil` raises.
+  `<small class='invalid-feedback'>` — Bootstrap reveals one only beside the
+  other.
+- Guard on the control's class, not the tag's type. A label carries
+  `form-label` and falls through; guarding on `Tags::Label` instead leaves
+  `html_tag.index 'form-control'` nil for every other tag, and `insert nil`
+  raises.
 - The proc is `instance_exec`'d on the view, so `tag` and `safe_join` are in
-  scope — no need to write markup as a string.
-- Which is just as well, because `insert` on a SafeBuffer escapes what it is
-  given: an attribute spliced in by hand arrives as `&#39;`. Build it with
-  `tag.attributes` and join it with `safe_join`.
-- A rule for apps we write. The gem never sets a host's Action View config, the
-  same line drawn for the logger and the time zone — so a control the gem draws
-  outside a form builder, like the combobox, carries this markup itself.
+  scope. Use them: `insert` on a SafeBuffer escapes what it is given, so a
+  hand-spliced attribute arrives as `&#39;`.
+- A rule for apps we write — so a control the gem draws outside a form builder,
+  like the combobox, carries this markup itself.
 
-#### Every model says how it is labelled
+#### Every model says how it is labeled
 
-- A model answers `recourse_label` with the column a combobox shows for one of its
-  records. `Recourse::Recoursive` supplies `:name`, and every Active Record model
-  is extended with it through `ActiveSupport.on_load :active_record`, so most
-  models need say nothing at all.
-- A model whose identity is not a `name` overrides it — `:code` for a ZIP, `:email`
-  for an Agent — but never in the model body. It `include`s its own `Recoursive`
-  concern, in `app/models/zip/recoursive.rb`, which overrides inside
-  `class_methods do`. The default arrives by `extend`, so only a class method can
-  replace it.
-- The label is what gets selected: `select(:id, label).order(label)`, per "select
-  only the columns a query displays". So it has to be a real column, not a method —
-  a method would not survive the `SELECT`.
-- Reading it back is `recourse.attributes[label]`, not `public_send`, which "no
-  metaprogramming" rules out.
+- A model answers `recourse_label` with the column a combobox shows.
+  `Recourse::Recoursive` supplies `:name` to every Active Record model through
+  `ActiveSupport.on_load`, so most models say nothing.
+- A model whose identity is not a `name` overrides it — `:code` for a ZIP,
+  `:email` for an Agent — never in the model body, but in its own `Recoursive`
+  concern at `app/models/zip/recoursive.rb`, inside `class_methods do`. The
+  default arrives by `extend`, so only a class method can replace it.
+- The label is what gets selected: `select(:id, label).order(label)`. So it must
+  be a real column — a method would not survive the `SELECT`.
+- Read it back with `recourse.attributes[label]`, never `public_send`.
 - Picking an encrypted column labels the option with its plaintext, since
-  `attributes` decrypts. That is a decision to make deliberately, not to fall into,
-  and it reaches further than a form: a foreign-key column in a *table* shows the
-  same label, so an encrypted one appears on the index of every model that
-  references it. `resource_columns` only keeps a model's own encrypted columns out.
-- `recourse_typed_label?` asks whether that label has a length validator, which is
-  what decides between typing a value and picking from a list. A length is the only
-  honest signal available: it says the value is bounded, so a person can type it.
-- A typed label is looked up on the way in — `ZIP.find_by code: '90210'` — and the
-  form asks for it under the foreign key's own name, so no host model needs a
-  virtual attribute and strong parameters need no special case.
+  `attributes` decrypts — a decision to make deliberately. It reaches past the
+  form: a foreign key in a *table* shows the same label, so an encrypted one
+  appears on the index of every model referencing it.
+- `recourse_typed_label?` asks whether the label has a length validator, which
+  decides between typing a value and picking from a list — a length says the
+  value is bounded, so a person can type it.
+- A typed label is looked up on the way in (`ZIP.find_by code: '90210'`) under
+  the foreign key's own name, so no host model needs a virtual attribute.
 
 #### What a gem always ships
 
-- Every gem carries `bin/console` and `bin/setup`, whatever else it has. One lets
-  a reader try the library in a REPL with it already required; the other gets a
-  clone to a working state in one command. A gem that needs a paragraph of README
-  to try out has neither.
-- Every gem carries a `CHANGELOG.md`, and a release is not made until it has been
-  written. An entry says which of three a change is — a **fix**, a **feature**, or
-  a **breaking change** — because that is what tells the reader whether they can
-  take it, and it is what decides the version.
-- The version follows from the entry, not the other way round. Semantic
-  Versioning: a fix bumps the patch, a feature bumps the minor, a breaking change
-  bumps the major. Deciding the number first and describing it afterwards is how
-  a minor release quietly breaks somebody.
-- Keep an `## [Unreleased]` heading at the top to collect entries as they land, so
-  a release is a rename rather than an act of remembering.
+- `bin/console` and `bin/setup`, whatever else it has: one to try the library in
+  a REPL, one to get a clone working in a single command.
+- A `CHANGELOG.md`, written before the release is made. Every entry says which
+  of three it is — **fix**, **feature**, **breaking change** — because that is
+  what tells a reader whether they can take it.
+- The version follows from the entry, not the other way round. SemVer: fix →
+  patch, feature → minor, breaking → major. Numbering first is how a minor
+  release quietly breaks somebody.
+- Keep an `## [Unreleased]` heading to collect entries, so a release is a rename
+  rather than an act of remembering.
 
 #### Git ignores a built gem
 
-- `*.gem` is gitignored. `rake build` puts one under `/pkg/`, which was already
-  ignored, but `gem build` leaves it in the working directory, where `git add -A`
-  would sweep up a megabyte of binary release artifact.
-- Nothing is lost by hiding it. `spec.files` reads `git ls-files`, so a build is
-  never packaged inside the next one either way.
+- `*.gem` is gitignored. `rake build` writes to the already-ignored `/pkg/`, but
+  `gem build` leaves one in the working directory for `git add -A` to sweep up.
+- Nothing is lost: `spec.files` reads `git ls-files`, so a build is never
+  packaged inside the next one anyway.
 
 #### Vendor what a page cannot render without
 
-- A stylesheet or script a page cannot do without is vendored into the gem and
-  served from it, never linked to a CDN. A host that fails to reach the CDN gets
-  an unstyled page, and the Bootstrap 6 CSS in particular comes from a preview
-  host with no promise of staying put.
-- The files live in `vendor/recourse/`, and an engine initializer serves them with
-  `Rack::Static`. That is the framework's own middleware rather than a controller
-  action, and it assumes no asset pipeline, which a host may well not have.
+- A stylesheet or script a page cannot do without is vendored and served from
+  the gem, never linked to a CDN — an unreachable CDN means an unstyled page.
+- Files live in `vendor/recourse/`, served by an engine initializer through
+  `Rack::Static`: the framework's own middleware, assuming no asset pipeline.
 - Keep the slash on the prefix. `urls: %w[/recourse/]` matches on `start_with?`,
-  so `urls: %w[/recourse]` would answer `/recourses` with a 404 from the file
-  server before the router ever saw it — in this gem of all places.
-- Vendor whatever the vendored file itself asks for. `bootstrap-icons.min.css`
-  loads `fonts/bootstrap-icons.woff2` relative to itself, so the CSS without the
-  fonts renders every icon as a blank box.
-- Keep the copies byte-identical to what the CDN serves, so a later version can
-  be diffed against upstream. `git ls-files` puts them in the gem already.
+  so `%w[/recourse]` would 404 `/recourses` before the router ever saw it.
+- Vendor whatever the vendored file asks for: `bootstrap-icons.min.css` loads
+  `fonts/bootstrap-icons.woff2` relative to itself, and without it every icon is
+  a blank box.
+- Keep copies byte-identical to the CDN's, so a later version can be diffed.
 - Our own JavaScript is not vendored. It lives in `app/javascript/recourse/` and
-  is served at the same prefix: the first `Rack::Static` takes `cascade: true`, so
-  a path it has no file for falls through to the second rather than 404ing. That
-  keeps `vendor/` meaning "upstream's", which is what exempts it from the lint.
-- A Stimulus controller imports Stimulus by its served path, not by the bare
-  `@hotwired/stimulus` specifier. Resolving that name would need an import map,
-  and a host app may already ship one of its own.
-- Start the application in the `<head>`, and guard it with `window.Stimulus`.
-  Turbo re-runs body scripts on every visit, and a second application connects
-  every controller a second time.
+  is served at the same prefix — the first `Rack::Static` takes `cascade: true`,
+  so a path it lacks falls through rather than 404ing. That keeps `vendor/`
+  meaning "upstream's", which is what exempts it from the lint.
+- A Stimulus controller imports Stimulus by its served path, not the bare
+  `@hotwired/stimulus` specifier: resolving that needs an import map, and a host
+  may ship its own.
+- Start the application in the `<head>`, guarded by `window.Stimulus`. Turbo
+  re-runs body scripts every visit, and a second application connects every
+  controller twice.
 
 #### Seed data lives in migrations, so schema.rb cannot load a database
 
-- `config.active_record.dump_schema_after_migration = false`, so no `schema.rb`
-  is ever written. Gitignoring it is not enough: it regenerates on every migrate
-  and then Rails loads it into the next empty database, stamping every version at
-  or below its own as already migrated — silently skipping the backfills and
-  leaving the tables empty for the next foreign key to trip over.
+- `config.active_record.dump_schema_after_migration = false`. Gitignoring
+  `schema.rb` is not enough: it regenerates on every migrate, and Rails then
+  loads it into the next empty database, stamping every version at or below its
+  own as migrated — skipping the backfills and leaving the tables empty.
 - Build a database with `db:migrate` from zero. Never `db:schema:load`, and be
-  wary of `db:prepare` for the same reason.
+  wary of `db:prepare`.
 - `db:drop` will not drop a database with open connections and reports success
-  anyway; `dropdb --force` is the reliable reset.
+  anyway. `dropdb --force` is the reliable reset.
 
 #### Design lives in STYLE.md
 
-- Every decision about how a page looks — Bootstrap conventions, class choices,
-  markup structure — is documented in `STYLE.md`, not here. Read that file
-  before writing or editing any layout, view or partial.
-- This file stays the authority for code style. Where the two overlap, `STYLE.md`
-  wins on markup and `CLAUDE.md` wins on Ruby.
+- Every decision about how a page looks is in `STYLE.md`. Read it before writing
+  or editing any layout, view or partial.
+- Where the two overlap, `STYLE.md` wins on markup and `CLAUDE.md` on Ruby.
 
 ### READABILITY
 
+#### Say it short
+
+- Between two versions that carry the same meaning, the shorter one wins. This
+  covers everything written: comments, conventions, commit messages, docs,
+  placeholders, and the words on a page.
+- Same for names. Where two real English words fit — not acronyms, not
+  inventions — take the shorter: `home` over `residence`, `job` over
+  `assignment`. Model names especially, since every table, route, path helper
+  and partial inherits the choice.
+- Cut what the reader already has: the restatement, the second example that
+  teaches nothing new, the sentence explaining why the rule is a good idea.
+- Keep what makes a rule usable: the code, the numbers, the cop name and
+  setting, and the gotcha that would otherwise be discovered the hard way.
+- Brevity is not omission. If a rule cannot be shortened without losing how to
+  apply it, leave it long.
+
 #### Files at most 100 lines
 
-- No code file goes over 100 lines, counting blank and comment lines. When one
-  gets close, split it — extract a class, a concern, a partial, a second test
-  case.
+- No code file over 100 lines, blank and comment lines counted. Split it —
+  extract a class, a concern, a partial, a second test case.
 - Enforced by `rake file_length`, part of the default task. RuboCop has no
-  file-length cop; `Metrics/ClassLength` and friends measure a class body, not a
-  file, and skip comments and blanks by default.
-- `.md`, `.txt`, `.html` and `.erb` are exempt. Prose is not code, and a view
-  is markup whose length is driven by the page, not by design choices.
-- **This is a rule for Ruby.** `ios/` is exempt entirely: Swift follows Swift's
-  own conventions, and a `UIViewController` split at a hundred lines to satisfy a
-  Ruby cap reads worse than the one file it came from.
-- Anything under `db/migrate/` is exempt. A migration that backfills a table is
-  as long as the data it carries, and splitting one to satisfy a line count
-  would be worse than leaving it long.
-- So is anything under `vendor/`. Upstream's formatting is not ours to fix, and a
-  vendored font is not even text — `File.readlines` on a `.woff2` reports
-  thousands of lines that mean nothing.
-- The task reads `git ls-files`, so an untracked file is invisible to it. A green
-  run before `git add` proves nothing about what the commit will contain.
+  file-length cop: `Metrics/ClassLength` measures a class body, skipping
+  comments and blanks.
+- Exempt: `.md`, `.txt`, `.html`, `.erb` — prose is not code, and a view's
+  length is driven by the page. `db/migrate/` — a backfill is as long as its
+  data. `vendor/` — upstream's formatting is not ours, and a `.woff2` is not
+  even text.
+- **A rule for Ruby.** `ios/` is exempt entirely; Swift follows Swift's
+  conventions, and a `UIViewController` split at a hundred lines reads worse.
+- The task reads `git ls-files`, so an untracked file is invisible to it. A
+  green run before `git add` proves nothing.
 
 #### Lines at most 100 characters
 
-- Hard limit of 100 characters per line, enforced by RuboCop's
-  `Layout/LineLength` (`Max: 100`, up from its default of 120).
-- Split long strings across lines with `\` continuations rather than letting a
-  line run over.
-- Views are exempt — `.html` and `.erb` files may run past 100 characters,
-  since a CDN URL or a long class list cannot be wrapped usefully. RuboCop does
-  not lint them anyway.
-- So is Swift, for the same reason as the file-length cap: `ios/` follows Swift's
-  conventions. RuboCop never saw it either way.
-- When a method call would need three lines and hanging indentation just to fit,
-  hoist the long arguments into a Rails `with_options` block instead. Still
-  three lines, but every line starts at a normal indent:
+- `Layout/LineLength` with `Max: 100`, down from its default of 120.
+- Split long strings with `\` continuations rather than running over.
+- Views are exempt (`.html`, `.erb`): a CDN URL or long class list cannot be
+  wrapped usefully, and RuboCop does not lint them. So is Swift.
+- When a call would need three lines and hanging indentation just to fit, hoist
+  the long arguments into `with_options` — still three lines, but every one
+  starts at a normal indent:
 
       with_options format: { with: SOME_PATTERN, message: 'is invalid' } do
         validates :phone, allow_nil: true
@@ -571,21 +480,17 @@ two is filed under the one a reader would look in first.
 
 #### Shared behavior becomes a concern
 
-- When two models declare the same behavior word for word, extract it into a
-  concern instead of leaving the copy in place.
-  `encrypts :email, deterministic: true, downcase: true` stood in both `Contact`
-  and `Agent`, so it became `Emailable`.
-- Name the concern after the feature it carries, not after the models that want
-  it: `Emailable`, `Phonable`.
-- Only what the models genuinely share moves. `Contact`'s email is optional and
-  `Agent`'s is required, so `presence: true` stays in each model — the same line
-  `Phonable` already draws for `phone`.
-- This sharpens the baseline's "concerns for genuinely shared behavior": a second
-  identical declaration is the threshold, and anticipating one is not.
+- Two models declaring the same behavior word for word: extract a concern.
+  `encrypts :email, deterministic: true, downcase: true` stood in `Contact` and
+  `Agent`, so it became `Emailable`.
+- Name it after the feature, not the models: `Emailable`, `Phonable`.
+- Only what they genuinely share moves. `Contact`'s email is optional and
+  `Agent`'s required, so `presence: true` stays in each model.
+- A second identical declaration is the threshold. Anticipating one is not.
 
 #### Indent `when` inside a `case`
 
-- On a multi-line `case`, `when` and `else` sit one level in from `case` and `end`:
+- `when` and `else` sit one level in from `case` and `end`:
 
       case params[:list]
         when 'unread' then Contact.with_unread
@@ -594,132 +499,106 @@ two is filed under the one a reader would look in first.
       end
 
 - Enforced by `Layout/CaseIndentation` with `EnforcedStyle: end` **and**
-  `IndentOneStep: true`. Neither alone is enough: the default aligns `when` with
-  `case`, and `end` alone aligns it with `end` rather than indenting it.
-- `Layout/ElseAlignment` then follows `when` on its own, so `else` needs no
-  setting of its own.
+  `IndentOneStep: true`. Neither alone is enough.
+- `Layout/ElseAlignment` then follows `when`, so `else` needs no setting.
 
 #### As few parentheses as possible
 
-- Omit parentheses on a method call's arguments; keep the inner ones, where
-  parsing needs them:
-
-      Object.const_set class_name, Class.new(RecoursesController)
-
-- Enforced by `Style/MethodCallWithArgsParentheses` with
-  `EnforcedStyle: omit_parentheses`. The cop is off by default, so it needs
-  `Enabled: true` as well as the style.
+- Omit them on a call's arguments; keep the inner ones, where parsing needs
+  them: `Object.const_set class_name, Class.new(RecoursesController)`.
+- `Style/MethodCallWithArgsParentheses`, `EnforcedStyle: omit_parentheses`. The
+  cop is off by default, so it needs `Enabled: true` too.
 
 #### List concerns alphabetically, on one line
 
-- Concerns are included in alphabetical order: `include Emailable, Phonable`,
-  never the other way round.
-- One `include` carries the whole list. Give each its own statement only when
-  the single line would not fit, and then keep the order.
-- Enforced by `Style/MixinGrouping` with `EnforcedStyle: grouped`. Its default
-  is `separated`, which demands the opposite, so the setting is not optional.
-- `include A, B` inserts them in reverse, so `A` ends up ahead of `B` in
-  `ancestors`. It only matters when both define the same method, which two
-  concerns that were extracted for being distinct features should not.
+- `include Emailable, Phonable`, never the other way round. One `include`
+  carries the list; split only when the line will not fit, keeping the order.
+- Enforced by `Style/MixinGrouping`, `EnforcedStyle: grouped`. Its default is
+  `separated`, which demands the opposite.
+- `include A, B` inserts in reverse, so `A` lands ahead of `B` in `ancestors`.
+  It matters only if both define the same method, which two concerns extracted
+  for being distinct features should not.
 
 #### Pass locals to partials explicitly
 
-- A partial never reads a controller's instance variables. Declare strict
-  locals on its first line — `<%# locals: (resources:, pagy:) %>` — and pass
-  them at the call site: `render 'table', resources: @resources, pagy: @pagy`.
-- A partial that takes no locals gets no comment at all. Never write
-  `<%# locals: () %>`.
+- A partial never reads a controller's instance variables. Declare strict locals
+  on line one — `<%# locals: (resources:, pagy:) %>` — and pass them:
+  `render 'table', resources: @resources, pagy: @pagy`. Rails then raises on an
+  omission instead of rendering a blank.
+- A partial taking no locals gets no comment. Never `<%# locals: () %>`.
 - A template rendered by an action may read instance variables. The rule is
   about partials, which should not depend on who rendered them.
-- Rails enforces this: omit a declared local and the render raises instead of
-  quietly rendering a blank.
 - Where two branches need different locals, write `if`/`else` rather than
-  `render cond ? 'a' : 'b'` — a single call cannot pass the right locals to
-  both.
-- The row partial is the deliberate exception, and it breaks the rule twice.
-  Its record arrives under a name computed at runtime (`contact:`, `state:`),
-  so the gem's own `_row` cannot declare strict locals and reads
-  `local_assigns[resource_key]`. And whether it is drawing the header row or a
-  body row travels in `@recourse_headers`, set by `_table` before each render,
-  which `column` reads. Both were asked for; neither is a pattern to copy.
-- The fields partial is the second exception, for the same two reasons. It is
-  handed the record under the runtime name so a host's `_fields` can declare
-  `<%# locals: (contact:) -%>`, while the gem's own cannot; and the form builder
-  travels in `@recourse_form`, set by `_form`, because `field :phone` is the
-  call site the host writes and threading a form through it would spoil that.
+  `render cond ? 'a' : 'b'` — one call cannot pass the right locals to both.
+- The row partial is the deliberate exception, twice over: its record arrives
+  under a runtime name (`contact:`, `state:`) so the gem's `_row` reads
+  `local_assigns[resource_key]`, and header-vs-body travels in
+  `@recourse_headers`, set by `_table`. Both were asked for; neither is a
+  pattern to copy.
+- The fields partial is the second exception, for the same two reasons — the
+  runtime name, so a host's `_fields` can declare `<%# locals: (contact:) -%>`,
+  and `@recourse_form`, set by `_form`, because `field :phone` is the call site
+  the host writes.
 
 #### Spell acronyms as acronyms
 
-- An acronym is written in capitals wherever it appears: ZIP code, not Zip code;
-  PIN, not Pin. That covers prose, comments, class names and labels alike.
-- When a model or column names one, register it so Rails agrees:
-  `inflect.acronym 'ZIP'` in `config/initializers/inflections.rb`. Without it
-  `human_attribute_name` renders `Zip` and every heading and label is wrong.
-- Registering it also fixes `camelize`, so `zip_code` becomes `ZIPCode` rather
-  than `ZipCode` — worth knowing before naming a class after one.
+- Capitals wherever it appears: ZIP code, not Zip code; PIN, not Pin. Prose,
+  comments, class names and labels alike.
+- Register it so Rails agrees: `inflect.acronym 'ZIP'` in
+  `config/initializers/inflections.rb`. Without it `human_attribute_name`
+  renders `Zip` and every heading is wrong.
+- It also fixes `camelize`, so `zip_code` becomes `ZIPCode` — worth knowing
+  before naming a class after one.
 
 #### Name non-trivial regular expressions
 
-- A regular expression that is not obvious at a glance gets a named constant,
-  so the name explains the intent and the pattern is stated once.
-  `/\A[2-9]\d{2}[2-9]\d{6}\z/` becomes `NORTH_AMERICAN_PHONES`.
-- Put the constant on the class or module that owns the rule, and comment it
-  with what it accepts and rejects — the name says what, the comment says why
-  those bounds.
+- A pattern that is not obvious at a glance gets a named constant, so the name
+  explains the intent: `/\A[2-9]\d{2}[2-9]\d{6}\z/` is `NORTH_AMERICAN_PHONES`.
+- Put it on the class that owns the rule and comment what it accepts and
+  rejects — the name says what, the comment says why those bounds.
 - Trivial patterns used once, like `%r{\Aexe/}`, stay inline.
 
 #### Comment every public declaration
 
-- Never comment a private method. The rule below is for the public surface; a
-  private method earns its explanation from its name and its caller.
-- Never put a method in a controller that only a view calls, and never reach for
-  `helper_method` to expose one. If a view needs it, it belongs in a helper
-  module or inline in the template. A controller's private methods are for the
-  controller's own work.
-- Indent `private` to match its `class` or `module`, not the `def`s under it, so
-  it stands out as a divider. Enforced by
-  `Layout/AccessModifierIndentation: EnforcedStyle: outdent`.
-- Precede every public class, module, constant and method declaration with a
-  comment line saying what that object does. This narrows the baseline's
-  "comment why, not what" rule: declarations get a *what*, and the *why* rule
-  still governs comments inside method bodies.
-- Say what it is for, not what the code plainly shows. `# Raised for every
-  failure the gem reports` earns its place; `# The Error class` does not.
-- A module reopened purely as a namespace in another file is not redeclared —
-  document it where it is defined.
-- Enforced by RuboCop: `Style/Documentation` for classes and modules,
-  `Style/DocumentationMethod` (off by default) for methods. Both skip `test/`,
-  matching RuboCop's own default, so test cases stay uncommented — their names
-  state the expectation.
-- Constants have no cop; keep them commented by hand.
-- Keep these comments to a single line whenever possible. If one line cannot
-  carry it, cut the aside rather than the rule — the detail belongs in the
-  commit message. Multi-line is a last resort, not a default.
+- Precede every public class, module, constant and method with a comment line
+  saying what it is for. This narrows "comment why, not what": declarations get
+  a *what*, and *why* still governs comments inside bodies.
+- Say what it is for, not what the code shows. `# Raised for every failure the
+  gem reports` earns its place; `# The Error class` does not.
+- Never comment a private method — it earns its explanation from its name and
+  its caller.
+- Never put a method in a controller that only a view calls, and never
+  `helper_method` to expose one. A view's needs belong in a helper or the
+  template; a controller's private methods are for the controller.
+- Indent `private` to match its `class`, not the `def`s under it, so it reads as
+  a divider. `Layout/AccessModifierIndentation: EnforcedStyle: outdent`.
+- A module reopened purely as a namespace is not redeclared — document it where
+  it is defined.
+- Enforced by `Style/Documentation` and `Style/DocumentationMethod` (off by
+  default). Both skip `test/`, so test cases stay uncommented — their names
+  state the expectation. Constants have no cop; comment them by hand.
+- One line whenever possible. If one line cannot carry it, cut the aside rather
+  than the rule — the detail belongs in the commit message.
 
 #### Never freeze strings
 
-- Never write `# frozen_string_literal: true`. No file gets a magic comment,
-  including generated ones — strip it from generator output.
-- Never call `.freeze` on a string, constant or not. Array and hash constants
-  are still worth freezing by hand.
-- Where a constant only names something, prefer a symbol over a string — it is
-  immutable already, so the question does not arise.
-- Enforced by RuboCop: `Style/FrozenStringLiteralComment` is `never`, and
-  `Style/MutableConstant` is disabled because it demands `.freeze` on string
-  constants and cannot be told to skip them.
+- Never write `# frozen_string_literal: true`, including in generator output.
+- Never `.freeze` a string, constant or not. Array and hash constants are still
+  worth freezing by hand.
+- Where a constant only names something, prefer a symbol — immutable already.
+- `Style/FrozenStringLiteralComment` is `never`, and `Style/MutableConstant` is
+  disabled: it demands `.freeze` on string constants and cannot skip them.
 
 #### Single quotes by default
 
-- Always use single-quoted strings.
-- Double quotes only when the string genuinely needs them: interpolation
-  (`"#{name}"`) or escape sequences (`"\n"`, `"\x0"`).
-- Enforced by RuboCop: `Style/StringLiterals` and
-  `Style/StringLiteralsInInterpolation` are both set to `single_quotes`.
-- This covers views too, `.html` and `.html.erb` included, and applies to HTML
-  attributes and CSS values as much as to Ruby: `<th scope='col'>`, not
-  `<th scope="col">`. RuboCop does not lint views, so this half is on us.
-- A Ruby string containing single quotes then *needs* double quotes, which is
-  why assertions on this markup read `"<table class='table table-hover'>"`.
+- Single-quoted strings. Double only where the string needs them: interpolation
+  (`"#{name}"`) or escapes (`"\n"`).
+- `Style/StringLiterals` and `Style/StringLiteralsInInterpolation`, both
+  `single_quotes`.
+- Views too, and HTML attributes and CSS values as much as Ruby:
+  `<th scope='col'>`. RuboCop does not lint views, so this half is on us.
+- Which is why assertions on that markup read
+  `"<table class='table table-hover'>"`.
 
 ### INTERNATIONALIZATION
 
@@ -728,76 +607,67 @@ two is filed under the one a reader would look in first.
 - `config.time_zone = 'Eastern Time (US & Canada)'`. That is what `Time.zone`
   means, what a form reads, and what a timestamp renders as.
 - Storage stays UTC. Never touch `config.active_record.default_timezone` — the
-  database keeps UTC and Rails converts on the way in and out, so the app zone
-  is a display concern only.
+  app zone is a display concern only.
 - A rule for apps we write. The gem never sets a host's time zone.
 
 #### American English, everywhere
 
-- The English is American. Write `color`, `gray`, `behavior`, `center`, `license`,
-  `normalize`, `organize`, `recognize` — never the British spelling of any of them.
-- This covers everything written, not just code — identifiers, comments, commit
-  messages, documentation, CSS values, and the words on a page.
-- It is a design rule as much as a coding one. A table heading spelled one way
-  beside a button spelled the other is the tell that nobody chose either.
-- Proper nouns are exempt, because they are not spellings we get to pick. Centre
-  County keeps its `re`, and so does every place name in `db/counties.txt`.
-- Nothing enforces it, so it is on us. The endings to watch are `-our`, `-re` and
-  `-ise`, plus the one that is neither, `grey`.
+- `color`, `gray`, `behavior`, `center`, `license`, `normalize`, `organize`,
+  `recognize` — never the British spelling of any of them.
+- Everything written, not just code: identifiers, comments, commit messages,
+  docs, CSS values, and the words on a page. A heading spelled one way beside a
+  button spelled the other is the tell that nobody chose either.
+- Proper nouns are exempt — Centre County keeps its `re`, and so does every
+  place name in `db/counties.txt`.
+- Nothing enforces it. Watch the `-our`, `-re` and `-ise` endings, and `grey`.
 
 #### I18n is deferred
 
-- User-facing strings stay plain English for now. This suspends the baseline's
-  "I18n for user-facing strings" rule until there are enough strings to be worth
-  a locale file — do not add one unprompted.
+- User-facing strings stay plain English until there are enough to be worth a
+  locale file. Do not add one unprompted.
 
 #### The State model
 
-- A `State` model always represents the United States, and always has exactly
-  these three attributes, each non-null and unique: `code` (two capital
-  letters, `'CA'`), `fips` (two digits, `'06'`), `name` (`'California'`).
-- It always ships with a migration that creates the table *and* backfills it
-  from the official list, so an app never starts with an empty states table.
-  Source of truth: https://www2.census.gov/geo/docs/reference/state.txt
-- 51 rows: the 50 states plus the District of Columbia. Territories are not
-  states, so `PR`, `GU`, `VI`, `AS`, `MP` and `UM` are left out.
+- A `State` is always a US state, with exactly three attributes, each non-null
+  and unique: `code` (`'CA'`), `fips` (`'06'`), `name` (`'California'`).
+- It always ships with a migration that creates the table *and* backfills it, so
+  an app never starts with an empty one. Source:
+  https://www2.census.gov/geo/docs/reference/state.txt
+- 51 rows: 50 states plus DC. Territories are not states, so no `PR`, `GU`,
+  `VI`, `AS`, `MP`, `UM`.
 - `fips` is a string, never an integer — `'06'` must keep its leading zero.
-- Enforce all of it in the database too: unique indexes, `null: false`,
-  `limit: 2`, and check constraints for the two-letter and two-digit shapes.
+- The database enforces all of it: unique indexes, `null: false`, `limit: 2`,
+  and check constraints for the two-letter and two-digit shapes.
 
 #### The County model
 
-- A `County` has a unique non-null 5-digit `fips` string, a non-null `name`, and
-  belongs to a `state`. `name` is deliberately *not* unique — more than twenty
-  states have a Washington County.
-- Creating a counties table always comes with a migration that backfills all
-  3,143 counties of the 50 states plus DC, each joined to the right `states` row.
-  Source: https://www2.census.gov/geo/docs/reference/codes2020/national_county2020.txt
-- The first two digits of a county's `fips` are its state's `fips`. Check that
-  after backfilling, not just the row count — by hand, since a migration does
-  not get a test.
-- Territories are left out, matching the states table.
-- The 3,143 rows live in `db/counties.txt`, not inside the migration. Migrations
-  are exempt from the file-length rule, so this is a decision rather than a
-  workaround: leave the data in the file and do not inline it.
-- The database enforces it too: unique index on `fips`, `null: false`, a
-  five-digit check constraint, and a real foreign key to `states`.
+- A `County` has a unique non-null 5-digit `fips`, a non-null `name`, and
+  belongs to a `state`. `name` is deliberately not unique — over twenty states
+  have a Washington County.
+- Always with a backfill of all 3,143 counties of the 50 states plus DC, each
+  joined to its `states` row. Source:
+  https://www2.census.gov/geo/docs/reference/codes2020/national_county2020.txt
+- The first two digits of a county's `fips` are its state's. Check that after
+  backfilling, not just the row count — by hand, since migrations get no test.
+- The 3,143 rows live in `db/counties.txt`, not inside the migration. A
+  decision, not a workaround: leave the data in the file.
+- The database enforces it: unique index on `fips`, `null: false`, a five-digit
+  check constraint, and a foreign key to `states`.
 
 #### The ZIP model
 
 - A `ZIP` has a unique non-null 5-digit `code`, a non-null `city`, a non-null
-  `time_zone`, belongs to a `county`, and optionally belongs to a `market`.
-- The class is `ZIP`, not `Zip`, because the acronym is registered. Register the
-  plural too — `inflect.acronym 'ZIPs'` — or every heading reads `Zips`.
-- Registering the plural renames more than headings: Rails camelizes a migration
-  filename to find its class, so `create_zips.rb` must define `CreateZIPs`. It
-  only breaks on a migrate from zero, which is why a reset is the real test.
-- Creating a zips table always comes with a migration that backfills it: every
-  ZIP, matched to the county it mostly belongs to and the main city in it.
-- `time_zone` holds a Rails zone name, never an IANA identifier. The source mixes
-  both, so the backfill normalizes on the way in, matching each identifier by its
-  offset and DST rules: Detroit and the Kentucky zones to Eastern, Indiana's
-  Eastern zones to `Indiana (East)`, Knox and Tell_City to Central, Boise to
-  Mountain, Anchorage and Nome to Alaska, Honolulu to Hawaii. Nothing should
-  survive that `ActiveSupport::TimeZone::MAPPING` does not name — worth checking
-  by hand after a backfill, since a migration does not get a test.
+  `time_zone`, belongs to a `county`, and optionally to a `market`.
+- The class is `ZIP`, not `Zip`. Register the plural too —
+  `inflect.acronym 'ZIPs'` — or every heading reads `Zips`.
+- That renames more than headings: Rails camelizes a migration filename to find
+  its class, so `create_zips.rb` must define `CreateZIPs`. It breaks only on a
+  migrate from zero, which is why a reset is the real test.
+- Always with a backfill: every ZIP, matched to the county it mostly belongs to
+  and the main city in it.
+- `time_zone` holds a Rails zone name, never an IANA identifier. The source
+  mixes both, so the backfill normalizes by offset and DST rules: Detroit and
+  the Kentucky zones to Eastern, Indiana's Eastern zones to `Indiana (East)`,
+  Knox and Tell_City to Central, Boise to Mountain, Anchorage and Nome to
+  Alaska, Honolulu to Hawaii. Nothing should survive that
+  `ActiveSupport::TimeZone::MAPPING` does not name — check by hand.

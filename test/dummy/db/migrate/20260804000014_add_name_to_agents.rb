@@ -1,4 +1,4 @@
-# Adds the name agents are labelled by, deriving one for any agent already stored.
+# Adds the name agents are labeled by, deriving one for any agent already stored.
 class AddNameToAgents < ActiveRecord::Migration[8.1]
   def up
     add_column :agents, :name, :string

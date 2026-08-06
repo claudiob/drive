@@ -1,7 +1,7 @@
 require 'active_support'
 
 module Recourse
-  # Extends every Active Record model, so each one can say how it is labelled and drawn.
+  # Extends every Active Record model, so each one can say how it is labeled and drawn.
   module Recoursive
     # Drawn by anything that has not said otherwise. Every set has a plain circle.
     ICON = :circle

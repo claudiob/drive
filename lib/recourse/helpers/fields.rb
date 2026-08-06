@@ -2,7 +2,7 @@ module Recourse
   module Helpers
     # Chooses the form field a column deserves, and labels it.
     module Fields
-      # One labelled field in the form's grid. `label:` overrides the heading and
+      # One labeled field in the form's grid. `label:` overrides the heading and
       # `type:` overrides the input the column would otherwise have chosen.
       def field(name, **options)
         column = name.to_s
