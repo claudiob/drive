@@ -17,6 +17,19 @@
         admin console's, and the system font is the one the platform draws with. %>
     <link rel='stylesheet' href='/native/base.css'>
     <link rel='stylesheet' href='/native/lists.css'>
+
+    <script type='module'>
+      import { Application } from '/recourse/stimulus.js'
+      import NavButtonsController from '/native/nav_buttons_controller.js'
+
+      // Guarded and in the head, the way the gem's own layout does it: Turbo re-runs
+      // body scripts on every visit, and a second application would connect every
+      // controller twice.
+      if (!window.Stimulus) {
+        window.Stimulus = Application.start()
+        window.Stimulus.register('nav-buttons', NavButtonsController)
+      }
+    </script>
   </head>
 
   <body>

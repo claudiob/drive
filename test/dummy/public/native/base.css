@@ -78,3 +78,14 @@ a {
   color: var(--label-2);
   text-align: center;
 }
+
+/* A page's own buttons disappear once the bridge has promoted them into the native
+   navigation bar. The attribute is set only when a native component of that name is
+   registered, so a browser keeps the plain links. */
+[data-bridge-components~='nav-buttons'] [data-controller~='nav-buttons'] {
+  display: none;
+}
+
+.nav-buttons {
+  margin: 0 var(--gutter) 8px;
+}

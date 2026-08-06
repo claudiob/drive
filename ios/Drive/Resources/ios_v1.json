@@ -1,0 +1,38 @@
+{
+  "settings": {},
+  "rules": [
+    {
+      "patterns": [".*"],
+      "properties": {
+        "context": "default",
+        "presentation": "default",
+        "pull_to_refresh_enabled": true
+      },
+      "comment": "Baseline: every screen is pushed and pulls to refresh. Note there is no 'push' presentation on iOS — 'default' is what pushes."
+    },
+    {
+      "patterns": ["/new$"],
+      "properties": {
+        "context": "modal",
+        "modal_style": "large",
+        "modal_dismiss_gesture_enabled": true,
+        "pull_to_refresh_enabled": false
+      },
+      "comment": "The convention: anything ending in /new is a modal, never a push."
+    },
+    {
+      "patterns": ["^/settings"],
+      "properties": {
+        "pull_to_refresh_enabled": false
+      },
+      "comment": "A grouped card list that rubber-bands into a spinner looks wrong."
+    },
+    {
+      "patterns": ["^/(contacts|jobs|messages)/\\d+/?(\\?.*)?$"],
+      "properties": {
+        "pull_to_refresh_enabled": false
+      },
+      "comment": "Detail pages are static; a refresh control on them is noise."
+    }
+  ]
+}

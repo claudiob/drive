@@ -1,5 +1,12 @@
 <% content_for :title, 'Jobs' %>
 
+<%# Promoted into the native navigation bar by the bridge, and left as a plain link in
+    a browser. `/new` ends the path, so the path configuration opens it as a modal. %>
+<div class='nav-buttons' data-controller='nav-buttons'>
+  <%= link_to 'Add job', new_job_path, id: 'nav-add-job',
+              data: { nav_buttons_target: 'button', nav_symbol: 'plus', nav_title: 'Add' } %>
+</div>
+
 <h1 class='title'>Jobs</h1>
 
 <% if @resources.blank? %>
