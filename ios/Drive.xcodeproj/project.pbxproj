@@ -37,6 +37,13 @@
 		1A0000000000000000000155 /* MessageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000055 /* MessageBar.swift */; };
 		1A0000000000000000000156 /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000056 /* BackButton.swift */; };
 		1A0000000000000000000157 /* ConversationViewController+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000057 /* ConversationViewController+Menu.swift */; };
+		1A0000000000000000000158 /* FieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000058 /* FieldCell.swift */; };
+		1A0000000000000000000159 /* ContactFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000059 /* ContactFields.swift */; };
+		1A000000000000000000015A /* NewContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000005A /* NewContactViewController.swift */; };
+		1A000000000000000000015B /* NewContactViewController+Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000005B /* NewContactViewController+Table.swift */; };
+		1A000000000000000000015C /* AddressSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000005C /* AddressSearchViewController.swift */; };
+		1A000000000000000000015D /* ConversationViewController+Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000005D /* ConversationViewController+Table.swift */; };
+		1A000000000000000000015E /* Payloads+Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000005E /* Payloads+Messages.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +78,13 @@
 		1A0000000000000000000055 /* MessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageBar.swift"; sourceTree = "<group>"; };
 		1A0000000000000000000056 /* BackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackButton.swift"; sourceTree = "<group>"; };
 		1A0000000000000000000057 /* ConversationViewController+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationViewController+Menu.swift"; sourceTree = "<group>"; };
+		1A0000000000000000000058 /* FieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FieldCell.swift"; sourceTree = "<group>"; };
+		1A0000000000000000000059 /* ContactFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactFields.swift"; sourceTree = "<group>"; };
+		1A000000000000000000005A /* NewContactViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewContactViewController.swift"; sourceTree = "<group>"; };
+		1A000000000000000000005B /* NewContactViewController+Table.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewContactViewController+Table.swift"; sourceTree = "<group>"; };
+		1A000000000000000000005C /* AddressSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddressSearchViewController.swift"; sourceTree = "<group>"; };
+		1A000000000000000000005D /* ConversationViewController+Table.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationViewController+Table.swift"; sourceTree = "<group>"; };
+		1A000000000000000000005E /* Payloads+Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payloads+Messages.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +153,13 @@
 			children = (
 				1A000000000000000000002A /* Job.swift */,
 				1A000000000000000000002B /* JobsViewController.swift */,
+				1A000000000000000000005E /* Payloads+Messages.swift */,
+				1A000000000000000000005D /* ConversationViewController+Table.swift */,
+				1A000000000000000000005C /* AddressSearchViewController.swift */,
+				1A000000000000000000005B /* NewContactViewController+Table.swift */,
+				1A000000000000000000005A /* NewContactViewController.swift */,
+				1A0000000000000000000059 /* ContactFields.swift */,
+				1A0000000000000000000058 /* FieldCell.swift */,
 				1A0000000000000000000057 /* ConversationViewController+Menu.swift */,
 				1A0000000000000000000056 /* BackButton.swift */,
 				1A0000000000000000000055 /* MessageBar.swift */,
@@ -263,6 +284,13 @@
 				1A0000000000000000000038 /* NavButtonsComponent.swift in Sources */,
 				1A000000000000000000003C /* DriveNavigatorDelegate.swift in Sources */,
 				1A000000000000000000003B /* JobsViewController.swift in Sources */,
+				1A000000000000000000015E /* Payloads+Messages.swift in Sources */,
+				1A000000000000000000015D /* ConversationViewController+Table.swift in Sources */,
+				1A000000000000000000015C /* AddressSearchViewController.swift in Sources */,
+				1A000000000000000000015B /* NewContactViewController+Table.swift in Sources */,
+				1A000000000000000000015A /* NewContactViewController.swift in Sources */,
+				1A0000000000000000000159 /* ContactFields.swift in Sources */,
+				1A0000000000000000000158 /* FieldCell.swift in Sources */,
 				1A0000000000000000000157 /* ConversationViewController+Menu.swift in Sources */,
 				1A0000000000000000000156 /* BackButton.swift in Sources */,
 				1A0000000000000000000155 /* MessageBar.swift in Sources */,

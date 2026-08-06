@@ -8,6 +8,9 @@ module Recourse
   # action: `resource_json` where only a row differs — an extra field, a renamed one —
   # and `index_json` where the payload is not a flat list of records. Both are private,
   # because a public method on a controller is an action.
+  #
+  # `create` and `update` answer here too: the record itself on 201 or 200, or its
+  # errors on 422, so a native form has something to show against each field.
   module Data
     extend ActiveSupport::Concern
 
@@ -21,6 +24,14 @@ module Recourse
       columns = Recourse.visible_columns resource_class
 
       record.attributes.slice(*columns).merge path: resource_path(record)
+    end
+
+    def render_saved(record, status)
+      render json: resource_json(record), status:
+    end
+
+    def render_rejected(record)
+      render json: { errors: record.errors.to_hash(true) }, status: :unprocessable_entity
     end
 
     def resource_path(record)

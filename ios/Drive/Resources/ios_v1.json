@@ -22,6 +22,8 @@
     { "patterns": ["^/messages/new$"], "properties": {"view_controller": "compose"},
       "comment": "After the /new rule, so it stays a modal and gains a native screen." },
     { "patterns": ["^/contacts/\\d+/messages$"], "properties": {"view_controller": "conversation"},
-      "comment": "The thread with one contact, drawn as bubbles." }
+      "comment": "The thread with one contact, drawn as bubbles." },
+    { "patterns": ["^/contacts/new$"], "properties": {"view_controller": "newContact"},
+      "comment": "After the /new rule, so it stays a modal and gains a native screen." }
   ]
 }

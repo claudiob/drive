@@ -29,9 +29,7 @@ final class ConversationViewController: UIViewController, PathConfigurationIdent
         view.backgroundColor = .systemBackground
         navigationItem.hidesBackButton = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "video"),
-            primaryAction: UIAction { _ in }
-        )
+            image: UIImage(systemName: "video"), primaryAction: UIAction { _ in })
 
         lay()
         load()
@@ -63,8 +61,26 @@ final class ConversationViewController: UIViewController, PathConfigurationIdent
         ])
     }
 
+    /// Seeing a conversation is reading it. Marked before the thread is fetched, so the
+    /// count the back button shows already excludes this one.
+    private func markRead() async {
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return
+        }
+
+        components.path = components.path.replacingOccurrences(of: "/messages", with: "/read")
+
+        guard let target = components.url else { return }
+
+        var request = URLRequest(url: target)
+        request.httpMethod = "POST"
+        _ = try? await URLSession.shared.data(for: request)
+    }
+
     private func load() {
         Task { @MainActor in
+            await markRead()
+
             guard let thread: Conversation = await NativeList.fetch(url) else { return }
 
             navigationItem.title = thread.title
@@ -79,18 +95,5 @@ final class ConversationViewController: UIViewController, PathConfigurationIdent
             messages = thread.messages
             table.reloadData()
         }
-    }
-}
-
-extension ConversationViewController: UITableViewDataSource {
-    func tableView(_ table: UITableView, numberOfRowsInSection section: Int) -> Int {
-        messages.count
-    }
-
-    func tableView(_ table: UITableView, cellForRowAt path: IndexPath) -> UITableViewCell {
-        let cell = table.dequeueReusableCell(withIdentifier: "bubble", for: path)
-        (cell as? BubbleCell)?.show(messages[path.row])
-
-        return cell
     }
 }

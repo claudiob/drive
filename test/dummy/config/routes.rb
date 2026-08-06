@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   # Native-only screens, so plain routes rather than recourses: neither is a model,
   # and neither belongs in the desktop sidebar.
   resources :lists, only: :index
+  resources :places, only: :index
   resource :settings, only: :show, controller: :settings
 
   # No index action, so no sidebar link.

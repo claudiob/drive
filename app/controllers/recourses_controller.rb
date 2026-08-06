@@ -26,13 +26,9 @@ class RecoursesController < ApplicationController
   def create
     record = assign resource_class.new(resource_params)
 
-    if record.save
-      flash.notice = "#{human_name} was created."
-      redirect_to url_for(action: :index), status: :see_other
-    else
-      flash.now.alert = "#{human_name} could not be created."
-      render :new, status: :unprocessable_entity
-    end
+    return refused record, :new, 'created' unless record.save
+
+    accepted record, 'created', :created
   end
 
   # Shows the form for the record the id names, which is already known to exist.
@@ -40,16 +36,30 @@ class RecoursesController < ApplicationController
 
   # Saves changes to a record, then shows the index again or redraws the form.
   def update
-    if @recourse.update resource_params
-      flash.notice = "#{human_name} was updated."
-      redirect_to url_for(action: :index), status: :see_other
-    else
-      flash.now.alert = "#{human_name} could not be updated."
-      render :edit, status: :unprocessable_entity
-    end
+    return refused @recourse, :edit, 'updated' unless @recourse.update resource_params
+
+    accepted @recourse, 'updated', :ok
   end
 
 private
+
+  def accepted(record, verb, status)
+    flash.notice = "#{human_name} was #{verb}."
+
+    respond_to do |format|
+      format.html { redirect_to url_for(action: :index), status: :see_other }
+      format.json { render_saved record, status }
+    end
+  end
+
+  def refused(record, form, verb)
+    flash.now.alert = "#{human_name} could not be #{verb}."
+
+    respond_to do |format|
+      format.html { render form, status: :unprocessable_entity }
+      format.json { render_rejected record }
+    end
+  end
 
   # Every table cell that names a referenced record would otherwise be a query.
   def resource_scope
