@@ -51,6 +51,12 @@
     </dict>
   </dict>
 
+  <!-- A device reaches the Mac by its Bonjour name rather than by localhost, and iOS 14
+       and later will not let it until this is asked for and granted. Without the key the
+       connection fails with no prompt and no error, which reads as an app with no data. -->
+  <key>NSLocalNetworkUsageDescription</key>
+  <string>Drive talks to the development server running on your Mac.</string>
+
   <!-- Two keys, because they cover different stacks: ArbitraryLoadsInWebContent lets
        WKWebView load the pages, and the localhost exception lets URLSession fetch the
        remote path configuration. Neither covers the other. Development only. -->

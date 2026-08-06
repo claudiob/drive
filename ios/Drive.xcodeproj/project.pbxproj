@@ -387,7 +387,8 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = W4LXMD6X76;
-				"DRIVE_BASE_URL[sdk=*]" = "http:/$()/localhost:4444";
+				"DRIVE_BASE_URL[sdk=iphoneos*]" = "http:/$()/William.local:4444";
+				"DRIVE_BASE_URL[sdk=iphonesimulator*]" = "http:/$()/localhost:4444";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Drive/Info.plist;
@@ -412,7 +413,8 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = W4LXMD6X76;
-				"DRIVE_BASE_URL[sdk=*]" = "http:/$()/localhost:4444";
+				"DRIVE_BASE_URL[sdk=iphoneos*]" = "http:/$()/William.local:4444";
+				"DRIVE_BASE_URL[sdk=iphonesimulator*]" = "http:/$()/localhost:4444";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Drive/Info.plist;
