@@ -1,4 +1,4 @@
-<%# locals: (name:, id:, invalid:, feedback:, label:, placeholder:, required:, recourses: nil, concepts: nil, fallback: nil) -%>
+<%# locals: (name:, id:, invalid:, feedback:, label:, placeholder:, required:, recourses: nil, concepts: nil, fallback: nil, digest: nil) -%>
 <button class='form-control<%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
@@ -12,8 +12,8 @@
            autocomplete='off' aria-label='Search…'>
   </div>
   <% if concepts %>
-    <%# A constant list, so one fixed key rather than a digest of a relation. %>
-    <% cache 'recourse/concepts' do %>
+    <%# No relation to take a version from, so the key digests the list itself. %>
+    <% cache digest do %>
       <% concepts.each do |concept, icon| %>
         <button class='menu-item' type='button' data-bs-value='<%= concept %>'><i class='bi bi-<%= icon %>'></i> <%= concept.to_s.humanize %></button>
       <% end %>

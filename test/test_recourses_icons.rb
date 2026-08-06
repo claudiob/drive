@@ -16,8 +16,8 @@ class TestRecoursesIcons < Minitest::Test
     # Literal markup in the partial, so single quotes; the record rows below come from
     # `tag.i` and carry double ones.
     assert_includes body, "data-bs-value='house'><i class='bi bi-house'></i> House"
-    # The distinct icons, not every synonym `fetch` answers to.
-    assert_equal Unicon.meanings.size, body.scan("class='menu-item'").size
+    # The distinct icons, not every name `fetch` answers to.
+    assert_equal Unicon.icons.size, body.scan("class='menu-item'").size
   end
 
   def test_a_menu_of_records_draws_each_with_the_concept_it_picked

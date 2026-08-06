@@ -1,8 +1,15 @@
+require 'digest'
+
 module Recourse
   module Helpers
     # The menus a form offers: one of the records a foreign key can point at, and one
     # of the concepts an icon can be picked from.
     module Comboboxes
+      # What the icon menu is cached under. The list is constant within a process but
+      # not between two, so the key has to be the list itself: a fixed one went on
+      # serving the icons the gem named before unicon was upgraded under it.
+      ICONS_KEY = "recourse/icons/#{Digest::SHA256.hexdigest Unicon.icons.join(',')}"
+
       # A combobox of labels. The query fetches the two columns the menu shows and
       # nothing else, and the errors are its own work: `field_error_proc` only ever
       # sees the tags a form builder drew, and this is a partial.
@@ -17,13 +24,14 @@ module Recourse
       end
 
       # A combobox of every concept an icon can be picked from, each row drawn with the
-      # icon it names. The list is the same for every form, so it is cached under a
-      # fixed key rather than a digest of anything.
+      # icon it names. The list is the same for every form, so it is cached against what
+      # it holds rather than against a relation.
       def icon_combobox(form, column)
         render 'recourses/combobox', **combobox_locals(form, column),
                                      label: column,
                                      placeholder: 'Select an icon…',
-                                     concepts: icon_concepts
+                                     concepts: icon_concepts,
+                                     digest: ICONS_KEY
       end
 
       # What a combobox row is drawn with: the concept the record picked, or what its
@@ -51,11 +59,11 @@ module Recourse
         }
       end
 
-      # `meanings`, not `concepts`: the latter counts every synonym a model name might
-      # arrive under, and offering both `house` and `home` drawing the same glyph is
-      # noise to choose from. Actions are absent from it too — nothing has a Close.
+      # `icons`, not every name that resolves: the latter counts each synonym a model
+      # might arrive under, and offering both `house` and `home` drawing the same glyph
+      # is noise to choose from. Actions are absent from it too — nothing has a Close.
       def icon_concepts
-        Unicon.meanings.map { |concept| [concept, Unicon[concept][:bootstrap]] }
+        Unicon.icons.map { |concept| [concept, Unicon[concept][:bootstrap]] }
       end
 
       # Only the columns the menu shows, plus the icon where the model keeps one.
