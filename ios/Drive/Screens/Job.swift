@@ -9,3 +9,9 @@ struct Job: Decodable, Hashable {
     let city: String
     let path: String
 }
+
+/// What `/jobs.json` answers: the two groups the board shows.
+struct JobBoard: Decodable {
+    let attention: [Job]
+    let claimed: [Job]
+}

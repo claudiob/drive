@@ -1,23 +1,49 @@
 import HotwireNative
 import UIKit
 
-/// The Jobs list, drawn with the same UIKit components Apple's Contacts list uses: an
-/// inset-grouped `UICollectionView` list layout and `UIListContentConfiguration`. No
-/// HTML imitating them, so the cells, separators, insets, highlight and swipe physics
-/// are the system's own.
+/// The Jobs board: what needs looking at, then what the agent has claimed, under a
+/// large title and a search field. Two inset-grouped list sections in a compositional
+/// layout, which is the shape the App Store gives its own Search tab.
 final class JobsViewController: UICollectionViewController, PathConfigurationIdentifiable {
     static var pathConfigurationIdentifier: String { "jobs" }
 
-    private let url: URL
-    private weak var navigator: Navigator?
-    private var jobs: [Job] = []
+    /// Section titles, in the order they are shown.
+    static let groups = ["Need your attention", "Claimed by you"]
+
+    let url: URL
+    weak var navigator: Navigator?
+    var jobs: [[Job]] = [[], []]
+
+    /// `valueCell` is the title-left, detail-right style the system lists use, and the
+    /// disclosure accessory is the real chevron rather than a glyph of our own.
+    let cell = UICollectionView.CellRegistration<UICollectionViewListCell, Job> {
+        cell, _, job in
+        var content = UIListContentConfiguration.valueCell()
+        content.text = job.title
+        content.secondaryText = job.city
+        content.image = UIImage(systemName: "hammer.fill")
+        cell.contentConfiguration = content
+        cell.accessories = [.disclosureIndicator()]
+    }
+
+    /// The extra-prominent header is the large bold one the App Store uses over each of
+    /// its groups; the chevron rides in the text so it follows the words rather than
+    /// sitting out at the trailing edge.
+    let header = UICollectionView
+        .SupplementaryRegistration<UICollectionViewListCell>(
+            elementKind: UICollectionView.elementKindSectionHeader
+        ) { view, _, path in
+            var content = UIListContentConfiguration.extraProminentInsetGroupedHeader()
+            content.attributedText = JobsViewController.titled(JobsViewController.groups[path.section])
+            view.contentConfiguration = content
+        }
 
     init(url: URL, navigator: Navigator?) {
         self.url = url
         self.navigator = navigator
 
         var list = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-        list.showsSeparators = true
+        list.headerMode = .supplementary
 
         super.init(collectionViewLayout: UICollectionViewCompositionalLayout.list(using: list))
     }
@@ -31,69 +57,39 @@ final class JobsViewController: UICollectionViewController, PathConfigurationIde
         super.viewDidLoad()
 
         title = "Jobs"
+        navigationItem.largeTitleDisplayMode = .always
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             systemItem: .add,
-            primaryAction: UIAction { [weak self] _ in self?.route("jobs/new") }
-        )
+            primaryAction: UIAction { [weak self] _ in self?.route("/jobs/new") })
+
+        let search = UISearchController(searchResultsController: nil)
+        search.searchBar.placeholder = "Search"
+        search.obscuresBackgroundDuringPresentation = false
+        navigationItem.searchController = search
+        navigationItem.hidesSearchBarWhenScrolling = false
 
         collectionView.refreshControl = UIRefreshControl(
             frame: .zero,
-            primaryAction: UIAction { [weak self] _ in self?.load() }
-        )
+            primaryAction: UIAction { [weak self] _ in self?.load() })
 
         load()
     }
 
-    // MARK: Data
+    func route(_ path: String) {
+        guard let target = NativeList.url(path, like: url) else { return }
 
-    // Eager, not lazy: a lazy one would be built the first time a cell is asked for,
-    // which is inside `cellForItemAt`, and UIKit rejects that outright — a registration
-    // made per cell would defeat reuse.
-    private let registration = UICollectionView.CellRegistration<UICollectionViewListCell, Job> {
-        cell, _, job in
-        // `valueCell` is the title-left, detail-right style the Settings and Contacts
-        // lists use; the disclosure accessory is the system chevron, not a glyph.
-        var content = UIListContentConfiguration.valueCell()
-        content.text = job.title
-        content.secondaryText = job.city
-        content.image = UIImage(systemName: "hammer.fill")
-        cell.contentConfiguration = content
-        cell.accessories = [.disclosureIndicator()]
+        navigator?.route(target)
     }
 
     private func load() {
         Task { @MainActor in
             defer { collectionView.refreshControl?.endRefreshing() }
 
-            // The screen is routed at /jobs; the data for it is /jobs.json.
-            let source = url.appendingPathExtension("json")
+            guard let board: JobBoard = await NativeList.fetch(url) else { return }
 
-            guard let (data, _) = try? await URLSession.shared.data(from: source),
-                  let jobs = try? JSONDecoder().decode([Job].self, from: data)
-            else { return }
-
-            self.jobs = jobs
+            jobs = [board.attention, board.claimed]
             collectionView.reloadData()
         }
-    }
-
-    private func route(_ path: String) {
-        navigator?.route(url.deletingLastPathComponent().appendingPathComponent(path))
-    }
-
-    // MARK: UICollectionView
-
-    override func collectionView(_ view: UICollectionView, numberOfItemsInSection: Int) -> Int {
-        jobs.count
-    }
-
-    override func collectionView(_ view: UICollectionView,
-                                 cellForItemAt path: IndexPath) -> UICollectionViewCell {
-        view.dequeueConfiguredReusableCell(using: registration, for: path, item: jobs[path.item])
-    }
-
-    override func collectionView(_ view: UICollectionView, didSelectItemAt path: IndexPath) {
-        view.deselectItem(at: path, animated: true)
-        route(String(jobs[path.item].path.dropFirst()))
     }
 }
