@@ -1,13 +1,13 @@
 import UIKit
 
 /// One message in a conversation. Heard from the contact it sits left in gray; sent by
-/// the agent it sits right in blue, with a tick reporting whether it arrived.
+/// the agent it sits right in blue, with a muted word under it reporting whether it
+/// arrived — the way Messages says it, rather than a mark inside the bubble.
 final class BubbleCell: UITableViewCell {
     private let body = UILabel()
-    private let tick = UIImageView()
+    private let status = UILabel()
     private let bubble = UIView()
-    private var leading: NSLayoutConstraint!
-    private var trailing: NSLayoutConstraint!
+    private let column = UIStackView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -15,39 +15,41 @@ final class BubbleCell: UITableViewCell {
         selectionStyle = .none
         backgroundColor = .clear
 
-        bubble.layer.cornerRadius = 18
-        bubble.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(bubble)
-
         body.numberOfLines = 0
         body.font = .preferredFont(forTextStyle: .body)
+        body.adjustsFontForContentSizeCategory = true
+        body.translatesAutoresizingMaskIntoConstraints = false
 
-        tick.image = UIImage(systemName: "checkmark",
-                             withConfiguration: UIImage.SymbolConfiguration(pointSize: 10))
-        tick.setContentHuggingPriority(.required, for: .horizontal)
+        bubble.layer.cornerRadius = 18
+        bubble.addSubview(body)
 
-        // Bottom-aligned, so the tick sits on the last line of a message of any height.
-        let stack = UIStackView(arrangedSubviews: [body, tick])
-        stack.spacing = 5
-        stack.alignment = .bottom
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        bubble.addSubview(stack)
+        status.font = .preferredFont(forTextStyle: .caption2)
+        status.adjustsFontForContentSizeCategory = true
+        status.textColor = .secondaryLabel
 
-        leading = bubble.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
-        trailing = bubble.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
-                                                    constant: -16)
+        // A stack rather than a pair of constraints toggled per side: hiding the status
+        // takes its spacing with it, so a message that reports nothing is as tight
+        // against the next as one from the contact.
+        column.axis = .vertical
+        column.spacing = 2
+        column.addArrangedSubview(bubble)
+        column.addArrangedSubview(status)
+        column.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(column)
 
         NSLayoutConstraint.activate([
-            bubble.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 3),
-            bubble.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3),
+            column.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            column.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            column.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 3),
+            column.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3),
             // A bubble grows with its text but stops well short of the far edge, so the
             // side it is on reads at a glance.
             bubble.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor,
                                           multiplier: 0.75),
-            stack.topAnchor.constraint(equalTo: bubble.topAnchor, constant: 9),
-            stack.bottomAnchor.constraint(equalTo: bubble.bottomAnchor, constant: -9),
-            stack.leadingAnchor.constraint(equalTo: bubble.leadingAnchor, constant: 14),
-            stack.trailingAnchor.constraint(equalTo: bubble.trailingAnchor, constant: -14)
+            body.topAnchor.constraint(equalTo: bubble.topAnchor, constant: 9),
+            body.bottomAnchor.constraint(equalTo: bubble.bottomAnchor, constant: -9),
+            body.leadingAnchor.constraint(equalTo: bubble.leadingAnchor, constant: 14),
+            body.trailingAnchor.constraint(equalTo: bubble.trailingAnchor, constant: -14)
         ])
     }
 
@@ -68,10 +70,9 @@ final class BubbleCell: UITableViewCell {
         bubble.backgroundColor = message.inbound ? .secondarySystemFill : .systemBlue
 
         // Nothing we received was delivered by us, so only our own side reports.
-        tick.isHidden = message.inbound
-        tick.tintColor = message.delivered ? .systemGreen : UIColor.white.withAlphaComponent(0.6)
+        status.text = message.delivered ? "Delivered" : "Sent"
+        status.isHidden = message.inbound
 
-        leading.isActive = message.inbound
-        trailing.isActive = !message.inbound
+        column.alignment = message.inbound ? .leading : .trailing
     }
 }
