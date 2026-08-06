@@ -37,6 +37,24 @@ enum HotwireSetup {
         #if DEBUG
             Hotwire.config.debugLoggingEnabled = true
         #endif
+
+        styleBars()
+    }
+
+    /// Both bars are opaque here and the page sits between them, so they need a real
+    /// background — left transparent they show the window through, and a label-coloured
+    /// title on it is invisible.
+    private static func styleBars() {
+        let navigationBar = UINavigationBarAppearance()
+        navigationBar.configureWithDefaultBackground()
+        UINavigationBar.appearance().standardAppearance = navigationBar
+        UINavigationBar.appearance().compactAppearance = navigationBar
+        UINavigationBar.appearance().scrollEdgeAppearance = navigationBar
+
+        let tabBar = UITabBarAppearance()
+        tabBar.configureWithDefaultBackground()
+        UITabBar.appearance().standardAppearance = tabBar
+        UITabBar.appearance().scrollEdgeAppearance = tabBar
     }
 
     private static func makeWebView(_ configuration: WKWebViewConfiguration) -> WKWebView {

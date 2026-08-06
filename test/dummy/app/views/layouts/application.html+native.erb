@@ -18,6 +18,14 @@
     <link rel='stylesheet' href='/native/base.css'>
     <link rel='stylesheet' href='/native/lists.css'>
 
+    <%# Upstream's bridge bundle imports Stimulus by the bare '@hotwired/stimulus'
+        specifier, which a browser cannot resolve on its own — the module would fail to
+        load and take the bridge with it. Mapped here rather than edited there, so the
+        vendored copy stays byte-identical to what npm serves. Must precede any module. %>
+    <script type='importmap'>
+      { "imports": { "@hotwired/stimulus": "/recourse/stimulus.js" } }
+    </script>
+
     <script type='module'>
       import { Application } from '/recourse/stimulus.js'
       import NavButtonsController from '/native/nav_buttons_controller.js'

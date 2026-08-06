@@ -2,16 +2,29 @@
   "settings": {},
   "rules": [
     {
-      "patterns": [".*"],
+      "patterns": [
+        ".*"
+      ],
       "properties": {
         "context": "default",
         "presentation": "default",
         "pull_to_refresh_enabled": true
       },
-      "comment": "Baseline: every screen is pushed and pulls to refresh. Note there is no 'push' presentation on iOS — 'default' is what pushes."
+      "comment": "Baseline: every screen is pushed and pulls to refresh. Note there is no 'push' presentation on iOS \u2014 'default' is what pushes."
     },
     {
-      "patterns": ["/new$"],
+      "patterns": [
+        "^/jobs$"
+      ],
+      "properties": {
+        "view_controller": "jobs"
+      },
+      "comment": "Drawn natively with UIKit's inset-grouped list, from /jobs.json."
+    },
+    {
+      "patterns": [
+        "/new$"
+      ],
       "properties": {
         "context": "modal",
         "modal_style": "large",
@@ -21,14 +34,18 @@
       "comment": "The convention: anything ending in /new is a modal, never a push."
     },
     {
-      "patterns": ["^/settings"],
+      "patterns": [
+        "^/settings"
+      ],
       "properties": {
         "pull_to_refresh_enabled": false
       },
       "comment": "A grouped card list that rubber-bands into a spinner looks wrong."
     },
     {
-      "patterns": ["^/(contacts|jobs|messages)/\\d+/?(\\?.*)?$"],
+      "patterns": [
+        "^/(contacts|jobs|messages)/\\d+/?(\\?.*)?$"
+      ],
       "properties": {
         "pull_to_refresh_enabled": false
       },

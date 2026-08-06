@@ -17,6 +17,9 @@
 		1A0000000000000000000038 /* NavButtonsComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000029 /* NavButtonsComponent.swift */; };
 		1A0000000000000000000037 /* ios_v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000027 /* ios_v1.json */; };
 		1A0000000000000000000015 /* HotwireNative in Frameworks */ = {isa = PBXBuildFile; productRef = 1A0000000000000000000014 /* HotwireNative */; };
+		1A000000000000000000003A /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000002A /* Job.swift */; };
+		1A000000000000000000003B /* JobsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000002B /* JobsViewController.swift */; };
+		1A000000000000000000003C /* DriveNavigatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000002C /* DriveNavigatorDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +34,9 @@
 		1A0000000000000000000027 /* ios_v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "ios_v1.json"; sourceTree = "<group>"; };
 		1A0000000000000000000029 /* NavButtonsComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavButtonsComponent.swift; sourceTree = "<group>"; };
 		1A0000000000000000000028 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A000000000000000000002A /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
+		1A000000000000000000002B /* JobsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsViewController.swift; sourceTree = "<group>"; };
+		1A000000000000000000002C /* DriveNavigatorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveNavigatorDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +75,7 @@
 				1A0000000000000000000016 /* Bridge */,
 				1A0000000000000000000010 /* Configuration */,
 				1A0000000000000000000011 /* Navigation */,
+				1A0000000000000000000017 /* Screens */,
 				1A0000000000000000000012 /* Resources */,
 				1A0000000000000000000028 /* Info.plist */,
 			);
@@ -93,9 +100,19 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
+		1A0000000000000000000017 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				1A000000000000000000002A /* Job.swift */,
+				1A000000000000000000002B /* JobsViewController.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
 		1A0000000000000000000011 /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				1A000000000000000000002C /* DriveNavigatorDelegate.swift */,
 				1A0000000000000000000025 /* DriveTabBarController.swift */,
 				1A0000000000000000000026 /* DriveWebViewController.swift */,
 			);
@@ -193,6 +210,9 @@
 				1A0000000000000000000035 /* DriveTabBarController.swift in Sources */,
 				1A0000000000000000000036 /* DriveWebViewController.swift in Sources */,
 				1A0000000000000000000038 /* NavButtonsComponent.swift in Sources */,
+				1A000000000000000000003C /* DriveNavigatorDelegate.swift in Sources */,
+				1A000000000000000000003B /* JobsViewController.swift in Sources */,
+				1A000000000000000000003A /* Job.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

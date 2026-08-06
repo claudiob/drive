@@ -7,7 +7,11 @@ export default class extends BridgeComponent {
   static component = 'nav-buttons'
   static targets = ['button']
 
-  bridgeConnect() {
+  // Plain Stimulus `connect`, and `super` first: the base class installs the listener
+  // that replays this on `native:restore`, when a cached page comes back.
+  connect() {
+    super.connect()
+
     this.send('connect', this.#buttons(), (message) => {
       document.getElementById(message.data.id)?.click()
     })

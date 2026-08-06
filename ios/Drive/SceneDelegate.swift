@@ -4,7 +4,8 @@ import UIKit
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
-    private let tabBarController = DriveTabBarController()
+    private let navigatorDelegate = DriveNavigatorDelegate()
+    private lazy var tabBarController = DriveTabBarController(navigatorDelegate: navigatorDelegate)
 
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
@@ -15,6 +16,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         HotwireSetup.run()
 
         window = UIWindow(windowScene: windowScene)
+        // Shows behind the bars, so black would band the top and bottom of every screen.
+        window?.backgroundColor = .systemGroupedBackground
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
 
