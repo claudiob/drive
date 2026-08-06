@@ -1,6 +1,6 @@
 # Someone the host app can reach, identified by a unique 10-digit phone number.
 class Contact < ApplicationRecord
-  include Emailable, Phonable
+  include Emailable, Phonable, Recoursive
 
   # Letter a contact files under. Plain `name`, because `surname` is encrypted
   # non-deterministically: the database cannot order, group or match that at all.

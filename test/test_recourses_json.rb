@@ -20,13 +20,7 @@ class TestRecoursesJSON < Minitest::Test
   end
 
   def test_an_index_answers_every_visible_column_and_where_to_find_the_record
-    # Claimed by the agent the app stands in with, so the job lands in a known group:
-    # the other one is chosen by id, which a test cannot pick.
-    Agent.create! email: 'json@example.com' if Agent.none?
-    agent = Agent.order(:id).first
-    # Shorthand never last on a line: it would run into the next one.
-    location = Location.create! agent:, zip: ZIP.first, city: 'Holtsville', street: '1 Main St'
-    job = Job.create! location:, title: 'Fix the roof'
+    job = claimed_job
 
     @session.get '/jobs.json'
     # Jobs answers two groups rather than one list, which is `index_json` overridden;
@@ -36,6 +30,17 @@ class TestRecoursesJSON < Minitest::Test
     assert_equal "/jobs/#{job.id}", row['path']
     # A host adds a field by overriding one method rather than the whole action.
     assert_equal 'Holtsville', row['city']
+  end
+
+  # Claimed by the agent the app stands in with, so it lands in a group a test can name:
+  # the other is chosen by id, which a test cannot arrange.
+  def claimed_job
+    Agent.create! email: 'json@example.com' if Agent.none?
+    agent = Agent.order(:id).first
+    # Shorthand never last on a line: it would run into the next one.
+    location = Location.create! agent:, zip: ZIP.first, city: 'Holtsville', street: '1 Main St'
+
+    Job.create! location:, title: 'Fix the roof'
   end
 
   def test_it_answers_a_created_record_and_where_to_find_it

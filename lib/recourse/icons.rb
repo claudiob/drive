@@ -1,21 +1,21 @@
+# Reopened for the one question a drawn resource cannot answer alone: which icon
+# set is being served, and what this resource is called in it.
 module Recourse
-  # Bootstrap Icons name for a resource title, keyed by the title as it displays.
-  NAVIGATION_ICONS = {
-    'Agents' => 'robot', 'Answers' => 'question-circle', 'Apps' => 'window',
-    'Assessments' => 'clipboard-check', 'Bookings' => 'calendar-check',
-    'Brands' => 'buildings', 'Campaigns' => 'megaphone', 'Contacts' => 'person-rolodex',
-    'Contract' => 'file-earmark-check', 'Conversations' => 'chat-dots', 'Counties' => 'map',
-    'CRM' => 'plugin', 'Echoes' => 'soundwave', 'Episodes' => 'collection-play',
-    'Evaluations' => 'speedometer2', 'Franchises' => 'shop', 'Home' => 'house',
-    'Jobs' => 'hammer', 'Locations' => 'geo-alt', 'Logout' => 'box-arrow-right',
-    'Markets' => 'pin-map', 'Messages' => 'chat-text', 'Offer questions' => 'gift',
-    'Optimizations' => 'sliders', 'Platforms' => 'plugin', 'Profile' => 'person-circle',
-    'Prompts' => 'terminal', 'Providers' => 'briefcase',
-    'Satisfaction questions' => 'emoji-smile', 'Searches' => 'search', 'Settings' => 'gear',
-    'Sources' => 'signpost', 'Specialties' => 'award', 'Specialty matches' => 'award',
-    'States' => 'geo', 'Verticals' => 'bar-chart', 'ZIPs' => 'geo-alt-fill',
-  }.freeze
+  # The icon sets a resource can be asked to name itself in.
+  ICON_SYSTEMS = %i[android bootstrap ios].freeze
 
-  # Shown when a resource is not in the map, so a list of links stays aligned.
-  FALLBACK_ICON = 'circle'
+  # What a resource is drawn with, in one set's naming. The answer comes from the model
+  # rather than from a list here: `recourse_icon` returns a symbol when every set calls
+  # the icon the same thing, and a hash keyed by set when they do not.
+  def self.icon(name, system)
+    icon = model(name)&.recourse_icon || Recoursive::ICON
+
+    icon.is_a?(Hash) ? icon.fetch(system, Recoursive::ICON) : icon
+  end
+
+  # A resource names a model by convention, but not always — `recourses :echoes` draws
+  # a controller the host wrote and no model at all, and that one takes the default.
+  def self.model(name)
+    name.to_s.classify.safe_constantize
+  end
 end

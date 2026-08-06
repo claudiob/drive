@@ -6,6 +6,8 @@ class Location
 
     class_methods do
       def recourse_label = :city
+
+      def recourse_icon = { bootstrap: :'geo-alt', ios: :'mappin.and.ellipse', android: :place }
     end
   end
 end

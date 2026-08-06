@@ -32,7 +32,7 @@ final class JobsViewController: UICollectionViewController, PathConfigurationIde
         // long title start in the same place; and room above and below, which is
         // what makes two lines read as one row rather than two.
         content.image = UIImage(
-            systemName: "hammer.fill",
+            systemName: job.icon,
             withConfiguration: UIImage.SymbolConfiguration(pointSize: 19)
         )
         content.imageProperties.reservedLayoutSize = CGSize(width: 32, height: 32)

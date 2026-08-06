@@ -2,12 +2,14 @@ module Recourse
   module Helpers
     # Helpers for the navbar and the sidebar.
     module Navigation
-      # Trail to the current page as [title, path] pairs; a nil path is this page.
+      # Trail to the current page as [name, title, path]; a nil path is this page. The
+      # name is the resource's, which is what an icon is looked up by.
       def resource_breadcrumbs
+        name = controller.controller_name
         leaf = breadcrumb_leaf
-        return [[resources_name, nil]] unless leaf
+        return [[name, resources_name, nil]] unless leaf
 
-        [[resources_name, url_for(action: :index)], [leaf, nil]]
+        [[name, resources_name, url_for(action: :index)], [name, leaf, nil]]
       end
 
       # Pencil linking to a record's edit page, or nothing when there is not one.
@@ -26,9 +28,10 @@ module Recourse
         url_for action: :new
       end
 
-      # Label for a link to a resource: its icon, then its title.
-      def resource_label(title)
-        icon = NAVIGATION_ICONS.fetch title, FALLBACK_ICON
+      # Label for a link to a resource: its icon, then its title. The model says which
+      # icon; nothing here holds a list of them.
+      def resource_label(name, title)
+        icon = Recourse.icon name, :bootstrap
 
         safe_join [tag.i(class: "bi bi-#{icon}"), title], ' '
       end

@@ -1,5 +1,7 @@
 # One of the markets the host app operates in, identified by name.
 class Market < ApplicationRecord
+  include Recoursive
+
   belongs_to :state
   has_many :zips, dependent: :nullify
 

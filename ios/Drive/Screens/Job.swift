@@ -8,6 +8,8 @@ struct Job: Decodable, Hashable {
     let status: String
     let city: String
     let path: String
+    /// Named by the model, in SF Symbols, so the app holds no list of its own.
+    let icon: String
 }
 
 /// What `/jobs.json` answers: the two groups the board shows.

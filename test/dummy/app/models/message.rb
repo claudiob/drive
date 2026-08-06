@@ -1,5 +1,7 @@
 # Something said to a contact or heard from one, sometimes about a job.
 class Message < ApplicationRecord
+  include Recoursive
+
   # The latest message per contact, and how many of theirs are still unread. Postgres
   # runs a window function before `distinct on`, so both come from the one pass.
   LATEST_PER_CONTACT = <<~SQL.squish

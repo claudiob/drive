@@ -68,30 +68,36 @@ before writing or editing any layout, view or partial.
 - A link to a resource is preceded by a Bootstrap Icon, using the `<i>` form:
   `<i class='bi bi-person-rolodex'></i> Contacts`. The layout loads
   `bootstrap-icons@1.13.1`.
-- Pick the icon by the displayed title, from this map. It is duplicated in
-  `lib/recourse/icons.rb`, which is what the code reads — change both together.
-- An unlisted title falls back to `circle`, so a column of links stays aligned.
-  Add a real entry rather than leaving the fallback in place.
+- **No list of icon names lives anywhere.** A model says what it is drawn with,
+  by answering `recourse_icon` in its own `Recoursive` concern — the same place
+  `recourse_label` is overridden, and for the same reason:
 
-      'Agents' => 'robot', 'Answers' => 'question-circle', 'Apps' => 'window',
-      'Assessments' => 'clipboard-check', 'Bookings' => 'calendar-check',
-      'Brands' => 'buildings', 'Campaigns' => 'megaphone',
-      'Contacts' => 'person-rolodex', 'Contract' => 'file-earmark-check',
-      'Conversations' => 'chat-dots', 'Counties' => 'map', 'CRM' => 'plugin',
-      'Echoes' => 'soundwave', 'Episodes' => 'collection-play',
-      'Evaluations' => 'speedometer2', 'Franchises' => 'shop', 'Home' => 'house',
-      'Jobs' => 'hammer', 'Locations' => 'geo-alt', 'Logout' => 'box-arrow-right',
-      'Markets' => 'pin-map', 'Messages' => 'chat-text',
-      'Offer questions' => 'gift', 'Optimizations' => 'sliders',
-      'Platforms' => 'plugin', 'Profile' => 'person-circle',
-      'Prompts' => 'terminal', 'Providers' => 'briefcase',
-      'Satisfaction questions' => 'emoji-smile', 'Searches' => 'search',
-      'Settings' => 'gear', 'Sources' => 'signpost', 'Specialties' => 'award',
-      'Specialty matches' => 'award', 'States' => 'geo',
-      'Verticals' => 'bar-chart', 'ZIPs' => 'geo-alt-fill'
+      class County
+        # How a county is drawn. One name serves every icon set.
+        module Recoursive
+          extend ActiveSupport::Concern
 
-- `Home` maps to `house`: Bootstrap Icons has no `home`, so that entry would
-  have rendered an empty box.
+          class_methods do
+            def recourse_icon = :map
+          end
+        end
+      end
+
+- A bare symbol means every icon set calls it the same thing. Where they differ,
+  answer a hash keyed by set instead — `:android`, `:bootstrap`, `:ios`:
+
+      def recourse_icon
+        { bootstrap: :'person-rolodex', ios: :'person.crop.circle', android: :contacts }
+      end
+
+- `Recourse.icon(name, system)` resolves it. A resource with no model of its own —
+  `recourses :echoes` draws a controller the host wrote and nothing else — takes
+  `Recoursive::ICON`, a plain `circle`, which every set has.
+- The console asks for `:bootstrap` and the app asks for `:ios`, and the answer
+  travels in the JSON of every row, so no list of Apple names lives in the app
+  either. Which set is served follows the request's variant.
+- Add a set to `ICON_SYSTEMS` and each model can name itself in it; nothing else
+  changes.
 - Icons go on *links*. The breadcrumb's current-page item is not a link, so it
   carries no icon.
 

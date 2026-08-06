@@ -11,6 +11,9 @@ module Recourse
   #
   # `create` and `update` answer here too: the record itself on 201 or 200, or its
   # errors on 422, so a native form has something to show against each field.
+  #
+  # Every row carries the icon its model named, in whichever set the client draws
+  # from — so no list of Apple names lives in the app, or of Bootstrap names here.
   module Data
     extend ActiveSupport::Concern
 
@@ -23,7 +26,17 @@ module Recourse
     def resource_json(record)
       columns = Recourse.visible_columns resource_class
 
-      record.attributes.slice(*columns).merge path: resource_path(record)
+      record.attributes.slice(*columns).merge path: resource_path(record), icon: icon_name
+    end
+
+    # Which set of names the client draws from. The app asks in SF Symbols; anything
+    # else is a browser, which has the Bootstrap Icons the console already loads.
+    def icon_system
+      request.variant.native? ? :ios : :bootstrap
+    end
+
+    def icon_name
+      Recourse.icon controller_name, icon_system
     end
 
     def render_saved(record, status)

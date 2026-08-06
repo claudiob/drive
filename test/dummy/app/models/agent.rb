@@ -1,6 +1,6 @@
 # Someone acting on the host app's behalf, identified by a unique email.
 class Agent < ApplicationRecord
-  include Emailable
+  include Emailable, Recoursive
 
   has_many :locations, dependent: :nullify
 
