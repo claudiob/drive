@@ -64,14 +64,16 @@ final class BubbleCell: UITableViewCell {
         bubble.convert(bubble.bounds, to: self)
     }
 
-    func show(_ message: Bubble) {
+    /// `reports` says this is the last message we sent, and so the only one that
+    /// carries the word: Messages leaves the ones above it silent.
+    func show(_ message: Bubble, reports: Bool) {
         body.text = message.body
         body.textColor = message.inbound ? .label : .white
         bubble.backgroundColor = message.inbound ? .secondarySystemFill : .systemBlue
 
         // Nothing we received was delivered by us, so only our own side reports.
         status.text = message.delivered ? "Delivered" : "Sent"
-        status.isHidden = message.inbound
+        status.isHidden = message.inbound || !reports
 
         column.alignment = message.inbound ? .leading : .trailing
     }

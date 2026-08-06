@@ -13,9 +13,9 @@ extension ConversationViewController: UITableViewDataSource {
             (cell as? TimeCell)?.show(caption)
 
             return cell
-        case let .bubble(message):
+        case let .bubble(message, reports):
             let cell = table.dequeueReusableCell(withIdentifier: "bubble", for: path)
-            (cell as? BubbleCell)?.show(message)
+            (cell as? BubbleCell)?.show(message, reports: reports)
 
             return cell
         }

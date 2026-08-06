@@ -4,7 +4,9 @@ import UIKit
 /// side, each under the time the block began.
 enum ConversationRow {
     case time(NSAttributedString)
-    case bubble(Bubble)
+    /// `reports` marks the last message we sent, which is the only one Messages says
+    /// Sent or Delivered under: the ones above it are answered by the fact of it.
+    case bubble(Bubble, reports: Bool)
 
     private static let clock = format("h:mm a")
     private static let weekday = format("EEEE")
@@ -16,13 +18,14 @@ enum ConversationRow {
     static func rows(_ messages: [Bubble]) -> [ConversationRow] {
         var rows: [ConversationRow] = []
         var previous: Bubble?
+        let reporting = messages.lastIndex { !$0.inbound }
 
-        for message in messages {
+        for (index, message) in messages.enumerated() {
             if previous == nil || previous?.inbound != message.inbound {
                 rows.append(.time(heading(message)))
             }
 
-            rows.append(.bubble(message))
+            rows.append(.bubble(message, reports: index == reporting))
             previous = message
         }
 

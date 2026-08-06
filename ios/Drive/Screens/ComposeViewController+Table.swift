@@ -10,7 +10,7 @@ extension ComposeViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ table: UITableView,
                             cellForRowAt path: IndexPath) -> UITableViewCell {
         if recipient != nil {
-            guard case let .bubble(message) = rows[path.row] else {
+            guard case let .bubble(message, reports) = rows[path.row] else {
                 let cell = table.dequeueReusableCell(withIdentifier: "time", for: path)
                 if case let .time(caption) = rows[path.row] { (cell as? TimeCell)?.show(caption) }
 
@@ -18,7 +18,7 @@ extension ComposeViewController: UITableViewDataSource, UITableViewDelegate {
             }
 
             let cell = table.dequeueReusableCell(withIdentifier: "bubble", for: path)
-            (cell as? BubbleCell)?.show(message)
+            (cell as? BubbleCell)?.show(message, reports: reports)
 
             return cell
         }
