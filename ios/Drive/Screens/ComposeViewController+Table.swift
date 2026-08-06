@@ -48,33 +48,6 @@ extension ComposeViewController {
         choose(matches[path.row])
     }
 
-    /// Picking someone fills the field, locks it, and turns the list into the
-    /// conversation with them — all without leaving the sheet.
-    func choose(_ contact: ContactCard) {
-        recipient = contact
-        field.text = contact.name
-        field.isLocked = true
-        matches = []
-        tableView.reloadData()
-
-        Task { @MainActor in
-            guard let target = NativeList.url("\(contact.path)/messages", like: url),
-                  let thread: Conversation = await NativeList.fetch(target) else { return }
-
-            rows = ConversationRow.rows(thread.messages)
-            tableView.reloadData()
-            tableView.separatorStyle = .none
-        }
-    }
-
-    func release() {
-        recipient = nil
-        rows = []
-        field.text = ""
-        field.isLocked = false
-        tableView.reloadData()
-    }
-
     static func name(_ contact: ContactCard, tint: UIColor) -> NSAttributedString {
         let body = UIFont.preferredFont(forTextStyle: .body)
         let given = NSMutableAttributedString(

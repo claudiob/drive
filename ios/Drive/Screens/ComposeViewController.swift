@@ -9,7 +9,7 @@ final class ComposeViewController: UITableViewController, PathConfigurationIdent
 
     let url: URL
     weak var navigator: Navigator?
-    private var contacts: [ContactCard] = []
+    var contacts: [ContactCard] = []
     var matches: [ContactCard] = []
     var rows: [ConversationRow] = []
     var recipient: ContactCard?
@@ -43,6 +43,7 @@ final class ComposeViewController: UITableViewController, PathConfigurationIdent
         tableView.keyboardDismissMode = .interactive
         field.onChange = { [weak self] query in self?.narrow(to: query) }
         field.onClear = { [weak self] in self?.release() }
+        field.onSubmit = { [weak self] in self?.accept() }
         header()
 
         Task { @MainActor in
@@ -56,6 +57,8 @@ final class ComposeViewController: UITableViewController, PathConfigurationIdent
                 if let query = ProcessInfo.processInfo.environment["DRIVE_QUERY"] {
                     field.text = query
                     narrow(to: query)
+
+                    if ProcessInfo.processInfo.environment["DRIVE_RETURN"] != nil { accept() }
                 }
             #endif
         }

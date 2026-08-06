@@ -5,6 +5,7 @@ import UIKit
 final class ComposeField: UIView {
     var onChange: ((String) -> Void)?
     var onClear: (() -> Void)?
+    var onSubmit: (() -> Void)?
     var isLocked = false
 
     private let field = UITextField()
@@ -82,6 +83,13 @@ extension ComposeField: UITextFieldDelegate {
         guard isLocked else { return true }
 
         if string.isEmpty { onClear?() }
+
+        return false
+    }
+
+    /// Return accepts what has been typed, when what has been typed is a whole number.
+    func textFieldShouldReturn(_ field: UITextField) -> Bool {
+        onSubmit?()
 
         return false
     }
