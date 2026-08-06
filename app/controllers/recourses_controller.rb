@@ -64,9 +64,12 @@ private
   # Every table cell that names a referenced record would otherwise be a query.
   def resource_scope
     names = resource_class.reflect_on_all_associations(:belongs_to).map(&:name)
-    return resource_class.all if names.empty?
+    scope = names.empty? ? resource_class.all : resource_class.includes(*names)
 
-    resource_class.includes(*names)
+    # Paging a relation with no order is not paging at all. Postgres may return rows any
+    # way it likes, and an updated one moves to the end of the table, so a page can repeat
+    # a row it already showed or skip one it never did.
+    scope.order :id
   end
 
   def find_resource

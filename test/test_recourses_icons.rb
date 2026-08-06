@@ -20,6 +20,18 @@ class TestRecoursesIcons < Minitest::Test
     assert_equal Unicon.icons.size, body.scan("class='menu-item'").size
   end
 
+  def test_a_column_named_icon_draws_the_concept_it_holds
+    # One the first page carries, since the table paginates and `Roofing` is not on it.
+    Specialty.find_by(name: 'Ants').update! icon: :house
+
+    @session.get '/specialties'
+    body = @session.response.body
+
+    assert_includes body, '<i class="bi bi-house"></i> House'
+    # One that picked nothing leaves the cell empty rather than falling back.
+    assert_includes body, '<td data-cell="Icon"></td>'
+  end
+
   def test_a_menu_of_records_draws_each_with_the_concept_it_picked
     Specialty.find_by(name: 'Roofing').update! icon: :house
 

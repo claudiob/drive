@@ -28,12 +28,28 @@ module Recourse
         value = resource.attributes[column]
 
         return time_tag value, value.strftime(TIME_FORMAT) if value.is_a? Time
+        return icon_cell value if column == 'icon'
         return number_to_phone value if column == 'phone'
         # An array column would otherwise print its own inspect output, brackets and
         # quotes and all, and an empty one would read `[]` rather than as empty.
         return value.join ', ' if value.is_a? Array
 
         value
+      end
+
+      # The `<i>` a Bootstrap icon name draws.
+      def bootstrap_glyph(icon)
+        tag.i class: "bi bi-#{icon}"
+      end
+
+      # A concept drawn as the icon it names, reading as the combobox that set it does:
+      # the glyph, then the concept. A column of names alone says nothing at a glance,
+      # and a column of glyphs alone drops the value the column holds. An empty column
+      # stays empty — there is no icon to fall back to that the record chose.
+      def icon_cell(concept)
+        return if concept.blank?
+
+        safe_join [bootstrap_glyph(Unicon[concept][:bootstrap]), ' ', concept.humanize]
       end
 
       # One cell: a heading in the header row, the block's output in every other.

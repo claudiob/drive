@@ -42,7 +42,7 @@ module Recourse
         icon = concept ? Unicon[concept][:bootstrap] : fallback
         return unless icon
 
-        safe_join [tag.i(class: "bi bi-#{icon}"), ' ']
+        safe_join [bootstrap_glyph(icon), ' ']
       end
 
     private
