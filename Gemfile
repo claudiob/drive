@@ -10,3 +10,4 @@ gem 'puma' # serves the dummy app when you run it in a browser
 gem 'rake' # runs the default task: tests, then RuboCop
 gem 'rubocop' # lints against the conventions in CLAUDE.md
 gem 'simplecov' # fails the suite when coverage drops below 100%
+gem 'unicon', path: '../unicon' # not published yet, so taken from beside this one

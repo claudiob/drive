@@ -2,15 +2,7 @@
 # across the alphabet, homes at claimed and unclaimed locations, and a conversation
 # apiece so the Messages tab has rows and unread ones among them.
 
-PEOPLE = [
-  'Ada Lovelace', 'Aaron Bujak', 'Aaron Dao', 'Able Nguyen', 'Adam Ortiz',
-  'Bianca Rossi', 'Bruno Marchetti', 'Carla Espinoza', 'Dario Conti',
-  'Elena Ricci', 'Fabio Greco', 'Grace Hopper', 'Hugo Bernard', 'Irene Fontana',
-  'Jonas Weber', 'Klara Novak', 'Luca Moretti', 'Marta Silva', 'Nadia Haddad',
-  'Omar Farouk', 'Paolo Bianchi', 'Quinn Doyle', 'Rosa Delgado', 'Sofia Ivanova',
-  'Tomas Nowak', 'Ursula Klein', 'Viktor Petrov', 'Wanda Kowalski',
-  'Xavier Dubois', 'Yara Haddad', 'Zoe Papadopoulos',
-]
+PEOPLE = Rails.root.join('db/people.txt').readlines chomp: true
 
 ['ada@example.com', 'grace@example.com'].each { |email| Agent.find_or_create_by! email: }
 
@@ -57,6 +49,15 @@ end
 # A contact with no name, to prove the '#' section and the phone fallback.
 Contact.find_or_create_by! phone: '5552999999'
 
+# A handful of trades pick an icon, so a list of jobs shows more than one shape and the
+# fallback is visible beside them.
+{
+  'Roofing' => :house, 'Wiring' => :bolt, 'Plumbing' => :droplet,
+  'Appliance Repair' => :toolbox, 'House Painter' => :brush, 'Landscaping' => :tree,
+}.each do |name, concept|
+  Specialty.find_by(name:)&.update! icon: concept
+end
+
 JOBS = [
   'Replace the water heater', 'Repaint the porch', 'Regrade the driveway',
   'Service the furnace', 'Reseal the deck', 'Replace the garage door',
@@ -65,8 +66,13 @@ JOBS = [
 
 # Spread across the locations, so some belong to a claimed one and some do not — and
 # `needing_attention` splits them again by id, which is the placeholder rule.
+# Every other job names a trade, so the list shows both the trade's icon and the
+# fallback for one that has none.
+TRADES = Specialty.where(name: %w[Roofing Wiring Plumbing Chimney]).order(:name).to_a
+
 JOBS.each_with_index do |title, index|
-  Job.find_or_create_by! title:, location: locations[index % locations.size]
+  job = Job.find_or_create_by! title:, location: locations[index % locations.size]
+  job.update! specialty: index.even? ? TRADES[(index / 2) % TRADES.size] : nil
 end
 
 Contact.order(:id).limit(12).each_with_index do |contact, index|

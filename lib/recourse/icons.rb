@@ -8,7 +8,13 @@ module Recourse
   # rather than from a list here: `recourse_icon` returns a symbol when every set calls
   # the icon the same thing, and a hash keyed by set when they do not.
   def self.icon(name, system)
-    icon = model(name)&.recourse_icon || Recoursive::ICON
+    resolve model(name)&.recourse_icon, system
+  end
+
+  # The same question asked of a model directly, which is how a combobox row knows what
+  # to draw beside a record whose own icon column is empty.
+  def self.resolve(icon, system)
+    icon ||= Recoursive::ICON
 
     icon.is_a?(Hash) ? icon.fetch(system, Recoursive::ICON) : icon
   end

@@ -26,6 +26,7 @@ module Recourse
 
         return form.text_field column, **options, type: type if type
         return form.password_field column, **options if encrypted_column? column
+        return icon_combobox form, column if column == 'icon'
         return form.email_field column, **options if column == 'email'
         return form.color_field column, **options if column == 'color'
 

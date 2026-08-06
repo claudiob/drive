@@ -22,10 +22,20 @@ private
   end
 
   def group(scope)
-    scope.includes(:location).map { |job| resource_json job }
+    scope.includes(:location, :specialty).map { |job| resource_json job }
   end
 
   def resource_json(record)
-    super.merge city: record.location.city
+    super.merge city: record.location.city, icon: icon_for(record)
+  end
+
+  # The trade's own icon where it picked one, the trade's model icon where it did not,
+  # and the job's only when there is no trade at all — so a list of jobs is a list of
+  # what they are, rather than a column of identical hammers.
+  def icon_for(job)
+    concept = job.specialty&.icon
+    return Unicon[concept][:ios] if concept.present?
+
+    Recourse.resolve (job.specialty ? Specialty : Job).recourse_icon, :ios
   end
 end

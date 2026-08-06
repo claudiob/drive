@@ -8,6 +8,7 @@ class Job < ApplicationRecord
   ]
 
   belongs_to :location
+  belongs_to :specialty, optional: true
   has_many :messages, dependent: :nullify
 
   enum :status, STATUSES.index_by(&:itself)

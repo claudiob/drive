@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   recourses :agents, only: %i[index new create]
   recourses :locations, only: %i[index new create]
   recourses :jobs
+  recourses :specialties
   recourses :messages
 
   # Native-only screens, so plain routes rather than recourses: neither is a model,

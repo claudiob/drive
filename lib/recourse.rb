@@ -1,4 +1,5 @@
 require 'pagy'
+require 'unicon'
 
 require_relative 'recourse/version'
 require_relative 'recourse/icons'

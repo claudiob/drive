@@ -34,4 +34,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activerecord', '>= 8.1' # reads the host app's resources
   spec.add_dependency 'pagy', '>= 43.6' # paginates the index pages
   spec.add_dependency 'railties', '>= 8.1' # Rails::Engine and the generators
+  spec.add_dependency 'unicon' # names an icon in every design system a client draws in
 end
