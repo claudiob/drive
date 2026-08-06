@@ -14,18 +14,55 @@ final class JobsViewController: UICollectionViewController, PathConfigurationIde
     weak var navigator: Navigator?
     var jobs: [[Job]] = [[], []]
 
-    // Built here rather than declared inline: a registration must exist before the
-    // callback that dequeues it, and UIKit aborts on one made lazily inside it.
-    let cell: UICollectionView.CellRegistration<UICollectionViewListCell, Job>
-    let header: UICollectionView.SupplementaryRegistration<UICollectionViewListCell>
+    // Stored, not `static let`: a registration must exist before the callback that
+    // dequeues it, and a `static let` is lazy — which UIKit aborts on.
+    /// `subtitleCell`, not `valueCell`: the title always leads and the location always
+    /// sits under it, muted. `valueCell` lifts the detail up beside a short title and
+    /// only drops it below a long one, so rows of mixed lengths never line up.
+    let cell = UICollectionView.CellRegistration<UICollectionViewListCell, Job> { cell, _, job in
+        var content = UIListContentConfiguration.subtitleCell()
+        content.text = job.title
+        content.textProperties.font = .preferredFont(forTextStyle: .headline)
+        content.secondaryText = job.city
+        content.secondaryTextProperties.font = .preferredFont(forTextStyle: .subheadline)
+        content.secondaryTextProperties.color = .secondaryLabel
+        content.textToSecondaryTextVerticalPadding = 3
+
+        // A reserved slot, so the hammer beside a short title and the one beside a
+        // long title start in the same place; and room above and below, which is
+        // what makes two lines read as one row rather than two.
+        content.image = UIImage(
+            systemName: "hammer.fill",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 19)
+        )
+        content.imageProperties.reservedLayoutSize = CGSize(width: 32, height: 32)
+        content.imageToTextPadding = 14
+        content.directionalLayoutMargins = .init(top: 12, leading: 4, bottom: 12, trailing: 0)
+
+        cell.contentConfiguration = content
+        cell.accessories = [.disclosureIndicator()]
+    }
+
+    /// The extra-prominent header is the large bold one the App Store uses over each of
+    /// its groups; the chevron rides in the text so it follows the words rather than
+    /// sitting out at the trailing edge.
+    let header = UICollectionView.SupplementaryRegistration<UICollectionViewListCell>(
+        elementKind: UICollectionView.elementKindSectionHeader
+    ) { view, _, path in
+        var content = UIListContentConfiguration.extraProminentInsetGroupedHeader()
+        content.attributedText = titled(JobsViewController.groups[path.section])
+        // The header configuration is the inset-grouped one, whose margins assume a
+        // card; in a plain list it has to be told to line up with the rows instead.
+        content.directionalLayoutMargins = .init(top: 18, leading: 20, bottom: 8, trailing: 20)
+        view.contentConfiguration = content
+    }
 
     init(url: URL, navigator: Navigator?) {
         self.url = url
         self.navigator = navigator
-        cell = Self.makeCell()
-        header = Self.makeHeader()
 
-        var list = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+        // `.plain`, not `.insetGrouped`: the rows run the full width of the screen.
+        var list = UICollectionLayoutListConfiguration(appearance: .plain)
         list.headerMode = .supplementary
 
         super.init(collectionViewLayout: UICollectionViewCompositionalLayout.list(using: list))

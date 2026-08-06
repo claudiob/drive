@@ -518,9 +518,9 @@ two is filed under the one a reader would look in first.
   file, and skip comments and blanks by default.
 - `.md`, `.txt`, `.html` and `.erb` are exempt. Prose is not code, and a view
   is markup whose length is driven by the page, not by design choices.
-- `.pbxproj` is exempt for the same reason. An Xcode project file is a manifest
-  that spends three entries per source file, so its length counts the app's
-  files rather than saying anything about how they are written.
+- **This is a rule for Ruby.** `ios/` is exempt entirely: Swift follows Swift's
+  own conventions, and a `UIViewController` split at a hundred lines to satisfy a
+  Ruby cap reads worse than the one file it came from.
 - Anything under `db/migrate/` is exempt. A migration that backfills a table is
   as long as the data it carries, and splitting one to satisfy a line count
   would be worse than leaving it long.
@@ -539,6 +539,8 @@ two is filed under the one a reader would look in first.
 - Views are exempt — `.html` and `.erb` files may run past 100 characters,
   since a CDN URL or a long class list cannot be wrapped usefully. RuboCop does
   not lint them anyway.
+- So is Swift, for the same reason as the file-length cap: `ios/` follows Swift's
+  conventions. RuboCop never saw it either way.
 - When a method call would need three lines and hanging indentation just to fit,
   hoist the long arguments into a Rails `with_options` block instead. Still
   three lines, but every line starts at a normal indent:

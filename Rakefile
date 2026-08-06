@@ -10,13 +10,13 @@ RuboCop::RakeTask.new
 # Ceiling for every code file, blank and comment lines included.
 MAX_FILE_LINES = 100
 
-# Prose and markup are exempt: docs, the license, and views of any length. So is an
-# Xcode project file, which is a manifest whose length is the number of files in it.
-EXEMPT_EXTENSIONS = %w[.erb .html .md .pbxproj .txt].freeze
+# Prose and markup are exempt: docs, the license, and views of any length.
+EXEMPT_EXTENSIONS = %w[.erb .html .md .txt].freeze
 
-# Two directories are exempt: a backfill is as long as the data it carries, and
-# upstream's formatting is not ours to fix.
-EXEMPT_DIRECTORIES = %w[db/migrate/ vendor/].freeze
+# Three directories are exempt: a backfill is as long as the data it carries,
+# upstream's formatting is not ours to fix, and the iOS app is Swift, which follows
+# Swift's conventions rather than this project's Ruby ones.
+EXEMPT_DIRECTORIES = %w[db/migrate/ ios/ vendor/].freeze
 
 desc "Fail if any code file is longer than #{MAX_FILE_LINES} lines"
 task :file_length do
