@@ -1,0 +1,29 @@
+{
+  "settings": {"comment": "Served to the app at launch, and it wins over the copy in the bundle \u2014 ios/Drive/Resources/ios_v1.json, which is only the offline fallback. Change both."},
+  "rules": [
+    { "patterns": [".*"], "properties": {"context": "default", "presentation": "default", "pull_to_refresh_enabled": true},
+      "comment": "Baseline: every screen is pushed and pulls to refresh. Note there is no 'push' presentation on iOS \u2014 'default' is what pushes." },
+    { "patterns": ["^/contacts(\\?.*)?$"], "properties": {"view_controller": "contacts"},
+      "comment": "Drawn natively from /contacts.json with UIKit's own list." },
+    { "patterns": ["^/settings$"], "properties": {"view_controller": "settings"},
+      "comment": "Drawn natively from /settings.json with UIKit's own list." },
+    { "patterns": ["^/messages$"], "properties": {"view_controller": "messages"},
+      "comment": "Drawn natively from /messages.json with UIKit's own list." },
+    { "patterns": ["^/lists$"], "properties": {"view_controller": "lists"},
+      "comment": "Drawn natively from /lists.json with UIKit's own list." },
+    { "patterns": ["^/jobs$"], "properties": {"view_controller": "jobs"},
+      "comment": "Drawn natively from /jobs.json with UIKit's own list." },
+    { "patterns": ["/new$"], "properties": {"context": "modal", "modal_style": "large", "modal_dismiss_gesture_enabled": true, "pull_to_refresh_enabled": false},
+      "comment": "The convention: anything ending in /new is a modal, never a push." },
+    { "patterns": ["^/settings"], "properties": {"pull_to_refresh_enabled": false},
+      "comment": "A grouped card list that rubber-bands into a spinner looks wrong." },
+    { "patterns": ["^/(contacts|jobs|messages)/\\d+/?(\\?.*)?$"], "properties": {"pull_to_refresh_enabled": false},
+      "comment": "Detail pages are static; a refresh control on them is noise." },
+    { "patterns": ["^/messages/new$"], "properties": {"view_controller": "compose"},
+      "comment": "After the /new rule, so it stays a modal and gains a native screen." },
+    { "patterns": ["^/contacts/\\d+/messages$"], "properties": {"view_controller": "conversation"},
+      "comment": "The thread with one contact, drawn as bubbles." },
+    { "patterns": ["^/contacts/new$"], "properties": {"view_controller": "newContact"},
+      "comment": "After the /new rule, so it stays a modal and gains a native screen." }
+  ]
+}
