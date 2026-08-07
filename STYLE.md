@@ -441,6 +441,15 @@ before writing or editing any layout, view or partial.
 - Typing in the search box submits the form after 300ms of quiet, through the
   `search` Stimulus controller registered beside `phone` in the layout:
   `data-action='input->search#submit'`.
+- The caret goes back into that box once the page has been replaced, so typing
+  carries on where it left off rather than into nothing. The controller cannot
+  hold that intent itself — it is torn down with the page it belongs to — so a
+  variable in the *module* records it, which the visit does not reload, and the
+  next controller consumes it in `connect`. It skips a cached preview, since the
+  real render connects again afterwards and is the one that can be typed into.
+- Only the caret is restored, not the value: the field is a `search_form_for`
+  field, so the server rendered what was typed back into it. `preventScroll`
+  keeps a refocus from jumping a long page back up to the form.
 - Ticking or unticking an option in a filter submits immediately, with no
   debounce: a filter is one decision, and the table should answer it. A combobox
   writes its hidden input from JavaScript and fires no native `change`, so the

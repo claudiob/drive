@@ -269,7 +269,9 @@ Typing in the search box, or picking from a filter's menu, submits the form
 itself — a Stimulus controller resubmits 300ms after the last keystroke, and
 immediately on every option ticked or unticked. Each submit replaces the page,
 so a menu closes as it is picked from; the hidden input carries the whole
-selection, so a second value only costs opening the menu again.
+selection, so a second value only costs opening the menu again. Typing survives
+that replacement: the caret returns to the search box, at the end of what the
+server rendered back into it.
 
 A model overrides any of this in its own `Searchable` concern; see "What a
 model can say".
