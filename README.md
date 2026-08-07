@@ -148,11 +148,11 @@ heading, a search box and a filter:
 | Method | Default | What it decides |
 | --- | --- | --- |
 | `ransackable_attributes` | every column but the encrypted ones | which columns a search or a filter may read |
-| `ransackable_associations` | none | whether a filter may join another table |
+| `ransackable_associations` | the foreign keys the search box reaches through | which other tables a predicate may join |
 | `ransortable_attributes` | the timestamps, plus every column an index covers | which headings can be clicked to sort |
-| `search_field` | every indexed string column, ORed and matched on containment | what the search box searches — nil where there is no such column, and no search box either |
+| `search_field` | every indexed string column, plus the label behind every foreign key too big to offer as a menu, ORed and matched on containment | what the search box searches — nil where there is nothing to look through, and no search box either |
 | `search_prompt` | `Filter by`, then those same columns joined by `or` | what the search box says while it is empty |
-| `filter_fields` | one `_in` entry per `belongs_to` | which foreign keys get a filter, and what draws it |
+| `filter_fields` | one `_in` entry per `belongs_to`, less the ones the search box reaches through | which foreign keys get a filter, and what draws it |
 | `recourse_searchable?` | true when there is a search field or any filter | whether the form above the table renders at all |
 
 A `State` answers `'code_or_fips_or_name_cont'` for the first and `'Filter by
@@ -164,6 +164,17 @@ identifies a row rather than describes it, so that is what both hooks read. The
 prompt spells each column the way `human_attribute_name` does, capital and all:
 downcasing it would spell a registered acronym back out as a word, `zip` where
 every heading reads `ZIP`.
+
+A foreign key is the other half of what a search looks through. Where the model
+it points at has a *typed* label — the same `recourse_typed_label?` that makes a
+form ask for a ZIP code instead of listing 40,965 of them — a menu is the wrong
+control for a filter too, so the label joins the search instead: `Location`
+answers `'zip_code_cont'` and `'Filter by ZIP code'`, offers no ZIP filter, and
+names `zip` in `ransackable_associations` so that one join is allowed and no
+other. The label has to be indexed on that model for this to happen, since that
+is the same test a column of its own would face; a typed label nothing indexes
+leaves the foreign key with neither a filter nor a search, and `scope:` on a
+`filter_fields` entry is what draws a menu for it anyway.
 
 Overriding one is the same shape as `Recoursive`: a same-named concern beside
 the model, defining inside `class_methods do`. The dummy app's `Market` widens
@@ -249,8 +260,10 @@ filter per `filter_fields` entry. A filter reuses the combobox from
 table to more than one of what a foreign key points at — `?q[state_id_in]=1,2`
 for two states at once. A foreign key whose target's label is typed, like the
 ZIP on `/locations`, is offered no filter at all: the menu would be the whole
-table. Naming that predicate in `filter_fields` with a `scope:` offers one
-anyway, over whichever relation the scope names.
+table. Its label goes into the search box instead — `?q[zip_code_cont]=005`
+narrows the same page by joining `zips` — and naming that predicate in
+`filter_fields` with a `scope:` still offers a menu, over whichever relation the
+scope names.
 
 Typing in the search box, or picking from a filter's menu, submits the form
 itself — a Stimulus controller resubmits 300ms after the last keystroke, and
@@ -265,6 +278,10 @@ What this costs:
   cannot use a btree index.
 - A filter's combobox selects every row of the model it offers, which is what
   the typed-label rule and a `scope:` are both for.
+- A search that reaches through a foreign key joins that table, and the
+  containment is never indexed there either. Which side the planner drives from
+  decides the cost: with few rows on this side it index-scans the other and
+  tests each match, and with many it scans the other table once and hashes.
 - A sort Ransack applies has no tiebreaker, so rows tied on the sorted column
   can shuffle between pages.
 - Pagy's own count runs on the filtered relation, so a narrower filter is a

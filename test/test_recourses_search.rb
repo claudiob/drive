@@ -29,12 +29,15 @@ class TestRecoursesSearch < Minitest::Test
   end
 
   # A foreign key whose label is typed is offered no filter of its own: that menu
-  # would be all 40,965 ZIPs, which is the judgement a form makes too.
-  def test_a_typed_reference_is_offered_no_filter
+  # would be all 40,965 ZIPs, which is the judgement a form makes too. The search
+  # box reaches through to the label instead, so the ZIP is still narrowed by.
+  def test_a_typed_reference_is_searched_rather_than_filtered
     @session.get '/locations'
     body = @session.response.body
 
     assert_includes body, "data-bs-name='q[source_id_in]'"
     refute_includes body, 'q[zip_id_in]'
+    assert_includes body, 'name="q[zip_code_cont]"'
+    assert_includes body, 'placeholder="Filter by ZIP code"'
   end
 end

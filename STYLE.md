@@ -423,6 +423,12 @@ before writing or editing any layout, view or partial.
   foreign keys" already makes about the field itself. Naming that predicate
   in `filter_fields` with a `scope:` draws a filter anyway, over whatever
   narrower relation the scope names.
+- What that foreign key gets instead is a place in the search box, its label
+  ORed in with the model's own columns: `/locations` searches `zip_code_cont`
+  and prompts `Filter by ZIP code`. One control replaces the other, so a page
+  never loses the ability to narrow by a ZIP — it just types the code, which is
+  exactly what the form beside it asks for. The label has to be indexed on the
+  other model to earn this, the same test a column of the model's own faces.
 - The combobox fragment is keyed `[recourses, multiple, selected]`, not just
   the relation: the same relation drawn as a single form combobox and as a
   multiple filter is different markup, and the same menu with a different
