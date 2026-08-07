@@ -1,6 +1,7 @@
 <%# locals: (query:, url:, field:, prompt:, filters:, sort:) -%>
 <%= search_form_for query, url: url, html: { class: 'recourse-search d-flex flex-wrap md:flex-nowrap ' \
-                                                    'align-items-center justify-content-end gap-2 ms-auto',
+                                                    'align-items-center justify-content-end gap-2 ms-auto ' \
+                                                    'mt-2 md:mt-0',
                                             role: 'search',
                                             data: { controller: 'search', turbo_frame: :results } } do |form| %>
   <%# Always drawn, even empty: a heading clicked after this was rendered has only

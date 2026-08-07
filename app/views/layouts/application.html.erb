@@ -58,7 +58,11 @@
          leave, and give it back as the viewport narrows: the box shrinks to a floor
          that still shows a word, and below 768px the row is allowed to wrap. */
       .recourse-search { flex: 1 1 auto; max-width: 48rem; }
-      .recourse-search-box { flex: 1 1 12rem; min-width: 8rem; }
+      /* The box grows and the filters do not, so the field someone types into is the
+         widest thing in the row on a large viewport. A toggle is `width: 100%`, which
+         as a flex item would otherwise mean the whole form. */
+      .recourse-search-box { flex: 2 1 16rem; min-width: 8rem; }
+      .recourse-search .combobox-toggle { flex: 0 1 10rem; }
 
       /* The button that empties a combobox search sits inside the field it clears. */
       .combobox-search { position: relative; }

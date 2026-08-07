@@ -468,9 +468,17 @@ before writing or editing any layout, view or partial.
   three filters and a search box has nowhere left to shrink to.
 - It takes the width the breadcrumb and the buttons leave, up to `48rem`, and
   gives it back as the viewport narrows. The search box is what absorbs the
-  difference — `flex: 1 1 12rem` with an `8rem` floor — so the filters keep their
-  labels readable and the box is what grows on a wide screen. Both rules are in
-  the layout's `<style>`, since neither is a width Bootstrap has a utility for. It
+  difference — `flex: 2 1 16rem` with an `8rem` floor, against `flex: 0 1 10rem`
+  for a combobox toggle — so the field someone types into is the widest thing in
+  the row on a large viewport, and the filters keep their labels readable rather
+  than growing into space nobody reads.
+- That toggle rule is not decoration. `.combobox-toggle` is `width: 100%`, which
+  for a flex item means the width of the whole form, so without a basis of its own
+  every filter would fight the search box for the entire row.
+- Wrapped, the form carries `mt-2 md:mt-0`: the navbar wraps it onto a line of its
+  own under the breadcrumb and the buttons, and Bootstrap's flex container has no
+  row gap, so the two rows would otherwise touch. Both rules are in the layout's
+  `<style>`, since neither is a width Bootstrap has a utility for. It
   carries the table's current sort as a `hidden_field_tag 'q[s]'`, without which
   searching would silently reorder the table back to the model's own default.
 - The search box is a Bootstrap 6 adorned control: an icon and an input inside
