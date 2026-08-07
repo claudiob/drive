@@ -440,12 +440,17 @@ before writing or editing any layout, view or partial.
   would serve one request's headings to the other.
 - Typing in the search box submits the form after 300ms of quiet, through the
   `search` Stimulus controller registered beside `phone` in the layout:
-  `data-action='input->search#submit'`. A combobox writes its hidden input
-  from JavaScript and fires no native `change`, and a multiple one stays open
-  while it is picked from, so the same controller listens for Bootstrap's own
-  `change.bs.combobox` to note that something was picked, and submits on
-  `hidden.bs.combobox` — when the menu closes — rather than reloading the
-  table under the cursor.
+  `data-action='input->search#submit'`.
+- Ticking or unticking an option in a filter submits immediately, with no
+  debounce: a filter is one decision, and the table should answer it. A combobox
+  writes its hidden input from JavaScript and fires no native `change`, so the
+  controller listens for Bootstrap's own `change.bs.combobox`, which bubbles —
+  one listener on the form hears every menu inside it.
+- The consequence is that the menu closes with each tick, since the response
+  replaces the page. Picking a second value means opening the menu again. The
+  hidden input carries the whole selection either way, so nothing is lost;
+  keeping the menu open through a submit would need the table in a Turbo frame
+  of its own, which is not how these pages are built yet.
 
 ## Links
 
