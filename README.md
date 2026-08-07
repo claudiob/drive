@@ -291,12 +291,12 @@ navigate it, which is the point of it — and that sort is read back off the URL
 into the form's hidden `q[s]`, so the next search keeps the order the last click
 asked for. **Every other link in a table has to leave the frame**, since the page
 it goes to has no frame of that name and Turbo would answer `Content missing`.
-The edit pencil does; a row partial of your own should use `cell_link_to`, which
+The edit pencil does; a row partial of your own should use `turbo_link_to`, which
 is `link_to` with `data-turbo-frame='_top'` already on it:
 
 ```erb
 <%= column header: 'Name' do %>
-  <%= cell_link_to contact.name, contact_messages_path(contact) %>
+  <%= turbo_link_to contact.name, contact_messages_path(contact) %>
 <% end %>
 ```
 
@@ -438,7 +438,7 @@ Chrome:
 - `resource_label(title)` — an icon and a title, for a link to a resource
 - `new_resource_path`, `edit_resource_link(record)` — nil and nothing when the
   action is not defined or not routed, so a link never points at a `404`
-- `cell_link_to(name, path, **options)` — `link_to` for a link inside a table,
+- `turbo_link_to(name, path, **options)` — `link_to` for a link inside a table,
   carrying the `data-turbo-frame='_top'` that takes it out of the results frame
 - `flash_theme(key)` — the Bootstrap theme one flash entry reads in
 

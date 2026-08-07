@@ -15,14 +15,14 @@ module Recourse
         path = edit_resource_path record
         return unless path
 
-        cell_link_to tag.i(class: 'bi bi-pencil-square'), path, aria: { label: 'Edit' }
+        turbo_link_to tag.i(class: 'bi bi-pencil-square'), path, aria: { label: 'Edit' }
       end
 
       # A link out of a table. Every cell is inside the results frame, and the page a
       # cell links to has no frame of that name, so Turbo would replace the table with
       # `Content missing` rather than leaving the page. `_top` is what leaves it.
       # Takes everything `link_to` takes, and a `data:` of its own still wins.
-      def cell_link_to(name, path, **options)
+      def turbo_link_to(name, path, **options)
         data = { turbo_frame: '_top' }.merge options.fetch(:data, {})
 
         link_to name, path, **options, data: data

@@ -595,7 +595,7 @@ before writing or editing any layout, view or partial.
 - Every other link in a table leaves it, and a page it leaves for has no frame of
   that name — Turbo replaces the table with `Content missing` rather than going
   there. So a link in a cell carries `data-turbo-frame='_top'`, and
-  `cell_link_to` is what puts it there: the edit pencil goes through it, and a
+  `turbo_link_to` is what puts it there: the edit pencil goes through it, and a
   host's own row partial should too rather than reaching for `link_to`.
 - It is worth being able to check. On `/contacts` the frame holds one link, the
   pencil, and it is `_top`; on `/counties` it holds nine, three sorts and six
