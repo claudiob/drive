@@ -54,7 +54,8 @@ module Recourse
                                      invalid: false, feedback: nil, label: label.to_s,
                                      placeholder: title, required: false, multiple: true,
                                      aria_label: title, selected: filter_values(predicate),
-                                     recourses: recourses.select(:id, label).order(label)
+                                     recourses: recourses.select(:id, label).order(label),
+                                     small: true
       end
 
       # A multiple combobox submits one input holding every value it was given, so

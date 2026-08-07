@@ -41,6 +41,25 @@
          its own: 'Nash' in 'Nashville' must not read as a word standing apart. */
       mark { padding: 0; }
 
+      /* The sidebar rules off the content below it while it sits under the navbar,
+         and off the content beside it once it is a column again. v6 generates no
+         responsive border utilities, so the switch is written out. */
+      .recourse-sidebar {
+        border-block-end: var(--bs-border-width) solid var(--bs-border-color);
+      }
+      @media (width >= 768px) {
+        .recourse-sidebar {
+          border-block-end: 0;
+          border-inline-end: var(--bs-border-width) solid var(--bs-border-color);
+        }
+      }
+
+      /* The search and its filters take the width the breadcrumb and the buttons
+         leave, and give it back as the viewport narrows: the box shrinks to a floor
+         that still shows a word, and below 768px the row is allowed to wrap. */
+      .recourse-search { flex: 1 1 auto; max-width: 48rem; }
+      .recourse-search-box { flex: 1 1 12rem; min-width: 8rem; }
+
       /* The button that empties a combobox search sits inside the field it clears. */
       .combobox-search { position: relative; }
       .combobox-search-input { padding-inline-end: 2rem; }
@@ -75,11 +94,11 @@
 
     <div class='container-fluid flex-grow-1 d-flex'>
       <div class='row flex-grow-1'>
-        <aside class='col-auto border-end py-3 px-3 mx-0'>
+        <aside class='recourse-sidebar col-12 md:col-auto py-3 px-3 mx-0'>
           <%= render 'sidebar' %>
         </aside>
 
-        <main class='col py-4 px-3'>
+        <main class='col-12 md:col py-4 px-3'>
           <%= yield %>
         </main>
       </div>

@@ -65,6 +65,12 @@ before writing or editing any layout, view or partial.
   `.nav-link` ships a `gap`, and a whitespace-only text node is not a flex item
   — so without it the breadcrumb's icon and text would touch while the
   sidebar's sit 0.5rem apart.
+- Every control in the navbar is the small size, since it shares a line with a
+  breadcrumb: `btn-sm` on a button, `form-control-sm` on a field, and
+  `form-control-sm` on a combobox toggle, which is a `<button>` wearing
+  `.form-control` and takes the same class. The combobox partial gets there
+  through a `small:` local, so the same partial draws a full-size one inside a
+  form and a small one in the navbar.
 - An index offers `Add <resource>` only when there is somewhere to go: the
   `new` route has to be drawn *and* the controller has to implement the action,
   or the button would 404 or raise. Its classes are
@@ -112,8 +118,17 @@ before writing or editing any layout, view or partial.
   `/contacts?page=2` still marks Contacts active.
 - A resource appears only if its `index` action is routed. `recourses :drafts,
   only: :new` draws no index, so it gets no link rather than a broken one.
-- Layout is `.row` with `aside.col-auto` and `main.col`, inside the page's
-  `.container-fluid`.
+- Layout is `.row` with `aside.col-12.md:col-auto` and `main.col-12.md:col`,
+  inside the page's `.container-fluid`. Below 768px each is a full-width row of
+  its own, so the sidebar sits under the navbar and the content under that;
+  from 768px they are the two columns again, unchanged.
+- Stacked, the links run across rather than down: the `ul` is `nav md:flex-column`,
+  and a plain `.nav` is a wrapping flex row.
+- The rule between the sidebar and what it sits against follows it around —
+  `border-block-end` while it is a band under the navbar, `border-inline-end`
+  once it is a column beside the content. v6 generates no responsive border
+  utilities, so `.recourse-sidebar` writes both out in the layout's `<style>`
+  rather than the aside carrying `border-end`.
 - The aside's border runs to the bottom of the window. That takes a chain of
   three: `body.d-flex.flex-column.min-vh-100`, then
   `.container-fluid.flex-grow-1.d-flex`, then `.row.flex-grow-1`. The aside
@@ -445,11 +460,17 @@ before writing or editing any layout, view or partial.
   and never draws it in place, so where it appears is the layout's decision and
   not the table's. It is contributed outside the empty-table branch, so a filter
   that matched nothing can still be cleared from the page it emptied.
-- The form is a GET `search_form_for` in a
-  `.d-flex.flex-nowrap.align-items-center.gap-2.ms-auto` row — one line, every
-  filter and the search box beside each other, since it shares the navbar with a
-  breadcrumb and a row that wrapped would push the navbar's height around as a
-  page gained a filter. `ms-auto` is what puts it at the right of that navbar. It
+- The form is a GET `search_form_for` in a `.recourse-search` row: `d-flex`,
+  `align-items-center`, `justify-content-end`, `gap-2`, `ms-auto`, and
+  `flex-wrap md:flex-nowrap`. One line from 768px up, since it shares the navbar
+  with a breadcrumb and a row that wrapped there would push the navbar's height
+  around as a page gained a filter — and free to wrap below that, where a line of
+  three filters and a search box has nowhere left to shrink to.
+- It takes the width the breadcrumb and the buttons leave, up to `48rem`, and
+  gives it back as the viewport narrows. The search box is what absorbs the
+  difference — `flex: 1 1 12rem` with an `8rem` floor — so the filters keep their
+  labels readable and the box is what grows on a wide screen. Both rules are in
+  the layout's `<style>`, since neither is a width Bootstrap has a utility for. It
   carries the table's current sort as a `hidden_field_tag 'q[s]'`, without which
   searching would silently reorder the table back to the model's own default.
 - The search box is a Bootstrap 6 adorned control: an icon and an input inside

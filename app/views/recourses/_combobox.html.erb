@@ -1,5 +1,5 @@
-<%# locals: (name:, id:, invalid:, feedback:, label:, placeholder:, required:, recourses:, multiple: false, selected: [], aria_label: nil) -%>
-<button class='form-control<%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
+<%# locals: (name:, id:, invalid:, feedback:, label:, placeholder:, required:, recourses:, multiple: false, selected: [], aria_label: nil, small: false) -%>
+<button class='form-control<%= ' form-control-sm' if small %><%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
         aria-required='<%= required %>' <%= tag.attributes 'data-bs-multiple': ('true' if multiple), 'aria-label': aria_label, 'aria-describedby': feedback && "#{id}_error" %>>
