@@ -33,7 +33,8 @@ class TestRecoursesFields < Minitest::Test
     body = session.response.body
 
     assert_includes body, "data-bs-toggle='combobox' data-bs-name='market[state_id]'"
-    assert_includes body, "data-bs-value='#{State.find_by!(code: 'AL').id}'>Alabama</button>"
+    assert_includes body, "data-bs-value='#{State.find_by!(code: 'AL').id}' " \
+                          "aria-selected='false'>Alabama</button>"
     refute_includes body, 'name="market[state_id]"'
   end
 end

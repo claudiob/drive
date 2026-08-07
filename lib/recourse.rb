@@ -1,10 +1,14 @@
 require 'pagy'
+# Before searchable.rb, so its `extend` lands ahead of Ransack's own defaults.
+require 'ransack'
 
 require_relative 'recourse/version'
 require_relative 'recourse/icons'
 require_relative 'recourse/controllers'
 require_relative 'recourse/helpers'
 require_relative 'recourse/recoursive'
+require_relative 'recourse/search'
+require_relative 'recourse/searchable'
 require_relative 'recourse/engine'
 
 # Namespace for the gem: the routes.rb DSL and the screens it mounts.

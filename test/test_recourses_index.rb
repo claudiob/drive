@@ -3,12 +3,15 @@ require 'action_dispatch/testing/integration'
 
 # The page `recourses` renders for a resource that belongs to another.
 class TestRecoursesIndex < Minitest::Test
+  # The heading sorts by its column, and only the heading: a `data-cell` carries the
+  # same title as text, so a narrow screen labels the cell with a word and not a link.
   def test_it_serves_a_resource_that_belongs_to_another
     session = ActionDispatch::Integration::Session.new Rails.application
     session.get '/counties'
 
     assert_equal 200, session.response.status
-    assert_includes session.response.body, '<th scope="col">State</th>'
+    assert_includes session.response.body, 'href="/counties?q%5Bs%5D=state_id+asc">State</a></th>'
+    assert_includes session.response.body, '<td data-cell="State">Alabama</td>'
     assert_includes session.response.body, 'data-cell="Fips"'
   end
 

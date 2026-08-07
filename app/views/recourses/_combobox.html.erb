@@ -1,8 +1,8 @@
-<%# locals: (name:, id:, invalid:, feedback:, label:, placeholder:, required:, recourses:) -%>
+<%# locals: (name:, id:, invalid:, feedback:, label:, placeholder:, required:, recourses:, multiple: false, selected: [], aria_label: nil) -%>
 <button class='form-control<%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
-        aria-required='<%= required %>' <%= tag.attributes 'aria-describedby': feedback && "#{id}_error" %>>
+        aria-required='<%= required %>' <%= tag.attributes 'data-bs-multiple': ('true' if multiple), 'aria-label': aria_label, 'aria-describedby': feedback && "#{id}_error" %>>
   <span class='combobox-value'><%= placeholder %></span>
   <i class='bi bi-chevron-down combobox-caret'></i>
 </button>
@@ -11,9 +11,10 @@
     <input type='text' class='form-control combobox-search-input' placeholder='Search…'
            autocomplete='off' aria-label='Search…'>
   </div>
-  <% cache recourses do %>
+  <% cache [recourses, multiple, selected] do %>
     <% recourses.each do |recourse| %>
-      <button class='menu-item' type='button' data-bs-value='<%= recourse.id %>'><%= recourse.attributes[label] %></button>
+      <% chosen = selected.include? recourse.id.to_s -%>
+      <button class='menu-item<%= ' selected' if chosen %>' type='button' data-bs-value='<%= recourse.id %>' aria-selected='<%= chosen %>'><%= recourse.attributes[label] %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
     <% end %>
   <% end %>
   <div class='combobox-no-results d-none'>No results found</div>

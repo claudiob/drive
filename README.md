@@ -15,6 +15,7 @@ and defining your own takes precedence over it.
 - Ruby 3.2 or newer.
 - Rails 8.1 or newer — `actionpack`, `activerecord` and `railties`.
 - `pagy` 43.6 or newer, which paginates every index.
+- `ransack` 4.4 or newer, which sorts, searches and filters every index.
 
 ## Installation
 
@@ -70,7 +71,9 @@ A resource with no `index` route gets no sidebar entry, which is what
 `index` reads the model's `recourse_includes` and `recourse_order`, so a table
 cell naming a referenced record costs no query of its own. The table hides
 every encrypted column, and a model with no rows renders `No contacts.`
-instead.
+instead. A heading sorts the table by its own column where the model allows
+it, and the form above the table narrows what it shows, by search or by
+filter.
 
 `new` and `edit` assign the record twice: to `@recourse`, and to the name Rails
 would use, so `@contact` is what a view of yours can read.
@@ -137,6 +140,60 @@ end
 `select`ed alongside the id. Pick an encrypted column and its plaintext is what
 the label reads — on every page that references the model, not just the form.
 
+The engine extends every model with `Recourse::Searchable` too, loaded right
+after Ransack so its `extend` lands ahead of Ransack's own defaults in the
+singleton ancestor chain — ours win. These are the hooks behind a sortable
+heading, a search box and a filter:
+
+| Method | Default | What it decides |
+| --- | --- | --- |
+| `ransackable_attributes` | every column but the encrypted ones | which columns a search or a filter may read |
+| `ransackable_associations` | none | whether a filter may join another table |
+| `ransortable_attributes` | the timestamps, plus every column an index covers | which headings can be clicked to sort |
+| `search_field` | every indexed string column, ORed and matched on containment | what the search box searches — nil where there is no such column, and no search box either |
+| `search_prompt` | `Filter by`, then those same columns joined by `or` | what the search box says while it is empty |
+| `filter_fields` | one `_in` entry per `belongs_to` | which foreign keys get a filter, and what draws it |
+| `recourse_searchable?` | true when there is a search field or any filter | whether the form above the table renders at all |
+
+A `State` answers `'code_or_fips_or_name_cont'` for the first and `'Filter by
+Code or Fips or Name'` for the second, since `code`, `fips` and `name` are its
+only columns that are both indexed and a searchable type — a string, text,
+citext or enum, an enum's value being a word even though its own Postgres type
+is not. An index is the only signal a schema carries about which column
+identifies a row rather than describes it, so that is what both hooks read. The
+prompt spells each column the way `human_attribute_name` does, capital and all:
+downcasing it would spell a registered acronym back out as a word, `zip` where
+every heading reads `ZIP`.
+
+Overriding one is the same shape as `Recoursive`: a same-named concern beside
+the model, defining inside `class_methods do`. The dummy app's `Market` widens
+its search past what an index suggests, and renames the filter it is narrowed
+with:
+
+```ruby
+# app/models/market/searchable.rb
+class Market
+  module Searchable
+    extend ActiveSupport::Concern
+
+    class_methods do
+      def search_field = 'name_or_email_cont'
+
+      def search_prompt = 'Filter by name or email'
+
+      def filter_fields = { 'state_id_in' => { label: 'Home state' } }
+    end
+  end
+end
+```
+
+```ruby
+# app/models/market.rb
+class Market < ApplicationRecord
+  include Searchable
+end
+```
+
 ## What a field becomes
 
 `recourse_typed_label?` is what splits the two kinds of foreign key. A label
@@ -165,6 +222,53 @@ pattern admits only digits. A field with a pattern also gets a `title` naming a
 value that would match, and an optional field gets `Optional` as its
 placeholder. A constraint your database has and your model does not is a
 constraint no field can show.
+
+## Sorting, searching and filtering
+
+A heading sorts its own column when the model's `ransortable_attributes`
+allows it. The row partial draws every heading through `sort_header(name)`
+rather than a bare title:
+
+```erb
+<%= column header: sort_header('name') do %>
+  <%= resource_cell record, 'name' %>
+<% end %>
+```
+
+It returns a sort link only on the header pass, with its own caret — up for
+ascending, down for descending, none where nobody sorted by that column — and
+the plain title on every other pass, so a `<td>`'s `data-cell` stays readable
+text. The link restarts the table at its first page, since a sort keeps
+whatever the request was already searching or filtering by and only replaces
+the order.
+
+`search_form` draws a GET form above the table, or nothing where the model's
+`recourse_searchable?` is false: a search box for its `search_field`, and one
+filter per `filter_fields` entry. A filter reuses the combobox from
+"Comboboxes for foreign keys" with `multiple: true`, so a request can narrow a
+table to more than one of what a foreign key points at — `?q[state_id_in]=1,2`
+for two states at once. A foreign key whose target's label is typed, like the
+ZIP on `/locations`, is offered no filter at all: the menu would be the whole
+table. Naming that predicate in `filter_fields` with a `scope:` offers one
+anyway, over whichever relation the scope names.
+
+Typing in the search box, or picking from a filter's menu, submits the form
+itself — a Stimulus controller resubmits 300ms after the last keystroke, and
+right after a multiple combobox's menu closes.
+
+A model overrides any of this in its own `Searchable` concern; see "What a
+model can say".
+
+What this costs:
+
+- A search reads the whole table: a `cont` predicate is `ILIKE '%…%'`, which
+  cannot use a btree index.
+- A filter's combobox selects every row of the model it offers, which is what
+  the typed-label rule and a `scope:` are both for.
+- A sort Ransack applies has no tiebreaker, so rows tied on the sorted column
+  can shuffle between pages.
+- Pagy's own count runs on the filtered relation, so a narrower filter is a
+  cheaper count too, not just a shorter table.
 
 ## Overriding a screen
 
@@ -248,6 +352,15 @@ Building a table:
 - `resource_columns` — the columns a table shows
 - `resource_column_title(column)` — a heading, translatable like any attribute
 - `resource_cell(record, column)` — one value, formatted by what it holds
+- `sort_header(column, title = nil)` — a heading that sorts by that column
+  where the model allows it, the plain title otherwise
+
+Searching and filtering:
+
+- `search_form` — the form above the table, or nothing where the model offers
+  neither a search field nor a filter
+- `filter_field(predicate, label: nil, scope: nil)` — one filter, a multiple
+  combobox of the records a foreign key points at
 
 Building a form:
 
@@ -281,16 +394,21 @@ The gem vendors what its pages cannot render without and serves it from
 `/recourse/` through `Rack::Static`, so a host needs no asset pipeline:
 `bootstrap.min.css`, `bootstrap-icons.min.css` with its fonts,
 `bootstrap.bundle.min.js`, `stimulus.js`, and the gem's own
-`phone_controller.js`.
+`phone_controller.js` and `search_controller.js`.
 
 It also ships `app/views/layouts/application.html.erb`, which is what renders
 when your app has no layout of its own. When it has one — and most do — the
 pages render inside yours, so copy those two stylesheets and the Stimulus
 module into it to see them styled.
 
-Both the index table and a combobox's list of options render inside `cache`
-blocks, keyed on the relation, so configuring a cache store is what turns them
-from correct into cheap.
+The index table renders inside a `cache_if params[:q].blank?, recourses`
+block, so a sorted or filtered table is drawn live instead of cached — two
+requests can share a relation and still want different headings. A
+combobox's list of options renders inside `cache [recourses, multiple,
+selected]`, since the same relation is different markup as a single form
+combobox and as a multiple filter, and the same menu is different markup
+again with a different selection. Configuring a cache store is what turns
+what is cached from correct into cheap.
 
 ## Ruby API
 
@@ -298,6 +416,9 @@ from correct into cheap.
 - `Recourse.declared` — the resources drawn, in `routes.rb` order
 - `Recourse.declare(name)` — records one, ignoring a repeated draw
 - `Recourse.editable_columns(model)` — what a form offers and `create` permits
+- `Recourse::Search` — the Ransack search behind an index; `query` is the
+  `Ransack::Search` the views read as `@q`, `scope` is the relation `index`
+  paginates
 - `Recourse::NAVIGATION_ICONS`, `Recourse::FALLBACK_ICON` — the Bootstrap Icons
   name a sidebar title is drawn with, and the one an unlisted title falls back to
 - `Recourse::Error` — the class every failure the gem reports will be, so a host

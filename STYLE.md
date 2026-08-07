@@ -365,11 +365,81 @@ before writing or editing any layout, view or partial.
   ciphertext helps nobody, and decrypting it into a list leaks it.
 - Column headings come from `human_attribute_name`, so a host app can rename
   one by translating the attribute.
-- A `belongs_to` currently shows its raw foreign key — `/counties` renders the
-  `State` column as `1`. Rendering the associated record instead needs
-  `includes` in the controller to stay within the one-count-one-select budget,
-  and that work is deferred. Do not reach through an association from a view in
-  the meantime.
+- Column headings that can be sorted are links, which the section below covers.
+
+## Sorting, searching and filtering
+
+- A heading that can be sorted is drawn with `sort_header(name)` in place of a
+  bare title, inside the usual `column` call:
+
+      <%= column header: sort_header('name') do %>
+        <%= resource_cell record, 'name' %>
+      <% end %>
+
+  It returns a Ransack `sort_link` only on the header pass — `@recourse_headers`
+  — and the plain title on every other, which is what keeps a `<td>`'s
+  `data-cell` readable text rather than a serialized `<a>`; `column` reads the
+  same value for the `<th>` and for every `<td>`. Calling Ransack's own
+  `sort_link` directly would put link markup where `data-cell` needs text.
+- The link passes `hide_indicator: true` and draws its own caret instead —
+  `bi bi-caret-up-fill` ascending, `bi bi-caret-down-fill` descending — with no
+  caret at all on a column nobody sorted by, so an arrow never claims an order
+  that is not in force.
+- It also passes `page: nil`, so clicking a heading restarts the table at its
+  first page. Ransack's own link already carries every other `q` parameter, so
+  sorting keeps whatever search or filter was in force.
+- `search_form` renders `recourses/_search` above the table, or nothing where
+  the model's `recourse_searchable?` is false. It lives in `index.html.erb`
+  rather than the layout, so a host with a layout of its own still gets it,
+  and it renders before the empty-table check, so a filter that matches
+  nothing can still be cleared from the page it emptied.
+- The form is a GET `search_form_for`, right-aligned in a
+  `.d-flex.flex-wrap.justify-content-end.gap-2.mb-3` row, and it carries the
+  table's current sort as a `hidden_field_tag 'q[s]'` — without it, searching
+  would silently reorder the table back to the model's own default.
+- The search box is a Bootstrap 6 adorned control: an icon and an input inside
+  one bordered box, rather than two elements butted against each other:
+
+      <div class='form-control form-control-sm form-adorn d-flex w-auto'>
+        <span class='form-adorn-icon'><i class='bi bi-search'></i></span>
+        <%= form.search_field field, class: 'form-ghost', placeholder: prompt,
+                                     aria: { label: prompt } %>
+      </div>
+
+- Filters reuse "Comboboxes for foreign keys" with `multiple: true`, one per
+  `filter_fields` entry whose predicate names a `belongs_to`. A multiple menu
+  item ends with its own check, shown only once picked:
+
+      <button class='menu-item selected' type='button' data-bs-value='1' aria-selected='true'>
+        Alabama<i class='bi bi-check menu-item-check'></i>
+      </button>
+
+  Bootstrap only reveals that check for `.selected > .menu-item-check`, so the
+  class and the icon travel together. `data-bs-multiple='true'` on the toggle
+  is what tells the plugin to write '2 selected' into it, instead of
+  replacing the toggle's text with whatever was picked last.
+- A foreign key whose target has a typed label is offered no filter: the menu
+  would be the whole table, the same 40,965-row judgement "Comboboxes for
+  foreign keys" already makes about the field itself. Naming that predicate
+  in `filter_fields` with a `scope:` draws a filter anyway, over whatever
+  narrower relation the scope names.
+- The combobox fragment is keyed `[recourses, multiple, selected]`, not just
+  the relation: the same relation drawn as a single form combobox and as a
+  multiple filter is different markup, and the same menu with a different
+  selection is too.
+- The table fragment is `cache_if params[:q].blank?, recourses`, so a sorted
+  or filtered table is always drawn live rather than cached. Two requests can
+  build the identical relation and still want different headings — only one
+  of them clicked a heading to get it — so caching on the relation alone
+  would serve one request's headings to the other.
+- Typing in the search box submits the form after 300ms of quiet, through the
+  `search` Stimulus controller registered beside `phone` in the layout:
+  `data-action='input->search#submit'`. A combobox writes its hidden input
+  from JavaScript and fires no native `change`, and a multiple one stays open
+  while it is picked from, so the same controller listens for Bootstrap's own
+  `change.bs.combobox` to note that something was picked, and submits on
+  `hidden.bs.combobox` — when the menu closes — rather than reloading the
+  table under the cursor.
 
 ## Links
 

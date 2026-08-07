@@ -1,0 +1,19 @@
+<%# locals: (query:, url:, field:, prompt:, filters:, sort:) -%>
+<%= search_form_for query, url: url, html: { class: 'd-flex flex-wrap justify-content-end gap-2 mb-3',
+                                            role: 'search', data: { controller: 'search' } } do |form| %>
+  <% if sort -%>
+    <%= hidden_field_tag 'q[s]', sort %>
+  <% end -%>
+
+  <% filters.each do |predicate, options| -%>
+    <%= filter_field predicate, **options %>
+  <% end -%>
+
+  <% if field -%>
+    <div class='form-control form-control-sm form-adorn d-flex w-auto'>
+      <span class='form-adorn-icon'><i class='bi bi-search'></i></span>
+      <%= form.search_field field, class: 'form-ghost', placeholder: prompt,
+                                   aria: { label: prompt }, data: { action: 'input->search#submit' } %>
+    </div>
+  <% end -%>
+<% end %>

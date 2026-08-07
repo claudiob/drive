@@ -7,9 +7,12 @@ class RecoursesController < ApplicationController
   # `find` raises RecordNotFound, so an id that names nothing answers 404.
   before_action :find_resource, only: %i[edit update]
 
-  # Lists one page of the model the route is named after.
+  # Lists one page of the model the route is named after. `@q` is Ransack's own
+  # name for a search, which is what its form and sort link helpers look for.
   def index
-    @pagy, @resources = pagy resource_scope
+    search = Recourse::Search.new resource_class, params[:q]
+    @q = search.query
+    @pagy, @resources = pagy search.scope
   end
 
   # Builds a blank record under the name Rails would use: @contact for contacts.
@@ -45,16 +48,6 @@ class RecoursesController < ApplicationController
   end
 
 private
-
-  # The model decides both halves: what to eager-load, so a cell naming a
-  # referenced record is not a query of its own, and how to sort the page.
-  def resource_scope
-    scope = resource_class.order resource_class.recourse_order
-    includes = resource_class.recourse_includes
-    return scope if includes.blank?
-
-    scope.includes includes
-  end
 
   def find_resource
     assign resource_class.find(params.expect(:id))

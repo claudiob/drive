@@ -18,12 +18,14 @@
     <script type='module'>
       import { Application } from '/recourse/stimulus.js'
       import PhoneController from '/recourse/phone_controller.js'
+      import SearchController from '/recourse/search_controller.js'
 
       // In the head, and guarded: Turbo re-runs body scripts on every visit, and a
       // second application would connect every controller twice.
       if (!window.Stimulus) {
         window.Stimulus = Application.start()
         window.Stimulus.register('phone', PhoneController)
+        window.Stimulus.register('search', SearchController)
       }
     </script>
 

@@ -1,5 +1,7 @@
 <%# locals: (recourses:, pagy:) %>
-<% cache recourses do %>
+<%# A sorted or filtered table is drawn live: two requests can ask for one relation
+    and want different headings, since only one of them clicked a heading to get it. -%>
+<% cache_if params[:q].blank?, recourses do %>
   <div class='table-responsive'>
     <table class='table caption-top table-hover align-middle sm:table-stacked'>
       <thead>
