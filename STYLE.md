@@ -589,9 +589,17 @@ before writing or editing any layout, view or partial.
 - A marked table is never cached, which the caching rule below already ensures:
   a fragment keyed on the relation alone would serve one search's marks to
   another's rows.
-- A link inside that frame navigates that frame, which is right for a heading
-  and for a pagination link and wrong for the edit pencil: a form page has no
-  results frame, so that one link carries `data-turbo-frame='_top'`.
+- A link inside that frame navigates that frame, and only two kinds should: a
+  heading, which sorts it, and a pagination link, which pages it. Both answer with
+  a page that has the frame in it.
+- Every other link in a table leaves it, and a page it leaves for has no frame of
+  that name — Turbo replaces the table with `Content missing` rather than going
+  there. So a link in a cell carries `data-turbo-frame='_top'`, and
+  `cell_link_to` is what puts it there: the edit pencil goes through it, and a
+  host's own row partial should too rather than reaching for `link_to`.
+- It is worth being able to check. On `/contacts` the frame holds one link, the
+  pencil, and it is `_top`; on `/counties` it holds nine, three sorts and six
+  pages, and none of them are.
 - A heading clicked inside the frame changes the order without redrawing the
   form, so the form's hidden `q[s]` is stale from that moment. The controller
   reads it back off the address bar on `turbo:frame-load` — which is why the

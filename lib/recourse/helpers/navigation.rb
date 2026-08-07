@@ -15,10 +15,17 @@ module Recourse
         path = edit_resource_path record
         return unless path
 
-        # `_top` because the row is inside the results frame, which a form page
-        # has none of: without it the edit page would be loaded into the table.
-        link_to tag.i(class: 'bi bi-pencil-square'), path, aria: { label: 'Edit' },
-                                                           data: { turbo_frame: '_top' }
+        cell_link_to tag.i(class: 'bi bi-pencil-square'), path, aria: { label: 'Edit' }
+      end
+
+      # A link out of a table. Every cell is inside the results frame, and the page a
+      # cell links to has no frame of that name, so Turbo would replace the table with
+      # `Content missing` rather than leaving the page. `_top` is what leaves it.
+      # Takes everything `link_to` takes, and a `data:` of its own still wins.
+      def cell_link_to(name, path, **options)
+        data = { turbo_frame: '_top' }.merge options.fetch(:data, {})
+
+        link_to name, path, **options, data: data
       end
 
       # Path to this resource's new page, or nil when there is not one to link to.
