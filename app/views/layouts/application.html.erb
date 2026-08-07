@@ -44,12 +44,15 @@
       /* The button that empties a combobox search sits inside the field it clears. */
       .combobox-search { position: relative; }
       .combobox-search-input { padding-inline-end: 2rem; }
+      /* `:not(.d-none)`, because v6's display utilities carry no `!important` and
+         this rule is later in the cascade: a plain `display` here would beat the
+         `.d-none` the button is hidden with, and show an X over an empty field. */
+      .combobox-search-clear:not(.d-none) { display: flex; }
       .combobox-search-clear {
         position: absolute;
         inset-block-start: 50%;
         inset-inline-end: calc(var(--bs-menu-padding-x) + .35rem);
         transform: translateY(-50%);
-        display: flex;
         padding: .15rem;
         border: 0;
         border-radius: var(--bs-radius-5);

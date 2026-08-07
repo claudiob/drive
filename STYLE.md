@@ -271,6 +271,12 @@ before writing or editing any layout, view or partial.
   container, the input reserves room with `padding-inline-end`, and the button
   sits in it. A flex row instead would put the button *beside* the field, which
   is a different control — Bootstrap's own search box has nothing there.
+- Its `display` is set through `.combobox-search-clear:not(.d-none)`, never on
+  the element itself. v6's display utilities carry no `!important` — `.d-none` is
+  a plain `display:none` — so any rule of ours with the same specificity and a
+  later position beats it, and a `display: flex` on the button showed an X over
+  every empty field. Anything the gem styles that a class is meant to hide needs
+  the same treatment.
 - The toggle carries the `id` the label points at, which is legal because a
   `<button>` is a labelable element. Use `form.field_id` and `form.field_name`
   rather than spelling either out.
