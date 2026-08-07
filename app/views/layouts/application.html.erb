@@ -18,6 +18,7 @@
     <script type='module'>
       import { Application } from '/recourse/stimulus.js'
       import ClearController from '/recourse/clear_controller.js'
+      import DeselectController from '/recourse/deselect_controller.js'
       import PhoneController from '/recourse/phone_controller.js'
       import SearchController from '/recourse/search_controller.js'
 
@@ -26,6 +27,7 @@
       if (!window.Stimulus) {
         window.Stimulus = Application.start()
         window.Stimulus.register('clear', ClearController)
+        window.Stimulus.register('deselect', DeselectController)
         window.Stimulus.register('phone', PhoneController)
         window.Stimulus.register('search', SearchController)
       }
@@ -63,6 +65,13 @@
          as a flex item would otherwise mean the whole form. */
       .recourse-search-box { flex: 2 1 16rem; min-width: 8rem; }
       .recourse-search .combobox-toggle { flex: 0 1 10rem; }
+      /* Stacked, each control is a row of its own rather than a fragment of one:
+         there is no second control beside it to share the line with. */
+      @media (width < 768px) {
+        .recourse-search { max-width: none; }
+        .recourse-search-box,
+        .recourse-search .combobox-toggle { flex: 1 1 100%; }
+      }
 
       /* The button that empties a combobox search sits inside the field it clears. */
       .combobox-search { position: relative; }

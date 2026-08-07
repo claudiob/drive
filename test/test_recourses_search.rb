@@ -29,6 +29,9 @@ class TestRecoursesSearch < Minitest::Test
     body = @session.response.body
 
     assert_includes body, "data-bs-value='#{states.first.id}' aria-selected='true'"
+    # The way back to no filter at all. It carries no `data-bs-value`, which is what
+    # keeps Bootstrap's own click handler off it, and never `.selected`, which it counts.
+    assert_includes body, "data-action='deselect#all'>All states</button>"
     assert_includes body, "of #{County.where(state: states).count} in total"
   end
 

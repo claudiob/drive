@@ -477,7 +477,11 @@ before writing or editing any layout, view or partial.
   every filter would fight the search box for the entire row.
 - Wrapped, the form carries `mt-2 md:mt-0`: the navbar wraps it onto a line of its
   own under the breadcrumb and the buttons, and Bootstrap's flex container has no
-  row gap, so the two rows would otherwise touch. Both rules are in the layout's
+  row gap, so the two rows would otherwise touch.
+- Below 768px every control in it is `flex: 1 1 100%` and the form's `max-width`
+  comes off, so each filter and the search box is a full-width row of its own.
+  Once they are stacked there is no second control beside them to share a line
+  with, and a half-width box in a column of them reads as unfinished. Both rules are in the layout's
   `<style>`, since neither is a width Bootstrap has a utility for. It
   carries the table's current sort as a `hidden_field_tag 'q[s]'`, without which
   searching would silently reorder the table back to the model's own default.
@@ -502,6 +506,21 @@ before writing or editing any layout, view or partial.
   class and the icon travel together. `data-bs-multiple='true'` on the toggle
   is what tells the plugin to write '2 selected' into it, instead of
   replacing the toggle's text with whatever was picked last.
+- A multiple menu opens with `All <resources>` above a `.menu-divider` — `All
+  states`, `All sources` — which is the filter's own empty state named, and the
+  way back to it without unticking whatever was ticked. It is always there, so
+  the menu never changes shape as it is used.
+- Two things about that entry are load-bearing. It carries no `data-bs-value`,
+  which is exactly what Bootstrap's click handler matches on
+  (`.menu-item[data-bs-value]`), so the plugin passes it by and the click is
+  ours. And it never carries `.selected`, which the plugin counts on *any*
+  element in the menu — a checked-looking `All states` would be submitted as
+  `undefined` alongside the real values.
+- Clicking it clicks each selected option in turn, rather than emptying the
+  hidden input by hand. The plugin has no method for this, and driving its own
+  path is what keeps the hidden input, the toggle's text and its events its
+  business. The submits that follow are coalesced to one, or emptying a filter of
+  four would ask the server for four tables.
 - A foreign key whose target has a typed label is offered no filter: the menu
   would be the whole table, the same 40,965-row judgement "Comboboxes for
   foreign keys" already makes about the field itself. Naming that predicate

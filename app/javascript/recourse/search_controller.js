@@ -20,7 +20,12 @@ export default class extends Controller {
     // A combobox writes its hidden input from JavaScript, which fires no `change`
     // of its own. Bootstrap's own event bubbles, so one listener on the form hears
     // every menu in it, and each tick or untick narrows the table straight away.
-    this.picked = () => this.#submit()
+    // Coalesced to the end of the turn, because emptying a filter unticks every
+    // option in it — one request for the table that leaves, not one per option.
+    this.picked = () => {
+      clearTimeout(this.pick)
+      this.pick = setTimeout(() => this.#submit(), 0)
+    }
     this.element.addEventListener('change.bs.combobox', this.picked)
 
     // The frame is not inside the form, so its events never reach it.
@@ -32,6 +37,7 @@ export default class extends Controller {
     this.element.removeEventListener('change.bs.combobox', this.picked)
     document.removeEventListener('turbo:frame-load', this.reloaded)
     clearTimeout(this.timer)
+    clearTimeout(this.pick)
   }
 
   submit() {

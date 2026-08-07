@@ -1,4 +1,4 @@
-<%# locals: (name:, id:, invalid:, feedback:, label:, placeholder:, required:, recourses:, multiple: false, selected: [], aria_label: nil, small: false) -%>
+<%# locals: (name:, id:, invalid:, feedback:, label:, placeholder:, required:, recourses:, multiple: false, selected: [], aria_label: nil, small: false, all: nil) -%>
 <button class='form-control<%= ' form-control-sm' if small %><%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
@@ -16,6 +16,12 @@
       <i class='bi bi-x-lg'></i>
     </button>
   </div>
+  <%# No `data-bs-value`, so the plugin's own click handler passes it by and this one
+      is ours; and never `.selected`, which it counts whatever the element is. -%>
+  <% if all -%>
+    <button type='button' class='menu-item' data-controller='deselect' data-action='deselect#all'><%= all %></button>
+    <div class='menu-divider'></div>
+  <% end -%>
   <% cache [recourses, multiple, selected] do %>
     <% recourses.each do |recourse| %>
       <% chosen = selected.include? recourse.id.to_s -%>

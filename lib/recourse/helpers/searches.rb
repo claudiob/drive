@@ -49,13 +49,16 @@ module Recourse
 
       def filter_combobox(predicate, title, recourses)
         label = recourses.klass.recourse_label
+        # What the filter reads as when nothing is ticked, so the way back to it is a
+        # line in the menu rather than unticking whatever was ticked.
+        all = "All #{recourses.klass.model_name.human.pluralize.downcase}"
 
         render 'recourses/combobox', name: "q[#{predicate}]", id: "q_#{predicate}",
                                      invalid: false, feedback: nil, label: label.to_s,
                                      placeholder: title, required: false, multiple: true,
                                      aria_label: title, selected: filter_values(predicate),
                                      recourses: recourses.select(:id, label).order(label),
-                                     small: true
+                                     small: true, all: all
       end
 
       # A multiple combobox submits one input holding every value it was given, so
