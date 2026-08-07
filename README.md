@@ -237,11 +237,11 @@ constraint no field can show.
 ## Sorting, searching and filtering
 
 A heading sorts its own column when the model's `ransortable_attributes`
-allows it. The row partial draws every heading through `sort_header(name)`
+allows it. The row partial draws every heading through `sort_link(name)`
 rather than a bare title:
 
 ```erb
-<%= column header: sort_header('name') do %>
+<%= column header: sort_link('name') do %>
   <%= resource_cell record, 'name' %>
 <% end %>
 ```
@@ -373,8 +373,10 @@ Building a table:
 - `resource_columns` — the columns a table shows
 - `resource_column_title(column)` — a heading, translatable like any attribute
 - `resource_cell(record, column)` — one value, formatted by what it holds
-- `sort_header(column, title = nil)` — a heading that sorts by that column
-  where the model allows it, the plain title otherwise
+- `sort_link(column, title = nil)` — a heading that sorts by that column
+  where the model allows it, the plain title otherwise. Ransack's helper of the
+  same name still works: pass it a search, as in `sort_link @q, :name, 'Name'`,
+  and the call goes through to Ransack unchanged
 
 Searching and filtering:
 

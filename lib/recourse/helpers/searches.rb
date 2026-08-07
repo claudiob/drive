@@ -9,11 +9,18 @@ module Recourse
       # A heading for a column: a link that sorts the table by it where the model
       # allows that, and the plain title everywhere else. Only the header row draws
       # the link, so the `data-cell` on every other row stays readable text.
-      def sort_header(column, title = nil)
-        title ||= reference_title column.to_s, belongs_to_association(column.to_s)
+      #
+      # This is Ransack's own helper of the same name, widened: hand it a search and
+      # it is Ransack's, `sort_link @q, :name, 'Name'`, through `super`. Hand it a
+      # column and it is ours, which asks the model whether that column sorts at all
+      # and fills in the heading, the caret and the search.
+      def sort_link(column, *args, &)
+        return super if column.is_a? Ransack::Search
+
+        title = args.first || sort_title(column)
         return title unless @recourse_headers && sortable_column?(column)
 
-        sort_link resource_search, column.to_sym, hide_indicator: true, page: nil do
+        super(resource_search, column.to_sym, hide_indicator: true, page: nil) do
           safe_join [title, sort_caret(column)].compact, ' '
         end
       end
@@ -63,6 +70,11 @@ module Recourse
       # `?q=anything` arrives as a String, which has no parameters to read.
       def query_params
         params[:q].respond_to?(:dig) ? params[:q] : {}
+      end
+
+      # The heading a form and a table already agree on for the same column.
+      def sort_title(column)
+        reference_title column.to_s, belongs_to_association(column.to_s)
       end
 
       def sortable_column?(column)

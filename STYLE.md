@@ -369,18 +369,23 @@ before writing or editing any layout, view or partial.
 
 ## Sorting, searching and filtering
 
-- A heading that can be sorted is drawn with `sort_header(name)` in place of a
+- A heading that can be sorted is drawn with `sort_link(name)` in place of a
   bare title, inside the usual `column` call:
 
-      <%= column header: sort_header('name') do %>
+      <%= column header: sort_link('name') do %>
         <%= resource_cell record, 'name' %>
       <% end %>
 
-  It returns a Ransack `sort_link` only on the header pass — `@recourse_headers`
-  — and the plain title on every other, which is what keeps a `<td>`'s
-  `data-cell` readable text rather than a serialized `<a>`; `column` reads the
-  same value for the `<th>` and for every `<td>`. Calling Ransack's own
-  `sort_link` directly would put link markup where `data-cell` needs text.
+  It draws a link only on the header pass — `@recourse_headers` — and the plain
+  title on every other, which is what keeps a `<td>`'s `data-cell` readable text
+  rather than a serialized `<a>`; `column` reads the same value for the `<th>`
+  and for every `<td>`.
+- It shares its name with Ransack's own helper on purpose, and widens it rather
+  than hiding it. A first argument that is a search is Ransack's call and goes
+  straight to `super`, so `sort_link @q, :name, 'Name'` still means what it means
+  everywhere else; a column name is ours, and asks the model whether that column
+  sorts at all. A second argument is the heading, for a column whose own name is
+  not what the table should call it.
 - The link passes `hide_indicator: true` and draws its own caret instead —
   `bi bi-caret-up-fill` ascending, `bi bi-caret-down-fill` descending — with no
   caret at all on a column nobody sorted by, so an arrow never claims an order

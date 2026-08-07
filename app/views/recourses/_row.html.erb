@@ -1,4 +1,4 @@
 <% record = local_assigns[resource_key] -%>
 <% resource_columns.each do |name| -%>
-  <%= column header: sort_header(name) do %><%= resource_cell record, name %><% end %>
+  <%= column header: sort_link(name) do %><%= resource_cell record, name %><% end %>
 <% end -%>
