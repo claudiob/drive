@@ -15,7 +15,10 @@ module Recourse
         path = edit_resource_path record
         return unless path
 
-        link_to tag.i(class: 'bi bi-pencil-square'), path, aria: { label: 'Edit' }
+        # `_top` because the row is inside the results frame, which a form page
+        # has none of: without it the edit page would be loaded into the table.
+        link_to tag.i(class: 'bi bi-pencil-square'), path, aria: { label: 'Edit' },
+                                                           data: { turbo_frame: '_top' }
       end
 
       # Path to this resource's new page, or nil when there is not one to link to.

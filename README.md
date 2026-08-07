@@ -237,11 +237,11 @@ constraint no field can show.
 ## Sorting, searching and filtering
 
 A heading sorts its own column when the model's `ransortable_attributes`
-allows it. The row partial draws every heading through `sort_link(name)`
+allows it. The row partial draws every heading through `sort_header(name)`
 rather than a bare title:
 
 ```erb
-<%= column header: sort_link('name') do %>
+<%= column header: sort_header('name') do %>
   <%= resource_cell record, 'name' %>
 <% end %>
 ```
@@ -270,11 +270,18 @@ scope names.
 
 Typing in the search box, or picking from a filter's menu, submits the form
 itself — a Stimulus controller resubmits 300ms after the last keystroke, and
-immediately on every option ticked or unticked. Each submit replaces the page,
-so a menu closes as it is picked from; the hidden input carries the whole
-selection, so a second value only costs opening the menu again. Typing survives
-that replacement: the caret returns to the search box, at the end of what the
-server rendered back into it.
+immediately on every option ticked or unticked. Only the table and its
+pagination are replaced by the answer: they sit in a `<turbo-frame id='results'>`
+that the form targets, so an open menu stays open, the caret stays where it was
+typing, and the address bar still advances to the query that produced the table.
+Without Turbo the same form is an ordinary GET that reloads the page, and the
+caret is put back into the search box by hand.
+
+Two links need to know about that frame. The edit pencil in each row carries
+`data-turbo-frame='_top'`, since a form page has no results frame to be loaded
+into; and a heading's sort, which navigates the frame, is read back off the URL
+into the form's hidden `q[s]`, so the next search keeps the order the last click
+asked for.
 
 A model overrides any of this in its own `Searchable` concern; see "What a
 model can say".
@@ -376,10 +383,9 @@ Building a table:
 - `resource_columns` — the columns a table shows
 - `resource_column_title(column)` — a heading, translatable like any attribute
 - `resource_cell(record, column)` — one value, formatted by what it holds
-- `sort_link(column, title = nil)` — a heading that sorts by that column
-  where the model allows it, the plain title otherwise. Ransack's helper of the
-  same name still works: pass it a search, as in `sort_link @q, :name, 'Name'`,
-  and the call goes through to Ransack unchanged
+- `sort_header(column, title = nil)` — a heading that sorts by that column
+  where the model allows it, the plain title otherwise. It calls Ransack's
+  `sort_link` rather than replacing it, so that helper stays yours to use
 
 Searching and filtering:
 

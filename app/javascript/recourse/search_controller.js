@@ -2,6 +2,8 @@ import { Controller } from '/recourse/stimulus.js'
 
 // Survives the visit that a submit starts, since the module is not reloaded with
 // the page: it is how the next controller knows the search box was being typed in.
+// Only a submit that replaces the whole page needs it — a frame leaves the form,
+// and the caret in it, exactly where they were.
 let typing = false
 
 export default class extends Controller {
@@ -20,10 +22,15 @@ export default class extends Controller {
     // every menu in it, and each tick or untick narrows the table straight away.
     this.picked = () => this.#submit()
     this.element.addEventListener('change.bs.combobox', this.picked)
+
+    // The frame is not inside the form, so its events never reach it.
+    this.reloaded = () => { typing = false; this.#syncSort() }
+    document.addEventListener('turbo:frame-load', this.reloaded)
   }
 
   disconnect() {
     this.element.removeEventListener('change.bs.combobox', this.picked)
+    document.removeEventListener('turbo:frame-load', this.reloaded)
     clearTimeout(this.timer)
   }
 
@@ -34,6 +41,15 @@ export default class extends Controller {
 
   #submit() {
     this.element.requestSubmit()
+  }
+
+  // A heading sorts by navigating the frame, which advances the address bar but
+  // leaves this form alone — so the sort it carries has to be read back off the URL,
+  // or the next search would reorder the table by whatever was in force before.
+  #syncSort() {
+    const field = this.element.querySelector('input[name="q[s]"]')
+
+    if (field) { field.value = new URL(window.location.href).searchParams.get('q[s]') || '' }
   }
 
   // The value comes back from the server, so only the caret has to be put back,

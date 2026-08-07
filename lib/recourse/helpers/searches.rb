@@ -10,17 +10,13 @@ module Recourse
       # allows that, and the plain title everywhere else. Only the header row draws
       # the link, so the `data-cell` on every other row stays readable text.
       #
-      # This is Ransack's own helper of the same name, widened: hand it a search and
-      # it is Ransack's, `sort_link @q, :name, 'Name'`, through `super`. Hand it a
-      # column and it is ours, which asks the model whether that column sorts at all
-      # and fills in the heading, the caret and the search.
-      def sort_link(column, *args, &)
-        return super if column.is_a? Ransack::Search
-
-        title = args.first || sort_title(column)
+      # Named apart from Ransack's `sort_link`, which it calls: sharing the name
+      # would take that helper away from every view this gem's controllers render.
+      def sort_header(column, title = nil)
+        title ||= sort_title column
         return title unless @recourse_headers && sortable_column?(column)
 
-        super(resource_search, column.to_sym, hide_indicator: true, page: nil) do
+        sort_link resource_search, column.to_sym, hide_indicator: true, page: nil do
           safe_join [title, sort_caret(column)].compact, ' '
         end
       end

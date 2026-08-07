@@ -376,10 +376,10 @@ before writing or editing any layout, view or partial.
 
 ## Sorting, searching and filtering
 
-- A heading that can be sorted is drawn with `sort_link(name)` in place of a
+- A heading that can be sorted is drawn with `sort_header(name)` in place of a
   bare title, inside the usual `column` call:
 
-      <%= column header: sort_link('name') do %>
+      <%= column header: sort_header('name') do %>
         <%= resource_cell record, 'name' %>
       <% end %>
 
@@ -387,12 +387,10 @@ before writing or editing any layout, view or partial.
   title on every other, which is what keeps a `<td>`'s `data-cell` readable text
   rather than a serialized `<a>`; `column` reads the same value for the `<th>`
   and for every `<td>`.
-- It shares its name with Ransack's own helper on purpose, and widens it rather
-  than hiding it. A first argument that is a search is Ransack's call and goes
-  straight to `super`, so `sort_link @q, :name, 'Name'` still means what it means
-  everywhere else; a column name is ours, and asks the model whether that column
-  sorts at all. A second argument is the heading, for a column whose own name is
-  not what the table should call it.
+- It is named apart from Ransack's `sort_link`, which it calls. Taking that name
+  would take the helper itself away from every view these controllers render,
+  since ours would answer first — so a host writing `sort_link @q, :name, 'Name'`
+  in a partial of its own still gets Ransack's, unchanged.
 - The link passes `hide_indicator: true` and draws its own caret instead —
   `bi bi-caret-up-fill` ascending, `bi bi-caret-down-fill` descending — with no
   caret at all on a column nobody sorted by, so an arrow never claims an order
@@ -455,8 +453,9 @@ before writing or editing any layout, view or partial.
 - Typing in the search box submits the form after 300ms of quiet, through the
   `search` Stimulus controller registered beside `phone` in the layout:
   `data-action='input->search#submit'`.
-- The caret goes back into that box once the page has been replaced, so typing
-  carries on where it left off rather than into nothing. The controller cannot
+- The caret goes back into that box when a submit replaced the whole page, which
+  with the results frame in place means only when Turbo is absent. The controller
+  cannot
   hold that intent itself — it is torn down with the page it belongs to — so a
   variable in the *module* records it, which the visit does not reload, and the
   next controller consumes it in `connect`. It skips a cached preview, since the
@@ -469,11 +468,26 @@ before writing or editing any layout, view or partial.
   writes its hidden input from JavaScript and fires no native `change`, so the
   controller listens for Bootstrap's own `change.bs.combobox`, which bubbles —
   one listener on the form hears every menu inside it.
-- The consequence is that the menu closes with each tick, since the response
-  replaces the page. Picking a second value means opening the menu again. The
-  hidden input carries the whole selection either way, so nothing is lost;
-  keeping the menu open through a submit would need the table in a Turbo frame
-  of its own, which is not how these pages are built yet.
+- What the answer replaces is the table and nothing else. `index.html.erb` wraps
+  it in `<turbo-frame id='results' data-turbo-action='advance'>` and the form
+  carries `data-turbo-frame='results'`, so a menu stays open while it is picked
+  from and the caret stays in the search box, while `advance` still puts the
+  query in the address bar for a reload or a shared link to answer.
+- The frame wraps *both* branches of the empty check, the table and the
+  `none` partial alike. A search that matches nothing has to answer with the
+  frame it was asked for, or Turbo replaces the table with an error about the
+  frame it could not find.
+- A link inside that frame navigates that frame, which is right for a heading
+  and for a pagination link and wrong for the edit pencil: a form page has no
+  results frame, so that one link carries `data-turbo-frame='_top'`.
+- A heading clicked inside the frame changes the order without redrawing the
+  form, so the form's hidden `q[s]` is stale from that moment. The controller
+  reads it back off the address bar on `turbo:frame-load` — which is why the
+  field is rendered even when nothing is sorted, and why that listener is on
+  `document` rather than on the form, whose subtree the frame is not in.
+- None of this is required for the page to work. Without Turbo the form is an
+  ordinary GET that reloads everything, which is also when the caret has to be
+  put back by hand.
 
 ## Links
 

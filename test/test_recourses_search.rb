@@ -15,6 +15,10 @@ class TestRecoursesSearch < Minitest::Test
 
     assert_includes body, "<td data-cell=\"Fips\">#{County.maximum :fips}</td>"
     assert_includes body, 'bi bi-caret-down-fill'
+    # The table and its pagination are what a search or a sort replaces, so both sit
+    # inside the frame the form targets, and the edit link inside it breaks back out.
+    assert_includes body, "<turbo-frame id='results' data-turbo-action='advance'>"
+    assert_includes body, 'data-turbo-frame="results"'
   end
 
   # Two values in one filter, which is how a multiple combobox submits them, beside a

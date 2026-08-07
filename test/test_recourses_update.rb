@@ -19,7 +19,9 @@ class TestRecoursesUpdate < Minitest::Test
     @session.follow_redirect!
 
     assert_includes body, '<th scope="col">Actions</th>'
-    assert_includes body, %(<a aria-label="Edit" href="/markets/#{@market.id}/edit">)
+    edit = %(href="/markets/#{@market.id}/edit">)
+
+    assert_includes body, %(<a aria-label="Edit" data-turbo-frame="_top" #{edit})
   end
 
   # The page names the record, by whatever its model labels one with.
