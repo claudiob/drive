@@ -402,8 +402,16 @@ before writing or editing any layout, view or partial.
   labels in the stacked layout come from, so without it a narrow screen shows
   values with nothing naming them.
 - A table of records shows every attribute that is not encrypted, one column
-  each — not just the id. Encrypted attributes are omitted entirely: showing
-  ciphertext helps nobody, and decrypting it into a list leaks it.
+  each. Encrypted attributes are omitted entirely: showing ciphertext helps
+  nobody, and decrypting it into a list leaks it.
+- The primary key is omitted too. An id is how a row is addressed, not something
+  to read about it, and a column of them is a column of noise next to the name
+  the row is actually known by.
+- `created_at` and `updated_at` come last, in that order, whichever way round the
+  schema declares them — they are what Rails maintains rather than what the
+  record is about, and a reader scanning a table wants its subject first. They
+  still precede the `Actions` column, which `_table` appends after every column a
+  row defines.
 - Column headings come from `human_attribute_name`, so a host app can rename
   one by translating the attribute.
 - Column headings that can be sorted are links, which the section below covers.
@@ -470,11 +478,12 @@ before writing or editing any layout, view or partial.
   foreign keys" already makes about the field itself. Naming that predicate
   in `filter_fields` with a `scope:` draws a filter anyway, over whatever
   narrower relation the scope names.
-- Nor is that foreign key's heading a sort link. Its cell shows a label from the
-  other table, and the id underneath is not the order that label reads in —
-  `/locations` sorted by `zip_id` is ZIP codes in the order the ZIPs were
-  created. A key that is filtered by a menu is still sortable, since nothing
-  claims to be ordering by the label there.
+- No foreign key's heading is a sort link, whichever control narrows it. Its cell
+  shows a label from another table and the id underneath is not the order that
+  label reads in: `/locations` sorted by `zip_id` is ZIP codes in the order the
+  ZIPs happened to be created, and `/counties` sorted by `state_id` is states in
+  the order they were seeded. A heading that claims to sort by what it shows has
+  to sort by what it shows.
 - What that foreign key gets instead is a place in the search box, its label
   ORed in with the model's own columns: `/locations` searches `zip_code_cont`
   and prompts `Filter by ZIP code`. One control replaces the other, so a page

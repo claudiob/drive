@@ -5,9 +5,18 @@ module Recourse
       # How a time reads on a page, e.g. 'Aug 4 at 03:47pm EDT'.
       TIME_FORMAT = '%b %-d at %I:%M%P %Z'
 
-      # Columns the table shows: every attribute that is not encrypted.
+      # What Rails maintains rather than what a record is about, so a table ends with
+      # these, in this order, whichever way round the schema happens to declare them.
+      TIMESTAMPS = %w[created_at updated_at].freeze
+
+      # Columns the table shows: every attribute that is not encrypted, less the
+      # primary key — an id is how a row is addressed, not something to read about
+      # it — and with the timestamps moved to the end, before the actions.
       def resource_columns
-        resource_model.column_names - Array(resource_model.encrypted_attributes).map(&:to_s)
+        hidden = Array(resource_model.encrypted_attributes).map(&:to_s)
+        columns = resource_model.column_names - hidden - [resource_model.primary_key]
+
+        (columns - TIMESTAMPS) + (TIMESTAMPS & columns)
       end
 
       # Columns a form offers, the same list `create` permits.

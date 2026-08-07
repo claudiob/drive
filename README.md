@@ -89,7 +89,8 @@ Two column lists decide what a screen shows, and they are deliberately not the
 same one:
 
 - A table shows every column except the encrypted ones, so a column holding PII
-  never reaches an index page.
+  never reaches an index page, and except the primary key. `created_at` and
+  `updated_at` come last, after whatever the record is actually about.
 - A form offers, and `create` permits, `Recourse.editable_columns` — every
   column except `id`, `created_at` and `updated_at`. Encrypted columns are
   offered, as password fields.
@@ -149,7 +150,7 @@ heading, a search box and a filter:
 | --- | --- | --- |
 | `ransackable_attributes` | every column but the encrypted ones | which columns a search or a filter may read |
 | `ransackable_associations` | the foreign keys the search box reaches through | which other tables a predicate may join |
-| `ransortable_attributes` | the timestamps, plus every column an index covers, less the foreign keys the search reaches through | which headings can be clicked to sort |
+| `ransortable_attributes` | the timestamps, plus every column an index covers, less every foreign key | which headings can be clicked to sort |
 | `search_field` | every indexed string column, plus the label behind every foreign key too big to offer as a menu, ORed and matched on containment | what the search box searches — nil where there is nothing to look through, and no search box either |
 | `search_prompt` | `Filter by`, then those same columns joined by `or` | what the search box says while it is empty |
 | `filter_fields` | one `_in` entry per `belongs_to`, less the ones the search box reaches through | which foreign keys get a filter, and what draws it |
@@ -171,9 +172,9 @@ form ask for a ZIP code instead of listing 40,965 of them — a menu is the wron
 control for a filter too, so the label joins the search instead: `Location`
 answers `'zip_code_cont'` and `'Filter by ZIP code'`, offers no ZIP filter, and
 names `zip` in `ransackable_associations` so that one join is allowed and no
-other. That column is not sortable either, for the same reason it is not
-filterable: the cell shows a code from another table, and `zip_id` is not the
-order that code reads in. The label has to be indexed on that model for this to happen, since that
+other. No foreign key's column is sortable, this one included: the cell shows a
+label from another table, and the id under it is not the order that label reads
+in. The label has to be indexed on that model for this to happen, since that
 is the same test a column of its own would face; a typed label nothing indexes
 leaves the foreign key with neither a filter nor a search, and `scope:` on a
 `filter_fields` entry is what draws a menu for it anyway.

@@ -21,13 +21,13 @@ module Recourse
     end
 
     # Columns a heading may sort by: the timestamps, and whatever an index covers,
-    # so an ORDER BY walks a btree rather than sorting the table to answer. Less the
-    # foreign keys the search reaches through — that cell shows a label from the
-    # other table, and the id beside it is not the order that label reads in.
+    # so an ORDER BY walks a btree rather than sorting the table to answer. Never a
+    # foreign key: its cell shows a label from the other table, and the id under it
+    # is not the order that label reads in.
     def ransortable_attributes(_auth_object = nil)
       sortable = ransackable_attributes & (recourse_indexed_columns + %w[created_at updated_at])
 
-      sortable - recourse_searchable_associations.map { |one| one.foreign_key.to_s }
+      sortable - reflect_on_all_associations(:belongs_to).map { |one| one.foreign_key.to_s }
     end
 
     # The predicate a search box submits: every indexed string column at once, plus
