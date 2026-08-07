@@ -243,6 +243,34 @@ before writing or editing any layout, view or partial.
   into it. Never put `name=` on the toggle itself.
 - `data-bs-search='true'` enables filtering, but the search input has to be in
   the markup — the plugin only wires up a `.combobox-search-input` it finds.
+- That input carries an X inside its right edge once there is anything to clear,
+  and nothing before then. A menu of fifty states filtered down to one is two
+  keystrokes from being useful again, and a backspace-until-empty is a poor way
+  to ask:
+
+      <div class='combobox-search' data-controller='clear'>
+        <input type='text' class='form-control combobox-search-input' placeholder='Search…'
+               autocomplete='off' aria-label='Search…'
+               data-clear-target='input' data-action='input->clear#toggle'>
+        <button type='button' class='combobox-search-clear d-none' aria-label='Clear search'
+                data-clear-target='button' data-action='clear#clear'>
+          <i class='bi bi-x-lg'></i>
+        </button>
+      </div>
+
+- The button starts `d-none` and the `clear` controller shows it on `input`,
+  since whether a field has anything in it is not something the server can know:
+  the menu is cached, and the same markup is served to a field being typed into
+  and one that was never touched.
+- Emptying the field is not enough on its own. Bootstrap filters the menu's rows
+  on the field's `input` event, so the controller dispatches one after clearing,
+  or the rows stay filtered to a term that is no longer there. It then puts the
+  caret back in the field, which is where someone who cleared a search is about
+  to type.
+- The X is positioned rather than laid out: `.combobox-search` is the relative
+  container, the input reserves room with `padding-inline-end`, and the button
+  sits in it. A flex row instead would put the button *beside* the field, which
+  is a different control — Bootstrap's own search box has nothing there.
 - The toggle carries the `id` the label points at, which is legal because a
   `<button>` is a labelable element. Use `form.field_id` and `form.field_name`
   rather than spelling either out.
@@ -404,9 +432,10 @@ before writing or editing any layout, view or partial.
   not the table's. It is contributed outside the empty-table branch, so a filter
   that matched nothing can still be cleared from the page it emptied.
 - The form is a GET `search_form_for` in a
-  `.d-flex.flex-wrap.justify-content-end.gap-2.ms-auto` row — `ms-auto` is what
-  puts it at the right of the navbar it is yielded into, and
-  `justify-content-end` is what keeps its own controls together at that end. It
+  `.d-flex.flex-nowrap.align-items-center.gap-2.ms-auto` row — one line, every
+  filter and the search box beside each other, since it shares the navbar with a
+  breadcrumb and a row that wrapped would push the navbar's height around as a
+  page gained a filter. `ms-auto` is what puts it at the right of that navbar. It
   carries the table's current sort as a `hidden_field_tag 'q[s]'`, without which
   searching would silently reorder the table back to the model's own default.
 - The search box is a Bootstrap 6 adorned control: an icon and an input inside
@@ -477,6 +506,21 @@ before writing or editing any layout, view or partial.
   `none` partial alike. A search that matches nothing has to answer with the
   frame it was asked for, or Turbo replaces the table with an error about the
   frame it could not find.
+- What a search matched is marked in the cell that matched it, with `<mark>`,
+  through `search_highlight`. A table of twenty rows that all matched says
+  nothing about *why* each one did; the mark is the answer, and it is why a
+  search and a filter read differently on the same page.
+- Only what the search looked through is marked: the model's own searchable
+  columns, and the label behind a foreign key the search reaches through, so
+  `/locations` marks the ZIP code it matched. Marking a word in a column nobody
+  searched would claim a match that never happened.
+- `mark { padding: 0 }` in the layout. Bootstrap gives `<mark>` padding of its
+  own, which pushes the matched letters apart from the rest of the word —
+  `Nash` in `Nashville` reads as a word standing on its own rather than as the
+  start of one.
+- A marked table is never cached, which the caching rule below already ensures:
+  a fragment keyed on the relation alone would serve one search's marks to
+  another's rows.
 - A link inside that frame navigates that frame, which is right for a heading
   and for a pagination link and wrong for the edit pencil: a form page has no
   results frame, so that one link carries `data-turbo-frame='_top'`.

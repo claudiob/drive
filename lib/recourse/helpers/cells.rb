@@ -23,7 +23,7 @@ module Recourse
       # Value for one cell, formatted according to what the column holds.
       def resource_cell(resource, column)
         association = belongs_to_association column
-        return reference_cell resource, association if association
+        return search_highlight reference_cell(resource, association), column if association
 
         value = resource.attributes[column]
 
@@ -33,7 +33,17 @@ module Recourse
         # quotes and all, and an empty one would read `[]` rather than as empty.
         return value.join ', ' if value.is_a? Array
 
-        value
+        search_highlight value, column
+      end
+
+      # A value with the searched text marked, so a row says why it is in the table.
+      # Only what the search looked through is marked: a word marked in a column
+      # nobody searched would claim a match that never happened.
+      def search_highlight(value, column)
+        term = query_params[resource_model.search_field]
+        return value if term.blank? || !searched_column?(column)
+
+        highlight value.to_s, term
       end
 
       # One cell: a heading in the header row, the block's output in every other.
@@ -41,6 +51,17 @@ module Recourse
         return tag.th(header, scope: :col, **) if @recourse_headers
 
         tag.td(capture(&), 'data-cell': header, **)
+      end
+
+    private
+
+      # A foreign key's cell shows a label from the other table, so what decides is
+      # whether the search reaches through that association rather than reads a column.
+      def searched_column?(column)
+        association = belongs_to_association column.to_s
+        return resource_model.recourse_searchable_associations.include? association if association
+
+        resource_model.recourse_searchable_columns.include? column.to_s
       end
     end
   end

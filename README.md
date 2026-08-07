@@ -277,6 +277,12 @@ typing, and the address bar still advances to the query that produced the table.
 Without Turbo the same form is an ordinary GET that reloads the page, and the
 caret is put back into the search box by hand.
 
+What a search matched is marked in the cell that matched it, so twenty rows that
+all matched still say why each one did. Only the columns the search looked
+through are marked — including the label behind a foreign key it reached
+through, so `/locations` marks the ZIP code. A row partial of your own gets the
+same by calling `search_highlight`.
+
 Two links need to know about that frame. The edit pencil in each row carries
 `data-turbo-frame='_top'`, since a form page has no results frame to be loaded
 into; and a heading's sort, which navigates the frame, is read back off the URL
@@ -383,6 +389,8 @@ Building a table:
 - `resource_columns` — the columns a table shows
 - `resource_column_title(column)` — a heading, translatable like any attribute
 - `resource_cell(record, column)` — one value, formatted by what it holds
+- `search_highlight(value, column)` — that value with the current search marked
+  in it, where the search looked through that column at all
 - `sort_header(column, title = nil)` — a heading that sorts by that column
   where the model allows it, the plain title otherwise. It calls Ransack's
   `sort_link` rather than replacing it, so that helper stays yours to use

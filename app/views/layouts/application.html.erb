@@ -17,6 +17,7 @@
 
     <script type='module'>
       import { Application } from '/recourse/stimulus.js'
+      import ClearController from '/recourse/clear_controller.js'
       import PhoneController from '/recourse/phone_controller.js'
       import SearchController from '/recourse/search_controller.js'
 
@@ -24,6 +25,7 @@
       // second application would connect every controller twice.
       if (!window.Stimulus) {
         window.Stimulus = Application.start()
+        window.Stimulus.register('clear', ClearController)
         window.Stimulus.register('phone', PhoneController)
         window.Stimulus.register('search', SearchController)
       }
@@ -34,6 +36,28 @@
         --bs-body-font-family: 'Geist', system-ui, sans-serif;
         --bs-font-mono: 'Geist Mono', ui-monospace, monospace;
       }
+
+      /* A marked match is part of the word it sits in, so it carries no padding of
+         its own: 'Nash' in 'Nashville' must not read as a word standing apart. */
+      mark { padding: 0; }
+
+      /* The button that empties a combobox search sits inside the field it clears. */
+      .combobox-search { position: relative; }
+      .combobox-search-input { padding-inline-end: 2rem; }
+      .combobox-search-clear {
+        position: absolute;
+        inset-block-start: 50%;
+        inset-inline-end: calc(var(--bs-menu-padding-x) + .35rem);
+        transform: translateY(-50%);
+        display: flex;
+        padding: .15rem;
+        border: 0;
+        border-radius: var(--bs-radius-5);
+        background: transparent;
+        color: var(--bs-fg-2);
+        line-height: 1;
+      }
+      .combobox-search-clear:hover { background-color: var(--bs-bg-1); color: var(--bs-fg-body); }
     </style>
   </head>
 

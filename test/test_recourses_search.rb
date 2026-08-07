@@ -32,6 +32,16 @@ class TestRecoursesSearch < Minitest::Test
     assert_includes body, "of #{County.where(state: states).count} in total"
   end
 
+  # What matched is marked, and only in the column that matched it: a mark in a column
+  # nobody searched would claim a match that never happened.
+  def test_a_search_marks_what_it_matched
+    @session.get '/counties?q%5Bfips_cont%5D=0100'
+    body = @session.response.body
+
+    assert_includes body, '<td data-cell="Fips"><mark>0100</mark>1</td>'
+    assert_includes body, '<td data-cell="Name">Autauga County</td>'
+  end
+
   # A foreign key whose label is typed is offered no filter of its own: that menu
   # would be all 40,965 ZIPs, which is the judgement a form makes too. The search
   # box reaches through to the label instead, so the ZIP is still narrowed by.

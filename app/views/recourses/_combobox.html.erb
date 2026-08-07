@@ -7,9 +7,14 @@
   <i class='bi bi-chevron-down combobox-caret'></i>
 </button>
 <div class='menu'>
-  <div class='combobox-search'>
+  <div class='combobox-search' data-controller='clear'>
     <input type='text' class='form-control combobox-search-input' placeholder='Search…'
-           autocomplete='off' aria-label='Search…'>
+           autocomplete='off' aria-label='Search…'
+           data-clear-target='input' data-action='input->clear#toggle'>
+    <button type='button' class='combobox-search-clear d-none' aria-label='Clear search'
+            data-clear-target='button' data-action='clear#clear'>
+      <i class='bi bi-x-lg'></i>
+    </button>
   </div>
   <% cache [recourses, multiple, selected] do %>
     <% recourses.each do |recourse| %>

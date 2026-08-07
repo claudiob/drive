@@ -36,5 +36,9 @@ class TestRecoursesFields < Minitest::Test
     assert_includes body, "data-bs-value='#{State.find_by!(code: 'AL').id}' " \
                           "aria-selected='false'>Alabama</button>"
     refute_includes body, 'name="market[state_id]"'
+    # The button that empties the menu's search. Hidden until there is something to
+    # clear, which only JavaScript can know.
+    assert_includes body, "class='combobox-search-clear d-none' aria-label='Clear search'"
+    assert_includes body, "data-clear-target='input' data-action='input->clear#toggle'"
   end
 end
