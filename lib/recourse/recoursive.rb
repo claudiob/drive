@@ -1,7 +1,8 @@
 require 'active_support'
 
 module Recourse
-  # Extends every Active Record model, so each one can say how it is labelled.
+  # Extends every Active Record model, so each one says how it is labelled, what
+  # its index eager-loads and how that index is sorted.
   module Recoursive
     # Column a combobox shows for a record, and selects alongside its id.
     def recourse_label = :name
@@ -11,6 +12,14 @@ module Recourse
     def recourse_typed_label?
       validators_on(recourse_label).any? ActiveModel::Validations::LengthValidator
     end
+
+    # Associations the index eager-loads, in any shape `includes` accepts. Every
+    # belongs_to by default, since each cell naming one would be a query of its own.
+    def recourse_includes = reflect_on_all_associations(:belongs_to).map(&:name)
+
+    # How the index sorts its rows, in any shape `order` accepts. By id by default,
+    # which is the one column every table has and the order rows were created in.
+    def recourse_order = :id
   end
 end
 

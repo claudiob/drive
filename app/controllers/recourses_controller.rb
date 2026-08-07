@@ -46,12 +46,14 @@ class RecoursesController < ApplicationController
 
 private
 
-  # Every table cell that names a referenced record would otherwise be a query.
+  # The model decides both halves: what to eager-load, so a cell naming a
+  # referenced record is not a query of its own, and how to sort the page.
   def resource_scope
-    names = resource_class.reflect_on_all_associations(:belongs_to).map(&:name)
-    return resource_class.all if names.empty?
+    scope = resource_class.order resource_class.recourse_order
+    includes = resource_class.recourse_includes
+    return scope if includes.blank?
 
-    resource_class.includes(*names)
+    scope.includes includes
   end
 
   def find_resource
