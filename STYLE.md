@@ -35,7 +35,8 @@ before writing or editing any layout, view or partial.
 ## The navbar
 
 - Every page opens with a navbar holding a breadcrumb, then `yield :actions`,
-  both to the left.
+  both to the left, and `yield :search` pushed to the right by the form's own
+  `ms-auto`.
 - The breadcrumb ends at the current page, and that last item is *not* a link:
   a `<span class='breadcrumb-link active'>` inside an
   `<li class='breadcrumb-item' aria-current='page'>`. Bootstrap's own example
@@ -46,8 +47,14 @@ before writing or editing any layout, view or partial.
 - An index has one item, its own name. Any other page links back to the index
   first and then names itself: `/counties/new` reads `Counties` as a link, then
   `New county` as plain text.
-- A view contributes buttons with `content_for :actions`; the layout only
-  yields. Nothing else belongs in the navbar.
+- A view contributes buttons with `content_for :actions` and its search form with
+  `content_for :search`; the layout only yields. Nothing else belongs in the
+  navbar.
+- Both are the *host's* to place. The gem never renders either where it decides:
+  a host that writes its own layout and yields neither gets no buttons and no
+  search box, the same way it gets no styling until it links the stylesheets.
+  The layout the gem ships is what a host's own layout is modelled on, which is
+  why the dummy app — having none of its own — shows the search in the navbar.
 - A breadcrumb link and its sidebar twin line up vertically, which constrains
   both. The `<nav class='navbar'>` carries no horizontal margin or padding of
   its own, so both columns reduce to `container-fluid` (0.75rem) plus a link
@@ -393,15 +400,17 @@ before writing or editing any layout, view or partial.
 - It also passes `page: nil`, so clicking a heading restarts the table at its
   first page. Ransack's own link already carries every other `q` parameter, so
   sorting keeps whatever search or filter was in force.
-- `search_form` renders `recourses/_search` above the table, or nothing where
-  the model's `recourse_searchable?` is false. It lives in `index.html.erb`
-  rather than the layout, so a host with a layout of its own still gets it,
-  and it renders before the empty-table check, so a filter that matches
-  nothing can still be cleared from the page it emptied.
-- The form is a GET `search_form_for`, right-aligned in a
-  `.d-flex.flex-wrap.justify-content-end.gap-2.mb-3` row, and it carries the
-  table's current sort as a `hidden_field_tag 'q[s]'` — without it, searching
-  would silently reorder the table back to the model's own default.
+- `search_form` renders `recourses/_search`, or nothing where the model's
+  `recourse_searchable?` is false. The index puts it in `content_for :search`
+  and never draws it in place, so where it appears is the layout's decision and
+  not the table's. It is contributed outside the empty-table branch, so a filter
+  that matched nothing can still be cleared from the page it emptied.
+- The form is a GET `search_form_for` in a
+  `.d-flex.flex-wrap.justify-content-end.gap-2.ms-auto` row — `ms-auto` is what
+  puts it at the right of the navbar it is yielded into, and
+  `justify-content-end` is what keeps its own controls together at that end. It
+  carries the table's current sort as a `hidden_field_tag 'q[s]'`, without which
+  searching would silently reorder the table back to the model's own default.
 - The search box is a Bootstrap 6 adorned control: an icon and an input inside
   one bordered box, rather than two elements butted against each other:
 

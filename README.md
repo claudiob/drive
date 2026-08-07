@@ -253,9 +253,12 @@ text. The link restarts the table at its first page, since a sort keeps
 whatever the request was already searching or filtering by and only replaces
 the order.
 
-`search_form` draws a GET form above the table, or nothing where the model's
-`recourse_searchable?` is false: a search box for its `search_field`, and one
-filter per `filter_fields` entry. A filter reuses the combobox from
+The index builds a GET form — a search box for the model's `search_field`, one
+filter per `filter_fields` entry, nothing at all where `recourse_searchable?` is
+false — and puts it in `content_for :search` rather than drawing it anywhere.
+**Your layout has to `yield :search`**, the same way it yields `:actions`, or
+the form is built and never shown. The layout the gem ships yields it in the
+navbar, to the right of the breadcrumb and the buttons. A filter reuses the combobox from
 "Comboboxes for foreign keys" with `multiple: true`, so a request can narrow a
 table to more than one of what a foreign key points at — `?q[state_id_in]=1,2`
 for two states at once. A foreign key whose target's label is typed, like the
@@ -380,8 +383,9 @@ Building a table:
 
 Searching and filtering:
 
-- `search_form` — the form above the table, or nothing where the model offers
-  neither a search field nor a filter
+- `search_form` — the search and filter form, or nothing where the model offers
+  neither a search field nor a filter. The index hands it to `content_for
+  :search`, so a layout is what decides where it goes
 - `filter_field(predicate, label: nil, scope: nil)` — one filter, a multiple
   combobox of the records a foreign key points at
 
@@ -422,7 +426,10 @@ The gem vendors what its pages cannot render without and serves it from
 It also ships `app/views/layouts/application.html.erb`, which is what renders
 when your app has no layout of its own. When it has one — and most do — the
 pages render inside yours, so copy those two stylesheets and the Stimulus
-module into it to see them styled.
+module into it to see them styled, and yield what the screens contribute:
+`yield :title`, `yield :actions` and `yield :search`. The last of those is where
+the search and filter form goes; the gem's own layout yields it at the right of
+the navbar.
 
 The index table renders inside a `cache_if params[:q].blank?, recourses`
 block, so a sorted or filtered table is drawn live instead of cached — two
