@@ -53,5 +53,7 @@ class TestRecoursesSearch < Minitest::Test
     refute_includes body, 'q[zip_id_in]'
     assert_includes body, 'name="q[zip_code_cont]"'
     assert_includes body, 'placeholder="Filter by ZIP code"'
+    # Nor sortable: the cell holds a code, and `zip_id` is not the order it reads in.
+    assert_includes body, '<th scope="col">ZIP code</th>'
   end
 end

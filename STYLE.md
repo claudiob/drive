@@ -470,6 +470,11 @@ before writing or editing any layout, view or partial.
   foreign keys" already makes about the field itself. Naming that predicate
   in `filter_fields` with a `scope:` draws a filter anyway, over whatever
   narrower relation the scope names.
+- Nor is that foreign key's heading a sort link. Its cell shows a label from the
+  other table, and the id underneath is not the order that label reads in —
+  `/locations` sorted by `zip_id` is ZIP codes in the order the ZIPs were
+  created. A key that is filtered by a menu is still sortable, since nothing
+  claims to be ordering by the label there.
 - What that foreign key gets instead is a place in the search box, its label
   ORed in with the model's own columns: `/locations` searches `zip_code_cont`
   and prompts `Filter by ZIP code`. One control replaces the other, so a page
