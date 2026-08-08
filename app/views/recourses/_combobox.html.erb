@@ -8,10 +8,11 @@
 </button>
 <div class='menu'>
   <div class='combobox-search' data-controller='clear'>
-    <input type='text' class='form-control combobox-search-input' placeholder='Search…'
-           autocomplete='off' aria-label='Search…'
+    <input type='text' class='form-control combobox-search-input'
+           placeholder='<%= t 'recourse.search' %>'
+           autocomplete='off' aria-label='<%= t 'recourse.search' %>'
            data-clear-target='input' data-action='input->clear#toggle'>
-    <button type='button' class='combobox-search-clear d-none' aria-label='Clear search'
+    <button type='button' class='combobox-search-clear d-none' aria-label='<%= t 'recourse.clear' %>'
             data-clear-target='button' data-action='clear#clear'>
       <i class='bi bi-x-lg'></i>
     </button>
@@ -28,7 +29,7 @@
       <button class='menu-item<%= ' selected' if chosen %>' type='button' data-bs-value='<%= recourse.id %>' aria-selected='<%= chosen %>'><%= recourse.attributes[label] %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
     <% end %>
   <% end %>
-  <div class='combobox-no-results d-none'>No results found</div>
+  <div class='combobox-no-results d-none'><%= t 'recourse.no_results' %></div>
 </div>
 <% if feedback -%>
   <small class='invalid-feedback' id='<%= id %>_error'><%= feedback %></small>

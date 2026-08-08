@@ -37,7 +37,7 @@ module Recourse
       def title(key, pattern)
         return unless pattern
 
-        "Please match the format #{SAMPLE_PLACEHOLDERS[key] || pattern_example(pattern)}"
+        t 'recourse.format', example: SAMPLE_PLACEHOLDERS[key] || pattern_example(pattern)
       end
 
       def length_option(model, column, bound)
@@ -63,7 +63,7 @@ module Recourse
         sample = SAMPLE_PLACEHOLDERS[(type || column).to_s]
         return sample if sample && (type || required?(model, column))
 
-        'Optional' unless required? model, column
+        t 'recourse.optional' unless required? model, column
       end
 
       # A belongs_to validates its association, not the column, so both are asked.

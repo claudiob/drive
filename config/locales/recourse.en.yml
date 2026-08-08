@@ -1,0 +1,27 @@
+en:
+  recourse:
+    actions: Actions
+    add: Add %{model}
+    all: All %{models}
+    clear: Clear search
+    created: "%{model} was created."
+    created_error: "%{model} could not be created."
+    delete: Delete %{model}
+    deleted: "%{model} was deleted."
+    format: Please match the format %{example}
+    new: New %{model}
+    no_results: No results found
+    none: "No %{models}."
+    optional: Optional
+    reference: "%{model} %{attribute}"
+    search: Search…
+    searched: Filter by %{list}
+    select: Select…
+    updated: "%{model} was updated."
+    updated_error: "%{model} could not be updated."
+    deletion:
+      title: Delete %{record}?
+      going: "%{list} will be deleted with it."
+      staying: "%{list} will be kept, without its %{model}."
+      under: Anything under those goes too.
+      undone: This cannot be undone.

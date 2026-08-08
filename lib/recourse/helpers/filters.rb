@@ -21,7 +21,7 @@ module Recourse
         label = recourses.klass.recourse_label
         # What the filter reads as when nothing is ticked, so the way back to it is a
         # line in the menu rather than unticking whatever was ticked.
-        all = "All #{recourses.klass.model_name.human.pluralize.downcase}"
+        all = t 'recourse.all', models: recourses.klass.model_name.human.pluralize.downcase
 
         render 'recourses/combobox', name: "q[#{predicate}]", id: "q_#{predicate}",
                                      invalid: false, feedback: nil, label: label.to_s,

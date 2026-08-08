@@ -13,7 +13,7 @@ module Recourse
                                      invalid: messages.any?,
                                      feedback: messages.to_sentence.upcase_first.presence,
                                      label: label.to_s,
-                                     placeholder: combobox_placeholder(column, association),
+                                     placeholder: combobox_placeholder(column),
                                      required: required?(resource_model, column),
                                      recourses: combobox_options(association.klass, label)
       end
@@ -24,9 +24,8 @@ module Recourse
         klass.select(:id, label).order label
       end
 
-      def combobox_placeholder(column, association)
-        placeholder(resource_model, column, nil) ||
-          "Select a #{association.klass.model_name.human}…"
+      def combobox_placeholder(column)
+        placeholder(resource_model, column, nil) || t('recourse.select')
       end
     end
   end

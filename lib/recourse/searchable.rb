@@ -50,7 +50,7 @@ module Recourse
               recourse_searchable_associations.map { |one| one.klass.recourse_reference_name }
       return if names.empty?
 
-      "Filter by #{names.join ' or '}"
+      I18n.t 'recourse.searched', list: names.join(' or ')
     end
 
     # Filters offered beside the search box, as a Ransack predicate to the options

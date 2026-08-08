@@ -703,11 +703,35 @@ two is filed under the one a reader would look in first.
   is a display concern only.
 - A rule for apps we write. The gem never sets a host's time zone.
 
-#### I18n is deferred
+#### Every user-facing string is in the locale file
 
-- User-facing strings stay plain English for now. This suspends the baseline's
-  "I18n for user-facing strings" rule until there are enough strings to be worth
-  a locale file — do not add one unprompted.
+- They live in `config/locales/recourse.en.yml` and nowhere else, read back with
+  `t` in a view or a controller and `I18n.t` in a model. This replaces the earlier
+  deferral, which was to run "until there are enough strings to be worth a locale
+  file": twenty was enough.
+- Keys are alphabetical, the model's name arrives as `%{model}` or `%{models}`,
+  and a group only earns nesting when its lines are one message — the delete
+  warning's four are `deletion.*`, everything else is flat.
+- The point is not translation, which is still nobody's plan. It is that a host
+  can reword `Add contact` by writing one key, rather than reopening a helper.
+
+#### No indefinite article in an interpolated string
+
+- Never write `a %{model}` or `an %{model}`. Which one is right is decided by
+  *sound* and not by spelling — an hour, an honest agent, a user, a European
+  market, a one-off — and this gem registers acronyms, where it splits again: a
+  ZIP, an SMS, an API.
+- Rails offers nothing to compute it. `ActiveSupport::Inflector` has no article
+  method and `String#indefinite_article` does not exist; the gems that add one
+  (`indefinite_article`, `a_vs_an`) are guessing from spelling with an exception
+  list, and guess wrong in public.
+- It would not survive the locale file anyway. An article is per-language and
+  usually per-gender — der/die/das, un/une — so an English one computed in Ruby
+  is unusable to whoever translates the key.
+- Write the copy so the question never comes up. `Select…` rather than `Select a
+  State…`, since the label above the field already names it; `without its job`
+  rather than `without a job`. A host who wants `Select an airplane…` writes that
+  one key themselves.
 
 #### The State model
 

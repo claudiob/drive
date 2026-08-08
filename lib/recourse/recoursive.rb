@@ -10,7 +10,8 @@ module Recourse
     # `ZIP code`: what to call a foreign key pointing here. A form's label, a table's
     # heading and a search prompt all name the same thing, so they name it once.
     def recourse_reference_name
-      "#{model_name.human} #{human_attribute_name(recourse_label).downcase}"
+      I18n.t 'recourse.reference', model: model_name.human,
+                                   attribute: human_attribute_name(recourse_label).downcase
     end
 
     # True when the label has a length, so it is short enough to be typed and a

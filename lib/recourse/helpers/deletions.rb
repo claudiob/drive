@@ -21,21 +21,16 @@ module Recourse
           form_class: 'd-inline-block', data: { turbo_confirm: destroy_warning(record) },
         }
 
-        button_to "Delete #{resource_name}", path, **options
+        button_to t('recourse.delete', model: resource_name), path, **options
       end
 
       # What deleting this record takes with it, counted a level down and no further:
       # a state reaches counties, then ZIPs, then locations, and counting that far
       # would join 40,965 rows to draw one page.
       def destroy_warning(record)
-        going = dependents record, DESTROYED
-        staying = dependents record, NULLIFIED
-        lines = ["Delete #{destroy_title record}?", nil]
-        lines << "#{going.to_sentence} will be deleted with it." if going.any?
-        lines << "#{staying.to_sentence} will be kept, without a #{resource_name}." if staying.any?
-        lines << 'Anything under those goes too.' if going.any?
+        lines = [t('recourse.deletion.title', record: destroy_title(record)), nil]
 
-        [*lines, nil, 'This cannot be undone.'].join "\n"
+        [*lines, *dependent_lines(record), nil, t('recourse.deletion.undone')].join "\n"
       end
 
     private
@@ -45,6 +40,23 @@ module Recourse
         return unless routed? controller.controller_path, 'destroy'
 
         url_for action: :destroy, id: record
+      end
+
+      # The middle of the warning, in the order it reads: what goes, what stays, and
+      # only then what is under what goes — the levels this stops short of counting.
+      def dependent_lines(record)
+        going = dependents record, DESTROYED
+        staying = dependents record, NULLIFIED
+        lines = []
+        lines << t('recourse.deletion.going', list: going.to_sentence) if going.any?
+        lines << staying_line(staying) if staying.any?
+        lines << t('recourse.deletion.under') if going.any?
+
+        lines
+      end
+
+      def staying_line(staying)
+        t 'recourse.deletion.staying', list: staying.to_sentence, model: resource_name
       end
 
       def dependents(record, kinds)

@@ -1,6 +1,6 @@
 # Superclass of the controllers the gem defines when a host app has none.
 class RecoursesController < ApplicationController
-  include Pagy::Method
+  include Pagy::Method, Recourse::ReferenceResolution
 
   helper Recourse::Helpers
 
@@ -23,12 +23,13 @@ class RecoursesController < ApplicationController
   # Saves a submitted record, then shows the index again or redraws the form.
   def create
     record = assign resource_class.new(resource_params)
+    model = human_name
 
     if record.save
-      flash.notice = "#{human_name} was created."
+      flash.notice = t 'recourse.created', model: model
       redirect_to url_for(action: :index), status: :see_other
     else
-      flash.now.alert = "#{human_name} could not be created."
+      flash.now.alert = t 'recourse.created_error', model: model
       render :new, status: :unprocessable_entity
     end
   end
@@ -39,10 +40,10 @@ class RecoursesController < ApplicationController
   # Saves changes to a record, then shows the index again or redraws the form.
   def update
     if @recourse.update resource_params
-      flash.notice = "#{human_name} was updated."
+      flash.notice = t 'recourse.updated', model: human_name
       redirect_to url_for(action: :index), status: :see_other
     else
-      flash.now.alert = "#{human_name} could not be updated."
+      flash.now.alert = t 'recourse.updated_error', model: human_name
       render :edit, status: :unprocessable_entity
     end
   end
@@ -52,7 +53,7 @@ class RecoursesController < ApplicationController
   # claiming it worked.
   def destroy
     @recourse.destroy!
-    flash.notice = "#{human_name} was deleted."
+    flash.notice = t 'recourse.deleted', model: human_name
     redirect_to url_for(action: :index), status: :see_other
   end
 
@@ -79,22 +80,5 @@ private
     permitted = Recourse.editable_columns resource_class
 
     resolve_references params.expect(controller_name.singularize.to_sym => permitted)
-  end
-
-  # A foreign key whose label is typed arrives as that label, so it is looked up
-  # here. Nothing found leaves the key nil, and `belongs_to` reports it missing.
-  def resolve_references(attributes)
-    resource_class.reflect_on_all_associations(:belongs_to).each do |association|
-      key = association.foreign_key.to_s
-      next unless attributes.key?(key) && association.klass.recourse_typed_reference?
-
-      attributes[key] = reference_id association, attributes[key]
-    end
-
-    attributes
-  end
-
-  def reference_id(association, label)
-    association.klass.find_by(association.klass.recourse_label => label)&.id
   end
 end

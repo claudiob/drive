@@ -22,7 +22,7 @@ class TestRecoursesDestroy < Minitest::Test
     body = @session.response.body
 
     assert_includes body, 'Delete Fix the roof?'
-    assert_includes body, '1 message will be kept, without a job.'
+    assert_includes body, '1 message will be kept, without its job.'
   end
 
   # And the delete keeps that promise: the message outlives the job it was about.

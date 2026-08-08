@@ -409,6 +409,32 @@ would have chosen:
 The form builder is not a local — it reaches `field` through `@recourse_form`,
 so `field :phone` is all the call site has to say.
 
+## Rewording anything it says
+
+Every string the gem renders comes from `config/locales/recourse.en.yml` under
+the `recourse` key, so rewording one takes a locale file of your own rather than
+a reopened helper:
+
+```yaml
+# config/locales/en.yml
+en:
+  recourse:
+    add: Create a new %{model}
+    none: "Nothing here yet."
+    select: Select an airplane…
+```
+
+The model's own name is `%{model}` and its plural `%{models}`, and both come from
+`model_name.human` — so translating `activerecord.models.contact` renames it
+everywhere at once, in the button and the flash alike.
+
+The gem's own copy carries no `a` or `an` anywhere it interpolates a model,
+because which one is right depends on how the word sounds rather than how it is
+spelled — *an hour*, *a user*, *a ZIP*, *an SMS* — and no rule gets that right in
+every language a key might be translated into. `Select…` says as much as `Select
+a State…` under a label that already reads `State`. If your models all take the
+same article, the keys above are where you say so.
+
 ## Helpers
 
 `RecoursesController` does `helper Recourse::Helpers`, so these are available in
