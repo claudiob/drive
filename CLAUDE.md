@@ -628,6 +628,13 @@ two is filed under the one a reader would look in first.
   `human_attribute_name` renders `Zip` and every heading and label is wrong.
 - Registering it also fixes `camelize`, so `zip_code` becomes `ZIPCode` rather
   than `ZipCode` — worth knowing before naming a class after one.
+- Register the plural as its own acronym, always. `URL` alone leaves a
+  `media_urls` column heading a table `Media urls`, the same way `ZIP` alone
+  leaves `zips` reading `Zips`.
+- An app registers the acronyms *it* says, and only those. A rule for apps we
+  write: the gem registers none, the same line drawn for the time zone, the
+  logger and `field_error_proc`. Inflections are global, and a gem that quietly
+  renamed a host's `Api` to `API` would be reaching well past its own pages.
 
 #### Name non-trivial regular expressions
 

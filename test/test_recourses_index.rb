@@ -39,7 +39,7 @@ class TestRecoursesIndex < Minitest::Test
     session = ActionDispatch::Integration::Session.new Rails.application
     session.get '/messages'
 
-    assert_includes session.response.body, %(<td data-cell="Media urls">#{urls.join ', '}</td>)
+    assert_includes session.response.body, %(<td data-cell="Media URLs">#{urls.join ', '}</td>)
   ensure
     message&.destroy
     contact&.destroy
