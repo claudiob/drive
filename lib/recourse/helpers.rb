@@ -57,7 +57,7 @@ module Recourse
     end
 
     def resource_model
-      controller.controller_name.classify.constantize
+      Recourse.model controller.controller_name
     end
 
     def routed?(controller_path, action)

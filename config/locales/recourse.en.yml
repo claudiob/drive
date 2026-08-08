@@ -16,6 +16,8 @@ en:
     delete: Delete %{model}
     deleted: "%{model} was deleted."
     format: Please match the format %{example}
+    missing_model: You declared `recourses :%{name}` in your routes file, but this app
+      has no %{model} model.
     new: New %{model}
     no_results: No results found
     none: "No %{models}."

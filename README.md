@@ -58,6 +58,16 @@ that work, or write `show` yourself.
 A resource with no `index` route gets no sidebar entry, which is what
 `only: []` is for.
 
+A resource names a model, and a name that resolves to none is an error rather
+than a mystery: `recourses :pizzas` with no `Pizza` in the app answers
+
+> You declared `recourses :pizzas` in your routes file, but this app has no Pizza
+> model.
+
+which is a `Recourse::Error`, so a host can rescue it like anything else the gem
+raises. Write the controller yourself if a resource of yours is not backed by a
+model at all — the gem defines one only where you have not.
+
 `recourses` works inside a `namespace` too, and the controller it defines follows
 the namespace rather than the resource:
 
@@ -558,6 +568,8 @@ what is cached from correct into cheap.
 - `Recourse::VERSION`
 - `Recourse.declared` — the resources drawn, in `routes.rb` order
 - `Recourse.declare(name)` — records one, ignoring a repeated draw
+- `Recourse.model(name)` — the model a resource is named after, or a
+  `Recourse::Error` naming the routes line to fix
 - `Recourse.editable_columns(model)` — what a form offers and `create` permits
 - `Recourse::Search` — the Ransack search behind an index; `query` is the
   `Ransack::Search` the views read as `@q`, `scope` is the relation `index`

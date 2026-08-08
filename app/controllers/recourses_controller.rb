@@ -69,7 +69,7 @@ private
   end
 
   def resource_class
-    controller_name.classify.constantize
+    Recourse.model controller_name
   end
 
   def human_name

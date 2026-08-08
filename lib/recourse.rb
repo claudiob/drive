@@ -38,6 +38,15 @@ module Recourse
     text.split.map { |word| acronyms.key?(word.downcase) ? word : word.downcase }.join ' '
   end
 
+  # The model a resource is named after. A controller the gem defined has nothing
+  # else to go on, so a name that resolves to no model is a routes file to fix
+  # rather than a `NameError` from somewhere inside a view.
+  def self.model(name)
+    model = name.to_s.classify
+
+    model.safe_constantize || raise(Error, I18n.t('recourse.missing_model', name:, model:))
+  end
+
   # Raised for every failure the gem reports, so hosts can rescue one type.
   class Error < StandardError; end
 end
