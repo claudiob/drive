@@ -38,8 +38,15 @@ module Recourse
 
     private
 
+      # A field types a foreign key for either of the two reasons a filter does: the
+      # label is short enough to type, or the other table is too long to list. A
+      # county name has no length to bound it and 3,144 rows behind it, and the
+      # second reason is what stops a form drawing every one of them.
       def typed_reference?(association)
-        association&.klass&.recourse_typed_label?
+        klass = association&.klass
+        return false unless klass
+
+        klass.recourse_typed_label? || !klass.recourse_listable?
       end
 
       def typed_reference(form, column, association)

@@ -220,15 +220,22 @@ end
 
 ## What a field becomes
 
-`recourse_typed_label?` is what splits the two kinds of foreign key. A label
-with a length validator is bounded, so it can be typed; the field asks for the
-label under the foreign key's own name and the controller looks the record up
-on the way in — `ZIP.find_by code: '90210'` — so no model needs a virtual
-attribute and no strong parameter needs a special case.
+Two questions split the two kinds of foreign key, and either one sends it to a
+text field. `recourse_typed_label?` asks whether the label is bounded — a length
+validator — and so can be typed: a ZIP code can. `recourse_listable?` asks
+whether the table is short enough that a menu of every row is a control rather
+than a page: 3,144 counties are not. A county name answers no to the first and
+still gets a text field through the second, which is the same call the filter
+beside it makes.
+
+Either way the field asks for the label under the foreign key's own name, and
+the controller looks the record up on the way in — `ZIP.find_by code: '90210'` —
+so no model needs a virtual attribute and no strong parameter needs a special
+case.
 
 | Column | Field |
 | --- | --- |
-| a foreign key whose target's label is typed | text field, resolved to an id on submit |
+| a foreign key whose label is typed, or whose table is too long to list | text field, resolved to an id on submit |
 | any other foreign key | a searchable combobox of every record, by label |
 | an encrypted attribute | password field |
 | `email`, `color` | email field, color field |

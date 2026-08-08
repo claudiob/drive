@@ -6,6 +6,10 @@ require 'action_dispatch/testing/integration'
 class TestRecoursesCaching < Minitest::Test
   def setup
     Rails.cache.clear
+    # Asked once per class per process, and this test counts what a *request* costs.
+    # Left to chance it lands in whichever test reaches a State combobox first, which
+    # is whichever one the seed happens to run first.
+    State.recourse_listable?
     @session = ActionDispatch::Integration::Session.new Rails.application
   end
 

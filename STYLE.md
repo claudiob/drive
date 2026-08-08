@@ -235,9 +235,11 @@ before writing or editing any layout, view or partial.
 
 ## Comboboxes for foreign keys
 
-- A form asks for a foreign key one of two ways, and which one is the label's
-  decision. Where the label has a *length validator* it is short enough to type,
-  so the field asks for the value; otherwise it is a combobox to pick from.
+- A form asks for a foreign key one of two ways, and two things decide. Where the
+  label has a *length validator* it is short enough to type, so the field asks for
+  the value; where the other table is too long to list — `recourse_listable?`,
+  100 rows — it asks for the value too, because the alternative is a menu of
+  everything. Otherwise it is a combobox to pick from.
 - A typed reference names both: the label reads `ZIP code`, not `ZIP`, since a
   code is what the field wants. It takes the shape of that attribute —
   `maxlength`, `minlength`, `pattern`, `title`, `inputmode` — from the model the
@@ -566,11 +568,11 @@ before writing or editing any layout, view or partial.
   word instead of picking it. The label only has to be a word for this: a `cont`
   against an id or a date matches nothing, so a long table labelled by one is
   left with neither control.
-- A form asks a different question of the same foreign key, and the two answers
-  can differ. A field asks whether the label can be *typed* — a length validator,
-  per "Comboboxes for foreign keys" — while a filter asks whether the table can
-  be *listed*. A county name has no length to validate, so the form would still
-  draw a menu of 3,144 where the filter no longer does.
+- A form asks the same two questions of the same foreign key, and either one is
+  enough to make it a typed field: the label is short enough to type, or the table
+  is too long to list. A county name has no length to bound it and 3,144 rows
+  behind it, and the second question is what keeps a form from drawing every one
+  of them.
 - The combobox fragment is keyed `[recourses, multiple, selected]`, not just
   the relation: the same relation drawn as a single form combobox and as a
   multiple filter is different markup, and the same menu with a different
