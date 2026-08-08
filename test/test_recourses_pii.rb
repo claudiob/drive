@@ -34,7 +34,7 @@ class TestRecoursesPii < Minitest::Test
     visit_index
 
     assert_includes body, 'name="q[phone_eq]"'
-    assert_includes body, 'placeholder="Filter by exact Phone"'
+    assert_includes body, 'placeholder="Filter by exact phone"'
   end
 
   def test_that_holds_for_a_row_stored_as_plaintext_too

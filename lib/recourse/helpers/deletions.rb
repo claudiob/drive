@@ -73,7 +73,7 @@ module Recourse
         count = record.association(association.name).reader.count
         return if count.zero?
 
-        name = association.klass.model_name.human.downcase
+        name = Recourse.downcase association.klass.model_name.human
 
         "#{number_with_delimiter count} #{name.pluralize count}"
       end

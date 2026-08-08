@@ -628,6 +628,10 @@ two is filed under the one a reader would look in first.
   `human_attribute_name` renders `Zip` and every heading and label is wrong.
 - Registering it also fixes `camelize`, so `zip_code` becomes `ZIPCode` rather
   than `ZipCode` — worth knowing before naming a class after one.
+- Never call `.downcase` on anything Rails humanized. `Recourse.downcase` is what
+  lower-cases a word the gem shows, and it leaves a registered acronym alone: a
+  plain `.downcase` turns `ZIP code` into `zip code` and `No ZIPs.` into `No
+  zips.`, undoing the registration two lines above.
 - Register the plural as its own acronym, always. `URL` alone leaves a
   `media_urls` column heading a table `Media urls`, the same way `ZIP` alone
   leaves `zips` reading `Zips`.

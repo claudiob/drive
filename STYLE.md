@@ -571,7 +571,7 @@ before writing or editing any layout, view or partial.
   four would ask the server for four tables.
 - A model whose searchable columns are all encrypted gets a search box that asks
   for a whole value: `/agents` searches `email_eq` and prompts `Filter by exact
-  Email`, where `/states` searches `code_or_fips_or_name_cont`. A `cont` would be
+  email`, where `/states` searches `code_or_fips_or_name_cont`. A `cont` would be
   matching a LIKE against ciphertext and finding nothing, every time.
 - Only deterministic encryption qualifies. Without it a value encrypts differently
   on every write, so even `eq` would never match — and that is a model's decision,

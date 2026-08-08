@@ -11,7 +11,7 @@ module Recourse
     # heading and a search prompt all name the same thing, so they name it once.
     def recourse_reference_name
       I18n.t 'recourse.reference', model: model_name.human,
-                                   attribute: human_attribute_name(recourse_label).downcase
+                                   attribute: Recourse.downcase(human_attribute_name(recourse_label))
     end
 
     # True when the label has a length, so it is short enough to be typed and a

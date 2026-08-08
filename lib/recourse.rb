@@ -30,6 +30,14 @@ module Recourse
     model.column_names - %w[id created_at updated_at]
   end
 
+  # Lower case, but for the words Rails was told are acronyms: `ZIP code` reads as
+  # `ZIP code` and never `zip code`, while `Code or Name` becomes `code or name`.
+  def self.downcase(text)
+    acronyms = ActiveSupport::Inflector.inflections.acronyms
+
+    text.split.map { |word| acronyms.key?(word.downcase) ? word : word.downcase }.join ' '
+  end
+
   # Raised for every failure the gem reports, so hosts can rescue one type.
   class Error < StandardError; end
 end

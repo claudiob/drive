@@ -179,20 +179,21 @@ heading, a search box and a filter:
 | `ransackable_associations` | the foreign keys the search box reaches through | which other tables a predicate may join |
 | `ransortable_attributes` | the timestamps, plus every column an index covers, less every foreign key | which headings can be clicked to sort |
 | `search_field` | every indexed string column, plus the label behind every foreign key whose model is too long to list, ORed and matched on containment — or, for a model with none of those, its deterministically encrypted indexed columns, matched whole | what the search box searches — nil where there is nothing to look through, and no search box either |
-| `search_prompt` | `Filter by`, then those same columns joined by `or` | what the search box says while it is empty |
+| `search_prompt` | `Filter by`, then those same columns joined by `or`, in lower case but for the acronyms | what the search box says while it is empty |
 | `filter_fields` | one `_in` entry per `belongs_to`, less the ones the search box reaches through | which foreign keys get a filter, and what draws it |
 | `recourse_searchable?` | true when there is a search field or any filter | whether the form above the table renders at all |
 | `recourse_listable?` | true when the table holds no more than `MENU_LIMIT` rows | whether a foreign key pointing here gets a menu or joins the search |
 
 A `State` answers `'code_or_fips_or_name_cont'` for the first and `'Filter by
-Code or Fips or Name'` for the second, since `code`, `fips` and `name` are its
+code or fips or name'` for the second, since `code`, `fips` and `name` are its
 only columns that are both indexed and a searchable type — a string, text,
 citext or enum, an enum's value being a word even though its own Postgres type
 is not. An index is the only signal a schema carries about which column
 identifies a row rather than describes it, so that is what both hooks read. The
-prompt spells each column the way `human_attribute_name` does, capital and all:
-downcasing it would spell a registered acronym back out as a word, `zip` where
-every heading reads `ZIP`.
+prompt reads in lower case, except for the words Rails was told are acronyms:
+`/locations` prompts `Filter by ZIP code`, not `filter by zip code`. Everything
+the gem lower-cases goes through `Recourse.downcase`, which leaves a registered
+acronym as it found it — the same call behind `No ZIPs.` and `All ZIPs`.
 
 A foreign key is the other half of what a search looks through, and what decides
 is how long the other table is. A menu is a control while every row fits in one;
@@ -207,7 +208,7 @@ A model whose only searchable columns are encrypted is searched differently, and
 `/agents` is the case: an email is encrypted, so a `cont` would read ciphertext
 and match nothing. Where a model has no plaintext column worth searching, the
 search box asks for a whole value instead — `email_eq`, prompted `Filter by exact
-Email` — which works because Active Record encrypts the term the same way it
+email` — which works because Active Record encrypts the term the same way it
 encrypted the column. Only *deterministically* encrypted columns qualify: without
 `deterministic: true` two writes of one address are two different ciphertexts, so
 nothing would ever compare equal. Sorting is never offered on any of them, since

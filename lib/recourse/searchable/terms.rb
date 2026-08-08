@@ -30,14 +30,20 @@ module Recourse
         I18n.t "recourse.searched_#{predicate}", list: recourse_search_names.join(' or ')
       end
 
-      # Those same terms as words: a column by its attribute name, a foreign key by
-      # what a form and a table already call it.
+      # Those same terms as words, lower case but for the acronyms among them.
       def recourse_search_names
-        plain = recourse_searchable_columns.map { |column| human_attribute_name column } +
-                recourse_searchable_associations.map { |one| one.klass.recourse_reference_name }
-        return plain if plain.any?
+        fields, = recourse_search_terms
 
-        recourse_encrypted_searchable_columns.map { |column| human_attribute_name column }
+        fields.map { |field| Recourse.downcase recourse_term_name(field) }
+      end
+
+      # A term is a column of this model, or a `zip_code` reaching through one of its
+      # foreign keys — which a form and a table already have a name for.
+      def recourse_term_name(field)
+        reached = recourse_searchable_associations.find { |one| field.start_with? "#{one.name}_" }
+        return reached.klass.recourse_reference_name if reached
+
+        human_attribute_name field
       end
     end
   end
