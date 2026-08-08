@@ -22,7 +22,8 @@ en:
     optional: Optional
     reference: "%{model} %{attribute}"
     search: Search…
-    searched: Filter by %{list}
+    searched_cont: Filter by %{list}
+    searched_eq: Filter by exact %{list}
     select: Select…
     updated: "%{model} was updated."
     updated_error: "%{model} could not be updated."

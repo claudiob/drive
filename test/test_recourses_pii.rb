@@ -28,6 +28,15 @@ class TestRecoursesPii < Minitest::Test
     end
   end
 
+  # A phone is the only thing a contact can be searched by, and it is encrypted, so
+  # the box asks for a whole one. What it asks for is a prompt, never a value.
+  def test_an_encrypted_column_is_searched_whole
+    visit_index
+
+    assert_includes body, 'name="q[phone_eq]"'
+    assert_includes body, 'placeholder="Filter by exact Phone"'
+  end
+
   def test_that_holds_for_a_row_stored_as_plaintext_too
     insert_plaintext_contact
     visit_index

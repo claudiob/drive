@@ -10,7 +10,7 @@ module Recourse
       # primary key — an id is how a row is addressed, not something to read about
       # it — and with the timestamps moved to the end, before the actions.
       def resource_columns
-        hidden = Array(resource_model.encrypted_attributes).map(&:to_s)
+        hidden = resource_model.recourse_encrypted_names
         columns = resource_model.column_names - hidden - [resource_model.primary_key]
 
         (columns - TIMESTAMPS) + (TIMESTAMPS & columns)

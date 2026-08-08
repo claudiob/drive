@@ -10,10 +10,31 @@ module Recourse
       # Columns worth searching: the indexed strings. An index is the only signal a
       # schema carries about which column identifies a row rather than describes it.
       def recourse_searchable_columns
+        recourse_indexed_strings - recourse_encrypted_names
+      end
+
+      # The same columns where they are encrypted, which a search matches whole
+      # rather than by containment: a LIKE reads ciphertext and matches nothing,
+      # while a deterministic value encrypts to the same bytes every time, so `=`
+      # still finds it. A column encrypted any other way is left out, since two
+      # writes of one address do not compare equal.
+      def recourse_encrypted_searchable_columns
+        (recourse_indexed_strings & recourse_encrypted_names).select do |column|
+          type_for_attribute(column).scheme.deterministic?
+        end
+      end
+
+      # Every indexed column whose value is a word, whether or not it is encrypted.
+      def recourse_indexed_strings
         types = attribute_types
-        ransackable_attributes.intersection(recourse_indexed_columns).select do |column|
+        column_names.intersection(recourse_indexed_columns).select do |column|
           SEARCHABLE_TYPES.include? types[column].type
         end
+      end
+
+      # The attributes Active Record Encryption holds, as column names.
+      def recourse_encrypted_names
+        Array(encrypted_attributes).map(&:to_s)
       end
 
       # Foreign keys a search reaches through rather than filters by: the ones whose

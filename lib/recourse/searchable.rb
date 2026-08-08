@@ -1,21 +1,23 @@
 require 'active_support'
 
 require_relative 'searchable/columns'
+require_relative 'searchable/terms'
 
 module Recourse
   # Extends every Active Record model with what Ransack asks of it, so an index
   # sorts, searches and filters before a model has said anything at all.
   module Searchable
-    include Columns
+    include Columns, Terms
 
     # How many rows a menu may hold before it stops being a menu. Fifty states are a
     # list to pick from; three thousand counties are a page of HTML nobody reads.
     MENU_LIMIT = 100
 
-    # Attributes Ransack may read: every column except the encrypted ones, since
-    # no predicate can say anything true about ciphertext.
+    # Attributes Ransack may read: every column that is not encrypted, plus the
+    # encrypted ones a search can still match whole — `cont` reads ciphertext and
+    # finds nothing, but a deterministic `eq` compares the same bytes every time.
     def ransackable_attributes(_auth_object = nil)
-      column_names - Array(encrypted_attributes).map(&:to_s)
+      (column_names - recourse_encrypted_names) + recourse_encrypted_searchable_columns
     end
 
     # Associations Ransack may reach through: the ones the search box looks into,
@@ -29,28 +31,10 @@ module Recourse
     # foreign key: its cell shows a label from the other table, and the id under it
     # is not the order that label reads in.
     def ransortable_attributes(_auth_object = nil)
-      sortable = ransackable_attributes & (recourse_indexed_columns + %w[created_at updated_at])
+      readable = ransackable_attributes - recourse_encrypted_names
+      sortable = readable & (recourse_indexed_columns + %w[created_at updated_at])
 
       sortable - reflect_on_all_associations(:belongs_to).map { |one| one.foreign_key.to_s }
-    end
-
-    # The predicate a search box submits: every indexed string column at once, plus
-    # the label behind every foreign key too big to offer as a menu, each matched on
-    # containment. Nil where the model has nothing worth looking through.
-    def search_field
-      fields = recourse_searchable_columns + recourse_searchable_references
-      return if fields.empty?
-
-      "#{fields.join '_or_'}_cont"
-    end
-
-    # What the search box says while it is empty, naming what it looks through.
-    def search_prompt
-      names = recourse_searchable_columns.map { |column| human_attribute_name column } +
-              recourse_searchable_associations.map { |one| one.klass.recourse_reference_name }
-      return if names.empty?
-
-      I18n.t 'recourse.searched', list: names.join(' or ')
     end
 
     # Filters offered beside the search box, as a Ransack predicate to the options

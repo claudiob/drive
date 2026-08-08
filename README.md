@@ -175,10 +175,10 @@ heading, a search box and a filter:
 
 | Method | Default | What it decides |
 | --- | --- | --- |
-| `ransackable_attributes` | every column but the encrypted ones | which columns a search or a filter may read |
+| `ransackable_attributes` | every column but the encrypted ones, plus any encrypted column a search can match whole | which columns a search or a filter may read |
 | `ransackable_associations` | the foreign keys the search box reaches through | which other tables a predicate may join |
 | `ransortable_attributes` | the timestamps, plus every column an index covers, less every foreign key | which headings can be clicked to sort |
-| `search_field` | every indexed string column, plus the label behind every foreign key whose model is too long to list, ORed and matched on containment | what the search box searches — nil where there is nothing to look through, and no search box either |
+| `search_field` | every indexed string column, plus the label behind every foreign key whose model is too long to list, ORed and matched on containment — or, for a model with none of those, its deterministically encrypted indexed columns, matched whole | what the search box searches — nil where there is nothing to look through, and no search box either |
 | `search_prompt` | `Filter by`, then those same columns joined by `or` | what the search box says while it is empty |
 | `filter_fields` | one `_in` entry per `belongs_to`, less the ones the search box reaches through | which foreign keys get a filter, and what draws it |
 | `recourse_searchable?` | true when there is a search field or any filter | whether the form above the table renders at all |
@@ -202,6 +202,16 @@ its label joins the search instead. `/locations` answers `'zip_code_cont'` for
 40,965 ZIPs; `/zips` answers `'code_or_county_name_cont'` for 3,144 counties and
 keeps the menu for its markets. Each names that one association in
 `ransackable_associations`, so exactly the join being searched is allowed.
+
+A model whose only searchable columns are encrypted is searched differently, and
+`/agents` is the case: an email is encrypted, so a `cont` would read ciphertext
+and match nothing. Where a model has no plaintext column worth searching, the
+search box asks for a whole value instead — `email_eq`, prompted `Filter by exact
+Email` — which works because Active Record encrypts the term the same way it
+encrypted the column. Only *deterministically* encrypted columns qualify: without
+`deterministic: true` two writes of one address are two different ciphertexts, so
+nothing would ever compare equal. Sorting is never offered on any of them, since
+what an ORDER BY would sort is the ciphertext.
 
 The label has to be a word for that to mean anything — a string, text, citext or
 enum — since a `cont` against an id or a date matches nothing. A model too long

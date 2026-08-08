@@ -569,6 +569,13 @@ before writing or editing any layout, view or partial.
   path is what keeps the hidden input, the toggle's text and its events its
   business. The submits that follow are coalesced to one, or emptying a filter of
   four would ask the server for four tables.
+- A model whose searchable columns are all encrypted gets a search box that asks
+  for a whole value: `/agents` searches `email_eq` and prompts `Filter by exact
+  Email`, where `/states` searches `code_or_fips_or_name_cont`. A `cont` would be
+  matching a LIKE against ciphertext and finding nothing, every time.
+- Only deterministic encryption qualifies. Without it a value encrypts differently
+  on every write, so even `eq` would never match — and that is a model's decision,
+  not something a page can work around.
 - A foreign key is offered a filter only while the model it points at is short
   enough to list — `recourse_listable?`, which is 100 rows. A menu is a control
   while every row fits in one and a page of HTML nobody reads past that: fifty
