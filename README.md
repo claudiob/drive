@@ -433,9 +433,11 @@ Foreign keys:
 Chrome:
 
 - `resource_breadcrumbs` — the trail to this page, as `[title, path]` pairs
-- `sidebar_resources` — every declared resource with an index, in routes order
+- `sidebar_resources` — every declared resource with an index, in routes order,
+  each with the position of the letter that reaches it from the keyboard
 - `current_resource?(name)` — whether a sidebar entry is this page
-- `resource_label(title)` — an icon and a title, for a link to a resource
+- `resource_label(title, key = nil)` — an icon and a title, for a link to a
+  resource, with the letter at `key` marked as its keyboard shortcut
 - `new_resource_path`, `edit_resource_link(record)` — nil and nothing when the
   action is not defined or not routed, so a link never points at a `404`
 - `turbo_link_to(name, path, **options)` — `link_to` for a link inside a table,

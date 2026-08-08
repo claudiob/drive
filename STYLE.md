@@ -136,6 +136,24 @@ before writing or editing any layout, view or partial.
   `align-items` unset, so items default to `stretch`.
 - `min-height` rather than `height`, so short pages fill the window without a
   scrollbar and long ones still scroll.
+- Every entry answers to a letter of its own title, held with Option: `Contacts`
+  to C, `Counties` — declared after it — to O, since C was taken. The letter is
+  the first one in the title nothing above it has claimed, which is what makes
+  the hint below able to point at it rather than at a number nobody can guess.
+- Holding Option marks that letter in place: `C` in `Contacts` and `o` in
+  `Counties` gain a weight and an underline. Marked rather than bracketed —
+  `[C]ontacts` would shift every entry two characters wide the moment the key
+  went down, and a sidebar that jumps is a worse hint than one that does not.
+  The bracketed form is two commented-out rules in the layout for whoever wants
+  it.
+- Option, not Control or Command: both of those are spoken for by the browser and
+  the system — Control+C and Command+C are copy — while Option is what a
+  browser's own `accesskey` reaches for on most platforms.
+- The key is matched on `event.code`, not `event.key`. On a Mac, Option+c is `ç`,
+  so the character produced says nothing about which key was pressed.
+- The link is `click`ed rather than followed by assigning a location, so the
+  visit is Turbo's like any other, and the `accesskey` attribute is deliberately
+  not set: the browser would activate the same link a second time.
 
 ## Forms
 

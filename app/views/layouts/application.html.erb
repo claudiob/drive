@@ -21,6 +21,7 @@
       import DeselectController from '/recourse/deselect_controller.js'
       import PhoneController from '/recourse/phone_controller.js'
       import SearchController from '/recourse/search_controller.js'
+      import ShortcutsController from '/recourse/shortcuts_controller.js'
 
       // In the head, and guarded: Turbo re-runs body scripts on every visit, and a
       // second application would connect every controller twice.
@@ -30,6 +31,7 @@
         window.Stimulus.register('deselect', DeselectController)
         window.Stimulus.register('phone', PhoneController)
         window.Stimulus.register('search', SearchController)
+        window.Stimulus.register('shortcuts', ShortcutsController)
       }
     </script>
 
@@ -72,6 +74,17 @@
         .recourse-search-box,
         .recourse-search .combobox-toggle { flex: 1 1 100%; }
       }
+
+      /* Held Option marks the letter each sidebar link answers to. Marked rather than
+         bracketed: '[C]ontacts' would shift the whole sidebar two characters wide the
+         moment the key went down. Swap the two rules below for the bracketed form. */
+      .recourse-keys .recourse-key {
+        font-weight: var(--bs-font-weight-semibold);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+      /* .recourse-keys .recourse-key::before { content: '['; }
+         .recourse-keys .recourse-key::after  { content: ']'; } */
 
       /* The button that empties a combobox search sits inside the field it clears. */
       .combobox-search { position: relative; }

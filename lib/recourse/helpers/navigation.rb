@@ -36,19 +36,28 @@ module Recourse
         url_for action: :new
       end
 
-      # Label for a link to a resource: its icon, then its title.
-      def resource_label(title)
+      # Label for a link to a resource: its icon, then its title, with the letter at
+      # `key` marked where the link answers to one.
+      def resource_label(title, key = nil)
         icon = NAVIGATION_ICONS.fetch title, FALLBACK_ICON
+        name = key ? shortcut_title(title, key) : title
 
-        safe_join [tag.i(class: "bi bi-#{icon}"), title], ' '
+        safe_join [tag.i(class: "bi bi-#{icon}"), name], ' '
       end
 
-      # Sidebar entries as [name, title, path], in the order routes.rb declares them.
+      # Sidebar entries as [name, title, path, key], in the order routes.rb declares
+      # them, `key` being where in the title the letter that reaches it sits.
       def sidebar_resources
+        taken = []
+
         Recourse.declared.filter_map do |name|
           next unless routed? name, 'index'
 
-          [name, name.humanize, url_for(controller: "/#{name}", action: :index)]
+          title = name.humanize
+          [
+            name, title, url_for(controller: "/#{name}", action: :index),
+            shortcut_index(title, taken),
+          ]
         end
       end
 

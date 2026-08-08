@@ -1,10 +1,11 @@
-<ul class='nav md:flex-column'>
-  <% sidebar_resources.each do |name, title, path| %>
+<ul class='nav md:flex-column' data-controller='shortcuts'>
+  <% sidebar_resources.each do |name, title, path, key| %>
     <% current = current_resource? name %>
     <li class='nav-item'>
-      <%= link_to resource_label(title), path,
+      <%= link_to resource_label(title, key), path,
                   class: class_names('nav-link', active: current),
-                  aria: { current: ('page' if current) } %>
+                  aria: { current: ('page' if current) },
+                  data: { key: (title[key].downcase if key) } %>
     </li>
   <% end %>
 </ul>

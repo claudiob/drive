@@ -3,15 +3,17 @@ require_relative 'helpers/comboboxes'
 require_relative 'helpers/constraints'
 require_relative 'helpers/examples'
 require_relative 'helpers/fields'
+require_relative 'helpers/filters'
 require_relative 'helpers/navigation'
 require_relative 'helpers/references'
 require_relative 'helpers/searches'
+require_relative 'helpers/shortcuts'
 
 module Recourse
   # View helpers for the pages the gem renders, and what the parts share.
   module Helpers
-    include Cells, Comboboxes, Constraints, Examples, Fields, Navigation, References,
-            Searches
+    include Cells, Comboboxes, Constraints, Examples, Fields, Filters, Navigation,
+            References, Searches, Shortcuts
 
     # Bootstrap theme for each flash key, so a notice and an alert read apart.
     FLASH_THEMES = { 'notice' => 'theme-success', 'alert' => 'theme-danger' }
@@ -47,6 +49,11 @@ module Recourse
     end
 
   private
+
+    # `?q=anything` arrives as a String, which has no parameters to read.
+    def query_params
+      params[:q].respond_to?(:dig) ? params[:q] : {}
+    end
 
     def resource_model
       controller.controller_name.classify.constantize

@@ -18,6 +18,17 @@ class TestRecoursesIndex < Minitest::Test
     refute_includes body, 'data-cell="Id"'
   end
 
+  # A sidebar link answers to a letter of its own title, and the first one free: both
+  # of these start with C, and Contacts is declared first.
+  def test_each_sidebar_entry_marks_the_letter_that_reaches_it
+    session = ActionDispatch::Integration::Session.new Rails.application
+    session.get '/counties'
+    body = session.response.body
+
+    assert_includes body, '<span class="recourse-key">C</span>ontacts'
+    assert_includes body, 'C<span class="recourse-key">o</span>unties'
+  end
+
   # An array column reads as its values, not as the inspect output of an Array. Brings
   # its own contact and takes both rows away again: a message outliving this test would
   # break every other one that clears the contacts it points at.
