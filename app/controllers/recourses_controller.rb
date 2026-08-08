@@ -77,7 +77,7 @@ private
   def resolve_references(attributes)
     resource_class.reflect_on_all_associations(:belongs_to).each do |association|
       key = association.foreign_key.to_s
-      next unless attributes.key?(key) && association.klass.recourse_typed_label?
+      next unless attributes.key?(key) && association.klass.recourse_typed_reference?
 
       attributes[key] = reference_id association, attributes[key]
     end

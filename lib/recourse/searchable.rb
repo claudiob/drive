@@ -67,6 +67,11 @@ module Recourse
     # True where the index has anything to show above its table.
     def recourse_searchable? = search_field.present? || filter_fields.any?
 
+    # True where a foreign key pointing here is typed rather than picked, which a
+    # form and the controller reading its parameters back have to agree on: the label
+    # is bounded, or the table is too long to list.
+    def recourse_typed_reference? = recourse_typed_label? || !recourse_listable?
+
     # True where every row of this model could be listed in one menu. The count is
     # bounded, so the question costs the same on ten rows as on ten million, and it
     # is asked once per class — a table that crosses the line is noticed at boot.
