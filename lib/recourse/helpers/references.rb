@@ -30,10 +30,7 @@ module Recourse
       def reference_title(column, association)
         return resource_column_title column unless typed_reference? association
 
-        klass = association.klass
-        attribute = klass.human_attribute_name klass.recourse_label
-
-        "#{klass.model_name.human} #{attribute.downcase}"
+        association.klass.recourse_reference_name
       end
 
     private

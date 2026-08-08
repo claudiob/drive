@@ -7,6 +7,12 @@ module Recourse
     # Column a combobox shows for a record, and selects alongside its id.
     def recourse_label = :name
 
+    # `ZIP code`: what to call a foreign key pointing here. A form's label, a table's
+    # heading and a search prompt all name the same thing, so they name it once.
+    def recourse_reference_name
+      "#{model_name.human} #{human_attribute_name(recourse_label).downcase}"
+    end
+
     # True when the label has a length, so it is short enough to be typed and a
     # form can ask for the value instead of listing every record to pick from.
     def recourse_typed_label?

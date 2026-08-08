@@ -42,13 +42,6 @@ module Recourse
         end
       end
 
-      # `ZIP code`, the way a form and a table already head the same foreign key.
-      def recourse_reference_name(association)
-        klass = association.klass
-
-        "#{klass.model_name.human} #{klass.human_attribute_name(klass.recourse_label).downcase}"
-      end
-
       # Columns an index covers, the primary key among them. Read from the schema
       # cache, so asking costs nothing after the first look.
       def recourse_indexed_columns

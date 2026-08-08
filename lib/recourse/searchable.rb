@@ -47,7 +47,7 @@ module Recourse
     # What the search box says while it is empty, naming what it looks through.
     def search_prompt
       names = recourse_searchable_columns.map { |column| human_attribute_name column } +
-              recourse_searchable_associations.map { |one| recourse_reference_name one }
+              recourse_searchable_associations.map { |one| one.klass.recourse_reference_name }
       return if names.empty?
 
       "Filter by #{names.join ' or '}"
