@@ -1,21 +1,23 @@
 Rails.application.routes.draw do
   # Deliberately not alphabetical: the sidebar follows this order, not a sort.
-  recourses :contacts
-  recourses :states, only: :index
-  recourses :counties, only: :index
-  recourses :markets, only: %i[index new create edit update]
+  recourses :bookings
+  recourses :providers
+  recourses :franchises
   recourses :zips, only: :index
+  recourses :markets, only: %i[index new create edit update]
+  recourses :counties, only: :index
+  recourses :specialties
+  recourses :settings
   recourses :sources, only: :index
+  recourses :contacts
   recourses :agents, only: %i[index new create]
+  recourses :apps
+
+  # The dummy app's own, which the twelve above came from fountain to sit beside.
+  recourses :states, only: :index
   recourses :locations, only: %i[index new create]
   recourses :jobs
   recourses :messages
-  recourses :apps
-  recourses :franchises
-  recourses :specialties
-  recourses :providers
-  recourses :bookings
-  recourses :settings
 
   # No index action, so no sidebar link.
   recourses :placeholders, only: []

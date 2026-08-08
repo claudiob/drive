@@ -19,14 +19,14 @@ class TestRecoursesIndex < Minitest::Test
   end
 
   # A sidebar link answers to a letter of its own title, and the first one free: both
-  # of these start with C, and Contacts is declared first.
+  # of these start with C, and Counties is declared first.
   def test_each_sidebar_entry_marks_the_letter_that_reaches_it
     session = ActionDispatch::Integration::Session.new Rails.application
     session.get '/counties'
     body = session.response.body
 
-    assert_includes body, '<span class="recourse-key">C</span>ontacts'
-    assert_includes body, 'C<span class="recourse-key">o</span>unties'
+    assert_includes body, '<span class="recourse-key">C</span>ounties'
+    assert_includes body, 'Co<span class="recourse-key">n</span>tacts'
     # A namespaced resource is its own entry, linking where its routes were drawn.
     assert_includes body, 'href="/admin/sources"'
     # And the icon beside each is the concept its model names, not a title looked up
