@@ -149,6 +149,12 @@ before writing or editing any layout, view or partial.
 - Option, not Control or Command: both of those are spoken for by the browser and
   the system — Control+C and Command+C are copy — while Option is what a
   browser's own `accesskey` reaches for on most platforms.
+- The marked title is wrapped in one element, and that is not decoration.
+  `.nav-link` is a flex container with a `gap`, so a bare `<span>` around the
+  letter would make three flex items of `C`, `o` and `unties` and put the gap
+  between each — the entry would read `C o unties`. One wrapper is one item, and
+  inside it the word is an ordinary word again. The same trap as the breadcrumb's
+  `gap-2` above, from the other side.
 - The key is matched on `event.code`, not `event.key`. On a Mac, Option+c is `ç`,
   so the character produced says nothing about which key was pressed.
 - The link is `click`ed rather than followed by assigning a location, so the

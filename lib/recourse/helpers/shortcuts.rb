@@ -14,11 +14,14 @@ module Recourse
         index
       end
 
-      # The title with that one letter marked, for the overlay to reveal.
+      # The title with that one letter marked, for the overlay to reveal. Wrapped in
+      # one element on purpose: `.nav-link` is a flex container with a gap, so a bare
+      # span would leave the letter a flex item of its own and the word would read
+      # `C o unties`. One element is one item, and inside it the word is just a word.
       def shortcut_title(title, key)
         marked = tag.span title[key], class: 'recourse-key'
 
-        safe_join [title[0...key], marked, title[(key + 1)..]]
+        tag.span safe_join([title[0...key], marked, title[(key + 1)..]])
       end
     end
   end
