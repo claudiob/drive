@@ -5,6 +5,10 @@ module Recourse
       # How a time reads on a page, e.g. 'Aug 4 at 03:47pm EDT'.
       TIME_FORMAT = '%b %-d at %I:%M%P %Z'
 
+      # And a date, e.g. 'Aug 12, 2026'. A date column holds no time to say when in
+      # the day, and `2026-08-12` is a value rather than something anyone reads.
+      DATE_FORMAT = '%b %-d, %Y'
+
       # What Rails maintains rather than what a record is about, so a table ends with
       # these, in this order, whichever way round the schema happens to declare them.
       TIMESTAMPS = %w[created_at updated_at].freeze
@@ -37,6 +41,9 @@ module Recourse
         value = resource.attributes[column]
 
         return time_tag value, value.strftime(TIME_FORMAT) if value.is_a? Time
+        # After Time, since a `DateTime` is a `Date` as well and would lose the time
+        # it carries if this ran first. A zoned time is not a Date, so it is safe.
+        return time_tag value, value.strftime(DATE_FORMAT) if value.is_a? Date
         return number_to_phone value if column == 'phone'
         # An array column would otherwise print its own inspect output, brackets and
         # quotes and all, and an empty one would read `[]` rather than as empty.

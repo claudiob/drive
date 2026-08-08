@@ -718,6 +718,19 @@ before writing or editing any layout, view or partial.
   The visible text drops both; the attribute is what a machine reads.
 - Zone comes from `config.time_zone`, so `%Z` reads `EDT` or `EST` depending on
   the date, never `UTC`.
+- A date with no time of its own reads `Aug 12, 2026` — `DATE_FORMAT`, which is
+  `%b %-d, %Y` — and never `2026-08-12`. The ISO form is a value rather than
+  something a reader takes in at a glance, and it already has a place on the page:
+
+      <time datetime='2026-08-12'>Aug 12, 2026</time>
+
+- The same `time_tag` draws it, so a date carries its machine-readable form the
+  way a time does. `time_tag` writes `iso8601` for a Date and `xmlschema` for a
+  time, which is why the attribute is the plain date here and the full offset
+  above.
+- The check for a Date comes *after* the one for a Time. A `DateTime` is a `Date`
+  as well, so a Date test running first would cut the time off one; a zoned time
+  is not a Date, so it is safe either way.
 
 ## Pagination
 
