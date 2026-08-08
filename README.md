@@ -151,10 +151,11 @@ heading, a search box and a filter:
 | `ransackable_attributes` | every column but the encrypted ones | which columns a search or a filter may read |
 | `ransackable_associations` | the foreign keys the search box reaches through | which other tables a predicate may join |
 | `ransortable_attributes` | the timestamps, plus every column an index covers, less every foreign key | which headings can be clicked to sort |
-| `search_field` | every indexed string column, plus the label behind every foreign key too big to offer as a menu, ORed and matched on containment | what the search box searches — nil where there is nothing to look through, and no search box either |
+| `search_field` | every indexed string column, plus the label behind every foreign key whose model is too long to list, ORed and matched on containment | what the search box searches — nil where there is nothing to look through, and no search box either |
 | `search_prompt` | `Filter by`, then those same columns joined by `or` | what the search box says while it is empty |
 | `filter_fields` | one `_in` entry per `belongs_to`, less the ones the search box reaches through | which foreign keys get a filter, and what draws it |
 | `recourse_searchable?` | true when there is a search field or any filter | whether the form above the table renders at all |
+| `recourse_listable?` | true when the table holds no more than `MENU_LIMIT` rows | whether a foreign key pointing here gets a menu or joins the search |
 
 A `State` answers `'code_or_fips_or_name_cont'` for the first and `'Filter by
 Code or Fips or Name'` for the second, since `code`, `fips` and `name` are its
@@ -166,18 +167,27 @@ prompt spells each column the way `human_attribute_name` does, capital and all:
 downcasing it would spell a registered acronym back out as a word, `zip` where
 every heading reads `ZIP`.
 
-A foreign key is the other half of what a search looks through. Where the model
-it points at has a *typed* label — the same `recourse_typed_label?` that makes a
-form ask for a ZIP code instead of listing 40,965 of them — a menu is the wrong
-control for a filter too, so the label joins the search instead: `Location`
-answers `'zip_code_cont'` and `'Filter by ZIP code'`, offers no ZIP filter, and
-names `zip` in `ransackable_associations` so that one join is allowed and no
-other. No foreign key's column is sortable, this one included: the cell shows a
-label from another table, and the id under it is not the order that label reads
-in. The label has to be indexed on that model for this to happen, since that
-is the same test a column of its own would face; a typed label nothing indexes
-leaves the foreign key with neither a filter nor a search, and `scope:` on a
-`filter_fields` entry is what draws a menu for it anyway.
+A foreign key is the other half of what a search looks through, and what decides
+is how long the other table is. A menu is a control while every row fits in one;
+past that it is a page of HTML nobody reads. So a `belongs_to` whose model is not
+`recourse_listable?` — more than `MENU_LIMIT`, which is 100 — gets no filter, and
+its label joins the search instead. `/locations` answers `'zip_code_cont'` for
+40,965 ZIPs; `/zips` answers `'code_or_county_name_cont'` for 3,144 counties and
+keeps the menu for its markets. Each names that one association in
+`ransackable_associations`, so exactly the join being searched is allowed.
+
+The label has to be a word for that to mean anything — a string, text, citext or
+enum — since a `cont` against an id or a date matches nothing. A model too long
+to list whose label is neither leaves the foreign key with no filter and no
+search, and `scope:` on a `filter_fields` entry is what draws a menu for it
+anyway.
+
+No foreign key's column is sortable, these included: the cell shows a label from
+another table, and the id under it is not the order that label reads in.
+
+`recourse_listable?` counts once per class and counts no further than it has to —
+`LIMIT 101` — so the question costs 0.03ms whether the table holds ten rows or
+ten million. A table that crosses the line is noticed at the next boot.
 
 Overriding one is the same shape as `Recoursive`: a same-named concern beside
 the model, defining inside `class_methods do`. The dummy app's `Market` widens
@@ -264,12 +274,13 @@ the form is built and never shown. The layout the gem ships yields it in the
 navbar, to the right of the breadcrumb and the buttons. A filter reuses the combobox from
 "Comboboxes for foreign keys" with `multiple: true`, so a request can narrow a
 table to more than one of what a foreign key points at — `?q[state_id_in]=1,2`
-for two states at once. A foreign key whose target's label is typed, like the
-ZIP on `/locations`, is offered no filter at all: the menu would be the whole
-table. Its label goes into the search box instead — `?q[zip_code_cont]=005`
-narrows the same page by joining `zips` — and naming that predicate in
-`filter_fields` with a `scope:` still offers a menu, over whichever relation the
-scope names.
+for two states at once. A foreign key whose model is too long to list — the ZIP
+on `/locations`, the county on `/zips` — is offered no filter at all, since the
+menu would be the whole table. Its label goes into the search box instead:
+`?q[zip_code_cont]=005` narrows one page by joining `zips`, and
+`?q[code_or_county_name_cont]=Autauga` narrows the other by joining `counties`.
+Naming that predicate in `filter_fields` with a `scope:` still offers a menu,
+over whichever relation the scope names.
 
 Typing in the search box, or picking from a filter's menu, submits the form
 itself — a Stimulus controller resubmits 300ms after the last keystroke, and

@@ -45,6 +45,17 @@ class TestRecoursesSearch < Minitest::Test
     assert_includes body, '<td data-cell="Name">Autauga County</td>'
   end
 
+  # 3,144 counties are too many for a menu, so the ZIPs page searches their names
+  # instead of listing them, and the market it can list keeps its own filter.
+  def test_a_long_table_is_searched_rather_than_listed
+    @session.get '/zips'
+    body = @session.response.body
+
+    assert_includes body, 'name="q[code_or_county_name_cont]"'
+    assert_includes body, "data-bs-name='q[market_id_in]'"
+    refute_includes body, 'q[county_id_in]'
+  end
+
   # A foreign key whose label is typed is offered no filter of its own: that menu
   # would be all 40,965 ZIPs, which is the judgement a form makes too. The search
   # box reaches through to the label instead, so the ZIP is still narrowed by.

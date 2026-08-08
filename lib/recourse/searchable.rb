@@ -8,6 +8,10 @@ module Recourse
   module Searchable
     include Columns
 
+    # How many rows a menu may hold before it stops being a menu. Fifty states are a
+    # list to pick from; three thousand counties are a page of HTML nobody reads.
+    MENU_LIMIT = 100
+
     # Attributes Ransack may read: every column except the encrypted ones, since
     # no predicate can say anything true about ciphertext.
     def ransackable_attributes(_auth_object = nil)
@@ -62,6 +66,15 @@ module Recourse
 
     # True where the index has anything to show above its table.
     def recourse_searchable? = search_field.present? || filter_fields.any?
+
+    # True where every row of this model could be listed in one menu. The count is
+    # bounded, so the question costs the same on ten rows as on ten million, and it
+    # is asked once per class — a table that crosses the line is noticed at boot.
+    def recourse_listable?
+      return @recourse_listable unless @recourse_listable.nil?
+
+      @recourse_listable = limit(MENU_LIMIT + 1).count <= MENU_LIMIT
+    end
   end
 end
 

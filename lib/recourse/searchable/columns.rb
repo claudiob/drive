@@ -17,15 +17,21 @@ module Recourse
       end
 
       # Foreign keys a search reaches through rather than filters by: the ones whose
-      # label is typed, since a menu of every row is what a typed label means the
-      # other model is too big for. The label has to be searchable on that model
-      # too — indexed, and a string — or there is nothing to reach for.
+      # other model is too long to list, since a menu is only a control while every
+      # row fits in one. The label has to be a word for the search to match, too.
       def recourse_searchable_associations
         reflect_on_all_associations(:belongs_to).select do |association|
           klass = association.klass
-          klass.recourse_typed_label? &&
-            klass.recourse_searchable_columns.include?(klass.recourse_label.to_s)
+          !klass.recourse_listable? && klass.recourse_searchable_label?
         end
+      end
+
+      # True where the label is a column a `cont` can match. Reaching through a
+      # foreign key to compare an id or a date against typed text says nothing.
+      def recourse_searchable_label?
+        type = attribute_types[recourse_label.to_s]
+
+        SEARCHABLE_TYPES.include? type&.type
       end
 
       # Those foreign keys as Ransack names them: `zip_code`, for the ZIP that

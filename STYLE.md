@@ -545,11 +545,14 @@ before writing or editing any layout, view or partial.
   path is what keeps the hidden input, the toggle's text and its events its
   business. The submits that follow are coalesced to one, or emptying a filter of
   four would ask the server for four tables.
-- A foreign key whose target has a typed label is offered no filter: the menu
-  would be the whole table, the same 40,965-row judgement "Comboboxes for
-  foreign keys" already makes about the field itself. Naming that predicate
-  in `filter_fields` with a `scope:` draws a filter anyway, over whatever
-  narrower relation the scope names.
+- A foreign key is offered a filter only while the model it points at is short
+  enough to list — `recourse_listable?`, which is 100 rows. A menu is a control
+  while every row fits in one and a page of HTML nobody reads past that: fifty
+  states are a list, 3,144 counties and 40,965 ZIPs are not. Naming that
+  predicate in `filter_fields` with a `scope:` draws a filter anyway, over
+  whatever narrower relation the scope names.
+- Dropping the county menu took `/zips` from 496KB to 22KB. That page was the
+  combobox.
 - No foreign key's heading is a sort link, whichever control narrows it. Its cell
   shows a label from another table and the id underneath is not the order that
   label reads in: `/locations` sorted by `zip_id` is ZIP codes in the order the
@@ -557,11 +560,17 @@ before writing or editing any layout, view or partial.
   the order they were seeded. A heading that claims to sort by what it shows has
   to sort by what it shows.
 - What that foreign key gets instead is a place in the search box, its label
-  ORed in with the model's own columns: `/locations` searches `zip_code_cont`
-  and prompts `Filter by ZIP code`. One control replaces the other, so a page
-  never loses the ability to narrow by a ZIP — it just types the code, which is
-  exactly what the form beside it asks for. The label has to be indexed on the
-  other model to earn this, the same test a column of the model's own faces.
+  ORed in with the model's own columns: `/locations` searches `zip_code_cont`,
+  `/zips` searches `code_or_county_name_cont`. One control replaces the other, so
+  a page never loses the ability to narrow by a ZIP or a county — it types the
+  word instead of picking it. The label only has to be a word for this: a `cont`
+  against an id or a date matches nothing, so a long table labelled by one is
+  left with neither control.
+- A form asks a different question of the same foreign key, and the two answers
+  can differ. A field asks whether the label can be *typed* — a length validator,
+  per "Comboboxes for foreign keys" — while a filter asks whether the table can
+  be *listed*. A county name has no length to validate, so the form would still
+  draw a menu of 3,144 where the filter no longer does.
 - The combobox fragment is keyed `[recourses, multiple, selected]`, not just
   the relation: the same relation drawn as a single form combobox and as a
   multiple filter is different markup, and the same menu with a different
