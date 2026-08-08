@@ -711,16 +711,16 @@ before writing or editing any layout, view or partial.
 
       <time datetime='2026-08-04T19:16:51-04:00'>Aug 4 at 07:16pm EDT</time>
 
-- Rails' `time_tag` builds both halves: `time_tag value,
-  value.strftime(TIME_FORMAT)`. Pass the text explicitly, or the helper reaches
-  for I18n instead.
+- Rails' `time_tag` builds both halves: `time_tag value, l(value, format:
+  :recourse)`. Pass the text explicitly — left to itself the helper picks a format
+  of its own.
 - The `datetime` attribute is `rfc3339`, so it carries seconds and the offset.
   The visible text drops both; the attribute is what a machine reads.
 - Zone comes from `config.time_zone`, so `%Z` reads `EDT` or `EST` depending on
   the date, never `UTC`.
-- A date with no time of its own reads `Aug 12, 2026` — `DATE_FORMAT`, which is
-  `%b %-d, %Y` — and never `2026-08-12`. The ISO form is a value rather than
-  something a reader takes in at a glance, and it already has a place on the page:
+- A date with no time of its own reads `Aug 12, 2026`, never `2026-08-12`. The
+  ISO form is a value rather than something a reader takes in at a glance, and it
+  already has a place on the page:
 
       <time datetime='2026-08-12'>Aug 12, 2026</time>
 
@@ -728,9 +728,16 @@ before writing or editing any layout, view or partial.
   way a time does. `time_tag` writes `iso8601` for a Date and `xmlschema` for a
   time, which is why the attribute is the plain date here and the full offset
   above.
-- The check for a Date comes *after* the one for a Time. A `DateTime` is a `Date`
-  as well, so a Date test running first would cut the time off one; a zoned time
-  is not a Date, so it is safe either way.
+- Both formats live in the locale file, as `date.formats.recourse` and
+  `time.formats.recourse`, and one `l(value, format: :recourse)` reads either:
+  I18n picks the date format or the time one by what it was handed. So nothing in
+  the code asks which it has, a `DateTime` — which is a Date *and* carries a time
+  — keeps its time, and a host can show `12 Aug 2026` by writing one key.
+- Namespaced under `recourse` rather than written to `default`, or the gem would
+  be reformatting every date in the host app that mounted it.
+- A locale with no `recourse` format raises rather than degrading: `l` looks its
+  format up with `raise: true`, unlike `t`. A host translating these pages
+  translates those two keys as well, or turns `i18n.fallbacks` on.
 
 ## Pagination
 

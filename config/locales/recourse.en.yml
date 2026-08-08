@@ -1,4 +1,11 @@
 en:
+  # Namespaced rather than `default`, so a host's own date and time formats stand.
+  date:
+    formats:
+      recourse: "%b %-d, %Y"
+  time:
+    formats:
+      recourse: "%b %-d at %I:%M%P %Z"
   recourse:
     actions: Actions
     add: Add %{model}
