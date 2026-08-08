@@ -50,20 +50,21 @@ module Recourse
       def sidebar_resources
         taken = []
 
-        Recourse.declared.filter_map do |name|
-          next unless routed? name, 'index'
+        Recourse.declared.filter_map do |path|
+          next unless routed? path, 'index'
 
-          title = name.humanize
+          title = path.split('/').last.humanize
           [
-            name, title, url_for(controller: "/#{name}", action: :index),
+            path, title, url_for(controller: "/#{path}", action: :index),
             shortcut_index(title, taken),
           ]
         end
       end
 
-      # True when a sidebar entry names the resource the page is showing.
-      def current_resource?(name)
-        name == controller.controller_name
+      # True when a sidebar entry names the page being shown. The whole path, so a
+      # namespaced resource and its top-level twin are not each other.
+      def current_resource?(path)
+        path == controller.controller_path
       end
 
     private

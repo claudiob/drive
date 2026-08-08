@@ -4,8 +4,11 @@ module Recourse
     # Draws what `resources` draws, after supplying any controller the host lacks.
     def recourses(*names, **, &)
       names.each do |name|
-        Recourse.declare name
-        Controllers.define_missing name
+        # `@scope[:module]` is the namespace being drawn in, so a resource is declared
+        # and its controller defined under the path Rails will route to.
+        path = [@scope[:module], name].compact.join '/'
+        Recourse.declare path
+        Controllers.define_missing path
       end
 
       resources(*names, **, &)

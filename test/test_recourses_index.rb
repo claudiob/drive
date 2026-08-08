@@ -27,6 +27,8 @@ class TestRecoursesIndex < Minitest::Test
 
     assert_includes body, '<span class="recourse-key">C</span>ontacts'
     assert_includes body, 'C<span class="recourse-key">o</span>unties'
+    # A namespaced resource is its own entry, linking where its routes were drawn.
+    assert_includes body, 'href="/admin/sources"'
   end
 
   # An array column reads as its values, not as the inspect output of an Array. Brings

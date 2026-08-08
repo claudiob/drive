@@ -58,6 +58,22 @@ that work, or write `show` yourself.
 A resource with no `index` route gets no sidebar entry, which is what
 `only: []` is for.
 
+`recourses` works inside a `namespace` too, and the controller it defines follows
+the namespace rather than the resource:
+
+```ruby
+namespace :admin do
+  recourses :sources, only: :index
+end
+```
+
+draws `/admin/sources` and defines `Admin::SourcesController`, making the `Admin`
+module itself if your app has none — a namespace is a routing decision, and Rails
+draws it whether or not a module exists to match. The sidebar entry links to
+where the routes were drawn, and a namespaced resource and its top-level twin are
+separate entries: `/sources` and `/admin/sources` never mark each other as the
+page being shown.
+
 ## The screens
 
 | Action | What it answers |

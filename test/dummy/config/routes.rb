@@ -14,4 +14,10 @@ Rails.application.routes.draw do
 
   # No index action, so no sidebar link.
   recourses :placeholders, only: []
+
+  # Namespaced, and the app defines no `Admin` module of its own: the controller
+  # `Admin::SourcesController` is the gem's to make.
+  namespace :admin do
+    recourses :sources, only: :index
+  end
 end
