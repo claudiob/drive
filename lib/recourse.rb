@@ -1,6 +1,7 @@
 require 'pagy'
 # Before searchable.rb, so its `extend` lands ahead of Ransack's own defaults.
 require 'ransack'
+require 'unicon'
 
 require_relative 'recourse/version'
 require_relative 'recourse/icons'
@@ -42,7 +43,8 @@ module Recourse
   # else to go on, so a name that resolves to no model is a routes file to fix
   # rather than a `NameError` from somewhere inside a view.
   def self.model(name)
-    model = name.to_s.classify
+    # A namespaced resource is `admin/sources`, and the model it lists is a Source.
+    model = name.to_s.split('/').last.classify
 
     model.safe_constantize || raise(Error, I18n.t('recourse.missing_model', name:, model:))
   end

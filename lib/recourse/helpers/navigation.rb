@@ -5,9 +5,10 @@ module Recourse
       # Trail to the current page as [title, path] pairs; a nil path is this page.
       def resource_breadcrumbs
         leaf = breadcrumb_leaf
-        return [[resources_name, nil]] unless leaf
+        here = controller.controller_path
+        return [[here, resources_name, nil]] unless leaf
 
-        [[resources_name, url_for(action: :index)], [leaf, nil]]
+        [[here, resources_name, url_for(action: :index)], [nil, leaf, nil]]
       end
 
       # Pencil linking to a record's edit page, or nothing when there is not one.
@@ -36,13 +37,12 @@ module Recourse
         url_for action: :new
       end
 
-      # Label for a link to a resource: its icon, then its title, with the letter at
-      # `key` marked where the link answers to one.
-      def resource_label(title, key = nil)
-        icon = NAVIGATION_ICONS.fetch title, FALLBACK_ICON
+      # Label for a link to a resource: the icon its model picked, then its title,
+      # with the letter at `key` marked where the link answers to one.
+      def resource_label(resource, title, key = nil)
         name = key ? shortcut_title(title, key) : title
 
-        safe_join [tag.i(class: "bi bi-#{icon}"), name], ' '
+        safe_join [tag.i(class: "bi bi-#{Recourse.icon resource}"), name], ' '
       end
 
       # Sidebar entries as [name, title, path, key], in the order routes.rb declares

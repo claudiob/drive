@@ -2,7 +2,7 @@
   <% sidebar_resources.each do |name, title, path, key| %>
     <% current = current_resource? name %>
     <li class='nav-item'>
-      <%= link_to resource_label(title, key), path,
+      <%= link_to resource_label(name, title, key), path,
                   class: class_names('nav-link', active: current),
                   aria: { current: ('page' if current) },
                   data: { key: (title[key].downcase if key) } %>

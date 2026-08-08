@@ -16,6 +16,7 @@ and defining your own takes precedence over it.
 - Rails 8.1 or newer — `actionpack`, `activerecord` and `railties`.
 - `pagy` 43.6 or newer, which paginates every index.
 - `ransack` 4.4 or newer, which sorts, searches and filters every index.
+- `unicon`, which names the icon a model picks in each design system.
 
 ## Installation
 
@@ -144,6 +145,7 @@ there without a model mentioning them.
 
 | Method | Default | What it decides |
 | --- | --- | --- |
+| `recourse_icon` | the model's own name, as a concept `Unicon` resolves | the icon a link to this resource is drawn with |
 | `recourse_label` | `:name` | the column that stands for a record — what a combobox lists, and what a table cell shows for a foreign key pointing here |
 | `recourse_typed_label?` | true when that column has a length validator | whether a foreign key to this model is typed into a text field or picked from a list |
 | `recourse_includes` | every `belongs_to` the table names | what the index eager-loads, in any shape `includes` accepts |
@@ -528,8 +530,9 @@ Chrome:
 - `sidebar_resources` — every declared resource with an index, in routes order,
   each with the position of the letter that reaches it from the keyboard
 - `current_resource?(name)` — whether a sidebar entry is this page
-- `resource_label(title, key = nil)` — an icon and a title, for a link to a
-  resource, with the letter at `key` marked as its keyboard shortcut
+- `resource_label(resource, title, key = nil)` — the icon its model picked and a
+  title, for a link to a resource, with the letter at `key` marked as its
+  keyboard shortcut
 - `new_resource_path`, `edit_resource_link(record)`,
   `destroy_resource_button(record)` — nil and nothing when the action is not
   defined or not routed, so a link never points at a `404`
@@ -570,12 +573,12 @@ what is cached from correct into cheap.
 - `Recourse.declare(name)` — records one, ignoring a repeated draw
 - `Recourse.model(name)` — the model a resource is named after, or a
   `Recourse::Error` naming the routes line to fix
+- `Recourse.icon(name)` — what that model's `recourse_icon` is called in
+  Bootstrap Icons
 - `Recourse.editable_columns(model)` — what a form offers and `create` permits
 - `Recourse::Search` — the Ransack search behind an index; `query` is the
   `Ransack::Search` the views read as `@q`, `scope` is the relation `index`
   paginates
-- `Recourse::NAVIGATION_ICONS`, `Recourse::FALLBACK_ICON` — the Bootstrap Icons
-  name a sidebar title is drawn with, and the one an unlisted title falls back to
 - `Recourse::Error` — the class every failure the gem reports will be, so a host
   can rescue one type
 - `Recourse::Routes`, `Recourse::Controllers`, `Recourse::Engine` — the wiring

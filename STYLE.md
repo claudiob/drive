@@ -103,30 +103,21 @@ before writing or editing any layout, view or partial.
 - A link to a resource is preceded by a Bootstrap Icon, using the `<i>` form:
   `<i class='bi bi-person-rolodex'></i> Contacts`. The layout loads
   `bootstrap-icons@1.13.1`.
-- Pick the icon by the displayed title, from this map. It is duplicated in
-  `lib/recourse/icons.rb`, which is what the code reads — change both together.
-- An unlisted title falls back to `circle`, so a column of links stays aligned.
-  Add a real entry rather than leaving the fallback in place.
-
-      'Agents' => 'robot', 'Answers' => 'question-circle', 'Apps' => 'window',
-      'Assessments' => 'clipboard-check', 'Bookings' => 'calendar-check',
-      'Brands' => 'buildings', 'Campaigns' => 'megaphone',
-      'Contacts' => 'person-rolodex', 'Contract' => 'file-earmark-check',
-      'Conversations' => 'chat-dots', 'Counties' => 'map', 'CRM' => 'plugin',
-      'Echoes' => 'soundwave', 'Episodes' => 'collection-play',
-      'Evaluations' => 'speedometer2', 'Franchises' => 'shop', 'Home' => 'house',
-      'Jobs' => 'hammer', 'Locations' => 'geo-alt', 'Logout' => 'box-arrow-right',
-      'Markets' => 'pin-map', 'Messages' => 'chat-text',
-      'Offer questions' => 'gift', 'Optimizations' => 'sliders',
-      'Platforms' => 'plugin', 'Profile' => 'person-circle',
-      'Prompts' => 'terminal', 'Providers' => 'briefcase',
-      'Satisfaction questions' => 'emoji-smile', 'Searches' => 'search',
-      'Settings' => 'gear', 'Sources' => 'signpost', 'Specialties' => 'award',
-      'Specialty matches' => 'award', 'States' => 'geo',
-      'Verticals' => 'bar-chart', 'ZIPs' => 'geo-alt-fill'
-
-- `Home` maps to `house`: Bootstrap Icons has no `home`, so that entry would
-  have rendered an empty box.
+- Which icon is the *model's* to say, through `recourse_icon`, and never a list
+  kept here. That list existed in two places — a map in `lib/recourse/icons.rb`
+  and a copy of it in this file — keyed by the title as it displayed, so a
+  resource renamed anywhere lost its picture silently.
+- A model names a *concept* rather than an icon: `:train`, not `train-front`.
+  `Unicon` says what that concept is called in Bootstrap Icons, and in SF Symbols
+  and Material Symbols for whatever draws these records next.
+- The default is the model's own name, so nothing has to be declared to be right:
+  a `Contact` draws `person-rolodex`, a `Job` a hammer, a `Booking` a
+  calendar-check. All sixteen models in the dummy app land on the icon the old
+  map had chosen for them by hand.
+- `def recourse_icon = :bag` in the model overrides it, for when the concept a
+  model is named after is not the concept it means.
+- A name Unicon has never heard of draws a circle rather than raising, which is
+  what the old `FALLBACK_ICON` did and one fewer thing for this gem to hold.
 - Icons go on *links*. The breadcrumb's current-page item is not a link, so it
   carries no icon.
 

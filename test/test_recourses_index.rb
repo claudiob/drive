@@ -29,6 +29,9 @@ class TestRecoursesIndex < Minitest::Test
     assert_includes body, 'C<span class="recourse-key">o</span>unties'
     # A namespaced resource is its own entry, linking where its routes were drawn.
     assert_includes body, 'href="/admin/sources"'
+    # And the icon beside each is the concept its model names, not a title looked up
+    # in a list: nothing anywhere says the word `Jobs` draws a hammer.
+    assert_includes body, '<i class="bi bi-hammer"></i>'
   end
 
   # An array column reads as its values, not as the inspect output of an Array. Brings

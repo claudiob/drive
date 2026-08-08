@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pagy', '>= 43.6' # paginates the index pages
   spec.add_dependency 'railties', '>= 8.1' # Rails::Engine and the generators
   spec.add_dependency 'ransack', '>= 4.4' # sorts, searches and filters the index pages
+  spec.add_dependency 'unicon' # names the icon a model picks, in Bootstrap Icons
 end

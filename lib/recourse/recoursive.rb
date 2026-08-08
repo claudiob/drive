@@ -7,6 +7,11 @@ module Recourse
     # Column a combobox shows for a record, and selects alongside its id.
     def recourse_label = :name
 
+    # The concept a resource is drawn with, which Unicon names in each icon set it
+    # knows. A model's own name by default — `contact` draws a rolodex, `job` a hammer
+    # — and Unicon answers with a circle for a name it has never heard of.
+    def recourse_icon = model_name.singular.to_sym
+
     # `ZIP code`: what to call a foreign key pointing here. A form's label, a table's
     # heading and a search prompt all name the same thing, so they name it once.
     def recourse_reference_name
