@@ -5,7 +5,9 @@ require 'action_dispatch/testing/integration'
 class TestRecoursesDestroy < Minitest::Test
   def setup
     @contact = Contact.create! phone: '5559990003', name: 'Ada'
-    @job = Job.create! location: Location.sole, title: 'Fix the roof'
+    # Its own location, since a suite that ran in another order may have left none.
+    @location = Location.create! zip: ZIP.first!, city: 'Holtsville', street: '1 Main St'
+    @job = Job.create! location: @location, title: 'Fix the roof'
     @message = Message.create! contact: @contact, job: @job, inbound: true, content: 'On my way'
     @session = ActionDispatch::Integration::Session.new Rails.application
   end
@@ -13,6 +15,7 @@ class TestRecoursesDestroy < Minitest::Test
   def teardown
     Message.where(id: @message.id).delete_all
     Job.where(id: @job.id).delete_all
+    Location.where(id: @location.id).delete_all
     Contact.where(id: @contact.id).delete_all
   end
 

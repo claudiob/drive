@@ -2,7 +2,10 @@
 class Agent < ApplicationRecord
   include Emailable
 
+  has_many :apps, dependent: :nullify
+  has_many :contacts, dependent: :nullify
   has_many :locations, dependent: :nullify
+  has_many :settings, dependent: :nullify
 
   before_validation :name_from_email, if: -> { name.blank? }
 

@@ -2,8 +2,9 @@
 class ZIP < ApplicationRecord
   include Recoursive
 
-  belongs_to :county
-  belongs_to :market, optional: true
+  belongs_to :county, counter_cache: true
+  belongs_to :market, optional: true, counter_cache: true
+  has_many :bookings, dependent: :destroy
   has_many :locations, dependent: :destroy
 
   validates :code, uniqueness: true, length: { is: 5 }, format: { with: /\A\d{5}\z/ }
