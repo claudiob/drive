@@ -8,7 +8,7 @@ class TestRecoursesCreate < Minitest::Test
   end
 
   def test_it_saves_and_returns_to_the_index_with_a_notice
-    Contact.delete_all
+    clear_contacts
     @session.post '/contacts', params: { contact: { phone: '5552234567', name: 'Ada' } }
 
     assert_equal 303, @session.response.status
@@ -36,6 +36,7 @@ class TestRecoursesCreate < Minitest::Test
   # A ZIP is typed rather than picked, because its code has a length, so `create`
   # looks the record up by that code and reports one that matches nothing.
   def test_it_resolves_a_typed_reference_and_rejects_one_that_matches_nothing
+    Job.delete_all
     Location.delete_all
     code = ZIP.first!.code
     @session.post '/locations', params: { location: { zip_id: code } }
@@ -50,6 +51,14 @@ class TestRecoursesCreate < Minitest::Test
   end
 
 private
+
+  # A parent cannot be cleared with `delete_all` while its children point at it: that
+  # is raw SQL, and skips the callbacks `dependent:` works through.
+  def clear_contacts
+    Booking.delete_all
+    Message.delete_all
+    Contact.delete_all
+  end
 
   def body
     @session.response.body

@@ -4,6 +4,10 @@ require 'action_dispatch/testing/integration'
 # What an index page costs in queries, which coverage cannot see for itself.
 class TestRecoursesPagination < Minitest::Test
   def setup
+    # Backfilled bookings and messages point at contacts, and `delete_all` is raw
+    # SQL: it skips the callbacks `dependent:` works through.
+    Booking.delete_all
+    Message.delete_all
     Contact.delete_all
     25.times { |index| Contact.create! phone: format('55522%05d', index) }
     @session = ActionDispatch::Integration::Session.new Rails.application

@@ -4,6 +4,8 @@ require 'action_dispatch/testing/integration'
 # Encrypted columns never reach a page the gem builds for itself.
 class TestRecoursesPii < Minitest::Test
   def setup
+    Booking.delete_all
+    Message.delete_all
     Contact.delete_all
     @session = ActionDispatch::Integration::Session.new Rails.application
   end
