@@ -7,8 +7,8 @@ controller and views needed to browse and edit a resource. Nothing is written
 into your app: every controller, template and partial it supplies is a default,
 and defining your own takes precedence over it.
 
-> **Status:** early development. `index`, `new`, `create`, `edit` and `update`
-> work; `show`, `destroy` and the eject generator are not implemented yet.
+> **Status:** early development. `index`, `new`, `create`, `edit`, `update` and
+> `destroy` work; `show` and the eject generator are not implemented yet.
 
 ## Requirements
 
@@ -52,8 +52,8 @@ block to nest in — and for each name it does three things:
 3. Draws the routes, by calling `resources` with the arguments it was given.
 
 Because the third step is plain `resources`, `recourses :contacts` also routes
-`show` and `destroy`, which no gem-supplied action answers yet. Pass `only:`
-to draw the five that work, or write the missing actions yourself.
+`show`, which no gem-supplied action answers yet. Pass `only:` to draw the six
+that work, or write `show` yourself.
 
 A resource with no `index` route gets no sidebar entry, which is what
 `only: []` is for.
@@ -67,6 +67,7 @@ A resource with no `index` route gets no sidebar entry, which is what
 | `create` | the index again, or the form with the errors on it |
 | `edit` | the form for the record the id names |
 | `update` | the index again, or the form with the errors on it |
+| `destroy` | the index again, without the record |
 
 `index` reads the model's `recourse_includes` and `recourse_order`, so a table
 cell naming a referenced record costs no query of its own. The table hides
@@ -77,6 +78,16 @@ filter.
 
 `new` and `edit` assign the record twice: to `@recourse`, and to the name Rails
 would use, so `@contact` is what a view of yours can read.
+
+`destroy` is offered from the edit page, as a button beside the breadcrumb, and
+only where the action is both implemented and routed. It asks first, through
+`data-turbo-confirm`, naming the record and counting one level of what goes with
+it: `2 messages will be deleted with it.` for a `dependent: :destroy`,
+`1 message will be kept, without a job.` for a `:nullify`, and
+`Anything under those goes too.` in place of the levels below — a state reaches
+counties, then ZIPs, then locations, and counting that far would join 40,965 rows
+to draw one page. Without Turbo loaded there is no confirmation at all, only the
+delete.
 
 `create` and `update` permit every editable column, then take one of two
 branches. Saved, they set `flash.notice` to `Contact was created.` and redirect
@@ -456,8 +467,10 @@ Chrome:
 - `current_resource?(name)` — whether a sidebar entry is this page
 - `resource_label(title, key = nil)` — an icon and a title, for a link to a
   resource, with the letter at `key` marked as its keyboard shortcut
-- `new_resource_path`, `edit_resource_link(record)` — nil and nothing when the
-  action is not defined or not routed, so a link never points at a `404`
+- `new_resource_path`, `edit_resource_link(record)`,
+  `destroy_resource_button(record)` — nil and nothing when the action is not
+  defined or not routed, so a link never points at a `404`
+- `destroy_warning(record)` — the text that button asks for confirmation with
 - `turbo_link_to(name, path, **options)` — `link_to` for a link inside a table,
   carrying the `data-turbo-frame='_top'` that takes it out of the results frame
 - `flash_theme(key)` — the Bootstrap theme one flash entry reads in

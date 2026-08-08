@@ -5,7 +5,7 @@ class RecoursesController < ApplicationController
   helper Recourse::Helpers
 
   # `find` raises RecordNotFound, so an id that names nothing answers 404.
-  before_action :find_resource, only: %i[edit update]
+  before_action :find_resource, only: %i[edit update destroy]
 
   # Lists one page of the model the route is named after. `@q` is Ransack's own
   # name for a search, which is what its form and sort link helpers look for.
@@ -45,6 +45,15 @@ class RecoursesController < ApplicationController
       flash.now.alert = "#{human_name} could not be updated."
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  # Deletes the record and shows the index without it. `destroy!` rather than
+  # `destroy`, so a callback that stops one says so instead of leaving the page
+  # claiming it worked.
+  def destroy
+    @recourse.destroy!
+    flash.notice = "#{human_name} was deleted."
+    redirect_to url_for(action: :index), status: :see_other
   end
 
 private

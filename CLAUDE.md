@@ -259,9 +259,21 @@ two is filed under the one a reader would look in first.
   record is entitled to delete the tree under it, and a `State` reaches a long way
   down — counties, then their ZIPs, then locations, then jobs. The point of the
   cascade is that they do not have to dismantle it by hand.
-- That reach is exactly why a delete action needs a modal that names what is about to
-  go, and how much of it. **When the destroy page gets built, ask Claudio about the
-  wording of that warning before designing it** — it has not been specified yet.
+- That reach is exactly why a delete names what is about to go, and how much of it,
+  before it goes. Settled wording, in a `data-turbo-confirm`:
+
+      Delete California?
+
+      58 counties and 3 markets will be deleted with it.
+      12 messages will be kept, without a job.
+      Anything under those goes too.
+
+      This cannot be undone.
+
+- Counted one level down and no further: one `COUNT` per `has_many`, `:destroy`
+  children reading as *deleted with it* and `:nullify` ones as *kept, without a
+  parent*. Counting the whole tree means joining 40,965 ZIPs to draw an edit page,
+  and `Anything under those goes too` is what stands in for the levels below.
 - `has_many` takes one name, unlike `validates`. `has_many :counties, :markets`
   does not declare two associations — it reads `:markets` as a scope and fails much
   later with `undefined method 'arity' for an instance of Symbol`, from a view.

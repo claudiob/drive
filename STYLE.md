@@ -76,6 +76,28 @@ before writing or editing any layout, view or partial.
   or the button would 404 or raise. Its classes are
   `btn theme-primary btn-sm btn-outline ms-3`.
 
+## Deleting a record
+
+- The delete lives on the edit page and nowhere else, contributed with
+  `content_for :actions` so it sits beside the breadcrumb. Not in the table: a
+  row of pencils with a bin beside each is a mis-click waiting to happen, and the
+  warning below is only worth writing if it cannot be bypassed.
+- It is a `button_to` rather than a link, since a delete is not a GET, wearing
+  `btn btn-sm btn-outline theme-danger ms-3` — the `Add <resource>` button's
+  classes in the colour that means this one is different. Its form takes
+  `d-inline-block`, or it would break the navbar's line.
+- It appears only where the `destroy` action is implemented *and* routed, the two
+  guards `Add <resource>` and the edit pencil already answer to.
+- It asks first, through `data-turbo-confirm`, and the wording is settled in
+  CLAUDE.md rather than here — the text names the record, counts a level of what
+  goes with it, says what is kept instead, and ends `This cannot be undone.`
+- The count stops at one level on purpose. Every `has_many` costs one `COUNT` on
+  an indexed key; counting a state's whole subtree means joining 40,965 ZIPs to
+  render an edit page, so `Anything under those goes too` stands in for the rest.
+- Turbo is what shows that dialog. Under a host layout that does not load it the
+  button still deletes, with nothing asked first — the same bargain as everything
+  else the gem's own layout brings.
+
 ## Icons on resource links
 
 - A link to a resource is preceded by a Bootstrap Icon, using the `<i>` form:
