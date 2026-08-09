@@ -63,7 +63,9 @@ module Recourse
     # True where this controller both implements an action and has a route drawn to
     # it. Either alone is a link that 404s or raises.
     def routed_action?(action)
-      controller.class.action_methods.include?(action) && routed?(controller.controller_path, action)
+      return false unless controller.class.action_methods.include? action
+
+      routed? controller.controller_path, action
     end
 
     def routed?(controller_path, action)

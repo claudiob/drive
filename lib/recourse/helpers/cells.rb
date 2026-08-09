@@ -24,9 +24,14 @@ module Recourse
         Recourse.editable_columns resource_model
       end
 
-      # Heading for a column, which a host app can translate like any attribute.
+      # Heading for a column, which a host app can translate like any attribute. A
+      # counter is headed with what it counts — `ZIPs`, not `ZIPs count` — since the
+      # column holds a number and the heading says what the number is of.
       def resource_column_title(column)
-        resource_model.human_attribute_name column
+        counted = resource_model.recourse_counters[column]
+        return resource_model.human_attribute_name column unless counted
+
+        counted.klass.model_name.human.pluralize
       end
 
       # Value for one cell, formatted according to what the column holds.

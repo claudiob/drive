@@ -135,6 +135,10 @@ same one:
   column except `id`, `created_at` and `updated_at`. Encrypted columns are
   offered, as password fields.
 
+A column holding a counter cache is headed with what it counts — `ZIPs` rather
+than `ZIPs count` — which the gem reads from the `counter_cache` on the other side
+of the association rather than from the column's name.
+
 A cell renders by what the column holds: a `belongs_to`'s foreign key as the
 label of the record it points at, a time as `Aug 4 at 03:47pm EDT`, an array as
 its values joined by commas, a `phone` through `number_to_phone`.

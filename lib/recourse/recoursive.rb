@@ -17,6 +17,16 @@ module Recourse
     # carry the same instant on every row and say nothing about any of them.
     def recourse_timestamped? = true
 
+    # Columns holding a counter cache, each mapped to the association it counts. Read
+    # from the `belongs_to` on the other side, which is where `counter_cache` is
+    # declared: a column merely named `quote_count` is not one of these.
+    def recourse_counters
+      reflect_on_all_associations(:has_many).filter_map do |association|
+        column = association.inverse_of&.counter_cache_column
+        [column, association] if column
+      end.to_h
+    end
+
     # `ZIP code`: what to call a foreign key pointing here. A form's label, a table's
     # heading and a search prompt all name the same thing, so they name it once.
     def recourse_reference_name

@@ -18,6 +18,8 @@ class TestRecoursesIndex < Minitest::Test
     refute_includes body, 'data-cell="Id"'
     # Census data, written once: the model says so, and the two columns go with it.
     refute_includes body, 'data-cell="Created at"'
+    # A counter is headed with what it counts, and keeps the acronym while it is at it.
+    assert_includes body, '<th scope="col">ZIPs</th>'
   end
 
   # A sidebar link answers to a letter of its own title, and the first one free: both
