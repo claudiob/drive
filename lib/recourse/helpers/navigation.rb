@@ -40,8 +40,7 @@ module Recourse
 
       # Path to this resource's new page, or nil when there is not one to link to.
       def new_resource_path
-        return unless controller.class.action_methods.include? 'new'
-        return unless routed? controller.controller_path, 'new'
+        return unless routed_action? 'new'
 
         url_for action: :new
       end
@@ -87,11 +86,15 @@ module Recourse
       end
 
       def edit_resource_path(record)
-        return unless controller.class.action_methods.include? 'edit'
-        return unless routed? controller.controller_path, 'edit'
+        return unless resource_actions?
 
         url_for action: :edit, id: record
       end
+
+      # Whether a row has anything to offer at the end of it. Only an edit link so
+      # far, so a table whose resource has no edit page ends at its last column
+      # rather than at a heading over nothing.
+      def resource_actions? = routed_action? 'edit'
     end
   end
 end

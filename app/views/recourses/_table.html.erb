@@ -8,7 +8,7 @@
         <tr>
           <% @recourse_headers = true %>
           <%= render 'row', resource_key => nil %>
-          <%= column header: t('recourse.actions') %>
+          <%= column header: t('recourse.actions') if resource_actions? %>
         </tr>
       </thead>
       <tbody>
@@ -16,7 +16,9 @@
         <% recourses.each do |recourse| %>
           <tr>
             <%= render 'row', resource_key => recourse %>
-            <%= column header: t('recourse.actions') do %><%= edit_resource_link recourse %><% end %>
+            <% if resource_actions? -%>
+              <%= column header: t('recourse.actions') do %><%= edit_resource_link recourse %><% end %>
+            <% end -%>
           </tr>
         <% end %>
       </tbody>

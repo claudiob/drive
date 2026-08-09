@@ -36,8 +36,7 @@ module Recourse
     private
 
       def destroy_resource_path(record)
-        return unless controller.class.action_methods.include? 'destroy'
-        return unless routed? controller.controller_path, 'destroy'
+        return unless routed_action? 'destroy'
 
         url_for action: :destroy, id: record
       end
