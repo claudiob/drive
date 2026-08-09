@@ -118,8 +118,11 @@ before writing or editing any layout, view or partial.
   model is named after is not the concept it means.
 - A name Unicon has never heard of draws a circle rather than raising, which is
   what the old `FALLBACK_ICON` did and one fewer thing for this gem to hold.
-- Icons go on *links*. The breadcrumb's current-page item is not a link, so it
-  carries no icon.
+- The breadcrumb's current page carries its icon too, though it is not a link:
+  `/locations` reads as the pin and then `Locations`. It needs `gap-2` for the
+  same reason a link does — only `.nav-link` ships a gap of its own.
+- A crumb naming a page rather than a resource gets none. `New market` is not a
+  thing with an icon, and the crumb before it is already showing the market's.
 
 ## The sidebar
 

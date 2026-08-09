@@ -8,7 +8,13 @@
         <li class='breadcrumb-item'>
           <%= link_to resource_label(resource, title), path, class: 'breadcrumb-link gap-2' %>
         </li>
+      <% elsif resource %>
+        <li class='breadcrumb-item' aria-current='page'>
+          <span class='breadcrumb-link active gap-2'><%= resource_label resource, title %></span>
+        </li>
       <% else %>
+        <%# A leaf names a page rather than a resource — `New market`, or a record by
+            its label — and the crumb before it already carries the icon. -%>
         <li class='breadcrumb-item' aria-current='page'>
           <span class='breadcrumb-link active'><%= title %></span>
         </li>
