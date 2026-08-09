@@ -8,6 +8,8 @@ class ZIP
       def recourse_label = :code
 
       def recourse_order = :code
+
+      def recourse_timestamped = false
     end
   end
 end

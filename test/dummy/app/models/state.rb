@@ -1,5 +1,7 @@
 # One of the United States, or DC: postal code, FIPS code and name.
 class State < ApplicationRecord
+  include Recoursive
+
   has_many :counties, dependent: :destroy
   has_many :markets, dependent: :destroy
 

@@ -462,7 +462,10 @@ before writing or editing any layout, view or partial.
   to read about it, and a column of them is a column of noise next to the name
   the row is actually known by.
 - `created_at` and `updated_at` come last, in that order, whichever way round the
-  schema declares them — they are what Rails maintains rather than what the
+  schema declares them, and only where the model is `recourse_timestamped` — the
+  dummy app's states, counties and ZIPs all say they are not, since a migration
+  wrote every row of them in the same instant and the columns would repeat one
+  timestamp three thousand times — they are what Rails maintains rather than what the
   record is about, and a reader scanning a table wants its subject first. They
   still precede the `Actions` column, which `_table` appends after every column a
   row defines.

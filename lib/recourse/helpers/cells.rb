@@ -13,7 +13,10 @@ module Recourse
         hidden = resource_model.recourse_encrypted_names
         columns = resource_model.column_names - hidden - [resource_model.primary_key]
 
-        (columns - TIMESTAMPS) + (TIMESTAMPS & columns)
+        rest = columns - TIMESTAMPS
+        return rest unless resource_model.recourse_timestamped
+
+        rest + (TIMESTAMPS & columns)
       end
 
       # Columns a form offers, the same list `create` permits.

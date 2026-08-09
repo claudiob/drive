@@ -16,6 +16,8 @@ class TestRecoursesIndex < Minitest::Test
     assert_includes body, '<th scope="col">State</th>'
     assert_includes body, '<td data-cell="State">Alabama</td>'
     refute_includes body, 'data-cell="Id"'
+    # Census data, written once: the model says so, and the two columns go with it.
+    refute_includes body, 'data-cell="Created at"'
   end
 
   # A sidebar link answers to a letter of its own title, and the first one free: both
