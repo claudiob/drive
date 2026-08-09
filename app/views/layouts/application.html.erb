@@ -45,6 +45,16 @@
          its own: 'Nash' in 'Nashville' must not read as a word standing apart. */
       mark { padding: 0; }
 
+      /* A pencil needs no share of the table's width, so the actions column asks for
+         the least a cell can ask for and the columns carrying text keep the rest.
+         `width: 1%` rather than a length: a table lays out to 100% and hands what a
+         cell cannot use to its neighbours, while `min-content` would still fit the
+         heading. Not while the table is stacked, where every cell is a block and 1%
+         of the row is a squashed one — the query matches `.sm:table-stacked`'s. */
+      @container (width >= 576px) {
+        .recourse-actions { width: 1%; white-space: nowrap; }
+      }
+
       /* The sidebar rules off the content below it while it sits under the navbar,
          and off the content beside it once it is a column again. v6 generates no
          responsive border utilities, so the switch is written out. */

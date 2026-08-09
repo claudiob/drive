@@ -439,15 +439,25 @@ before writing or editing any layout, view or partial.
 - Those names cost one query per association rather than one per row, because the
   index eager-loads every `belongs_to` the table can name. Twenty locations still
   cost five queries.
-- Every table ends with an `Actions` column, and `_table` adds it rather than
-  `_row`. That is the whole point of putting it there: a host that writes its own
-  row still gets the column, appended after whatever columns that row defines, so
-  `/contacts` reads `Name | Phone | Created at | Actions`.
+- A table that has actions ends with an `Actions` column, and `_table` adds it
+  rather than `_row`. That is the whole point of putting it there: a host that
+  writes its own row still gets the column, appended after whatever columns that
+  row defines, so `/contacts` reads `Name | Phone | Created at | Actions`.
 - Where the resource has an `edit` action each row links to it, and the link's
   content is the `<i class='bi bi-pencil-square'></i>` icon rather than the word.
   It carries `aria-label='Edit'`, since an icon alone says nothing to a screen
   reader.
-- The column is there either way, empty for a resource that only has an index.
+- A resource with no `edit` action gets no column at all, rather than a heading
+  over an empty column on every row.
+- It is as narrow as the pencil in it: `.recourse-actions` asks for `width: 1%`,
+  which is the least a cell can ask for, and a table laying out to 100% hands what
+  that cell cannot use to the columns carrying text. `min-content` would still fit
+  the heading, and a length would be a guess. `white-space: nowrap` keeps a second
+  action beside the first rather than under it.
+- Not while the table is stacked, where every cell is a block and 1% of the row is
+  a squashed one. The rule sits in a `@container (width >= 576px)`, which is
+  `.sm:table-stacked`'s own query read the other way round, against the
+  `.table-responsive` the table already sits in.
 - The record arrives under its own name, `contact:` for contacts, so a host
   partial declares `<%# locals: (contact:) -%>`. It is rendered once for the
   header row with that local set to nil, so never assume it is present outside

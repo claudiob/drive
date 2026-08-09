@@ -17,7 +17,7 @@ class TestRecoursesUpdate < Minitest::Test
 
     @session.follow_redirect!
 
-    assert_includes body, '<th scope="col">Actions</th>'
+    assert_includes body, '<th scope="col" class="recourse-actions">Actions</th>'
     edit = %(href="/markets/#{@market.id}/edit">)
 
     assert_includes body, %(<a aria-label="Edit" data-turbo-frame="_top" #{edit})
