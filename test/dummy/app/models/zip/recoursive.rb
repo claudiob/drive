@@ -9,7 +9,7 @@ class ZIP
 
       def recourse_order = :code
 
-      def recourse_timestamped = false
+      def recourse_timestamped? = false
     end
   end
 end

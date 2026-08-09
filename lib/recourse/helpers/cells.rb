@@ -14,7 +14,7 @@ module Recourse
         columns = resource_model.column_names - hidden - [resource_model.primary_key]
 
         rest = columns - TIMESTAMPS
-        return rest unless resource_model.recourse_timestamped
+        return rest unless resource_model.recourse_timestamped?
 
         rest + (TIMESTAMPS & columns)
       end

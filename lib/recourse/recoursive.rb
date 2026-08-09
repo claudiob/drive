@@ -15,7 +15,7 @@ module Recourse
     # Whether a table ends with when a row was written and last touched. True unless
     # a model says otherwise: reference data is written once, so those two columns
     # carry the same instant on every row and say nothing about any of them.
-    def recourse_timestamped = true
+    def recourse_timestamped? = true
 
     # `ZIP code`: what to call a foreign key pointing here. A form's label, a table's
     # heading and a search prompt all name the same thing, so they name it once.

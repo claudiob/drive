@@ -34,13 +34,6 @@ Style/MethodCallWithArgsParentheses:
   Enabled: true
   EnforcedStyle: omit_parentheses
 
-# `recourse_timestamped` answers true or false without the `?` its neighbours carry,
-# because that is the name a model writes: renaming it here would leave a host's
-# `def recourse_timestamped = false` declaring nothing at all.
-Naming/PredicateMethod:
-  AllowedMethods:
-    - recourse_timestamped
-
 # Default is `separated`, one statement per mixin; ours share a line.
 Style/MixinGrouping:
   EnforcedStyle: grouped

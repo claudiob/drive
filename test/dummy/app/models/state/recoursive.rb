@@ -5,7 +5,7 @@ class State
     extend ActiveSupport::Concern
 
     class_methods do
-      def recourse_timestamped = false
+      def recourse_timestamped? = false
     end
   end
 end
