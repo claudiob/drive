@@ -137,7 +137,8 @@ same one:
 
 A column holding a counter cache is headed with what it counts — `ZIPs` rather
 than `ZIPs count` — which the gem reads from the `counter_cache` on the other side
-of the association rather than from the column's name.
+of the association rather than from the column's name. Every cell in it leads with
+the icon of what is counted, so `<i class='bi bi-geo-alt'></i> 26`.
 
 A cell renders by what the column holds: a `belongs_to`'s foreign key as the
 label of the record it points at, a time as `Aug 4 at 03:47pm EDT`, an array as

@@ -488,6 +488,12 @@ before writing or editing any layout, view or partial.
   row defines.
 - Column headings come from `human_attribute_name`, so a host app can rename
   one by translating the attribute.
+- A counter cache is headed with what it counts — `ZIPs`, not `ZIPs count` — and
+  every cell in it leads with that model's icon: `<i class='bi bi-geo-alt'></i> 26`.
+  A column of figures is read down rather than across, and by the row that raises
+  the question the heading is off the top of the screen; the icon travels with the
+  number. It is the same icon the sidebar and the breadcrumb draw for that
+  resource, so the three agree without anyone naming it three times.
 - Column headings that can be sorted are links, which the section below covers.
 
 ## Sorting, searching and filtering

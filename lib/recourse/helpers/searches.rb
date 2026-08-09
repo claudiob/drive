@@ -32,7 +32,26 @@ module Recourse
                                    filters: resource_model.filter_fields, sort: sort_param
       end
 
+      # A value with the searched text marked, so a row says why it is in the table.
+      # Only what the search looked through is marked: a word marked in a column
+      # nobody searched would claim a match that never happened.
+      def search_highlight(value, column)
+        term = query_params[resource_model.search_field]
+        return value if term.blank? || !searched_column?(column)
+
+        highlight value.to_s, term
+      end
+
     private
+
+      # A foreign key's cell shows a label from the other table, so what decides is
+      # whether the search reaches through that association rather than reads a column.
+      def searched_column?(column)
+        association = belongs_to_association column.to_s
+        return resource_model.recourse_searchable_associations.include? association if association
+
+        resource_model.recourse_searchable_columns.include? column.to_s
+      end
 
       # The heading a form and a table already agree on for the same column.
       def sort_title(column)

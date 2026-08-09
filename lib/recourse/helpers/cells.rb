@@ -46,24 +46,13 @@ module Recourse
         return search_highlight reference_cell(resource, association), column if association
 
         value = resource.attributes[column]
+        counted = resource_model.recourse_counters[column]
 
-        return localized value if value.is_a?(Date) || value.is_a?(Time)
-        return number_to_phone value if column == 'phone'
-        # An array column would otherwise print its own inspect output, brackets and
-        # quotes and all, and an empty one would read `[]` rather than as empty.
-        return value.join ', ' if value.is_a? Array
+        # A count leads with the icon of what it counts rather than the heading: a
+        # column of figures is read down, and by then the heading is a scroll away.
+        return counter_cell value, counted.klass if counted
 
-        search_highlight value, column
-      end
-
-      # A value with the searched text marked, so a row says why it is in the table.
-      # Only what the search looked through is marked: a word marked in a column
-      # nobody searched would claim a match that never happened.
-      def search_highlight(value, column)
-        term = query_params[resource_model.search_field]
-        return value if term.blank? || !searched_column?(column)
-
-        highlight value.to_s, term
+        formatted_cell value, column
       end
 
       # A date or a time, in words and in the attribute a machine reads. `l` picks
@@ -82,13 +71,18 @@ module Recourse
 
     private
 
-      # A foreign key's cell shows a label from the other table, so what decides is
-      # whether the search reaches through that association rather than reads a column.
-      def searched_column?(column)
-        association = belongs_to_association column.to_s
-        return resource_model.recourse_searchable_associations.include? association if association
+      def counter_cell(value, model)
+        safe_join [tag.i(class: "bi bi-#{Recourse.model_icon model}"), value], ' '
+      end
 
-        resource_model.recourse_searchable_columns.include? column.to_s
+      def formatted_cell(value, column)
+        return localized value if value.is_a?(Date) || value.is_a?(Time)
+        return number_to_phone value if column == 'phone'
+        # An array column would otherwise print its own inspect output, brackets and
+        # quotes and all, and an empty one would read `[]` rather than as empty.
+        return value.join ', ' if value.is_a? Array
+
+        search_highlight value, column
       end
     end
   end
