@@ -29,6 +29,15 @@ module Recourse
         link_to name, path, **options, data: data
       end
 
+      # Where a form submits: the action that saves it, in the namespace the resource
+      # was drawn in. `form_with model:` would ask polymorphic routing instead, which
+      # knows the model and not the namespace, and names a route that does not exist.
+      def resource_form_url(record)
+        return url_for action: :create if record.new_record?
+
+        url_for action: :update, id: record
+      end
+
       # Path to this resource's new page, or nil when there is not one to link to.
       def new_resource_path
         return unless controller.class.action_methods.include? 'new'

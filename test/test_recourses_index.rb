@@ -8,11 +8,11 @@ class TestRecoursesIndex < Minitest::Test
   # foreign key's heading sorts by nothing, and no column shows the id.
   def test_it_serves_a_resource_that_belongs_to_another
     session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/counties'
+    session.get '/admin/counties'
     body = session.response.body
 
     assert_equal 200, session.response.status
-    assert_includes body, 'href="/counties?q%5Bs%5D=fips+asc">Fips</a></th>'
+    assert_includes body, 'href="/admin/counties?q%5Bs%5D=fips+asc">Fips</a></th>'
     assert_includes body, '<th scope="col">State</th>'
     assert_includes body, '<td data-cell="State">Alabama</td>'
     refute_includes body, 'data-cell="Id"'
@@ -24,7 +24,7 @@ class TestRecoursesIndex < Minitest::Test
   # of these start with C, and Counties is declared first.
   def test_each_sidebar_entry_marks_the_letter_that_reaches_it
     session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/counties'
+    session.get '/admin/counties'
     body = session.response.body
 
     assert_includes body, '<span class="recourse-key">C</span>ounties'

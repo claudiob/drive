@@ -14,7 +14,7 @@ class TestRecoursesPagination < Minitest::Test
   end
 
   def test_it_costs_one_count_and_one_select
-    queries = contact_queries { @session.get '/contacts' }
+    queries = contact_queries { @session.get '/admin/contacts' }
 
     assert_equal 2, queries.size
     assert_equal 1, queries.grep(/COUNT/).size

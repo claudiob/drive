@@ -14,8 +14,8 @@ class TestRecoursesCaching < Minitest::Test
   end
 
   def test_a_warm_combobox_checks_its_version_without_fetching_the_rows_again
-    cold = state_queries { @session.get '/markets/new' }
-    warm = state_queries { @session.get '/markets/new' }
+    cold = state_queries { @session.get '/admin/markets/new' }
+    warm = state_queries { @session.get '/admin/markets/new' }
 
     assert_equal 2, cold.size
     assert_match(/COUNT/, warm.sole)

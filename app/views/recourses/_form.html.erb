@@ -1,5 +1,7 @@
 <% record = local_assigns[resource_key] -%>
-<%= form_with model: record do |form| %>
+<%# The url is spelled out rather than left to `model:`, which would name a route
+    outside whatever namespace the resource was drawn in. -%>
+<%= form_with model: record, url: resource_form_url(record) do |form| %>
   <% @recourse_form = form -%>
   <div class='row'>
     <%= render 'fields', resource_key => record %>

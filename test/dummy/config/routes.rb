@@ -1,17 +1,21 @@
 Rails.application.routes.draw do
-  # Deliberately not alphabetical: the sidebar follows this order, not a sort.
-  recourses :bookings
-  recourses :providers
-  recourses :franchises
-  recourses :zips, only: :index
-  recourses :markets, only: %i[index new create edit update]
-  recourses :counties, only: :index
-  recourses :specialties
-  recourses :settings
-  recourses :sources, only: :index
-  recourses :contacts
-  recourses :agents, only: %i[index new create]
-  recourses :apps
+  # Deliberately not alphabetical: the sidebar follows this order, not a sort. Each
+  # draws a different slice of the seven, so the pages a resource offers — and the
+  # links the gem draws to them — are covered between them.
+  namespace :admin do
+    recourses :bookings, only: %i[index show destroy]
+    recourses :providers
+    recourses :franchises, except: :show
+    recourses :zips, only: %i[index edit]
+    recourses :markets, except: :show
+    recourses :counties, only: :index
+    recourses :specialties, except: :show
+    recourses :settings, only: %i[index edit update]
+    recourses :sources, except: :show
+    recourses :contacts, except: :show
+    recourses :agents, only: %i[index show]
+    recourses :apps, only: %i[index edit update]
+  end
 
   # The dummy app's own, which the twelve above came from fountain to sit beside.
   recourses :states, only: :index
@@ -21,10 +25,4 @@ Rails.application.routes.draw do
 
   # No index action, so no sidebar link.
   recourses :placeholders, only: []
-
-  # Namespaced, and the app defines no `Admin` module of its own: the controller
-  # `Admin::SourcesController` is the gem's to make.
-  namespace :admin do
-    recourses :sources, only: :index
-  end
 end

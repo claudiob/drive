@@ -13,7 +13,7 @@ class TestRecoursesPii < Minitest::Test
   # The column list is the single place PII is dropped, and it asks the model
   # rather than a record — so no row's contents can put an encrypted column back.
   def test_the_generic_columns_leave_out_every_encrypted_attribute
-    columns = ContactsController.new.view_context.resource_columns
+    columns = Admin::ContactsController.new.view_context.resource_columns
 
     assert_includes columns, 'name'
     %w[phone email surname].each { |column| refute_includes columns, column }
@@ -49,7 +49,7 @@ class TestRecoursesPii < Minitest::Test
 private
 
   def visit_index
-    @session.get '/contacts'
+    @session.get '/admin/contacts'
   end
 
   def body
