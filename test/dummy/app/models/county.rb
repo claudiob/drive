@@ -1,7 +1,5 @@
 # One county of the United States, identified by its 5-digit FIPS code.
 class County < ApplicationRecord
-  include Recoursive
-
   belongs_to :state
   has_many :zips, dependent: :destroy
 

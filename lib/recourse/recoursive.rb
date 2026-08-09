@@ -12,10 +12,11 @@ module Recourse
     # — and Unicon answers with a circle for a name it has never heard of.
     def recourse_icon = model_name.singular.to_sym
 
-    # Whether a table ends with when a row was written and last touched. True unless
-    # a model says otherwise: reference data is written once, so those two columns
-    # carry the same instant on every row and say nothing about any of them.
-    def recourse_timestamped? = true
+    # Which of `created_at` and `updated_at` a table ends with, in that order.
+    # Neither by default: a timestamp is a fact about the row's storage rather than
+    # about the thing it stores, and reference data written once by a migration
+    # carries the same instant on every row of it.
+    def recourse_timestamps = []
 
     # Columns holding a counter cache, each mapped to the association it counts. Read
     # from the `belongs_to` on the other side, which is where `counter_cache` is

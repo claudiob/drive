@@ -128,10 +128,9 @@ same one:
 
 - A table shows every column except the encrypted ones, so a column holding PII
   never reaches an index page, and except the primary key and anything the model
-  declares `attr_readonly`. `created_at` and
-  `updated_at` come last, after whatever the record is actually about — and not at
-  all where the model answers `recourse_timestamped?` with false, which is what
-  reference data written once by a migration should say.
+  declares `attr_readonly`. `created_at` and `updated_at` are shown only where a
+  model asks for them by name — `def recourse_timestamps = %i[created_at]` — and
+  come last when it does, after whatever the record is actually about.
 - A form offers, and `create` permits, `Recourse.editable_columns` — every
   column except `id`, `created_at` and `updated_at`. Encrypted columns are
   offered, as password fields.
@@ -157,7 +156,7 @@ there without a model mentioning them.
 | `recourse_typed_label?` | true when that column has a length validator | whether a foreign key to this model is typed into a text field or picked from a list |
 | `recourse_includes` | every `belongs_to` the table names | what the index eager-loads, in any shape `includes` accepts |
 | `recourse_order` | `:id` | how the index sorts, in any shape `order` accepts |
-| `recourse_timestamped?` | `true` | whether the table ends with `Created at` and `Updated at` |
+| `recourse_timestamps` | `[]` | which of `created_at` and `updated_at` the table ends with |
 
 Overriding one means overriding a class method, which is what the `Recoursive`
 concern next to the model is for:

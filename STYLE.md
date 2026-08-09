@@ -471,11 +471,15 @@ before writing or editing any layout, view or partial.
   no page draws would answer with rows carrying nothing that explains why they are
   there, and the mark that usually explains it has nowhere to go. A host that
   wants one searched anyway names the predicate itself, in `search_field`.
-- `created_at` and `updated_at` come last, in that order, whichever way round the
-  schema declares them, and only where the model is `recourse_timestamped?` — the
-  dummy app's states, counties and ZIPs all say they are not, since a migration
-  wrote every row of them in the same instant and the columns would repeat one
-  timestamp three thousand times — they are what Rails maintains rather than what the
+- `created_at` and `updated_at` are shown only where a model names them in
+  `recourse_timestamps`, and come last when it does, in that order however the
+  schema declares them. Neither by default: a timestamp is a fact about the row's
+  storage rather than about the thing it stores, and on reference data written by
+  a migration it repeats one instant three thousand times.
+- A model asks for the one that means something. A booking and a contact show
+  `created_at`, since when the work came in and when someone first reached the app
+  are part of what those rows say; a setting and an app show `updated_at`, since
+  both are written once and edited after — they are what Rails maintains rather than what the
   record is about, and a reader scanning a table wants its subject first. They
   still precede the `Actions` column, which `_table` appends after every column a
   row defines.

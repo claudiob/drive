@@ -2,8 +2,9 @@ module Recourse
   module Helpers
     # Helpers for the cells of a table and the fields of a form.
     module Cells
-      # What Rails maintains rather than what a record is about, so a table ends with
-      # these, in this order, whichever way round the schema happens to declare them.
+      # What Rails maintains rather than what a record is about. A table ends with
+      # whichever of these its model asks for, in this order, whichever way round the
+      # schema happens to declare them.
       TIMESTAMPS = %w[created_at updated_at].freeze
 
       # Columns the table shows: every attribute that is not encrypted and not
@@ -12,10 +13,9 @@ module Recourse
       # before the actions.
       def resource_columns
         columns = resource_model.column_names - hidden_columns
-        rest = columns - TIMESTAMPS
-        return rest unless resource_model.recourse_timestamped?
+        asked = resource_model.recourse_timestamps.map(&:to_s)
 
-        rest + (TIMESTAMPS & columns)
+        (columns - TIMESTAMPS) + (TIMESTAMPS & columns & asked)
       end
 
       # What no table shows: ciphertext nobody can read, a value written once that
