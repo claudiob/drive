@@ -2,7 +2,11 @@ Rails.application.routes.draw do
   # Deliberately not alphabetical: the sidebar follows this order, not a sort. Each
   # draws a different slice of the seven, so the pages a resource offers — and the
   # links the gem draws to them — are covered between them.
-  namespace :admin do
+  #
+  # `scope module:` rather than `namespace`: the controllers live under `Admin::`,
+  # while the paths stay where a reader expects them — `/contacts`, not
+  # `/admin/contacts`.
+  scope module: :admin do
     recourses :bookings, only: %i[index show destroy]
     recourses :providers
     recourses :franchises, except: :show

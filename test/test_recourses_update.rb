@@ -10,7 +10,7 @@ class TestRecoursesUpdate < Minitest::Test
   end
 
   def test_it_saves_changes_and_returns_to_an_index_that_links_back_here
-    @session.patch "/admin/markets/#{@market.id}", params: { market: { name: 'Chicago Metro' } }
+    @session.patch "/markets/#{@market.id}", params: { market: { name: 'Chicago Metro' } }
 
     assert_equal 'Chicago Metro', @market.reload.name
     assert_equal 'Market was updated.', @session.request.flash[:notice]
@@ -18,7 +18,7 @@ class TestRecoursesUpdate < Minitest::Test
     @session.follow_redirect!
 
     assert_includes body, '<th scope="col">Actions</th>'
-    edit = %(href="/admin/markets/#{@market.id}/edit">)
+    edit = %(href="/markets/#{@market.id}/edit">)
 
     assert_includes body, %(<a aria-label="Edit" data-turbo-frame="_top" #{edit})
   end
@@ -28,7 +28,7 @@ class TestRecoursesUpdate < Minitest::Test
   def test_it_redraws_a_form_titled_after_the_record
     provider = Provider.create! name: 'Pat', phone: '2125550190', email: 'pat@example.com',
                                 time_zone: 'Eastern Time (US & Canada)'
-    @session.patch "/admin/providers/#{provider.id}", params: { provider: { email: '' } }
+    @session.patch "/providers/#{provider.id}", params: { provider: { email: '' } }
 
     assert_equal 422, @session.response.status
     assert_includes body, '<title>Pat</title>'

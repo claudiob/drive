@@ -10,7 +10,7 @@ class TestRecoursesSearch < Minitest::Test
   # Following a heading's own link: the order it asks for replaces the model's, and
   # the heading says which way it went.
   def test_a_heading_sorts_the_table_by_its_column
-    @session.get '/admin/counties?q%5Bs%5D=name+desc'
+    @session.get '/counties?q%5Bs%5D=name+desc'
     body = @session.response.body
 
     assert_includes body, "<td data-cell=\"Name\">#{County.maximum :name}</td>"
@@ -25,7 +25,7 @@ class TestRecoursesSearch < Minitest::Test
   # search box left empty — `IN ()` would match no row rather than every one.
   def test_a_filter_of_two_values_narrows_the_table_and_marks_its_menu
     states = State.where(code: %w[AK AL]).order :code
-    @session.get "/admin/counties?q%5Bstate_id_in%5D=#{states.ids.join ','}&q%5Bfips_cont%5D="
+    @session.get "/counties?q%5Bstate_id_in%5D=#{states.ids.join ','}&q%5Bfips_cont%5D="
     body = @session.response.body
 
     assert_includes body, "data-bs-value='#{states.first.id}' aria-selected='true'"
@@ -38,7 +38,7 @@ class TestRecoursesSearch < Minitest::Test
   # What matched is marked, and only in the column that matched it: the state beside
   # it is not searched, so the word `Alabama` is never marked by a search for one.
   def test_a_search_marks_what_it_matched
-    @session.get '/admin/counties?q%5Bfips_or_name_cont%5D=Autauga'
+    @session.get '/counties?q%5Bfips_or_name_cont%5D=Autauga'
     body = @session.response.body
 
     assert_includes body, '<td data-cell="Name"><mark>Autauga</mark> County</td>'
@@ -48,7 +48,7 @@ class TestRecoursesSearch < Minitest::Test
   # 3,144 counties are too many for a menu, so the ZIPs page searches their names
   # instead of listing them, and the market it can list keeps its own filter.
   def test_a_long_table_is_searched_rather_than_listed
-    @session.get '/admin/zips'
+    @session.get '/zips'
     body = @session.response.body
 
     assert_includes body, 'name="q[code_or_county_name_cont]"'

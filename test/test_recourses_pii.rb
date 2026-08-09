@@ -49,7 +49,7 @@ class TestRecoursesPii < Minitest::Test
 private
 
   def visit_index
-    @session.get '/admin/contacts'
+    @session.get '/contacts'
   end
 
   def body

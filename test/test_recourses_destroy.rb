@@ -41,7 +41,7 @@ class TestRecoursesDestroy < Minitest::Test
   # A contact takes its messages with it, and the count is of that one level: what
   # those messages reach in turn is a sentence rather than four more queries.
   def test_it_counts_a_level_of_what_goes_with_the_record
-    @session.get "/admin/contacts/#{@contact.id}/edit"
+    @session.get "/contacts/#{@contact.id}/edit"
 
     assert_includes @session.response.body, '1 message will be deleted with it.'
     assert_includes @session.response.body, 'Anything under those goes too.'

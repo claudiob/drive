@@ -5,7 +5,7 @@ require 'action_dispatch/testing/integration'
 class TestRecoursesFields < Minitest::Test
   def test_a_required_email_shows_an_example_address
     session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/admin/providers/new'
+    session.get '/providers/new'
 
     assert_match %r{placeholder="michael@example\.com"[^>]*name="provider\[email\]"},
                  session.response.body
@@ -15,7 +15,7 @@ class TestRecoursesFields < Minitest::Test
   # rule, and the phone carries the only bracket class of any pattern in the app.
   def test_a_host_names_the_types_and_the_title_shows_the_format
     session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/admin/contacts/new'
+    session.get '/contacts/new'
     body = session.response.body
 
     assert_includes body, 'pattern="[2-9]\d{2}-[2-9]\d{2}-\d{4}"'
@@ -29,7 +29,7 @@ class TestRecoursesFields < Minitest::Test
   # the pattern, a bracket class giving its first character and a literal itself.
   def test_a_pattern_with_no_sample_shows_a_value_that_would_match
     session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/admin/franchises/new'
+    session.get '/franchises/new'
 
     assert_includes session.response.body, 'title="Please match the format a-0000"'
   end

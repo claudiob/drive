@@ -9,10 +9,10 @@ class TestRecoursesCreate < Minitest::Test
 
   def test_it_saves_and_returns_to_the_index_with_a_notice
     clear_contacts
-    @session.post '/admin/contacts', params: { contact: { phone: '5552234567', name: 'Ada' } }
+    @session.post '/contacts', params: { contact: { phone: '5552234567', name: 'Ada' } }
 
     assert_equal 303, @session.response.status
-    assert_includes @session.response.headers['Location'], '/admin/contacts'
+    assert_includes @session.response.headers['Location'], '/contacts'
     assert_equal 'Contact was created.', @session.request.flash[:notice]
     assert_equal 'Ada', Contact.sole.name
   end

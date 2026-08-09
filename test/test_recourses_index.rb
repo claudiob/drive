@@ -8,11 +8,11 @@ class TestRecoursesIndex < Minitest::Test
   # foreign key's heading sorts by nothing, and no column shows the id.
   def test_it_serves_a_resource_that_belongs_to_another
     session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/admin/counties'
+    session.get '/counties'
     body = session.response.body
 
     assert_equal 200, session.response.status
-    assert_includes body, 'href="/admin/counties?q%5Bs%5D=name+asc">Name</a></th>'
+    assert_includes body, 'href="/counties?q%5Bs%5D=name+asc">Name</a></th>'
     assert_includes body, '<th scope="col">State</th>'
     assert_includes body, '<td data-cell="State">Alabama</td>'
     refute_includes body, 'data-cell="Id"'
@@ -26,13 +26,13 @@ class TestRecoursesIndex < Minitest::Test
   # of these start with C, and Counties is declared first.
   def test_each_sidebar_entry_marks_the_letter_that_reaches_it
     session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/admin/counties'
+    session.get '/counties'
     body = session.response.body
 
     assert_includes body, '<span class="recourse-key">C</span>ounties'
     assert_includes body, 'Co<span class="recourse-key">n</span>tacts'
     # A namespaced resource is its own entry, linking where its routes were drawn.
-    assert_includes body, 'href="/admin/sources"'
+    assert_includes body, 'href="/sources"'
     # And the icon beside each is the concept its model names, not a title looked up
     # in a list: nothing anywhere says the word `Jobs` draws a hammer.
     assert_includes body, '<i class="bi bi-hammer"></i>'
