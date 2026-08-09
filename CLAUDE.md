@@ -80,6 +80,20 @@ two is filed under the one a reader would look in first.
   creates the database on first run, so `rake test` is still the only command
   needed once the server is up.
 
+#### Clear the cache when a table's structure changes
+
+- Change what the default index table draws — which columns it shows, how a heading
+  reads, whether a column sorts, what sits at the end of a row — and clear the
+  dummy app's cache in the same breath: `cd test/dummy && bin/rails tmp:cache:clear`.
+- The fragment key does not notice. `cache recourses` digests the relation and the
+  *template*, and everything above is decided in the gem's Ruby — `resource_columns`,
+  `sort_header`, `resource_actions?` — which no digest covers. The page keeps
+  serving the table it drew before the change, and the next person to look at it in
+  a browser sees a feature that appears not to work.
+- Data changes need no such thing: the relation's own version — its count and its
+  newest `updated_at` — is part of the key, so a new row expires the fragment by
+  itself. It is only the shape of the markup that goes stale.
+
 #### Cache a query or a fragment that repeats
 
 - Reach for `Rails.cache` wherever the same rows would be read or the same markup
