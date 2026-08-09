@@ -27,7 +27,6 @@ module Recourse
         return form.text_field column, **options, type: type if type
         return form.password_field column, **options if encrypted_column? column
         return form.email_field column, **options if column == 'email'
-        return form.color_field column, **options if column == 'color'
 
         dated_field form, column, **options
       end
@@ -37,7 +36,6 @@ module Recourse
       def dated_field(form, column, **)
         case attribute_type column
         when :date then form.date_field column, **
-        when :time then form.time_field column, **
         when :datetime then form.datetime_local_field column, **
         else form.text_field column, **
         end

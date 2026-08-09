@@ -6,17 +6,23 @@ module Recourse
       # these, in this order, whichever way round the schema happens to declare them.
       TIMESTAMPS = %w[created_at updated_at].freeze
 
-      # Columns the table shows: every attribute that is not encrypted, less the
-      # primary key — an id is how a row is addressed, not something to read about
-      # it — and with the timestamps moved to the end, before the actions.
+      # Columns the table shows: every attribute that is not encrypted and not
+      # read-only, less the primary key — an id is how a row is addressed, not
+      # something to read about it — and with the timestamps moved to the end,
+      # before the actions.
       def resource_columns
-        hidden = resource_model.recourse_encrypted_names
-        columns = resource_model.column_names - hidden - [resource_model.primary_key]
-
+        columns = resource_model.column_names - hidden_columns
         rest = columns - TIMESTAMPS
         return rest unless resource_model.recourse_timestamped?
 
         rest + (TIMESTAMPS & columns)
+      end
+
+      # What no table shows: ciphertext nobody can read, a value written once that
+      # belongs to the row's identity, and the id that addresses it.
+      def hidden_columns
+        resource_model.recourse_encrypted_names +
+          resource_model.readonly_attributes.to_a + [resource_model.primary_key]
       end
 
       # Columns a form offers, the same list `create` permits.

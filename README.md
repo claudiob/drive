@@ -127,7 +127,8 @@ Two column lists decide what a screen shows, and they are deliberately not the
 same one:
 
 - A table shows every column except the encrypted ones, so a column holding PII
-  never reaches an index page, and except the primary key. `created_at` and
+  never reaches an index page, and except the primary key and anything the model
+  declares `attr_readonly`. `created_at` and
   `updated_at` come last, after whatever the record is actually about — and not at
   all where the model answers `recourse_timestamped?` with false, which is what
   reference data written once by a migration should say.
@@ -196,7 +197,7 @@ heading, a search box and a filter:
 | --- | --- | --- |
 | `ransackable_attributes` | every column but the encrypted ones, plus any encrypted column a search can match whole | which columns a search or a filter may read |
 | `ransackable_associations` | the foreign keys the search box reaches through | which other tables a predicate may join |
-| `ransortable_attributes` | the timestamps, plus every column an index covers, less every foreign key | which headings can be clicked to sort |
+| `ransortable_attributes` | the timestamps, every column an index covers and every counter cache, less every foreign key | which headings can be clicked to sort |
 | `search_field` | every indexed string column, plus the label behind every foreign key whose model is too long to list, ORed and matched on containment — or, for a model with none of those, its deterministically encrypted indexed columns, matched whole | what the search box searches — nil where there is nothing to look through, and no search box either |
 | `search_prompt` | `Filter by`, then those same columns joined by `or`, in lower case but for the acronyms | what the search box says while it is empty |
 | `filter_fields` | one `_in` entry per `belongs_to`, less the ones the search box reaches through | which foreign keys get a filter, and what draws it |
@@ -295,8 +296,8 @@ case.
 | a foreign key whose label is typed, or whose table is too long to list | text field, resolved to an id on submit |
 | any other foreign key | a searchable combobox of every record, by label |
 | an encrypted attribute | password field |
-| `email`, `color` | email field, color field |
-| a `date`, `time` or `datetime` attribute | date, time or `datetime-local` field |
+| `email` | email field |
+| a `date` or `datetime` attribute | date or `datetime-local` field |
 | anything else | text field |
 
 The type comes from the model's own `type_for_attribute`, so an `attribute

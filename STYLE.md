@@ -222,9 +222,12 @@ before writing or editing any layout, view or partial.
   including the encrypted-column one — an explicit type is an instruction.
 - The field type otherwise follows the column, and the rules are in this order: a
   foreign key is a combobox; an encrypted column is a password field; one named
-  `email` or `color` gets that input; a `date`, `time` or `datetime` attribute
-  gets its own field, the last of those as `datetime-local`; everything else is
-  text.
+  `email` gets an email input; a `date` or `datetime` attribute gets its own
+  field, the second as `datetime-local`; everything else is text.
+- A `color` input and a `time` one were here and are not: the dummy app's only
+  columns of those kinds went with the market they belonged to, and a branch no
+  page reaches is a branch nothing tests. Both are four lines to restore beside a
+  column that wants them.
 - Encryption wins over the name, so an encrypted `email` is masked rather than
   typed as an email — protecting the value matters more than the keyboard.
 - Length, format and numericality travel to the browser, and all three are read
@@ -461,6 +464,10 @@ before writing or editing any layout, view or partial.
 - The primary key is omitted too. An id is how a row is addressed, not something
   to read about it, and a column of them is a column of noise next to the name
   the row is actually known by.
+- So is anything a model declares `attr_readonly`. A value written once and never
+  again is a fact about the row's identity rather than about the row —
+  `attr_readonly :fips` takes the FIPS column off `/admin/counties` without
+  taking it out of the search that finds one.
 - `created_at` and `updated_at` come last, in that order, whichever way round the
   schema declares them, and only where the model is `recourse_timestamped?` — the
   dummy app's states, counties and ZIPs all say they are not, since a migration

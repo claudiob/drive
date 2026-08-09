@@ -10,10 +10,10 @@ class TestRecoursesSearch < Minitest::Test
   # Following a heading's own link: the order it asks for replaces the model's, and
   # the heading says which way it went.
   def test_a_heading_sorts_the_table_by_its_column
-    @session.get '/admin/counties?q%5Bs%5D=fips+desc'
+    @session.get '/admin/counties?q%5Bs%5D=name+desc'
     body = @session.response.body
 
-    assert_includes body, "<td data-cell=\"Fips\">#{County.maximum :fips}</td>"
+    assert_includes body, "<td data-cell=\"Name\">#{County.maximum :name}</td>"
     assert_includes body, 'bi bi-caret-down-fill'
     # The table and its pagination are what a search or a sort replaces, so both sit
     # inside the frame the form targets, and the edit link inside it breaks back out.
@@ -35,14 +35,14 @@ class TestRecoursesSearch < Minitest::Test
     assert_includes body, "of #{County.where(state: states).count} in total"
   end
 
-  # What matched is marked, and only in the column that matched it: a mark in a column
-  # nobody searched would claim a match that never happened.
+  # What matched is marked, and only in the column that matched it: the state beside
+  # it is not searched, so the word `Alabama` is never marked by a search for one.
   def test_a_search_marks_what_it_matched
-    @session.get '/admin/counties?q%5Bfips_cont%5D=0100'
+    @session.get '/admin/counties?q%5Bfips_or_name_cont%5D=Autauga'
     body = @session.response.body
 
-    assert_includes body, '<td data-cell="Fips"><mark>0100</mark>1</td>'
-    assert_includes body, '<td data-cell="Name">Autauga County</td>'
+    assert_includes body, '<td data-cell="Name"><mark>Autauga</mark> County</td>'
+    assert_includes body, '<td data-cell="State">Alabama</td>'
   end
 
   # 3,144 counties are too many for a menu, so the ZIPs page searches their names

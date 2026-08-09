@@ -1,6 +1,6 @@
 # Someone who does jobs for the host app, identified by a unique phone number.
 class Provider < ApplicationRecord
-  include Emailable, Phonable
+  include Phonable
 
   # Team sizes a provider identifies with, smallest to largest. A provider with...
   TEAM_SIZES = [
@@ -19,9 +19,11 @@ class Provider < ApplicationRecord
   encrypts :phone, deterministic: true
   encrypts :pin
 
-  validates :name, presence: true
+  validates :name, :email, presence: true
   validates :phone, presence: true, uniqueness: true
-  validates :pin, length: { is: 6 }, allow_nil: true
+  # Six digits, which is a shape the browser can check and a title can name — the
+  # only pattern in this app without a canonical sample to show instead.
+  validates :pin, length: { is: 6 }, format: { with: /\A\d{6}\z/ }, allow_nil: true
   validates :commission_rate, :time_zone, presence: true
   validates :commission_type, presence: true, length: { is: 1 }
 

@@ -12,14 +12,14 @@ class TestRecoursesIndex < Minitest::Test
     body = session.response.body
 
     assert_equal 200, session.response.status
-    assert_includes body, 'href="/admin/counties?q%5Bs%5D=fips+asc">Fips</a></th>'
+    assert_includes body, 'href="/admin/counties?q%5Bs%5D=name+asc">Name</a></th>'
     assert_includes body, '<th scope="col">State</th>'
     assert_includes body, '<td data-cell="State">Alabama</td>'
     refute_includes body, 'data-cell="Id"'
     # Census data, written once: the model says so, and the two columns go with it.
     refute_includes body, 'data-cell="Created at"'
-    # A counter is headed with what it counts, and keeps the acronym while it is at it.
-    assert_includes body, '<th scope="col">ZIPs</th>'
+    # A counter is headed with what it counts, keeps the acronym, and sorts.
+    assert_includes body, 'q%5Bs%5D=zips_count+asc">ZIPs</a></th>'
   end
 
   # A sidebar link answers to a letter of its own title, and the first one free: both

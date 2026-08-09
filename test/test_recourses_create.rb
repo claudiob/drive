@@ -20,17 +20,17 @@ class TestRecoursesCreate < Minitest::Test
   # A missing state fails `belongs_to`, which reports on :state, not :state_id, so
   # the message reaches the combobox only because both names are asked.
   def test_it_redraws_the_form_with_the_errors_beside_the_fields
-    @session.post '/admin/markets', params: { market: { name: '', email: '' } }
+    @session.post '/jobs', params: { job: { title: '' } }
 
     assert_equal 422, @session.response.status
     assert_includes body, "<div class='toast theme-danger' role='alert'"
-    assert_includes body, "<span class='me-auto'>Market could not be created.</span>"
+    assert_includes body, "<span class='me-auto'>Job could not be created.</span>"
     assert_includes body, "class='form-control is-invalid combobox-toggle'"
-    assert_includes body, "<small class='invalid-feedback' id='market_state_id_error'>Must exist"
+    assert_includes body, "<small class='invalid-feedback' id='job_location_id_error'>Must exist"
     assert_includes body,
-                    '<input aria-describedby="market_name_error" class="is-invalid form-control"'
+                    '<input aria-describedby="job_title_error" class="is-invalid form-control"'
     assert_includes body,
-                    '<small class="invalid-feedback" id="market_name_error">Can&#39;t be blank'
+                    '<small class="invalid-feedback" id="job_title_error">Can&#39;t be blank'
   end
 
   # A ZIP is typed rather than picked, because its code has a length, so `create`

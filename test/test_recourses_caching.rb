@@ -9,13 +9,13 @@ class TestRecoursesCaching < Minitest::Test
     # Asked once per class per process, and this test counts what a *request* costs.
     # Left to chance it lands in whichever test reaches a State combobox first, which
     # is whichever one the seed happens to run first.
-    State.recourse_listable?
+    Location.recourse_listable?
     @session = ActionDispatch::Integration::Session.new Rails.application
   end
 
   def test_a_warm_combobox_checks_its_version_without_fetching_the_rows_again
-    cold = state_queries { @session.get '/admin/markets/new' }
-    warm = state_queries { @session.get '/admin/markets/new' }
+    cold = location_queries { @session.get '/jobs/new' }
+    warm = location_queries { @session.get '/jobs/new' }
 
     assert_equal 2, cold.size
     assert_match(/COUNT/, warm.sole)
@@ -23,10 +23,10 @@ class TestRecoursesCaching < Minitest::Test
 
 private
 
-  def state_queries
+  def location_queries
     queries = []
     subscription = ActiveSupport::Notifications.subscribe 'sql.active_record' do |*, payload|
-      queries << payload[:sql] if payload[:sql].include? 'FROM "states"'
+      queries << payload[:sql] if payload[:sql].include? 'FROM "locations"'
     end
     yield
     queries

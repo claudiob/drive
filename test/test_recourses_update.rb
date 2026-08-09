@@ -5,8 +5,7 @@ require 'action_dispatch/testing/integration'
 class TestRecoursesUpdate < Minitest::Test
   def setup
     Market.delete_all
-    @market = Market.create! name: 'Chicago', email: 'chi@example.com',
-                             state: State.find_by!(code: 'IL')
+    @market = Market.create! name: 'Chicago'
     @session = ActionDispatch::Integration::Session.new Rails.application
   end
 
@@ -24,13 +23,18 @@ class TestRecoursesUpdate < Minitest::Test
     assert_includes body, %(<a aria-label="Edit" data-turbo-frame="_top" #{edit})
   end
 
-  # The page names the record, by whatever its model labels one with.
+  # The page names the record, by whatever its model labels one with — so what is
+  # rejected has to be something other than that label, or there is nothing to name.
   def test_it_redraws_a_form_titled_after_the_record
-    @session.patch "/admin/markets/#{@market.id}", params: { market: { email: '' } }
+    provider = Provider.create! name: 'Pat', phone: '2125550190', email: 'pat@example.com',
+                                time_zone: 'Eastern Time (US & Canada)'
+    @session.patch "/admin/providers/#{provider.id}", params: { provider: { email: '' } }
 
     assert_equal 422, @session.response.status
-    assert_includes body, '<title>Chicago</title>'
-    assert_includes body, "<span class='me-auto'>Market could not be updated.</span>"
+    assert_includes body, '<title>Pat</title>'
+    assert_includes body, "<span class='me-auto'>Provider could not be updated.</span>"
+  ensure
+    provider&.destroy
   end
 
 private

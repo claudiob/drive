@@ -26,15 +26,17 @@ module Recourse
       recourse_searchable_associations.map { |association| association.name.to_s }
     end
 
-    # Columns a heading may sort by: the timestamps, and whatever an index covers,
-    # so an ORDER BY walks a btree rather than sorting the table to answer. Never a
-    # foreign key: its cell shows a label from the other table, and the id under it
-    # is not the order that label reads in.
+    # Columns a heading may sort by: the timestamps, whatever an index covers, and
+    # every counter cache — a count is a number a reader ranks by, and the one column
+    # whose heading says what it counts. Never a foreign key: its cell shows a label
+    # from the other table, and the id under it is not the order that label reads in.
     def ransortable_attributes(_auth_object = nil)
       readable = ransackable_attributes - recourse_encrypted_names
-      sortable = readable & (recourse_indexed_columns + %w[created_at updated_at])
+      indexed = recourse_indexed_columns + recourse_counters.keys + %w[created_at updated_at]
 
-      sortable - reflect_on_all_associations(:belongs_to).map { |one| one.foreign_key.to_s }
+      keys = reflect_on_all_associations(:belongs_to).map { |one| one.foreign_key.to_s }
+
+      (readable & indexed) - keys
     end
 
     # Filters offered beside the search box, as a Ransack predicate to the options
