@@ -15,10 +15,15 @@
     <link rel='stylesheet' href='/recourse/bootstrap.min.css'>
     <link rel='stylesheet' href='/recourse/bootstrap-icons.min.css'>
 
+    <%# `data:,` is an empty document, which is what stops the browser asking a host
+        for a `/favicon.ico` it has no reason to have. The controller replaces it. -%>
+    <link rel='icon' href='data:,' data-controller='favicon' data-favicon-icon-value='<%= Recourse.model_icon resource_model %>'>
+
     <script type='module'>
       import { Application } from '/recourse/stimulus.js'
       import ClearController from '/recourse/clear_controller.js'
       import DeselectController from '/recourse/deselect_controller.js'
+      import FaviconController from '/recourse/favicon_controller.js'
       import PhoneController from '/recourse/phone_controller.js'
       import SearchController from '/recourse/search_controller.js'
       import ShortcutsController from '/recourse/shortcuts_controller.js'
@@ -29,6 +34,7 @@
         window.Stimulus = Application.start()
         window.Stimulus.register('clear', ClearController)
         window.Stimulus.register('deselect', DeselectController)
+        window.Stimulus.register('favicon', FaviconController)
         window.Stimulus.register('phone', PhoneController)
         window.Stimulus.register('search', SearchController)
         window.Stimulus.register('shortcuts', ShortcutsController)

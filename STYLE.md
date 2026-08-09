@@ -123,6 +123,22 @@ before writing or editing any layout, view or partial.
   same reason a link does — only `.nav-link` ships a gap of its own.
 - A crumb naming a page rather than a resource gets none. `New market` is not a
   thing with an icon, and the crumb before it is already showing the market's.
+- The tab wears it too. The layout draws
+  `<link rel='icon' href='data:,' data-controller='favicon'>` and the controller
+  replaces the `href` with a data URI it draws, so `/counties` is a map in the tab
+  strip and `/markets` a shop. `data:,` is an empty document, which is what keeps
+  the browser from asking a host for a `/favicon.ico` it has no reason to have.
+- Drawn from the font rather than shipped as an image. The codepoint is in the
+  stylesheet and nowhere JavaScript can ask for it, so the controller has an
+  element wear `bi bi-map` and reads what its `::before` would have said. The
+  probe is rendered and hidden rather than `display: none` — a box that is never
+  generated has no pseudo-element to report on.
+- Nothing is drawn until `document.fonts.load` resolves. `connect` runs long
+  before the font arrives, and a character the font has not brought is a blank
+  box, which is exactly what would end up in the tab.
+- 64 pixels square, in the body's own colour, so the tab matches the page rather
+  than guessing at what the browser has put behind it. A tab asks for 16 and twice
+  that on a retina display; a glyph scaled down reads better than one scaled up.
 
 ## The sidebar
 

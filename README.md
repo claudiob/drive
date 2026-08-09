@@ -554,8 +554,8 @@ Chrome:
 The gem vendors what its pages cannot render without and serves it from
 `/recourse/` through `Rack::Static`, so a host needs no asset pipeline:
 `bootstrap.min.css`, `bootstrap-icons.min.css` with its fonts,
-`bootstrap.bundle.min.js`, `stimulus.js`, and the gem's own
-`phone_controller.js` and `search_controller.js`.
+`bootstrap.bundle.min.js`, `stimulus.js`, and the gem's own Stimulus
+controllers — `clear`, `deselect`, `favicon`, `phone`, `search` and `shortcuts`.
 
 It also ships `app/views/layouts/application.html.erb`, which is what renders
 when your app has no layout of its own. When it has one — and most do — the
@@ -563,7 +563,9 @@ pages render inside yours, so copy those two stylesheets and the Stimulus
 module into it to see them styled, and yield what the screens contribute:
 `yield :title`, `yield :actions` and `yield :search`. The last of those is where
 the search and filter form goes; the gem's own layout yields it at the right of
-the navbar.
+the navbar. It also sets the favicon from the page's own icon, which a host's
+layout gets by copying the `<link rel='icon' data-controller='favicon'>` line
+and registering the controller.
 
 The index table renders inside a `cache_if params[:q].blank?, recourses`
 block, so a sorted or filtered table is drawn live instead of cached — two
@@ -583,6 +585,7 @@ what is cached from correct into cheap.
   `Recourse::Error` naming the routes line to fix
 - `Recourse.icon(name)` — what that model's `recourse_icon` is called in
   Bootstrap Icons
+- `Recourse.model_icon(model)` — the same for a model already in hand
 - `Recourse.editable_columns(model)` — what a form offers and `create` permits
 - `Recourse::Search` — the Ransack search behind an index; `query` is the
   `Ransack::Search` the views read as `@q`, `scope` is the relation `index`
