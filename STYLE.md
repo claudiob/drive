@@ -166,6 +166,13 @@ before writing or editing any layout, view or partial.
   `.container-fluid.flex-grow-1.d-flex`, then `.row.flex-grow-1`. The aside
   stretches because `.row` is a flex container and Bootstrap leaves
   `align-items` unset, so items default to `stretch`.
+- Only while they are one line, though: the row is
+  `align-content-start md:align-content-stretch`. Stacked, the sidebar and the
+  content are two lines of a wrapping flex row, and `align-content: stretch`
+  hands each of them half of whatever height the page has left over — a band of
+  empty space under a dozen links, and the rule stranded well below them. Packed
+  to the top instead, they sit against each other; from 768px the single line is
+  stretched again, which is what draws the rule the whole way down.
 - `min-height` rather than `height`, so short pages fill the window without a
   scrollbar and long ones still scroll.
 - Every entry answers to a letter of its own title, held with Option: `Contacts`

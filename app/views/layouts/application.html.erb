@@ -135,7 +135,12 @@
     </nav>
 
     <div class='container-fluid flex-grow-1 d-flex'>
-      <div class='row flex-grow-1'>
+      <%# Stacked, the sidebar and the content are two lines of a wrapping flex row,
+          and `align-content: stretch` would hand each of them half the height the
+          page has left over — an empty gap under a dozen links. Packed to the top
+          below 768px, and stretched again above it, where the single line being full
+          height is what draws the sidebar's rule the whole way down. -%>
+      <div class='row flex-grow-1 align-content-start md:align-content-stretch'>
         <aside class='recourse-sidebar col-12 md:col-auto py-3 px-3 mx-0'>
           <%= render 'sidebar' %>
         </aside>
