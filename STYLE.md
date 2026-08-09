@@ -65,6 +65,11 @@ before writing or editing any layout, view or partial.
   `.nav-link` ships a `gap`, and a whitespace-only text node is not a flex item
   — so without it the breadcrumb's icon and text would touch while the
   sidebar's sit 0.5rem apart.
+- Whatever shares that line sits vertically centred on it, and what separates a
+  line from the next one is the container's `row-gap-2` rather than a margin on
+  anything in it. A margin is there whether the item wrapped or not, so the
+  `mt-2 md:mt-0` the search form used to carry dropped the field a few pixels
+  below the breadcrumb at every width where the two still shared a line.
 - Every control in the navbar is the small size, since it shares a line with a
   breadcrumb: `btn-sm` on a button, `form-control-sm` on a field, and
   `form-control-sm` on a combobox toggle, which is a `<button>` wearing

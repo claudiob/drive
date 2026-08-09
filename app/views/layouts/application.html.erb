@@ -127,7 +127,10 @@
 
   <body class='d-flex flex-column min-vh-100'>
     <nav class='navbar border-bottom'>
-      <div class='container-fluid px-3 justify-content-start'>
+      <%# `row-gap` rather than a margin on the search: a margin is there whether the
+          form wrapped or not, and on the line it shares with the breadcrumb it drops
+          the field a few pixels below it. A row gap only exists between lines. -%>
+      <div class='container-fluid px-3 justify-content-start row-gap-2'>
         <%= render 'breadcrumb' %>
         <%= yield :actions %>
         <%= yield :search %>
