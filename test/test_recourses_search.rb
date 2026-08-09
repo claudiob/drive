@@ -38,7 +38,7 @@ class TestRecoursesSearch < Minitest::Test
   # What matched is marked, and only in the column that matched it: the state beside
   # it is not searched, so the word `Alabama` is never marked by a search for one.
   def test_a_search_marks_what_it_matched
-    @session.get '/counties?q%5Bfips_or_name_cont%5D=Autauga'
+    @session.get '/counties?q%5Bname_cont%5D=Autauga'
     body = @session.response.body
 
     assert_includes body, '<td data-cell="Name"><mark>Autauga</mark> County</td>'

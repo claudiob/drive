@@ -7,10 +7,12 @@ module Recourse
       # type of its own, and what it holds is a word, so it reads as a string too.
       SEARCHABLE_TYPES = %i[string text citext enum].freeze
 
-      # Columns worth searching: the indexed strings. An index is the only signal a
-      # schema carries about which column identifies a row rather than describes it.
+      # Columns worth searching: the indexed strings a table also shows. An index is
+      # the only signal a schema carries about which column identifies a row rather
+      # than describes it, and a column no page draws is not one to search by — a row
+      # would arrive with nothing on it explaining why.
       def recourse_searchable_columns
-        recourse_indexed_strings - recourse_encrypted_names
+        recourse_indexed_strings - recourse_encrypted_names - readonly_attributes.to_a
       end
 
       # The same columns where they are encrypted, which a search matches whole
@@ -19,7 +21,8 @@ module Recourse
       # still finds it. A column encrypted any other way is left out, since two
       # writes of one address do not compare equal.
       def recourse_encrypted_searchable_columns
-        (recourse_indexed_strings & recourse_encrypted_names).select do |column|
+        columns = (recourse_indexed_strings & recourse_encrypted_names) - readonly_attributes.to_a
+        columns.select do |column|
           type_for_attribute(column).scheme.deterministic?
         end
       end

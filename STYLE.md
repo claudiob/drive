@@ -465,9 +465,12 @@ before writing or editing any layout, view or partial.
   to read about it, and a column of them is a column of noise next to the name
   the row is actually known by.
 - So is anything a model declares `attr_readonly`. A value written once and never
-  again is a fact about the row's identity rather than about the row —
-  `attr_readonly :fips` takes the FIPS column off `/admin/counties` without
-  taking it out of the search that finds one.
+  again is a fact about the row's identity rather than about the row, and
+  `attr_readonly :fips` takes the FIPS column off `/counties` entirely.
+- It comes out of the search box with the column. A search that matched a column
+  no page draws would answer with rows carrying nothing that explains why they are
+  there, and the mark that usually explains it has nowhere to go. A host that
+  wants one searched anyway names the predicate itself, in `search_field`.
 - `created_at` and `updated_at` come last, in that order, whichever way round the
   schema declares them, and only where the model is `recourse_timestamped?` — the
   dummy app's states, counties and ZIPs all say they are not, since a migration
