@@ -709,13 +709,17 @@ before writing or editing any layout, view or partial.
       </div>
 
 - Filters reuse "Comboboxes for foreign keys" with `multiple: true`, one per
-  `filter_fields` entry whose predicate names a `belongs_to`. A multiple menu
-  item ends with its own check, shown only once picked:
+  `filter_fields` entry whose predicate names a `belongs_to` or an enum. A multiple
+  menu item ends with its own check, shown only once picked:
 
       <button class='menu-item selected' type='button' data-bs-value='1' aria-selected='true'>
         Alabama<i class='bi bi-check menu-item-check'></i>
       </button>
 
+  An enum's filter is the same menu over the words the column admits rather than over
+  records: headed by the attribute — `Status`, not `Booking status` — since the row it
+  sits in names other tables and this one names the table already being read. Its
+  reset line reads `All statuses`, the column's own name pluralized.
   Bootstrap only reveals that check for `.selected > .menu-item-check`, so the
   class and the icon travel together. `data-bs-multiple='true'` on the toggle
   is what tells the plugin to write '2 selected' into it, instead of

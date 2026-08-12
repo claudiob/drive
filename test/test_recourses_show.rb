@@ -74,12 +74,16 @@ class TestRecoursesShow < Minitest::Test
     refute_includes body, 'Bookings'
   end
 
-  # The row's own way in, beside the pencil where a resource has both pages.
-  def test_the_index_links_to_it
+  # The row's own way in, beside the pencil where a resource has both pages — and, on
+  # the same index, the menu that narrows it by the one enum a booking has.
+  def test_the_index_links_to_it_and_offers_its_enum_as_a_filter
     @session.get '/bookings'
 
     assert_includes body, %(aria-label="Show" data-turbo-frame="_top" href="/bookings/#{@bare.id}")
     assert_includes body, '<i class="bi bi-eye"></i>'
+    assert_includes body, "data-bs-name='q[status_in]'"
+    assert_includes body, "data-bs-value='scheduled'"
+    assert_includes body, "data-action='deselect#all'>All statuses</button>"
   end
 
   # The breadcrumb links back to the index and then names the record, as edit does.

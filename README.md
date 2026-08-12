@@ -273,7 +273,7 @@ heading, a search box and a filter:
 | `ransortable_attributes` | the timestamps, every column an index covers and every counter cache, less every foreign key | which headings can be clicked to sort |
 | `search_field` | every indexed string column a table shows, plus the label behind every foreign key whose model is too long to list, ORed and matched on containment — or, for a model with none of those, its deterministically encrypted indexed columns, matched whole | what the search box searches — nil where there is nothing to look through, and no search box either |
 | `search_prompt` | `Filter by`, then those same columns joined by `or`, in lower case but for the acronyms | what the search box says while it is empty |
-| `filter_fields` | one `_in` entry per `belongs_to`, less the ones the search box reaches through | which foreign keys get a filter, and what draws it |
+| `filter_fields` | one `_in` entry per enum, then one per `belongs_to`, less the ones the search box reaches through | which columns get a filter, and what draws each |
 | `recourse_searchable?` | true when there is a search field or any filter | whether the form above the table renders at all |
 | `recourse_listable?` | true when the table holds no more than `MENU_LIMIT` rows | whether a foreign key pointing here gets a menu or joins the search |
 
@@ -469,7 +469,14 @@ the form is built and never shown. The layout the gem ships yields it in the
 navbar, to the right of the breadcrumb and the buttons. A filter reuses the combobox from
 "Comboboxes for foreign keys" with `multiple: true`, so a request can narrow a
 table to more than one of what a foreign key points at — `?q[state_id_in]=1,2`
-for two states at once. A foreign key whose model is too long to list — the ZIP
+for two states at once.
+
+Every enum gets one too, and gets it first: `/bookings` opens with a `Status`
+menu of the words that column admits, `?q[status_in]=scheduled,fulfilled` for two
+of them at once. The words are the model's own `defined_enums`, the same ones the
+form's menu offers and a show page draws as a badge, and the way back reads `All
+statuses` — the column's name rather than a model's, since a status belongs to the
+table being read and not to another one. A foreign key whose model is too long to list — the ZIP
 on `/locations`, the county on `/zips` — is offered no filter at all, since the
 menu would be the whole table. Its label goes into the search box instead:
 `?q[zip_code_cont]=005` narrows one page by joining `zips`, and
