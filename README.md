@@ -138,7 +138,11 @@ filter.
 
 `show` reads one record out where its form would have been: the same grid the
 edit page uses, `lg:col-6` so it is two columns on a large viewport, with the
-heading a form would give each column above and what the record says below. No
+heading a form would give each column above and what the record says below, and a
+rule under each row of two. Both pages lay a row out with the same class, and the
+edit page reserves the width of that rule without drawing one, so a field sits at
+exactly the height of the value it edits and switching tabs moves nothing but the
+controls. No
 form and no field — a value the record has nothing for reads as an em dash. It
 lists the same columns the form offers, so the two pages never disagree about
 which attributes a record has.

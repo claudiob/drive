@@ -249,6 +249,19 @@ before writing or editing any layout, view or partial.
   `mb-3 lg:col-6` per attribute — two columns on a large viewport, one below it —
   and the same title, the record's own label, so a look and a change never
   disagree about what the page is called.
+- One rule between rows, so a heading and its value read as one thing and the next
+  pair as another. It sits on the cells rather than between them — a column's gutter
+  is padding inside it, so two side by side draw one unbroken line — and it is
+  `.recourse-values > .recourse-row` that colours it in.
+- Every row on *both* pages reserves the width that rule takes, in `transparent`, and
+  carries the same `pb-2 mb-3`. That is what leaves a field at exactly the height of
+  the value it edits, row after row: the two pages line up to the pixel, so switching
+  tabs moves nothing but the controls.
+- Which needs two things of the show page's values, both of them about a value being
+  as tall as the control that edits it. `.form-control-plaintext` takes a control's
+  `min-height`, which Bootstrap defines for it and then never applies; and the reveal
+  button loses `.btn-sm`'s, since it is a word beside a value rather than a control
+  beside it.
 - Each attribute is a heading and a value, not a definition list: a
   `<div class='form-label'>` above a `<div class='form-control-plaintext'>`. The
   first is the class the form's `<label>` wears and the second is Bootstrap's own

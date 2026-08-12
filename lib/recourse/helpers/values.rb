@@ -9,7 +9,7 @@ module Recourse
         column = name.to_s
         label = options.fetch :label, reference_title(column, belongs_to_association(column))
 
-        tag.div class: 'mb-3 lg:col-6' do
+        tag.div class: ROW do
           safe_join [tag.div(label, class: 'form-label'), value_control(column)]
         end
       end

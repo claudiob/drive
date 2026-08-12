@@ -23,6 +23,12 @@ module Recourse
             Fields, Filters, Formats, Inputs, Kinds, Navigation, References, Searches,
             Shortcuts, Values
 
+    # The grid a record's own two pages lay an attribute out in: two columns on a large
+    # viewport, and the same padding on both, so a value and the field that edits it sit
+    # at the same height whichever page is open. The rule between rows belongs to the
+    # show page alone — `.recourse-values` in the layout draws it.
+    ROW = 'recourse-row pb-2 mb-3 lg:col-6'
+
     # Bootstrap theme for each flash key, so a notice and an alert read apart.
     FLASH_THEMES = { 'notice' => 'theme-success', 'alert' => 'theme-danger' }
 

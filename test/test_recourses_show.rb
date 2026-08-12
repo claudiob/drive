@@ -25,7 +25,8 @@ class TestRecoursesShow < Minitest::Test
     visit @filled
 
     assert_equal 200, @session.response.status
-    assert_includes body, '<div class="mb-3 lg:col-6"><div class="form-label">Summary</div>'
+    assert_includes body, '<div class="recourse-row pb-2 mb-3 lg:col-6">' \
+                          '<div class="form-label">Summary</div>'
     assert_includes body, '<div class="form-control-plaintext">Everything booking</div>'
     assert_includes body, '<div class="form-control-plaintext">Cupertino</div>'
     # A foreign key reads as what it points at, the same as in the table.
