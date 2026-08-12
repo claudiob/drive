@@ -10,11 +10,13 @@ en:
     actions: Actions
     add: Add %{model}
     all: All %{models}
+    blank: "—"
     clear: Clear search
     created: "%{model} was created."
     created_error: "%{model} could not be created."
     delete: Delete %{model}
     deleted: "%{model} was deleted."
+    edit: Edit
     format: Please match the format %{example}
     missing_model: You declared `recourses :%{name}` in your routes file, but this app
       has no %{model} model.
@@ -27,6 +29,7 @@ en:
     searched_cont: Filter by %{list}
     searched_eq: Filter by exact %{list}
     select: Select…
+    show: Show
     unknown_color: "`Recourse.color` is one of %{colors}, or nil for Bootstrap's own
       blue. It cannot be %{color}."
     updated: "%{model} was updated."

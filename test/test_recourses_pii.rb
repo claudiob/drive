@@ -39,6 +39,18 @@ class TestRecoursesPii < Minitest::Test
     assert_includes body, 'placeholder="Filter by exact phone"'
   end
 
+  # And on the show page, which reads out one record rather than a table of them —
+  # the same column list, so the same columns are missing from it.
+  def test_encrypted_values_stay_off_the_show_page_too
+    agent = Agent.create! email: 'ada@example.com'
+    @session.get "/agents/#{agent.id}"
+
+    assert_includes body, '<div class="form-control-plaintext">Ada</div>'
+    ['Email', 'ada@example.com'].each { |value| refute_includes body, value }
+  ensure
+    agent&.destroy
+  end
+
   def test_that_holds_for_a_row_stored_as_plaintext_too
     insert_plaintext_contact
     visit_index

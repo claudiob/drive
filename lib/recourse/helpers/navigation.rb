@@ -11,14 +11,6 @@ module Recourse
         [[here, resources_name, url_for(action: :index)], [nil, leaf, nil]]
       end
 
-      # Pencil linking to a record's edit page, or nothing when there is not one.
-      def edit_resource_link(record)
-        path = edit_resource_path record
-        return unless path
-
-        turbo_link_to tag.i(class: 'bi bi-pencil-square'), path, aria: { label: 'Edit' }
-      end
-
       # A link out of a table. Every cell is inside the results frame, and the page a
       # cell links to has no frame of that name, so Turbo would replace the table with
       # `Content missing` rather than leaving the page. `_top` is what leaves it.
@@ -81,20 +73,9 @@ module Recourse
       def breadcrumb_leaf
         case controller.action_name
         when 'new', 'create' then t 'recourse.new', model: resource_name
-        when 'edit', 'update' then resource_record_label
+        when 'show', 'edit', 'update' then resource_record_label
         end
       end
-
-      def edit_resource_path(record)
-        return unless resource_actions?
-
-        url_for action: :edit, id: record
-      end
-
-      # Whether a row has anything to offer at the end of it. Only an edit link so
-      # far, so a table whose resource has no edit page ends at its last column
-      # rather than at a heading over nothing.
-      def resource_actions? = routed_action? 'edit'
     end
   end
 end

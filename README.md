@@ -7,8 +7,8 @@ controller and views needed to browse and edit a resource. Nothing is written
 into your app: every controller, template and partial it supplies is a default,
 and defining your own takes precedence over it.
 
-> **Status:** early development. `index`, `new`, `create`, `edit`, `update` and
-> `destroy` work; `show` and the eject generator are not implemented yet.
+> **Status:** early development. All seven actions work; the eject generator is
+> not implemented yet.
 
 ## Requirements
 
@@ -52,9 +52,8 @@ block to nest in — and for each name it does three things:
    `app/controllers` is enough to keep the gem from defining anything.
 3. Draws the routes, by calling `resources` with the arguments it was given.
 
-Because the third step is plain `resources`, `recourses :contacts` also routes
-`show`, which no gem-supplied action answers yet. Pass `only:` to draw the six
-that work, or write `show` yourself.
+Because the third step is plain `resources`, `recourses :contacts` routes all
+seven actions, and all seven are answered.
 
 A resource with no `index` route gets no sidebar entry, which is what
 `only: []` is for.
@@ -123,6 +122,7 @@ route back into the `get` lines that generator writes for named actions, and
 | Action | What it answers |
 | --- | --- |
 | `index` | one page of the model — 20 rows, `?page=2` for the next |
+| `show` | the record the id names, read out |
 | `new` | a blank record's form |
 | `create` | the index again, or the form with the errors on it |
 | `edit` | the form for the record the id names |
@@ -136,8 +136,19 @@ instead. A heading sorts the table by its own column where the model allows
 it, and the form above the table narrows what it shows, by search or by
 filter.
 
-`new` and `edit` assign the record twice: to `@recourse`, and to the name Rails
-would use, so `@contact` is what a view of yours can read.
+`show` reads one record out where its form would have been: the same grid the
+edit page uses, `lg:col-6` so it is two columns on a large viewport, with the
+heading a form would give each column above and what the record says below. No
+form and no field — a value the record has nothing for reads as an em dash. It
+shows the columns a *table* would, not the ones a form would, which is what keeps
+a decrypted phone number off a page that only reads.
+
+`show` and `edit` are what an index row links to, an eye then a pencil, and each
+appears only where its action is both implemented and routed. A resource with
+neither gets no `Actions` column at all.
+
+`new`, `show` and `edit` assign the record twice: to `@recourse`, and to the name
+Rails would use, so `@contact` is what a view of yours can read.
 
 `destroy` is offered from the edit page, as a button beside the breadcrumb, and
 only where the action is both implemented and routed. It asks first, through
@@ -152,8 +163,8 @@ delete.
 `create` and `update` permit every editable column, then take one of two
 branches. Saved, they set `flash.notice` to `Contact was created.` and redirect
 to the index with `303 See Other`; rejected, they set `flash.now.alert` and
-re-render the form with `422 Unprocessable Entity`. `edit` and `update` look
-their record up with `find`, so an id that names nothing raises
+re-render the form with `422 Unprocessable Entity`. `show`, `edit`, `update` and
+`destroy` look their record up with `find`, so an id that names nothing raises
 `ActiveRecord::RecordNotFound` and Rails answers `404`.
 
 Two column lists decide what a screen shows, and they are deliberately not the
@@ -167,6 +178,11 @@ same one:
 - A form offers, and `create` permits, `Recourse.editable_columns` — every
   column except `id`, `created_at` and `updated_at`. Encrypted columns are
   offered, as password fields.
+
+The show page reads from the first of those two, the table's list, and so shows
+neither ciphertext nor a readonly column. Deliberate: a form may offer what only
+the database should keep, but a page that reads a record out shows what a page
+that lists them would.
 
 A column holding a counter cache is headed with what it counts — `ZIPs` rather
 than `ZIPs count` — which the gem reads from the `counter_cache` on the other side
@@ -435,9 +451,10 @@ Anything your app defines wins, because your app's view paths come first and
 | Define this | To replace |
 | --- | --- |
 | `app/controllers/contacts_controller.rb` | the whole controller |
-| `app/views/contacts/index.html.erb` | the index template — `new` and `edit` the same way |
+| `app/views/contacts/index.html.erb` | the index template — `show`, `new` and `edit` the same way |
 | `app/views/contacts/_row.html.erb` | the cells of one row |
 | `app/views/contacts/_fields.html.erb` | the fields of the form |
+| `app/views/contacts/_values.html.erb` | the values the show page reads out |
 | `app/views/recourses/_sidebar.html.erb` | a shared partial, for every resource at once |
 
 Clear the cache after adding one. The index table renders inside a fragment
@@ -495,6 +512,15 @@ would have chosen:
 
 The form builder is not a local — it reaches `field` through `@recourse_form`,
 so `field :phone` is all the call site has to say.
+
+A values partial is the same shape again, for the show page, and builds its rows
+with `value`. It needs no builder at all, so `label:` is the only option:
+
+```erb
+<%# locals: (contact:) -%>
+<%= value :name, label: 'First name' %>
+<%= value :phone %>
+```
 
 ## Rewording anything it says
 
@@ -583,6 +609,12 @@ Searching and filtering:
 - `filter_field(predicate, label: nil, scope: nil)` — one filter, a multiple
   combobox of the records a foreign key points at
 
+Reading one out:
+
+- `value(name, label: nil)` — one labelled value in the show page's grid, the
+  heading a form would give the column above what the table would print below
+- `resource_value(column)` — that value alone, an em dash where there is none
+
 Building a form:
 
 - `field(name, label: nil, type: nil)` — one labelled field in the grid
@@ -608,9 +640,11 @@ Chrome:
 - `resource_label(resource, title, key = nil)` — the icon its model picked and a
   title, for a link to a resource, with the letter at `key` marked as its
   keyboard shortcut
-- `new_resource_path`, `edit_resource_link(record)`,
+- `new_resource_path`, `show_resource_link(record)`, `edit_resource_link(record)`,
   `destroy_resource_button(record)` — nil and nothing when the action is not
   defined or not routed, so a link never points at a `404`
+- `resource_links(record)` — both row links together, or nothing where a row has
+  neither; `resource_actions?` is what the table asks before drawing the column
 - `destroy_warning(record)` — the text that button asks for confirmation with
 - `turbo_link_to(name, path, **options)` — `link_to` for a link inside a table,
   carrying the `data-turbo-frame='_top'` that takes it out of the results frame

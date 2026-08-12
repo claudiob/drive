@@ -5,7 +5,7 @@ class RecoursesController < ApplicationController
   helper Recourse::Helpers
 
   # `find` raises RecordNotFound, so an id that names nothing answers 404.
-  before_action :find_resource, only: %i[edit update destroy]
+  before_action :find_resource, only: %i[show edit update destroy]
 
   # Lists one page of the model the route is named after. `@q` is Ransack's own
   # name for a search, which is what its form and sort link helpers look for.
@@ -33,6 +33,9 @@ class RecoursesController < ApplicationController
       render :new, status: :unprocessable_entity
     end
   end
+
+  # Reads out the record the id names, which is already known to exist.
+  def show; end
 
   # Shows the form for the record the id names, which is already known to exist.
   def edit; end

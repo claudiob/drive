@@ -225,6 +225,31 @@ before writing or editing any layout, view or partial.
   visit is Turbo's like any other, and the `accesskey` attribute is deliberately
   not set: the browser would activate the same link a second time.
 
+## The show page
+
+- It is the edit page with the form taken out. Same `.row`, same
+  `mb-3 lg:col-6` per attribute — two columns on a large viewport, one below it —
+  and the same title, the record's own label, so a look and a change never
+  disagree about what the page is called.
+- Each attribute is a heading and a value, not a definition list: a
+  `<div class='form-label'>` above a `<div class='form-control-plaintext'>`. The
+  first is the class the form's `<label>` wears and the second is Bootstrap's own
+  read-only control, whose padding and line height are a control's, so a value sits
+  exactly where the input holding it would have.
+- `.form-control-plaintext` and not a disabled `.form-control`: a box a person
+  cannot type in invites them to try. This page has no form on it at all, which is
+  the whole difference from the edit page.
+- The values are the ones a *table* would print, and formatted by the same helper —
+  a foreign key reads as the label of what it points at, a date as `Aug 12, 2026`,
+  a counter with the icon of what it counts. So a column reads the same whether it
+  is met in a row or on a page of its own.
+- Which also settles what is left off: no ciphertext, no `attr_readonly` column, and
+  no timestamp the model did not ask for. A form may offer what only the database
+  should keep; a page that reads a record out shows what a page listing them would.
+- A value the record has nothing for reads as an em dash, so a heading is never left
+  standing over a gap. `false` is something a record says, so only nil and an empty
+  list get the dash.
+
 ## Forms
 
 - The gem serves `new.html.erb`: it sets `:title` to `New <resource>` and
@@ -491,12 +516,18 @@ before writing or editing any layout, view or partial.
   rather than `_row`. That is the whole point of putting it there: a host that
   writes its own row still gets the column, appended after whatever columns that
   row defines, so `/contacts` reads `Name | Phone | Created at | Actions`.
-- Where the resource has an `edit` action each row links to it, and the link's
-  content is the `<i class='bi bi-pencil-square'></i>` icon rather than the word.
-  It carries `aria-label='Edit'`, since an icon alone says nothing to a screen
-  reader.
-- A resource with no `edit` action gets no column at all, rather than a heading
-  over an empty column on every row.
+- A row links to what a record has: an eye to the show page, then a pencil to the
+  edit one, each drawn only where its action is both implemented and routed. The
+  content of each is the icon rather than the word —
+  `<i class='bi bi-eye'></i>` and `<i class='bi bi-pencil-square'></i>` — and each
+  carries an `aria-label`, since an icon alone says nothing to a screen reader.
+- The pair sits in one `<div class='d-flex gap-2'>`, so two icons in a cell read as
+  two things to click rather than as one smudge.
+- A look before a change, in the order the seven actions are drawn. Never the other
+  way round: the pencil is the one that matters, and putting it under the cursor
+  first is how a row gets edited by accident.
+- A resource with neither action gets no column at all, rather than a heading over
+  an empty column on every row.
 - It is as narrow as the pencil in it: `.recourse-actions` asks for `width: 1%`,
   which is the least a cell can ask for, and a table laying out to 100% hands what
   that cell cannot use to the columns carrying text. `min-content` would still fit
