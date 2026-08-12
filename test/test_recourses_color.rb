@@ -4,12 +4,14 @@ require 'action_dispatch/testing/integration'
 # What a host's `Recourse.color` does to the pages the gem serves.
 class TestRecoursesColor < Minitest::Test
   def setup
+    @color = Recourse.color
     @session = ActionDispatch::Integration::Session.new Rails.application
   end
 
-  # Global, so every other test would see it left behind.
+  # Put back rather than cleared: it is global, and the dummy app's initializer set
+  # it, so clearing would leave every test that ran after this one in another app.
   def teardown
-    Recourse.color = nil
+    Recourse.color = @color
   end
 
   def test_a_chosen_color_overrides_bootstraps_primary
@@ -26,6 +28,6 @@ class TestRecoursesColor < Minitest::Test
 
     assert_equal '`Recourse.color` is one of blue, orange, purple, pink, and brown, or ' \
                  "nil for Bootstrap's own blue. It cannot be taupe.", error.message
-    assert_nil Recourse.color
+    assert_equal @color, Recourse.color
   end
 end
