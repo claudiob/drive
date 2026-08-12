@@ -1,0 +1,19 @@
+<%# locals: (tabs:) -%>
+<%# `card-header-tabs` is what pulls the row up into the header's padding, so the
+    active tab meets the body it belongs to instead of floating above it. -%>
+<div class='card'>
+  <div class='card-header'>
+    <ul class='nav nav-tabs card-header-tabs'>
+      <% tabs.each do |label, path, current| %>
+        <li class='nav-item'>
+          <%= link_to label, path, class: class_names('nav-link', active: current),
+                                   aria: { current: ('page' if current) } %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class='card-body'>
+    <%= yield %>
+  </div>
+</div>

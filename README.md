@@ -163,6 +163,12 @@ gives away.
 appears only where its action is both implemented and routed. A resource with
 neither gets no `Actions` column at all.
 
+Both pages wrap their content in a Bootstrap card whose header is a row of tabs,
+one per page the record has — `Show` behind the eye, then `Edit` behind the
+pencil, with the page being read marked `active` and `aria-current='page'`. They
+are links rather than a JavaScript tab set, since each is a page of its own; a
+resource with only one of the two gets a card with one tab.
+
 `new`, `show` and `edit` assign the record twice: to `@recourse`, and to the name
 Rails would use, so `@contact` is what a view of yours can read.
 
@@ -530,6 +536,7 @@ Anything your app defines wins, because your app's view paths come first and
 | `app/views/contacts/_row.html.erb` | the cells of one row |
 | `app/views/contacts/_fields.html.erb` | the fields of the form |
 | `app/views/contacts/_values.html.erb` | the values the show page reads out |
+| `app/views/recourses/_card.html.erb` | the tabbed card the show and edit pages sit in |
 | `app/views/recourses/_sidebar.html.erb` | a shared partial, for every resource at once |
 
 Clear the cache after adding one. The index table renders inside a fragment
@@ -730,6 +737,8 @@ Chrome:
   defined or not routed, so a link never points at a `404`
 - `resource_links(record)` — both row links together, or nothing where a row has
   neither; `resource_actions?` is what the table asks before drawing the column
+- `resource_tabs(record)` — the pages a record has as `[label, path, current]`, which
+  is what the card's header draws
 - `destroy_warning(record)` — the text that button asks for confirmation with
 - `turbo_link_to(name, path, **options)` — `link_to` for a link inside a table,
   carrying the `data-turbo-frame='_top'` that takes it out of the results frame

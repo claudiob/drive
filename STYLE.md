@@ -225,6 +225,24 @@ before writing or editing any layout, view or partial.
   visit is Turbo's like any other, and the `accesskey` attribute is deliberately
   not set: the browser would activate the same link a second time.
 
+## The card a record sits in
+
+- A record's pages — `show` and `edit` — put their content in a `.card` whose
+  `.card-header` holds a `ul.nav.nav-tabs.card-header-tabs`, one tab per page the
+  record has. `card-header-tabs` is what pulls the row up into the header's padding,
+  so the active tab meets the body it belongs to instead of floating above it.
+- Tabs are *links*, not a JavaScript tab set: each is a page of its own, with its own
+  URL and its own breadcrumb. The current one carries `.active` and
+  `aria-current='page'`, the same pair a sidebar entry uses.
+- A look before a change, the order the seven actions are drawn and the order the row
+  links follow. Each tab wears that link's icon — the eye and the pencil — from one
+  `ICONS` map, so a row and a card cannot come to disagree about which is which.
+- One tab where a resource has only one of the two pages, rather than no card: the
+  card is what says which page of a record is being read, and that is worth saying
+  even when there is only one.
+- `new` gets no card. There is no record yet, so there is no other page of it to
+  offer, and a single `New` tab would name the page it is already on.
+
 ## The show page
 
 - It is the edit page with the form taken out. Same `.row`, same

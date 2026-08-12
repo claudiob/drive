@@ -1,5 +1,7 @@
 <% content_for :title, resource_record_label %>
 
-<div class='row'>
-  <%= render 'values', resource_key => resource_record %>
-</div>
+<%= render layout: 'card', locals: { tabs: resource_tabs(resource_record) } do %>
+  <div class='row'>
+    <%= render 'values', resource_key => resource_record %>
+  </div>
+<% end %>
