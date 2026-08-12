@@ -18,6 +18,11 @@ module Recourse
     # carries the same instant on every row of it.
     def recourse_timestamps = []
 
+    # What a column holds that no column type can say: `:price` and `:percentage`, per
+    # attribute. A decimal is only a number, and `hourly_rate` and `commission_rate`
+    # are not the same kind of one. Read by the show page and by the form alike.
+    def recourse_formats = {}
+
     # Columns holding a counter cache, each mapped to the association it counts. Read
     # from the `belongs_to` on the other side, which is where `counter_cache` is
     # declared: a column merely named `quote_count` is not one of these.

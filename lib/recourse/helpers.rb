@@ -7,6 +7,9 @@ require_relative 'helpers/deletions'
 require_relative 'helpers/examples'
 require_relative 'helpers/fields'
 require_relative 'helpers/filters'
+require_relative 'helpers/formats'
+require_relative 'helpers/inputs'
+require_relative 'helpers/kinds'
 require_relative 'helpers/navigation'
 require_relative 'helpers/references'
 require_relative 'helpers/searches'
@@ -17,7 +20,8 @@ module Recourse
   # View helpers for the pages the gem renders, and what the parts share.
   module Helpers
     include Actions, Cells, Colors, Comboboxes, Constraints, Deletions, Examples,
-            Fields, Filters, Navigation, References, Searches, Shortcuts, Values
+            Fields, Filters, Formats, Inputs, Kinds, Navigation, References, Searches,
+            Shortcuts, Values
 
     # Bootstrap theme for each flash key, so a notice and an alert read apart.
     FLASH_THEMES = { 'notice' => 'theme-success', 'alert' => 'theme-danger' }

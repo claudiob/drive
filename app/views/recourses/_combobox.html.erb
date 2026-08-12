@@ -1,4 +1,4 @@
-<%# locals: (name:, id:, invalid:, feedback:, label:, placeholder:, required:, recourses:, multiple: false, selected: [], aria_label: nil, small: false, all: nil) -%>
+<%# locals: (name:, id:, invalid:, feedback:, placeholder:, required:, label: nil, recourses: nil, values: [], multiple: false, selected: [], aria_label: nil, small: false, all: nil) -%>
 <button class='form-control<%= ' form-control-sm' if small %><%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
@@ -23,12 +23,21 @@
     <button type='button' class='menu-item' data-controller='deselect' data-action='deselect#all'><%= all %></button>
     <div class='menu-divider'></div>
   <% end -%>
-  <% cache [recourses, multiple, selected] do %>
-    <% recourses.each do |recourse| %>
-      <% chosen = selected.include? recourse.id.to_s -%>
-      <button class='menu-item<%= ' selected' if chosen %>' type='button' data-bs-value='<%= recourse.id %>' aria-selected='<%= chosen %>'><%= recourse.attributes[label] %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
+  <%# Records are cached on the relation, and a list of words is not worth caching:
+      an enum has a dozen of them and they are already in memory. -%>
+  <% if recourses -%>
+    <% cache [recourses, multiple, selected] do %>
+      <% recourses.each do |recourse| %>
+        <% chosen = selected.include? recourse.id.to_s -%>
+        <button class='menu-item<%= ' selected' if chosen %>' type='button' data-bs-value='<%= recourse.id %>' aria-selected='<%= chosen %>'><%= recourse.attributes[label] %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
+      <% end %>
     <% end %>
-  <% end %>
+  <% else -%>
+    <% values.each do |value| %>
+      <% chosen = selected.include? value -%>
+      <button class='menu-item<%= ' selected' if chosen %>' type='button' data-bs-value='<%= value %>' aria-selected='<%= chosen %>'><%= value %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
+    <% end %>
+  <% end -%>
   <div class='combobox-no-results d-none'><%= t 'recourse.no_results' %></div>
 </div>
 <% if feedback -%>

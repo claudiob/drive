@@ -25,10 +25,13 @@ module Recourse
         options = { class: 'form-control', size: nil }.merge field_html(column, type)
 
         return form.text_field column, **options, type: type if type
+        # A phone is a phone before it is ciphertext: the field types its own
+        # separators as they are keyed, and a password box would hide the fact.
+        return kind_field form, column, **options if attribute_kind(column) == :phone
         return encrypted_field form, column, **options if encrypted_column? column
         return form.email_field column, **options if column == 'email'
 
-        dated_field form, column, **options
+        kind_field form, column, **options
       end
 
     private
@@ -40,21 +43,8 @@ module Recourse
         form.password_field column, **, value: form.object.attributes[column]
       end
 
-      def dated_field(form, column, **)
-        case attribute_type column
-        when :date then form.date_field column, **
-        when :datetime then form.datetime_local_field column, **
-        else form.text_field column, **
-        end
-      end
-
       def encrypted_column?(column)
         Array(resource_model.encrypted_attributes).map(&:to_s).include? column
-      end
-
-      # The model's own attribute type, so an `attribute` override still counts.
-      def attribute_type(column)
-        resource_model.type_for_attribute(column).type
       end
     end
   end

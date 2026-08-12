@@ -27,9 +27,11 @@ module Recourse
     @declared << name.to_s unless @declared.include? name.to_s
   end
 
-  # Columns a user may set: the form offers these and `create` permits these.
+  # Columns a user may set: the form offers these, the show page reads these out, and
+  # `create` permits these. A counter cache is none of a user's business — Rails keeps
+  # it, so a form that offered one would let it be typed over.
   def self.editable_columns(model)
-    model.column_names - %w[id created_at updated_at]
+    model.column_names - %w[id created_at updated_at] - model.recourse_counters.keys
   end
 
   # Lower case, but for the words Rails was told are acronyms: `ZIP code` reads as

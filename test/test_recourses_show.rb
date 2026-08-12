@@ -41,7 +41,26 @@ class TestRecoursesShow < Minitest::Test
     visit @bare
 
     assert_includes body, '<div class="form-control-plaintext">—</div>'
-    assert_includes body, '<div class="form-control-plaintext">true</div>'
+    # A boolean is a picture either way, and the one a record never answered is a
+    # third picture rather than a dash.
+    assert_includes body, '<i class="bi bi-check" aria-label="true"></i>'
+    assert_includes body, '<i class="bi bi-square" aria-label="—"></i>'
+    # An enum is a badge, in the word the column holds.
+    assert_includes body, '<span class="badge">draft</span>'
+  end
+
+  # Every kind of number, read out as what it is of rather than as what it is stored
+  # as. Only the two the schema cannot tell apart are declared, in `recourse_formats`.
+  def test_a_number_reads_as_the_kind_of_number_it_is
+    @session.get "/providers/#{Provider.find_by!(name: 'Everything Provider').id}"
+
+    assert_includes body, '<div class="form-control-plaintext">$95.00</div>'
+    assert_includes body, '<div class="form-control-plaintext">15.00%</div>'
+    assert_includes body, '<div class="form-control-plaintext">12.500</div>'
+    assert_includes body, '<div class="form-control-plaintext">4.75</div>'
+    assert_includes body, '<div class="form-control-plaintext">128</div>'
+    # A counter cache is Rails' to keep, so no page reads one out and no form sets it.
+    refute_includes body, 'Bookings'
   end
 
   # The row's own way in, beside the pencil where a resource has both pages.

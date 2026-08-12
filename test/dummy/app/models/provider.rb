@@ -1,6 +1,6 @@
 # Someone who does jobs for the host app, identified by a unique phone number.
 class Provider < ApplicationRecord
-  include Phonable
+  include Phonable, Recoursive
 
   # Team sizes a provider identifies with, smallest to largest. A provider with...
   TEAM_SIZES = [

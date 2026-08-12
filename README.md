@@ -143,6 +143,15 @@ form and no field — a value the record has nothing for reads as an em dash. It
 lists the same columns the form offers, so the two pages never disagree about
 which attributes a record has.
 
+Each value reads as what it is of rather than as what it is stored as: a boolean is
+an icon — a tick, a cross, or an empty square for the one a record never answered —
+an enum is a badge, an integer carries its delimiters, a decimal is rounded to its
+own scale, a `:price` wears the currency and a `:percentage` a `%`, and a phone is
+punctuated. A counter cache is not shown at all, being Rails' to keep rather than
+anyone's to read. The kinds and the helpers behind them are the table under
+["What a field becomes"](#what-a-field-becomes), which the form reads too — one
+question, two answers.
+
 Encrypted columns are among them, and they arrive masked: one `*` per character,
 with a `Show` beside it that swaps the plaintext in. The value travels in a
 `data-reveal-plain-value` attribute and a Stimulus controller does the swap, so a
@@ -183,10 +192,10 @@ same one:
   model asks for them by name — `def recourse_timestamps = %i[created_at]` — and
   come last when it does, after whatever the record is actually about.
 - A form offers, and `create` permits, `Recourse.editable_columns` — every
-  column except `id`, `created_at` and `updated_at`. Encrypted columns are
-  offered, as password fields carrying the record's own value — masked by the
-  browser, and there so that saving a change to one column does not demand every
-  encrypted one be retyped.
+  column except `id`, `created_at`, `updated_at` and any counter cache. Encrypted
+  columns are offered, as password fields carrying the record's own value — masked
+  by the browser, and there so that saving a change to one column does not demand
+  every encrypted one be retyped.
 
 The show page reads from the second of those two, the form's list, which is why an
 encrypted column reaches it — masked — while no index table draws one at all. A
@@ -216,6 +225,7 @@ there without a model mentioning them.
 | `recourse_includes` | every `belongs_to` the table names | what the index eager-loads, in any shape `includes` accepts |
 | `recourse_order` | `:id` | how the index sorts, in any shape `order` accepts |
 | `recourse_timestamps` | `[]` | which of `created_at` and `updated_at` the table ends with |
+| `recourse_formats` | `{}` | what a column holds that no column type can say: `{ hourly_rate: :price, commission_rate: :percentage }` |
 
 Overriding one means overriding a class method, which is what the `Recoursive`
 concern next to the model is for:
@@ -353,13 +363,29 @@ case.
 | --- | --- |
 | a foreign key whose label is typed, or whose table is too long to list | text field, resolved to an id on submit |
 | any other foreign key | a searchable combobox of every record, by label |
+| a counter cache | none: Rails keeps it, so no form offers it and `create` does not permit it |
+| `phone` | telephone field, typing its own separators as it goes |
 | an encrypted attribute | password field, prefilled |
 | `email` | email field |
+| a `boolean` | checkbox, under its label like every other control |
+| an `enum` | a combobox of the words it admits, one at a time |
+| an `integer` | number field, `step="1"` |
+| a `float` | number field, `step="any"` |
+| a `decimal` | number field stepped by its scale and capped by its precision — `scale: 2, precision: 4` gives `step="0.01" max="99.99"` |
+| a `:price` | the same, with the currency in a `.form-adorn-text` before it |
+| a `:percentage` | the same, with `%` after it, through `.form-adorn-end` |
 | a `date` or `datetime` attribute | date or `datetime-local` field |
 | anything else | text field |
 
 The type comes from the model's own `type_for_attribute`, so an `attribute
-:opens_on, :date` override counts.
+:opens_on, :date` override counts, and so do its `precision` and `scale` —
+`columns_hash` is never asked. `:price` and `:percentage` are the two no column
+type can state, so a model states them in `recourse_formats`; everything else in
+that table is read off the schema or off the name.
+
+A phone is a phone before it is ciphertext: an encrypted `phone` gets the
+telephone field rather than the password one, since the field types its own
+separators and a password box would hide the fact. The show page still masks it.
 
 What the browser then enforces is read from the validators, never from the
 schema: `maxlength` and `minlength` from a length validator, `pattern` from a
@@ -621,15 +647,24 @@ Searching and filtering:
 Reading one out:
 
 - `value(name, label: nil)` — one labelled value in the show page's grid, the
-  heading a form would give the column above what the table would print below
+  heading a form would give the column above what the record says below
 - `resource_value(column)` — that value alone, an em dash where there is none.
   `value` is what masks an encrypted one; this is the value itself
+- `formatted_value(column)` — the value formatted by what the column holds, with
+  no em dash and no mask
+- `attribute_kind(column)` — what the column holds, as `:counter`, `:price`,
+  `:percentage`, `:enum`, `:phone` or the attribute's own type. The one question
+  the show page and the form both answer
+- `icon_tag(concept, label: nil)` — one Bootstrap icon, by the concept Unicon
+  names it under rather than by what this set happens to call it
 
 Building a form:
 
 - `field(name, label: nil, type: nil)` — one labelled field in the grid
 - `editable_columns` — the columns a form offers
 - `resource_field(form, column, type: nil)` — the field alone, unlabelled
+- `kind_field(form, column, **options)` — the field a column's kind deserves, which
+  is what `resource_field` falls through to
 - `combobox(form, column, association)` — the menu a foreign key offers
 - `field_html(column, type = nil, model = resource_model)` — the browser-side
   constraints a column's validators add up to

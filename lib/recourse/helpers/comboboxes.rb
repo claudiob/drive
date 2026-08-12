@@ -6,16 +6,24 @@ module Recourse
       # nothing else, and the errors are its own work: `field_error_proc` only ever
       # sees the tags a form builder drew, and this is a partial.
       def combobox(form, column, association)
-        messages = errors_on column
         label = association.klass.recourse_label
-        render 'recourses/combobox', name: form.field_name(column),
-                                     id: form.field_id(column),
-                                     invalid: messages.any?,
-                                     feedback: messages.to_sentence.upcase_first.presence,
+
+        render 'recourses/combobox', **combobox_locals(form, column),
                                      label: label.to_s,
-                                     placeholder: combobox_placeholder(column),
-                                     required: required?(resource_model, column),
                                      recourses: combobox_options(association.klass, label)
+      end
+
+      # What every combobox needs to know about the column it sets, whatever it offers
+      # as choices: the enum one asks for these too, and gives `values:` instead.
+      def combobox_locals(form, column)
+        messages = errors_on column
+
+        {
+          name: form.field_name(column), id: form.field_id(column), invalid: messages.any?,
+          feedback: messages.to_sentence.upcase_first.presence,
+          placeholder: combobox_placeholder(column),
+          required: required?(resource_model, column),
+        }
       end
 
     private

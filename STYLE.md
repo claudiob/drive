@@ -241,10 +241,18 @@ before writing or editing any layout, view or partial.
   the whole difference from the edit page.
 - One row per *editable* column, the same list the form offers, so the two pages
   never disagree about which attributes a record has. Encrypted columns included.
-- Each value is formatted by the table's own helper — a foreign key reads as the
-  label of what it points at, a date as `Aug 12, 2026`, a counter with the icon of
-  what it counts — so a column reads the same whether it is met in a row or on a
-  page of its own.
+- Each value reads as what it is *of*, not as what it is stored as. A foreign key is
+  the label of what it points at, a date is `Aug 12, 2026`, an integer carries its
+  delimiters, a decimal is rounded to its own scale, a price wears the currency and a
+  percentage a `%`, and a phone is punctuated.
+- A boolean is a picture: `Unicon[:check]` for true, `Unicon[:close]` for false, and
+  `Unicon[:square]` for the one a record never answered. Three states rather than two
+  and a dash, because an empty box is a fact about the record and a dash is a fact
+  about the page. Each carries an `aria-label`, since an icon says nothing aloud.
+- An enum is a `.badge`, in the word the column holds rather than a humanized one —
+  the same word the form's menu offers, so the two never read differently.
+- A counter cache is not on the page at all. Rails keeps it, so there is nothing to
+  read and nothing to set; the index table is where a count belongs.
 - An encrypted value arrives masked: one `*` per character, and a `Show` beside it
   that swaps the plaintext in. The plaintext travels in a
   `data-reveal-plain-value` attribute and the swap is a Stimulus controller, so
@@ -271,6 +279,24 @@ before writing or editing any layout, view or partial.
 - After a rejected update the title shows what was typed, not what is stored,
   because the record already carries the submitted values. Blanking the label
   blanks the title.
+- Which field a column gets is decided by what it holds, the same question the show
+  page asks: `attribute_kind`. A checkbox for a boolean, a combobox for an enum, a
+  number field stepped by what the column keeps, a telephone field for a phone.
+- A checkbox goes *under* its label like every other control, not beside it the way
+  Bootstrap's own examples put it. The grid is label-above-control throughout, and
+  the show page draws the same attribute's icon under the same label.
+- A number field says what it will take: `step="1"` for an integer, `step="any"` for
+  a float, and for a decimal the scale as the step and the precision as the cap —
+  `scale: 2, precision: 4` gives `step="0.01" max="99.99"`. No `min`: how far below
+  zero a column may go is the model's business, not the schema's.
+- A price and a percentage are adorned rather than labelled twice. The wrapper takes
+  `.form-control form-adorn d-flex` and the border and padding with it, the unit is a
+  `.form-adorn-text`, and the input inside is a `.form-ghost` with neither.
+  `.form-adorn-end` reorders the pair, so `%` follows the number and the currency
+  precedes it.
+- The currency is `number.currency.format.unit` from the locale, never a `$` written
+  into a view: an app that counts in euros says so once, where its numbers are
+  already formatted.
 - The form is `form_with model:` plus one field per *editable* column — every
   column except `id`, `created_at` and `updated_at`. Encrypted columns are
   editable even though the table will not display them.

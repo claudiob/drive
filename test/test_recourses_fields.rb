@@ -11,6 +11,37 @@ class TestRecoursesFields < Minitest::Test
                  session.response.body
   end
 
+  # What a column holds is what its field is. Only the two kinds no column type can
+  # tell apart are declared, in `recourse_formats`.
+  def test_each_kind_of_number_gets_the_field_that_fits_it
+    session = ActionDispatch::Integration::Session.new Rails.application
+    session.get '/providers/new'
+    body = session.response.body
+
+    assert_includes body, '<div><input name="provider[active]" type="hidden" value="0" />' \
+                          '<input class="check" type="checkbox"'
+    assert_match %r{step="1" type="number" name="provider\[review_number\]"}, body
+    assert_match %r{step="any" type="number" name="provider\[service_radius\]"}, body
+    # A scale says how many decimals fit, and a precision how many digits in all.
+    assert_includes body, 'step="0.01" max="99.99" type="number" value="15.0"'
+    # An enum is a menu of the words it admits, and a counter cache is not a field.
+    assert_includes body, %(data-bs-value='small')
+    refute_includes body, 'provider[bookings_count]'
+  end
+
+  # The unit adorns the control rather than sitting inside it: at the end for a
+  # percentage, at the start for money, and the input inside is a ghost either way.
+  def test_a_price_and_a_percentage_wear_their_unit
+    session = ActionDispatch::Integration::Session.new Rails.application
+    session.get '/providers/new'
+    body = session.response.body
+
+    assert_includes body, '<div class="form-control form-adorn d-flex form-adorn-end">' \
+                          '<span class="form-adorn-text">%</span><input class="form-ghost"'
+    assert_includes body, '<div class="form-control form-adorn d-flex">' \
+                          '<span class="form-adorn-text">$</span><input class="form-ghost"'
+  end
+
   # The host's own `_fields` names both types, which beats the encrypted-column
   # rule, and the phone carries the only bracket class of any pattern in the app.
   def test_a_host_names_the_types_and_the_title_shows_the_format

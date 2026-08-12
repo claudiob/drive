@@ -14,21 +14,27 @@ module Recourse
         end
       end
 
-      # What the record says for one column, or a dash where it says nothing. `false`
-      # is something it says, so only nil and an empty list read as nothing.
+      # What the record says for one column, or a dash where it says nothing. A
+      # boolean says something either way, and an icon says it, so only a value that
+      # formats to nothing at all reads as nothing.
       def resource_value(column)
-        value = resource_cell resource_record, column
+        value = formatted_value column
 
         value.to_s.empty? ? t('recourse.blank') : value
       end
 
     private
 
+      # Nothing to disclose is nothing to mask: an encrypted column the record has no
+      # value for reads as the dash, rather than as one asterisk hiding one.
       def value_control(column)
-        value = resource_value column
-        return tag.div value, class: 'form-control-plaintext' unless encrypted_column? column
+        return masked_value formatted_value(column) if masked? column
 
-        masked_value value
+        tag.div resource_value(column), class: 'form-control-plaintext'
+      end
+
+      def masked?(column)
+        encrypted_column?(column) && resource_record.attributes[column].present?
       end
 
       # PII is a page's to show and nobody's to leak by accident, so it arrives as one
@@ -36,7 +42,7 @@ module Recourse
       # screenshot of the page discloses nothing, and reading one value takes a click.
       def masked_value(value)
         options = {
-          class: 'form-control-plaintext d-flex gap-2',
+          class: 'form-control-plaintext d-flex gap-2 align-items-end',
           data: { controller: 'reveal', reveal_plain_value: value },
         }
 
@@ -49,7 +55,7 @@ module Recourse
 
       def reveal_button
         tag.button t('recourse.reveal'), type: :button,
-                                         class: 'btn btn-link btn-sm p-0 align-baseline',
+                                         class: 'btn btn-link btn-sm p-0',
                                          data: { action: 'reveal#show', reveal_target: 'button' }
       end
     end
