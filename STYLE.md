@@ -32,6 +32,26 @@ before writing or editing any layout, view or partial.
 - The engine serves them with `Rack::Static`, since a host may run no asset
   pipeline at all — see CLAUDE.md, "Vendor what a page cannot render without".
 
+## The primary colour
+
+- Bootstrap's primary is blue, and `Recourse.color` is what changes it — nil by
+  default, and one of `blue`, `orange`, `purple`, `pink` or `brown`.
+- Five of the sixteen families, because `--bs-primary-contrast` is white and these
+  are the five dark enough at their 500 step to carry it. The other eleven are
+  declined rather than forgotten, and anything else raises.
+- Never restyle a component to recolour it. `.theme-primary` maps all nine
+  `--bs-primary-*` properties onto `--bs-theme-*`, so redefining those nine is what
+  carries a colour to every button, link, sorted heading and focus ring at once.
+- The nine live in `_color.html.erb`, copied from `bootstrap.min.css` in upstream's
+  order and upstream's shapes with only the family swapped — including the
+  two-branch `light-dark` focus ring, which is worth keeping verbatim so a later
+  Bootstrap can be diffed against it.
+- The block goes *after* the stylesheet link in the head. Both selectors are
+  `:root`, so it wins on being later and nothing else; put it before and it does
+  nothing at all.
+- A host wanting the eleven, or a palette of its own, overrides that partial. It
+  takes the family as its one local, so a host's version can ignore it entirely.
+
 ## The navbar
 
 - Every page opens with a navbar holding a breadcrumb, then `yield :actions`,

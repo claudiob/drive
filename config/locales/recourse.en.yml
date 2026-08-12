@@ -27,6 +27,8 @@ en:
     searched_cont: Filter by %{list}
     searched_eq: Filter by exact %{list}
     select: Select…
+    unknown_color: "`Recourse.color` is one of %{colors}, or nil for Bootstrap's own
+      blue. It cannot be %{color}."
     updated: "%{model} was updated."
     updated_error: "%{model} could not be updated."
     deletion:

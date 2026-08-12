@@ -522,6 +522,33 @@ every language a key might be translated into. `Select…` says as much as `Sele
 a State…` under a label that already reads `State`. If your models all take the
 same article, the keys above are where you say so.
 
+## Recolouring it
+
+```ruby
+# config/initializers/recourse.rb
+Recourse.color = :orange
+```
+
+Bootstrap's primary colour is blue, and one line makes it one of five others:
+
+```ruby
+Recourse::COLORS # => [:blue, :orange, :purple, :pink, :brown]
+```
+
+Every button, link, sorted heading and focus ring follows, because `.theme-primary`
+and everything else Bootstrap draws in that colour read the nine `--bs-primary-*`
+custom properties that the gem's layout redefines under `:root` when a colour is
+set. Nothing is emitted when it is nil, which is the default.
+
+Five of the sixteen families Bootstrap ships, and the other eleven are left out
+rather than forgotten: `--bs-primary-contrast` is white, and these five are the
+ones dark enough at their 500 step to carry white text. Anything else raises a
+`Recourse::Error` naming the five, rather than writing `var(--bs-purpel-500)` into
+every page and going unnoticed until somebody looked at a button.
+
+A host that wants the eleven, or a palette of its own, overrides
+`app/views/recourses/_color.html.erb`, which takes the family as its one local.
+
 ## Helpers
 
 `RecoursesController` does `helper Recourse::Helpers`, so these are available in
@@ -623,6 +650,9 @@ what is cached from correct into cheap.
 - `Recourse.declare(name)` — records one, ignoring a repeated draw
 - `Recourse.model(name)` — the model a resource is named after, or a
   `Recourse::Error` naming the routes line to fix
+- `Recourse.color` / `Recourse.color=` — the Bootstrap colour family the pages
+  call primary, one of `Recourse::COLORS`, or nil for Bootstrap's own blue
+- `Recourse::COLORS` — `%i[blue orange purple pink brown]`
 - `Recourse.icon(name)` — what that model's `recourse_icon` is called in
   Bootstrap Icons
 - `Recourse.model_icon(model)` — the same for a model already in hand

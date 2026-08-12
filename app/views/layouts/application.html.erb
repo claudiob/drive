@@ -14,6 +14,8 @@
     <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap'>
     <link rel='stylesheet' href='/recourse/bootstrap.min.css'>
     <link rel='stylesheet' href='/recourse/bootstrap-icons.min.css'>
+    <%# After the stylesheet, which is what makes it win: both selectors are `:root`. -%>
+    <%= primary_color_style %>
 
     <%# `data:,` is an empty document, which is what stops the browser asking a host
         for a `/favicon.ico` it has no reason to have. The controller replaces it. -%>
