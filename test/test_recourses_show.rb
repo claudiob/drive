@@ -9,7 +9,8 @@ class TestRecoursesShow < Minitest::Test
     @session = ActionDispatch::Integration::Session.new Rails.application
     @contact = Contact.create! name: 'Ada', phone: '2125550999'
     @filled = Booking.create! summary: 'Everything booking', contact: @contact,
-                              zip: ZIP.first!, city: 'Cupertino', subscribed: false
+                              zip: ZIP.first!, city: 'Cupertino', subscribed: false,
+                              street: '1 Infinite Loop'
     @bare = Booking.create! summary: 'Bare booking', contact: @contact, zip: ZIP.first!
   end
 
@@ -29,7 +30,9 @@ class TestRecoursesShow < Minitest::Test
     assert_includes body, '<div class="form-control-plaintext">Cupertino</div>'
     # A foreign key reads as what it points at, the same as in the table.
     assert_includes body, '<div class="form-control-plaintext">Ada</div>'
-    # No form anywhere on it, which is the whole difference from the edit page.
+    # The same columns the form offers, encrypted ones included — masked, and with
+    # a button rather than a form, which is the whole difference from the edit page.
+    assert_includes body, 'data-reveal-plain-value="1 Infinite Loop"'
     refute_includes body, '<form'
   end
 

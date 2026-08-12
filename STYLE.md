@@ -239,13 +239,23 @@ before writing or editing any layout, view or partial.
 - `.form-control-plaintext` and not a disabled `.form-control`: a box a person
   cannot type in invites them to try. This page has no form on it at all, which is
   the whole difference from the edit page.
-- The values are the ones a *table* would print, and formatted by the same helper —
-  a foreign key reads as the label of what it points at, a date as `Aug 12, 2026`,
-  a counter with the icon of what it counts. So a column reads the same whether it
-  is met in a row or on a page of its own.
-- Which also settles what is left off: no ciphertext, no `attr_readonly` column, and
-  no timestamp the model did not ask for. A form may offer what only the database
-  should keep; a page that reads a record out shows what a page listing them would.
+- One row per *editable* column, the same list the form offers, so the two pages
+  never disagree about which attributes a record has. Encrypted columns included.
+- Each value is formatted by the table's own helper — a foreign key reads as the
+  label of what it points at, a date as `Aug 12, 2026`, a counter with the icon of
+  what it counts — so a column reads the same whether it is met in a row or on a
+  page of its own.
+- An encrypted value arrives masked: one `*` per character, and a `Show` beside it
+  that swaps the plaintext in. The plaintext travels in a
+  `data-reveal-plain-value` attribute and the swap is a Stimulus controller, so
+  what a screenshot catches is asterisks and reading one value is a click. See
+  CLAUDE.md, "Encrypt PII", for why the page shows PII at all.
+- The `Show` is a `<button class='btn btn-link btn-sm p-0 align-baseline'>`, not an
+  `<a href='#'>`: it goes nowhere, and a link that goes nowhere is a link that
+  breaks when middle-clicked. It removes itself once it has fired, since a reveal
+  that has nothing left to reveal reads as though there were more to see.
+- The mask and the button sit in the one `.form-control-plaintext`, made
+  `d-flex gap-2`, so the pair stays on the line the value would have occupied.
 - A value the record has nothing for reads as an em dash, so a heading is never left
   standing over a gap. `false` is something a record says, so only nil and an empty
   list get the dash.
@@ -280,9 +290,11 @@ before writing or editing any layout, view or partial.
   the browser turns the form back before the server ever sees it. It is the same
   judgement the placeholder makes, from the same validators — the two are
   readings of one fact and never disagree.
-- Worth knowing before there is an `edit` action: a required encrypted attribute
-  is a required password field, and a password field renders empty, so editing a
-  record would demand the value be retyped. Revisit the rule then, not now.
+- An encrypted attribute's password field carries the record's own value, which is
+  the revisiting that bullet used to defer. A password field renders empty by
+  default, so a required encrypted column would have demanded its value be retyped
+  before anything else about the record could be saved. The browser masks it in the
+  box, which is the protection the show page's asterisks give.
 - A required field shows the shape it expects instead: `555-555-5555` for a
   phone, `michael@example.com` for an email. Every other required field has no
   placeholder, since there is nothing useful to show.

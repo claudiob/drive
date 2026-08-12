@@ -25,6 +25,7 @@ en:
     none: "No %{models}."
     optional: Optional
     reference: "%{model} %{attribute}"
+    reveal: Show
     search: Search…
     searched_cont: Filter by %{list}
     searched_eq: Filter by exact %{list}

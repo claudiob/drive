@@ -140,8 +140,15 @@ filter.
 edit page uses, `lg:col-6` so it is two columns on a large viewport, with the
 heading a form would give each column above and what the record says below. No
 form and no field — a value the record has nothing for reads as an em dash. It
-shows the columns a *table* would, not the ones a form would, which is what keeps
-a decrypted phone number off a page that only reads.
+lists the same columns the form offers, so the two pages never disagree about
+which attributes a record has.
+
+Encrypted columns are among them, and they arrive masked: one `*` per character,
+with a `Show` beside it that swaps the plaintext in. The value travels in a
+`data-reveal-plain-value` attribute and a Stimulus controller does the swap, so a
+screenshot of the page catches asterisks and reading one value is a deliberate
+click. Encryption settles what the database keeps; the mask settles what a screen
+gives away.
 
 `show` and `edit` are what an index row links to, an eye then a pencil, and each
 appears only where its action is both implemented and routed. A resource with
@@ -177,12 +184,14 @@ same one:
   come last when it does, after whatever the record is actually about.
 - A form offers, and `create` permits, `Recourse.editable_columns` — every
   column except `id`, `created_at` and `updated_at`. Encrypted columns are
-  offered, as password fields.
+  offered, as password fields carrying the record's own value — masked by the
+  browser, and there so that saving a change to one column does not demand every
+  encrypted one be retyped.
 
-The show page reads from the first of those two, the table's list, and so shows
-neither ciphertext nor a readonly column. Deliberate: a form may offer what only
-the database should keep, but a page that reads a record out shows what a page
-that lists them would.
+The show page reads from the second of those two, the form's list, which is why an
+encrypted column reaches it — masked — while no index table draws one at all. A
+table is a page of records and a screenful of PII; a show page is one record, read
+on purpose.
 
 A column holding a counter cache is headed with what it counts — `ZIPs` rather
 than `ZIPs count` — which the gem reads from the `counter_cache` on the other side
@@ -344,7 +353,7 @@ case.
 | --- | --- |
 | a foreign key whose label is typed, or whose table is too long to list | text field, resolved to an id on submit |
 | any other foreign key | a searchable combobox of every record, by label |
-| an encrypted attribute | password field |
+| an encrypted attribute | password field, prefilled |
 | `email` | email field |
 | a `date` or `datetime` attribute | date or `datetime-local` field |
 | anything else | text field |
@@ -613,7 +622,8 @@ Reading one out:
 
 - `value(name, label: nil)` — one labelled value in the show page's grid, the
   heading a form would give the column above what the table would print below
-- `resource_value(column)` — that value alone, an em dash where there is none
+- `resource_value(column)` — that value alone, an em dash where there is none.
+  `value` is what masks an encrypted one; this is the value itself
 
 Building a form:
 
@@ -656,7 +666,8 @@ The gem vendors what its pages cannot render without and serves it from
 `/recourse/` through `Rack::Static`, so a host needs no asset pipeline:
 `bootstrap.min.css`, `bootstrap-icons.min.css` with its fonts,
 `bootstrap.bundle.min.js`, `stimulus.js`, and the gem's own Stimulus
-controllers — `clear`, `deselect`, `favicon`, `phone`, `search` and `shortcuts`.
+controllers — `clear`, `deselect`, `favicon`, `phone`, `reveal`, `search` and
+`shortcuts`.
 
 It also ships `app/views/layouts/application.html.erb`, which is what renders
 when your app has no layout of its own. When it has one — and most do — the

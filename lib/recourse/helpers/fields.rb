@@ -25,13 +25,20 @@ module Recourse
         options = { class: 'form-control', size: nil }.merge field_html(column, type)
 
         return form.text_field column, **options, type: type if type
-        return form.password_field column, **options if encrypted_column? column
+        return encrypted_field form, column, **options if encrypted_column? column
         return form.email_field column, **options if column == 'email'
 
         dated_field form, column, **options
       end
 
     private
+
+      def encrypted_field(form, column, **)
+        # A password field renders no value of its own, so a required encrypted column
+        # would demand its value be retyped before anything else could be saved. It
+        # carries the record's, which the browser masks the way the show page does.
+        form.password_field column, **, value: form.object.attributes[column]
+      end
 
       def dated_field(form, column, **)
         case attribute_type column

@@ -39,16 +39,31 @@ class TestRecoursesPii < Minitest::Test
     assert_includes body, 'placeholder="Filter by exact phone"'
   end
 
-  # And on the show page, which reads out one record rather than a table of them —
-  # the same column list, so the same columns are missing from it.
-  def test_encrypted_values_stay_off_the_show_page_too
+  # The show page is the exception, and a deliberate one: this is an admin tool for
+  # agents, so reading a record's PII is allowed. What is not allowed is disclosing
+  # it to whoever is behind the person reading, so it arrives masked.
+  def test_the_show_page_masks_an_encrypted_value_until_it_is_asked_for
     agent = Agent.create! email: 'ada@example.com'
     @session.get "/agents/#{agent.id}"
 
-    assert_includes body, '<div class="form-control-plaintext">Ada</div>'
-    ['Email', 'ada@example.com'].each { |value| refute_includes body, value }
+    assert_includes body, '<span data-reveal-target="mask">***************</span>'
+    # In an attribute for the reveal to swap in, and nowhere a screenshot would show.
+    assert_includes body, 'data-reveal-plain-value="ada@example.com"'
+    refute_includes body, '>ada@example.com<'
   ensure
     agent&.destroy
+  end
+
+  # The edit form carries one too, in a field the browser masks. A password field
+  # renders no value of its own, so a required encrypted column would otherwise
+  # demand its value be retyped before anything else about the record could be saved.
+  def test_the_edit_form_prefills_an_encrypted_field
+    contact = Contact.create! phone: '5552234567', surname: 'Lovelace'
+    @session.get "/contacts/#{contact.id}/edit"
+    field = body[/<input[^>]*name="contact\[surname\]"[^>]*>/]
+
+    assert_includes field, 'type="password"'
+    assert_includes field, 'value="Lovelace"'
   end
 
   def test_that_holds_for_a_row_stored_as_plaintext_too

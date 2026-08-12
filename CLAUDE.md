@@ -184,8 +184,15 @@ two is filed under the one a reader would look in first.
 - Never constrain the *shape* of an encrypted value in the database. What is
   stored is ciphertext, so only `null: false` and a unique index still mean
   anything; the format belongs to the model.
-- Encrypted columns never appear in a generic table, so encrypting a column
+- Encrypted columns never appear in a generic *table*, so encrypting a column
   removes it from the index page. That is intended — see `STYLE.md`.
+- A *show* page is the other way round: it draws every encrypted column, because
+  this is an admin tool for agents and reading a record's PII is part of the job.
+  Encryption settles what the database keeps, not what a page may say.
+- Which makes the screen the risk rather than the disk, so a page that shows PII
+  masks it: one asterisk per character, and a `Show` beside it that swaps the
+  plaintext in. A screenshot then discloses nothing nobody asked to see, and
+  reading one value is a deliberate click. Markup in `STYLE.md`.
 
 #### Phone numbers
 
@@ -241,10 +248,11 @@ two is filed under the one a reader would look in first.
   test comes with it only if it reaches a line nothing else does. The suite it
   leaves is small on purpose — six tests for 146 lines.
 - Two kinds of assertion are exempt, because a covered line cannot stand in for
-  them. How many queries a page costs, and whether an encrypted column reaches
-  the page: both run exactly the same lines whether they hold or not, so
-  coverage stays green while the behavior breaks. The PII leak that prompted the
-  second exemption printed an address at 100%.
+  them. How many queries a page costs, and how an encrypted column reaches the
+  page — masked on a show page, not at all on an index: both run exactly the same
+  lines whether they hold or not, so coverage stays green while the behavior
+  breaks. The PII leak that prompted the second exemption printed an address at
+  100%.
 - Nothing else is exempt. Markup, titles, breadcrumbs, icons, pagination links
   and the order of the sidebar are all asserted by whichever test happens to
   render the page, and no test is added to pin them down further.
