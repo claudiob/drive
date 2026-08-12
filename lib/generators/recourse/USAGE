@@ -1,0 +1,21 @@
+Description:
+    Everything `rails generate resource` writes, with the route drawn by
+    `recourses` rather than `resources`. That one word is what hands the model
+    its seven screens: index, new, create, edit, update and destroy, served by
+    this gem without a controller or a view of your own.
+
+    The controller it writes inherits RecoursesController rather than
+    ApplicationController, so the actions and the views arrive with it.
+
+Example:
+    bin/rails generate recourse contact name:string phone:string
+
+    This will create:
+        app/models/contact.rb, its migration, fixture and test
+        app/controllers/contacts_controller.rb, inheriting RecoursesController
+        app/helpers/contacts_helper.rb and app/views/contacts
+        recourses :contacts, in config/routes.rb
+
+    bin/rails generate recourse admin/market name:string
+
+    This will draw the route inside `namespace :admin`.

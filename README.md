@@ -85,6 +85,39 @@ where the routes were drawn, and a namespaced resource and its top-level twin ar
 separate entries: `/sources` and `/admin/sources` never mark each other as the
 page being shown.
 
+## `rails generate recourse`
+
+```
+$ bin/rails generate recourse contact name:string phone:string
+      invoke  active_record
+      create    db/migrate/20260812032723_create_contacts.rb
+      create    app/models/contact.rb
+      invoke    test_unit
+      create      test/models/contact_test.rb
+      invoke  controller
+      create    app/controllers/contacts_controller.rb
+      invoke    erb
+      create      app/views/contacts
+      invoke    helper
+      create      app/helpers/contacts_helper.rb
+       route  recourses :contacts
+```
+
+Everything `rails generate resource` writes — the ORM and test framework hooks
+are your app's own, so whatever `resource` invokes, this invokes — with two
+differences, both of them about handing the model its screens rather than
+leaving you to write them:
+
+- The route reads `recourses :contacts` rather than `resources :contacts`.
+- The controller inherits `RecoursesController` rather than
+  `ApplicationController`. It has to: a controller of your own is exactly what
+  step 2 above steps aside for, so an `ApplicationController` one would leave the
+  resource with no actions at all.
+
+It takes every option `resource` takes, including `--actions`, which turns the
+route back into the `get` lines that generator writes for named actions, and
+`admin/market`, which nests the route in a `namespace :admin` block.
+
 ## The screens
 
 | Action | What it answers |
