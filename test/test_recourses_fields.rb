@@ -12,7 +12,7 @@ class TestRecoursesFields < Minitest::Test
   end
 
   # What a column holds is what its field is. Only the two kinds no column type can
-  # tell apart are declared, in `recourse_formats`.
+  # tell apart are types the dummy app registers, `:price` and `:percentage`.
   def test_each_kind_of_number_gets_the_field_that_fits_it
     session = ActionDispatch::Integration::Session.new Rails.application
     session.get '/providers/new'

@@ -289,6 +289,10 @@ before writing or editing any layout, view or partial.
   a float, and for a decimal the scale as the step and the precision as the cap —
   `scale: 2, precision: 4` gives `step="0.01" max="99.99"`. No `min`: how far below
   zero a column may go is the model's business, not the schema's.
+- A price and a percentage are attributes whose *type* says so — `Price` and
+  `Percentage`, registered by the app, reporting `:price` and `:percentage` from
+  `type_for_attribute`. The gem asks the attribute and never guesses from a name:
+  `hourly_rate` is money and `commission_rate` is a share of it.
 - A price and a percentage are adorned rather than labelled twice. The wrapper takes
   `.form-control form-adorn d-flex` and the border and padding with it, the unit is a
   `.form-adorn-text`, and the input inside is a `.form-ghost` with neither.

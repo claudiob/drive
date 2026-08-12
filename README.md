@@ -225,7 +225,6 @@ there without a model mentioning them.
 | `recourse_includes` | every `belongs_to` the table names | what the index eager-loads, in any shape `includes` accepts |
 | `recourse_order` | `:id` | how the index sorts, in any shape `order` accepts |
 | `recourse_timestamps` | `[]` | which of `created_at` and `updated_at` the table ends with |
-| `recourse_formats` | `{}` | what a column holds that no column type can say: `{ hourly_rate: :price, commission_rate: :percentage }` |
 
 Overriding one means overriding a class method, which is what the `Recoursive`
 concern next to the model is for:
@@ -379,9 +378,50 @@ case.
 
 The type comes from the model's own `type_for_attribute`, so an `attribute
 :opens_on, :date` override counts, and so do its `precision` and `scale` —
-`columns_hash` is never asked. `:price` and `:percentage` are the two no column
-type can state, so a model states them in `recourse_formats`; everything else in
-that table is read off the schema or off the name.
+`columns_hash` is never asked.
+
+`:price` and `:percentage` are types your app defines, not hooks this gem asks
+for. A `decimal` says how many digits it keeps and nothing about what they mean,
+so if you want `$95.00` and `15.00%` on your pages, register the types that say
+so:
+
+```ruby
+# app/types/price.rb
+class Price < ActiveRecord::Type::Decimal
+  PRECISION = 10
+  SCALE = 2
+
+  def initialize(precision: PRECISION, scale: SCALE, **) = super
+  def type = :price
+end
+
+# config/initializers/types.rb
+ActiveSupport.on_load :active_record do
+  ActiveRecord::Type.register(:price) { |_name, **options| Price.new(**options) }
+end
+
+# and in the model
+attribute :hourly_rate, :price
+```
+
+The gem asks the attribute what it is and formats what it hears, so a type of
+your own is all it takes. Give migrations the same word by extending
+`ActiveRecord::ConnectionAdapters::TableDefinition` — Rails keeps
+`define_column_methods` private, so write the method out:
+
+```ruby
+module MoneyColumns
+  def price(*names, **options)
+    names.each { |name| decimal name, precision: Price::PRECISION, scale: Price::SCALE, **options }
+  end
+end
+
+ActiveRecord::ConnectionAdapters::TableDefinition.include MoneyColumns
+```
+
+Then `t.price :hourly_rate` and `attribute :hourly_rate, :price` are the same
+decision said twice, once to the database and once to the page. `test/dummy` does
+all of this, for `:price` and `:percentage` both.
 
 A phone is a phone before it is ciphertext: an encrypted `phone` gets the
 telephone field rather than the password one, since the field types its own

@@ -10,15 +10,13 @@ module Recourse
       def numeric_kind?(kind) = NUMERIC_KINDS.include?(kind)
 
       # Asked in the order that settles it. A counter cache is a counter whatever its
-      # column says, since no page may show one and no form may set one; what the
-      # model declares outranks the schema, because no column type says `price`; an
-      # enum is one however it is stored; and a phone is a phone by its name, the
-      # convention the placeholders and the pattern already follow.
+      # column says, since no page may show one and no form may set one; an enum is
+      # one however it is stored; a phone is a phone by its name, the convention the
+      # placeholders and the pattern already follow; and everything else is the type
+      # the attribute itself reports — `:price` included, where a host has registered
+      # a type that says so.
       def attribute_kind(column)
         return :counter if resource_model.recourse_counters.key? column
-
-        declared = resource_model.recourse_formats[column.to_sym]
-        return declared if declared
         return :enum if resource_model.defined_enums.key? column
         return :phone if column == 'phone'
 

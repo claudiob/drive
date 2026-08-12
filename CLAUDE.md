@@ -259,6 +259,28 @@ two is filed under the one a reader would look in first.
 
 ### MAINTAINABILITY
 
+#### A new kind of value is an Active Record type
+
+- When a page has to tell two columns of the same type apart — money from a share of
+  it, both `decimal(10,2)` — the answer is a custom Active Record type in the *app*,
+  never a hook in the gem. `Price < ActiveRecord::Type::Decimal` reporting
+  `def type = :price`, registered with `ActiveRecord::Type.register`, and the model
+  says `attribute :hourly_rate, :price`.
+- The gem then asks `type_for_attribute` like it does for everything else, and the
+  rule for a price applies exactly where a `:price` type is what answers. No
+  `recourse_formats`, and no guessing from a column's name: `hourly_rate` is money
+  and `commission_rate` is not.
+- Give migrations the same word by extending
+  `ActiveRecord::ConnectionAdapters::TableDefinition` with a column method that
+  delegates to the type it is a kind of. Rails keeps `define_column_methods` private,
+  so write the method out rather than reaching for it.
+- Keep the type's `precision` and `scale` equal to the column's. A type promising
+  five digits over a `decimal(4, 2)` puts a `max` in the browser that the database
+  will refuse.
+- Registered with a block — `register(:price) { |_name, **options| Price.new(**options) }`
+  — so an app under `app/types/` is autoloaded when a model first asks rather than
+  during boot.
+
 #### No metaprogramming
 
 - Never call `send` or `public_send`. Reach the data directly instead:

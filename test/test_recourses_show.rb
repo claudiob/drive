@@ -50,7 +50,7 @@ class TestRecoursesShow < Minitest::Test
   end
 
   # Every kind of number, read out as what it is of rather than as what it is stored
-  # as. Only the two the schema cannot tell apart are declared, in `recourse_formats`.
+  # as. The two the schema cannot tell apart are types the dummy app registers.
   def test_a_number_reads_as_the_kind_of_number_it_is
     @session.get "/providers/#{Provider.find_by!(name: 'Everything Provider').id}"
 

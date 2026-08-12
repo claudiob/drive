@@ -1,6 +1,6 @@
 # Someone who does jobs for the host app, identified by a unique phone number.
 class Provider < ApplicationRecord
-  include Phonable, Recoursive
+  include Phonable
 
   # Team sizes a provider identifies with, smallest to largest. A provider with...
   TEAM_SIZES = [
@@ -15,6 +15,12 @@ class Provider < ApplicationRecord
   has_many :bookings, dependent: :nullify
 
   enum :team_size, TEAM_SIZES.index_by(&:itself)
+
+  # Three decimals of the same shape and two different meanings, which is what the
+  # types are for: a page reads `$95.00` and `15.00%` off these three lines.
+  attribute :commission_rate, :percentage
+  attribute :hourly_rate, :price
+  attribute :minimum_price, :price
 
   encrypts :phone, deterministic: true
   encrypts :pin
