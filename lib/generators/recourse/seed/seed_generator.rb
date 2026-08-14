@@ -2,6 +2,7 @@ require 'rails/generators'
 
 require_relative '../loading'
 require_relative 'rows'
+require_relative 'shapes'
 require_relative 'texts'
 require_relative 'values'
 
@@ -11,7 +12,7 @@ module Recourse
     # serves, so every screen has rows to show and every nullable column is seen
     # both ways.
     class SeedGenerator < Rails::Generators::Base
-      include Loading, Rows, Texts, Values
+      include Loading, Rows, Shapes, Texts, Values
 
       # Templates live beside this class, which is also what tells the parent where
       # to read `--help` from: a USAGE one directory above the source root.

@@ -203,9 +203,12 @@ are filled, so a nullable column is seen both ways on the screens.
 Values are of each column's own kind, drawn at random while the file is
 generated — never at seed time, so the written file stays the same on every
 `db:seed` run and `find_or_create_by!` keeps finding its rows. A string is a
-random length inside its length validator's bounds, from an alphabet that
-reaches past ASCII into accents and emoji, and never repeats within its column,
-so a unique index is satisfied. An email column gets an address, a phone column
+random length inside its length validator's bounds and reads as words — each a
+random one to fifteen characters, joined by single spaces, so no run goes
+longer unbroken — from an alphabet that reaches past ASCII into accents and
+emoji, and never repeats within its column, so a unique index is satisfied. A
+column pinned to an exact length gets one solid word instead, since a code is
+not prose. An email column gets an address, a phone column
 ten valid digits, an enum cycles the words it admits, a date and a time step
 back a random distance from today, and a reference reads a random row of the
 model it points at — an app's own attribute type counts as what it subclasses,

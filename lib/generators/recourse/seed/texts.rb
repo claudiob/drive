@@ -1,45 +1,35 @@
 module Recourse
   module Generators
-    # What a seed string is made of: random lengths inside the column's own
-    # bounds, a wide alphabet, and no value repeated within its column. Private
-    # for the reason `Seeds` is.
+    # What free seed text is made of: words of evenly distributed lengths, joined
+    # by single spaces into the column's own bounds. Private for the reason
+    # `Seeds` is.
     module Texts
-      # Letters open and close every string, so none leads or trails blank.
+      # Letters open and close every word, so none leads or trails blank.
       LETTERS = [*'a'..'z', *'A'..'Z'].freeze
 
-      # The middle draws on more of Unicode — digits, spaces, accents, emoji — so
-      # 25 rows put more than one alphabet on the screens. No quote and no
-      # backslash: the value lands inside a single-quoted Ruby literal.
+      # The middle draws on more of Unicode — digits, accents, emoji — so 25 rows
+      # put more than one alphabet on the screens. No quote and no backslash: the
+      # value lands inside a single-quoted Ruby literal. No space either; a space
+      # is what joins words, never part of one.
       ALPHABET = [
-        *LETTERS, *'0'..'9', ' ', ' ', ' ', '&', '-', '.',
+        *LETTERS, *'0'..'9', '&', '-', '.',
         'é', 'ü', 'ñ', 'ø', 'ß', 'Ω', 'ç',
         '✨', '🌵', '🎯', '🦉', '🚀', '🍋',
       ].freeze
 
-      # What an email's local part is made of, plain and lowercase: the shape has
-      # to survive a format validator and `downcase: true` encryption unchanged.
-      MAILBOX = [*'a'..'z', *'0'..'9'].freeze
+      # How long one word may be, drawn evenly, so no string carries a longer
+      # unbroken run and a one-letter word is as likely as a fifteen-letter one.
+      WORDS = 1..15
 
     private
 
-      # An email column gets an address and a phone column ten valid digits, since
-      # both are the string shapes a model is nearly certain to grow a validator
-      # for; everything else is text of a random length in the wide alphabet.
-      def seed_string(column)
-        seed_unique column do
-          next seed_email if column.end_with? 'email'
-          next seed_phone if column.end_with? 'phone'
+      # A column pinned to an exact length holds a code, and a code is one solid
+      # word; everything else reads as words.
+      def seed_words(column)
+        length = seed_length column
+        return seed_word length if seed_length_options(column)[:is]
 
-          "'#{seed_text seed_length(column)}'"
-        end
-      end
-
-      def seed_email
-        "'#{Array.new(rand(4..10)) { MAILBOX.sample }.join}@example.com'"
-      end
-
-      def seed_phone
-        "'555234#{format '%04d', rand(10_000)}'"
+        seed_text length
       end
 
       # Random within the bounds the column's own length validator states, and a
@@ -59,24 +49,26 @@ module Recourse
         validator&.options || {}
       end
 
+      # Words joined by single spaces, landing exactly on `length`: a draw that
+      # would overshoot, or leave one character of room — a space with nothing
+      # after it — stretches to end the string instead.
       def seed_text(length)
+        words = []
+        remaining = length
+        while remaining.positive?
+          drawn = rand WORDS
+          drawn = remaining if drawn >= remaining - 1
+          words << seed_word(drawn)
+          remaining -= drawn + 1
+        end
+
+        words.join ' '
+      end
+
+      def seed_word(length)
         return LETTERS.sample if length < 2
 
         [LETTERS.sample, *Array.new(length - 2) { ALPHABET.sample }, LETTERS.sample].join
-      end
-
-      # The same value twice would leave `find_or_create_by!` finding row one when
-      # row two was meant, so a value is drawn again until it is new to its column.
-      def seed_unique(column)
-        @seed_taken ||= Hash.new { |hash, key| hash[key] = [] }
-        taken = @seed_taken["#{@model}/#{column}"]
-        value = loop do
-          candidate = yield
-          break candidate unless taken.include? candidate
-        end
-
-        taken << value
-        value
       end
     end
   end
