@@ -46,14 +46,22 @@ class TestRecoursesSearch < Minitest::Test
   end
 
   # 3,144 counties are too many for a menu, so the ZIPs page searches their names
-  # instead of listing them, and the market it can list keeps its own filter.
+  # instead of listing them, and the market it can list keeps its own filter. Each
+  # market in that menu says how many of the rows being filtered are its own, since
+  # a market is one of the models that counts its ZIPs.
   def test_a_long_table_is_searched_rather_than_listed
+    market = Market.create! name: 'Chicago Metro'
+    ZIP.first!.update! market: market
     @session.get '/zips'
     body = @session.response.body
 
     assert_includes body, 'name="q[code_or_county_name_cont]"'
     assert_includes body, "data-bs-name='q[market_id_in]'"
+    assert_includes body, "Chicago Metro<span class='recourse-count fg-2'>1</span>"
     refute_includes body, 'q[county_id_in]'
+  ensure
+    ZIP.first!.update! market: nil
+    market&.destroy
   end
 
   # A foreign key whose label is typed is offered no filter of its own: that menu

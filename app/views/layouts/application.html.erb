@@ -132,6 +132,12 @@
       /* .recourse-keys .recourse-key::before { content: '['; }
          .recourse-keys .recourse-key::after  { content: ']'; } */
 
+      /* How many rows a menu's option accounts for, at the right of the row it belongs
+         to. The tick that may follow gives up its own `auto` margin: two of them would
+         split the free space between them and leave the count mid-row. */
+      .recourse-count { margin-inline-start: auto; }
+      .recourse-count + .menu-item-check { margin-inline-start: 0; }
+
       /* The button that empties a combobox search sits inside the field it clears. */
       .combobox-search { position: relative; }
       .combobox-search-input { padding-inline-end: 2rem; }

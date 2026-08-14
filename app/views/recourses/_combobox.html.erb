@@ -1,4 +1,4 @@
-<%# locals: (name:, id:, invalid:, feedback:, placeholder:, required:, label: nil, recourses: nil, values: [], multiple: false, selected: [], aria_label: nil, small: false, all: nil) -%>
+<%# locals: (name:, id:, invalid:, feedback:, placeholder:, required:, label: nil, counter: nil, recourses: nil, values: [], multiple: false, selected: [], aria_label: nil, small: false, all: nil) -%>
 <button class='form-control<%= ' form-control-sm' if small %><%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
@@ -29,7 +29,7 @@
     <% cache [recourses, multiple, selected] do %>
       <% recourses.each do |recourse| %>
         <% chosen = selected.include? recourse.id.to_s -%>
-        <button class='menu-item<%= ' selected' if chosen %>' type='button' data-bs-value='<%= recourse.id %>' aria-selected='<%= chosen %>'><%= recourse.attributes[label] %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
+        <button class='menu-item<%= ' selected' if chosen %>' type='button' data-bs-value='<%= recourse.id %>' aria-selected='<%= chosen %>'><%= recourse.attributes[label] %><% if counter %><span class='recourse-count fg-2'><%= number_with_delimiter recourse.attributes[counter] %></span><% end %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
       <% end %>
     <% end %>
   <% else -%>

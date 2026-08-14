@@ -517,6 +517,13 @@ navbar, to the right of the breadcrumb and the buttons. A filter reuses the comb
 table to more than one of what a foreign key points at — `?q[state_id_in]=1,2`
 for two states at once.
 
+Where the model a filter lists keeps a counter cache of the rows being filtered —
+`markets.zips_count` on `/zips` — every option in that menu ends with the count, at
+the right of its row and in muted text. It comes from the same
+`recourse_counters` the table's own headings read, so a `zips_count` nobody
+maintains is not mistaken for a count of anything, and it is fetched by widening
+the two-column `SELECT` the menu already makes rather than by a query of its own.
+
 Every enum gets one too, and gets it first: `/bookings` opens with a `Status`
 menu of the words that column admits, `?q[status_in]=scheduled,fulfilled` for two
 of them at once. The words are the model's own `defined_enums`, the same ones the

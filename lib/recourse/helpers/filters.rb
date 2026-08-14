@@ -38,13 +38,22 @@ module Recourse
 
       def filter_combobox(predicate, title, recourses)
         label = recourses.klass.recourse_label
+        counter = filter_counter recourses.klass
         # What the filter reads as when nothing is ticked, so the way back to it is a
         # line in the menu rather than unticking whatever was ticked.
         models = Recourse.downcase recourses.klass.model_name.human.pluralize
 
         filter_menu predicate, title, nil, t('recourse.all', models: models),
-                    label: label.to_s,
-                    recourses: recourses.select(:id, label).order(label)
+                    label: label.to_s, counter: counter,
+                    recourses: recourses.select(*[:id, label, counter].compact).order(label)
+      end
+
+      # The column on the model a filter lists that counts the rows being filtered —
+      # `markets.zips_count` on `/zips`. Read from the counter caches that model keeps
+      # rather than from a column named after this one, so a `zips_count` nobody
+      # maintains is not mistaken for a count of anything.
+      def filter_counter(klass)
+        klass.recourse_counters.find { |_, one| one.klass == resource_model }&.first
       end
 
       def filter_menu(predicate, title, values, all, **)

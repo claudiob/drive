@@ -729,6 +729,12 @@ before writing or editing any layout, view or partial.
         Alabama<i class='bi bi-check menu-item-check'></i>
       </button>
 
+  Where the model a filter lists counts the rows being filtered, each option ends
+  with that count: a `<span class='recourse-count fg-2'>` at the right of the row, in
+  muted text, so the name reads first and the number answers "how many of these?".
+  It takes `margin-inline-start: auto` and the tick beside it gives up its own, since
+  two auto margins would split the free space and leave the count mid-row. The tick
+  keeps its width while hidden, so ticking an option moves nothing.
   An enum's filter is the same menu over the words the column admits rather than over
   records: headed by the attribute — `Status`, not `Booking status` — since the row it
   sits in names other tables and this one names the table already being read. Its
