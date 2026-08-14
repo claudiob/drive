@@ -66,6 +66,20 @@
          its own: 'Nash' in 'Nashville' must not read as a word standing apart. */
       mark { padding: 0; }
 
+      /* A crumb that is not a link keeps its resting colors under the cursor.
+         Bootstrap lights every .breadcrumb-link on hover, which on a <span>
+         promises a click that goes nowhere — and the element is the whole
+         discriminator, since a crumb that links is an <a>. Redefining the hover
+         tokens, rather than out-cascading the hover rule, leaves Bootstrap's own
+         selector in charge and the active crumb its own resting color. */
+      span.breadcrumb-link {
+        --bs-breadcrumb-link-hover-color: var(--bs-breadcrumb-link-color);
+        --bs-breadcrumb-link-hover-bg: transparent;
+      }
+      span.breadcrumb-link.active {
+        --bs-breadcrumb-link-hover-color: var(--bs-breadcrumb-link-active-color);
+      }
+
       /* A pencil needs no share of the table's width, so the actions column asks for
          the least a cell can ask for and the columns carrying text keep the rest.
          `width: 1%` rather than a length: a table lays out to 100% and hands what a

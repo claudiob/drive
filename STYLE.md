@@ -93,6 +93,13 @@ before writing or editing any layout, view or partial.
   `.nav-link` ships a `gap`, and a whitespace-only text node is not a flex item
   — so without it the breadcrumb's icon and text would touch while the
   sidebar's sit 0.5rem apart.
+- A crumb that is not a link keeps its resting colors on hover: Bootstrap lights
+  every `.breadcrumb-link` under the cursor, which on a `<span>` promises a
+  click that goes nowhere. The layout redefines the two
+  `--bs-breadcrumb-link-hover-*` tokens on `span.breadcrumb-link` — the element
+  is what tells a link from the rest, since a crumb that links is an `<a>` — and
+  gives the `.active` span its own resting color back, rather than out-cascading
+  Bootstrap's hover rule.
 - Whatever shares that line sits vertically centred on it, and what separates a
   line from the next one is the container's `row-gap-2` rather than a margin on
   anything in it. A margin is there whether the item wrapped or not, so the
