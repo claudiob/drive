@@ -14,10 +14,11 @@ Description:
     one to fifteen characters joined by single spaces, in an alphabet reaching
     past ASCII into accents and emoji, never repeated within its column — a
     column pinned to an exact length gets one solid word, since a code is not
-    prose. An email column gets an address, a phone column ten valid digits, an
-    enum cycles the words it admits, a date and a time step back a random
-    distance, and a reference reads a random row of the model it points at. A
-    validator with stricter opinions is yours to satisfy by editing the file.
+    prose. An email column gets an address, a phone column ten valid digits, a
+    column named like an id digits alone, an enum cycles the words it admits, a
+    date and a time step back a random distance, and a reference reads a random
+    row of the model it points at. A validator with stricter opinions is yours
+    to satisfy by editing the file.
 
     db/seeds.rb gains the loader that reads the directory, once, so follow-up
     `rails db:seed` runs pick every file up — alphabetically, so reorder by

@@ -226,8 +226,9 @@ random one to fifteen characters, joined by single spaces, so no run goes
 longer unbroken — from an alphabet that reaches past ASCII into accents and
 emoji, and never repeats within its column, so a unique index is satisfied. A
 column pinned to an exact length gets one solid word instead, since a code is
-not prose. An email column gets an address, a phone column
-ten valid digits, an enum cycles the words it admits, a date and a time step
+not prose. An email column gets an address, a phone column ten valid digits, a
+column named like an id — `uid`, a `user_id` held as a string — digits
+alone, an enum cycles the words it admits, a date and a time step
 back a random distance from today, and a reference reads a random row of the
 model it points at — an app's own attribute type counts as what it subclasses,
 so a `Price` seeds as the decimal it is. A validator with stricter opinions is

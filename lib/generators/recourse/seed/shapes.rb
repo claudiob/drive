@@ -10,13 +10,15 @@ module Recourse
 
     private
 
-      # An email column gets an address and a phone column ten valid digits, since
-      # both are the string shapes a model is nearly certain to grow a validator
-      # for; everything else is words of a random total length.
+      # An email column gets an address, a phone column ten valid digits, and a
+      # column named like an id — `uid`, `user_id` held as a string — digits
+      # alone: the shapes a column's name promises. Everything else is words of a
+      # random total length.
       def seed_string(column)
         seed_unique column do
           next seed_email if column.end_with? 'email'
           next seed_phone if column.end_with? 'phone'
+          next seed_digits column if column.end_with? 'id'
 
           "'#{seed_words column}'"
         end
@@ -28,6 +30,11 @@ module Recourse
 
       def seed_phone
         "'555234#{format '%04d', rand(10_000)}'"
+      end
+
+      # As long as the column's own gates allow, like any other string.
+      def seed_digits(column)
+        "'#{Array.new(seed_length(column)) { rand 10 }.join}'"
       end
 
       # The same value twice would leave `find_or_create_by!` finding row one when

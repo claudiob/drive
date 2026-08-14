@@ -33,12 +33,20 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
     end
     assert_file('db/seeds/messages.rb') { |messages| assert_wrapped_contents messages }
     assert_file 'db/seeds/counties.rb', /state: State\.offset\(\d+\)\.first/
-    assert_file 'db/seeds/providers.rb', /pin: '[^' ]{6}'/
-    assert_file 'db/seeds/states.rb', /code: '[^']{2}', fips: '[^']{2}'/
+    assert_shaped_strings
     assert_no_file 'db/seeds/placeholders.rb'
   end
 
 private
+
+  # Every shape fits its own gates: a PIN is its validator's six characters, a
+  # state's code and FIPS are their columns' two, and a string named like an id —
+  # the app's `uid` — is digits and nothing else.
+  def assert_shaped_strings
+    assert_file 'db/seeds/providers.rb', /pin: '[^' ]{6}'/
+    assert_file 'db/seeds/states.rb', /code: '[^']{2}', fips: '[^']{2}'/
+    assert_file 'db/seeds/apps.rb', /uid: '\d+'/
+  end
 
   # The bare row opens the file, and every content value reads as words: nothing
   # runs past the fifteen unbroken characters a single word may be.
