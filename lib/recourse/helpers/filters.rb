@@ -45,7 +45,17 @@ module Recourse
 
         filter_menu predicate, title, nil, t('recourse.all', models: models),
                     label: label.to_s, counter: counter,
-                    recourses: recourses.select(*[:id, label, counter].compact).order(label)
+                    recourses: filter_options(recourses, label, counter)
+      end
+
+      # The commonest choice first where the model keeps a count, since a menu is read
+      # from the top and most requests want the option most rows are behind — and by
+      # name where it keeps none. The name breaks the tie either way, or two markets
+      # holding the same number would swap places between one request and the next.
+      def filter_options(recourses, label, counter)
+        return recourses.select(:id, label).order label unless counter
+
+        recourses.select(:id, label, counter).order counter => :desc, label => :asc
       end
 
       # The column on the model a filter lists that counts the rows being filtered —

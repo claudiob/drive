@@ -50,18 +50,29 @@ class TestRecoursesSearch < Minitest::Test
   # market in that menu says how many of the rows being filtered are its own, since
   # a market is one of the models that counts its ZIPs.
   def test_a_long_table_is_searched_rather_than_listed
-    market = Market.create! name: 'Counted Market'
-    ZIP.first!.update! market: market
+    markets = counted_markets
     @session.get '/zips'
     body = @session.response.body
 
     assert_includes body, 'name="q[code_or_county_name_cont]"'
     assert_includes body, "data-bs-name='q[market_id_in]'"
-    assert_includes body, "Counted Market<span class='recourse-count fg-2'>1</span>"
+    assert_includes body, "Alpha Market<span class='recourse-count fg-2'>1</span>"
     refute_includes body, 'q[county_id_in]'
   ensure
-    ZIP.first!.update! market: nil
-    market&.destroy
+    clear_markets markets
+  end
+
+  # Read from the top, so the option most of the rows are behind is the first offered:
+  # `Zebra` outranks `Alpha` on two ZIPs against one, which alphabetical order would
+  # have had the other way round.
+  def test_a_counted_filter_offers_its_commonest_option_first
+    markets = counted_markets
+    @session.get '/zips'
+    body = @session.response.body
+
+    assert_operator body.index('Zebra Market'), :<, body.index('Alpha Market')
+  ensure
+    clear_markets markets
   end
 
   # A market with none of the rows being filtered is in the menu without being on it —
@@ -80,6 +91,20 @@ class TestRecoursesSearch < Minitest::Test
                     "class='menu-item selected' type='button' data-bs-value='#{empty.id}'"
   ensure
     empty&.destroy
+  end
+
+  # One ZIP for `Alpha` and two for `Zebra`, so the count and the alphabet disagree
+  # about which of them comes first.
+  def counted_markets
+    alpha, zebra = %w[Alpha Zebra].map { |name| Market.create! name: "#{name} Market" }
+    ZIP.limit(3).each_with_index { |zip, index| zip.update! market: index.zero? ? alpha : zebra }
+
+    [alpha, zebra]
+  end
+
+  def clear_markets(markets)
+    ZIP.where(market: Array(markets).compact).find_each { |zip| zip.update! market: nil }
+    Array(markets).each { |one| one&.destroy }
   end
 
   # A foreign key whose label is typed is offered no filter of its own: that menu
