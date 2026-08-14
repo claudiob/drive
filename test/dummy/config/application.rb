@@ -1,7 +1,12 @@
 require_relative 'boot'
 
+require 'action_cable/engine'
 require 'action_controller/railtie'
+require 'active_job/railtie'
 require 'active_record/railtie'
+
+# After the frameworks: it only extends Active Record when Active Job is loaded.
+require 'turbo-rails'
 
 require 'recourse'
 

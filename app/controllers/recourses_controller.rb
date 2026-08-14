@@ -7,6 +7,11 @@ class RecoursesController < ApplicationController
   # `find` raises RecordNotFound, so an id that names nothing answers 404.
   before_action :find_resource, only: %i[show edit update destroy]
 
+  # The model served here broadcasts refreshes for its index. On the way into every
+  # action — before `create` commits, so its own change is broadcast — and again
+  # after a dev reload hands the model a fresh class.
+  before_action { resource_class.recourse_broadcast }
+
   # Lists one page of the model the route is named after. `@q` is Ransack's own
   # name for a search, which is what its form and sort link helpers look for.
   def index

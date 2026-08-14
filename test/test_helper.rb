@@ -29,3 +29,8 @@ ApplicationRecord.descendants.each(&:reset_column_information)
 # Routes load lazily, and `recourses` defines controllers as it draws them, so a
 # test that never issues a request would otherwise not see them.
 Rails.application.reload_routes_unless_loaded
+
+# turbo-rails swaps this in through an on_load hook only ActiveSupport::TestCase
+# fires, and this suite runs on Minitest::Test: without it every refresh broadcast
+# waits half a second on a background thread the test never joins.
+Turbo::ThreadDebouncer.debouncer_class = Turbo::ImmediateDebouncer

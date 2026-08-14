@@ -23,5 +23,14 @@ module Recourse
                                        cascade: true
       app.middleware.use Rack::Static, urls: STATIC_URLS, root: Engine.root.join('app/javascript')
     end
+
+    # Turbo bundled with the cable element, served from the host's own turbo-rails,
+    # so the page runs the version of Turbo that gem signed its streams for.
+    initializer 'recourse.turbo' do |app|
+      if defined? Turbo::Engine
+        app.middleware.use Rack::Static, urls: { '/recourse/turbo.min.js' => 'turbo.min.js' },
+                                         root: Turbo::Engine.root.join('app/assets/javascripts').to_s
+      end
+    end
   end
 end

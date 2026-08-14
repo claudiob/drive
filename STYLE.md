@@ -935,10 +935,39 @@ before writing or editing any layout, view or partial.
   ordinary GET that reloads everything, which is also when the caret has to be
   put back by hand.
 
+## Live index refreshes
+
+- When the host runs turbo-rails, an index page subscribes to its model's
+  refreshes: `refresh_subscription` renders a `turbo_stream_from` on the plural
+  stream every committed change broadcasts on, so a record saved in one browser
+  redraws the table in every other one that has the page open.
+- The subscription tag sits *outside* the `results` frame, so a search
+  keystroke's frame navigation never tears the cable connection down and reopens
+  it.
+- The helper also asks the head for two metas, `turbo-refresh-method: morph` and
+  `turbo-refresh-scroll: preserve`. Neither is Turbo's default, and without them
+  a refresh replaces the whole body and scrolls back to the top.
+- A refresh re-fetches the *current* URL, so the search, sort and page params
+  the frame's `advance` put in the address bar all survive it.
+- The search form carries `data-turbo-permanent` (and the `id` the attribute
+  needs under a replace render): a morph would write the fetched page's older
+  query over what is mid-typing, and skipping the form's subtree keeps the text,
+  the caret and any open filter menu.
+- When turbo-rails is present the layout serves its bundle at
+  `/recourse/turbo.min.js` instead of loading plain Turbo from the CDN — the
+  same Turbo, plus the `<turbo-cable-stream-source>` element and Action Cable
+  client that turn the subscription tag into a connection, in the version the
+  host's own gem signed the streams for. Without turbo-rails nothing changes:
+  no tag, no metas, the CDN script as before.
+- Which models take part is the model's own business — `recourse_broadcasts?`,
+  documented in the README — and the helper renders nothing for one that opted
+  out.
+
 ## Links
 
 - Internal links go through Turbo, so navigation is a fetch and a swap rather
-  than a full page load. The layout loads Turbo from the CDN.
+  than a full page load. The layout loads Turbo from the CDN, or from the host's
+  own turbo-rails when it is there — see "Live index refreshes".
 - Turbo prefetches a link on `mouseenter`, so a page is already on its way
   before the click lands. This is on by default in Turbo 8 — never add
   `<meta name='turbo-prefetch' content='true'>` to restate it.

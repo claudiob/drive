@@ -361,9 +361,9 @@ through `number_to_phone`.
 
 ## What a model can say
 
-Every Active Record model answers four class methods: the engine extends
-`ActiveRecord::Base` with `Recourse::Recoursive` on load, so the defaults are
-there without a model mentioning them.
+Every Active Record model answers a handful of class methods: the engine
+extends `ActiveRecord::Base` with `Recourse::Recoursive` on load, so the
+defaults are there without a model mentioning them.
 
 | Method | Default | What it decides |
 | --- | --- | --- |
@@ -373,6 +373,7 @@ there without a model mentioning them.
 | `recourse_includes` | every `belongs_to` the table names | what the index eager-loads, in any shape `includes` accepts |
 | `recourse_order` | `:id` | how the index sorts, in any shape `order` accepts |
 | `recourse_timestamps` | `[]` | which of `created_at` and `updated_at` the table ends with |
+| `recourse_broadcasts?` | `true` | whether saving a record refreshes every open index listing it — see [Live index refreshes](#live-index-refreshes) |
 
 Overriding one means overriding a class method, which is what the `Recoursive`
 concern next to the model is for:
@@ -686,6 +687,36 @@ What this costs:
   can shuffle between pages.
 - Pagy's own count runs on the filtered relation, so a narrower filter is a
   cheaper count too, not just a shorter table.
+
+## Live index refreshes
+
+When the host app runs [turbo-rails](https://github.com/hotwired/turbo-rails),
+an index page subscribes to its model's refreshes: save a record in one browser
+and every other browser with that index open redraws the table in place, scroll
+and half-typed search intact, with the filters and sort it was showing. Nothing
+to declare — every recoursed model broadcasts by default, and a model that
+should not says so in its `Recoursive` concern:
+
+```ruby
+class_methods do
+  # A toggle flips too often to be worth refreshing every open screen for.
+  def recourse_broadcasts? = false
+end
+```
+
+What the host needs, all standard turbo-rails: the gem in the bundle, Action
+Cable mounted with a real adapter in production (and
+`config.action_cable.allowed_request_origins` set), and an Active Job backend —
+refreshes are broadcast through `broadcast_refresh_later_to`, so a job adapter
+that is down means pages that quietly stop refreshing. The gem then serves
+turbo-rails' own Turbo bundle instead of the CDN's, so the cable element and
+the signed streams come from the same gem version.
+
+Without turbo-rails, none of this exists: no subscription, no broadcasts, and
+the pages behave exactly as before. Broadcasts attach the first time a model's
+recourse is served in a process; a process that changes records without ever
+serving one — a job runner, a console — does not broadcast unless the model
+declares `broadcasts_refreshes_to` itself.
 
 ## Overriding a screen
 

@@ -11,4 +11,7 @@ Rails.application.configure do
 
   # A test posts straight to create, without fetching a form for its token first.
   config.action_controller.allow_forgery_protection = false
+
+  # The default `:async` runs jobs on background threads; a test reads them queued.
+  config.active_job.queue_adapter = :test
 end
