@@ -13,7 +13,10 @@
     </ul>
   </div>
 
-  <div class='card-body'>
+  <%# `align-items-stretch`, since a card body is a column flex container that packs
+      its children to the start: a form of two fields would take the width of two
+      fields rather than the width of the card. -%>
+  <div class='card-body align-items-stretch'>
     <%= yield %>
   </div>
 </div>

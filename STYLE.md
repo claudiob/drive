@@ -231,6 +231,11 @@ before writing or editing any layout, view or partial.
   `.card-header` holds a `ul.nav.nav-tabs.card-header-tabs`, one tab per page the
   record has. `card-header-tabs` is what pulls the row up into the header's padding,
   so the active tab meets the body it belongs to instead of floating above it.
+- The body takes `align-items-stretch`. A `.card-body` is a column flex container
+  that packs its children to the start, so a form of two fields would be as wide as
+  two fields rather than as wide as the card, and its grid would stop halfway across
+  the page. Stretched, every page fills the card whatever it holds: two columns of
+  equal width, or one field taking half the row.
 - Tabs are *links*, not a JavaScript tab set: each is a page of its own, with its own
   URL and its own breadcrumb. The current one carries `.active` and
   `aria-current='page'`, the same pair a sidebar entry uses.
