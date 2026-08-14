@@ -116,6 +116,12 @@ leaving you to write them:
   resource with no actions at all.
 - It writes `db/seeds/contacts.rb`, so a new resource has something to show on the
   screens it just gained.
+- A `references` attribute gets a counter cache. The migration adds
+  `add_column :markets, :contacts_count, :integer, default: 0, null: false` after
+  the `create_table`, and the model reads `belongs_to :market, counter_cache: true`
+   — both sides of the association, since a foreign key read from one of them is
+  half a model. A polymorphic reference gets neither: it names no one table to put
+  the count on.
 
 That seed file holds two rows, which is the pair every screen is worth looking at
 with: one carrying only the attributes the migration marks `null: false` — write

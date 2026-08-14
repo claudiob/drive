@@ -46,6 +46,23 @@ class TestRecourseGenerator < Rails::Generators::TestCase
     assert_file 'db/seeds.rb', %r{Dir\[Rails\.root\.join\('db/seeds/\*\.rb'\)\]}
   end
 
+  # Both sides of the association a `references` attribute declares: the column on the
+  # parent, and the option on the child that keeps it.
+  def test_a_reference_counts_itself_on_the_parent
+    generate_a_widget
+
+    counter = 'add_column :markets, :widgets_count, :integer, default: 0, null: false'
+
+    assert_migration 'db/migrate/create_widgets.rb', /end\n    #{counter}/
+    assert_file 'app/models/widget.rb', /belongs_to :market, counter_cache: true/
+  end
+
+  def test_it_nests_the_route_the_way_the_resource_was_named
+    run_generator %w[admin/gadget]
+
+    assert_file 'config/routes.rb', /namespace :admin do\n    recourses :gadgets\n  end/
+  end
+
   def generate_a_widget
     run_generator %w[widget name:string! nickname:string quantity:integer market:references]
   end

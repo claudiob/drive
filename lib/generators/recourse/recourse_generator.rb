@@ -1,5 +1,6 @@
 require 'rails/generators/rails/resource/resource_generator'
 
+require_relative 'counters'
 require_relative 'seeds'
 
 module Recourse
@@ -8,7 +9,7 @@ module Recourse
     # the route drawn by `recourses` and a seed file, so the gem serves the seven
     # screens for it and there is something to see on them.
     class RecourseGenerator < Rails::Generators::ResourceGenerator
-      include Seeds
+      include Counters, Seeds
 
       # Templates live beside this class, which is also what tells the parent where to
       # read `--help` from: a USAGE one directory above the source root.
@@ -34,6 +35,17 @@ module Recourse
       # and every other switch meant for the controller from reaching it.
       hook_for :resource_controller, in: :recourse, required: true do |controller|
         invoke controller, [controller_name, options[:actions]]
+      end
+
+      # A `references` attribute is a `belongs_to`, and a `belongs_to` keeps a count on
+      # the other side: the parent gains the column and the child's association gains
+      # the option that fills it. Both sides, since a foreign key read from one of them
+      # is half a model.
+      def add_counter_caches
+        counted_attributes.each do |attribute|
+          add_counter_column attribute
+          count_from_belongs_to attribute
+        end
       end
 
       # Two rows to look at: a bare one and a filled one, in a file of their own under

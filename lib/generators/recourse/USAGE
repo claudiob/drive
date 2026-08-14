@@ -7,6 +7,10 @@ Description:
     The controller it writes inherits RecoursesController rather than
     ApplicationController, so the actions and the views arrive with it.
 
+    An attribute of type references gets a counter cache: the migration adds an
+    integer column to the parent table and the belongs_to is written with
+    counter_cache: true, so both sides of the association are declared.
+
     It also writes db/seeds/<resources>.rb, holding two rows: one with only the
     attributes the migration marks null: false, and one with every optional
     attribute assigned as well. Mark an attribute required with a trailing !,
