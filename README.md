@@ -720,7 +720,7 @@ Bootstrap's primary colour is blue, and one line makes it one of five others:
 Recourse::COLORS # => [:blue, :orange, :purple, :pink, :brown]
 ```
 
-Every button, link, sorted heading and focus ring follows, because `.theme-primary`
+Every button, link, sorted heading, focus ring and favicon follows, because `.theme-primary`
 and everything else Bootstrap draws in that colour read the nine `--bs-primary-*`
 custom properties that the gem's layout redefines under `:root` when a colour is
 set. Nothing is emitted when it is nil, which is the default.

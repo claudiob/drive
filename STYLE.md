@@ -161,8 +161,17 @@ before writing or editing any layout, view or partial.
 - Nothing is drawn until `document.fonts.load` resolves. `connect` runs long
   before the font arrives, and a character the font has not brought is a blank
   box, which is exactly what would end up in the tab.
-- 64 pixels square, in the body's own colour, so the tab matches the page rather
-  than guessing at what the browser has put behind it. A tab asks for 16 and twice
+- 64 pixels square, in the page's primary colour: an app that sets
+  `Recourse.color = :pink` gets a pink tab as well as pink buttons. `--bs-primary-fg`
+  rather than `-bg`, since that is the one a link is drawn in and the one that adapts
+  to the colour scheme — `light-dark(600, 400)`, darker on a light page and lighter
+  on a dark one, which is what a tab strip wants too.
+- Resolved by painting rather than by reading. `getPropertyValue` on a custom
+  property hands back `light-dark(var(--bs-pink-600), var(--bs-pink-400))`, which a
+  canvas cannot parse, so the probe that already reads the codepoint wears
+  `color: var(--bs-primary-fg)` and its computed `color` is read off the same call.
+  A host without those properties falls back to the inherited colour, which is where
+  this started. A tab asks for 16 and twice
   that on a retina display; a glyph scaled down reads better than one scaled up.
 
 ## The sidebar
