@@ -19,6 +19,18 @@ class TestRecoursesNesting < Minitest::Test
     assert_includes body, 'aria-current="page" data-key="c" href="/counties">'
   end
 
+  # A nested form never asks which parent the record is for — the path has already
+  # answered, so the county field is off the page while every other field stands,
+  # and `create` writes the route's county whatever a form is made to submit.
+  def test_a_nested_form_does_not_ask_for_the_parent
+    county = County.first
+    session = ActionDispatch::Integration::Session.new Rails.application
+    session.get "/counties/#{county.id}/zips/new"
+
+    assert_includes session.response.body, 'zip[code]'
+    refute_includes session.response.body, 'zip[county_id]'
+  end
+
   # Reached through a parent, a nested resource defaults to its collection actions
   # — list the parent's rows, add one — and an explicit `only:` is the host's word,
   # which wins. Drawn into a fresh route set over names the dummy app already

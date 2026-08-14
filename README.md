@@ -58,7 +58,11 @@ seven actions, and all seven are answered.
 A *nested* `recourses` is the one exception: it defaults to
 `only: %i[index new create]` — the collection actions, which are what makes
 sense reached through a parent, while the member pages belong to the resource's
-own top-level routes. An explicit `only:` or `except:` is your word and wins:
+own top-level routes. The nested pages take the hint: the index lists only the
+parent's rows and drops its column, and the form drops its field — a comment
+under `/posts/2` is for post 2, not for one picked from a menu, so no field
+asks and `create` writes the route's parent whatever a form is made to submit.
+An explicit `only:` or `except:` is your word and wins:
 
 ```ruby
 recourses :posts do
