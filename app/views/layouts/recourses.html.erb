@@ -35,6 +35,7 @@
       import SearchController from '/recourse/search_controller.js'
       import ShortcutsController from '/recourse/shortcuts_controller.js'
       import ToastController from '/recourse/toast_controller.js'
+      import TooltipController from '/recourse/tooltip_controller.js'
 
       // In the head, and guarded: Turbo re-runs body scripts on every visit, and a
       // second application would connect every controller twice.
@@ -48,6 +49,7 @@
         window.Stimulus.register('search', SearchController)
         window.Stimulus.register('shortcuts', ShortcutsController)
         window.Stimulus.register('toast', ToastController)
+        window.Stimulus.register('tooltip', TooltipController)
       }
     </script>
 

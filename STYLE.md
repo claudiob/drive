@@ -668,6 +668,12 @@ before writing or editing any layout, view or partial.
 - A look before a change, in the order the seven actions are drawn. Never the
   other way round: the pencil is the one that matters, and putting it under the
   cursor first is how a row gets edited by accident.
+- Every icon heading — the two actions and each counter — carries a Bootstrap
+  tooltip on top saying what the icon is: `Show`, `Edit`, or the counted model's
+  plural, the same word its `aria-label` already speaks. The title travels in
+  `data-bs-title` and the `tooltip` Stimulus controller is what makes it,
+  since Bootstrap never wires one on its own — and its `disconnect` disposes it,
+  so a table Turbo redraws never strands a tooltip over an element that left.
 - A resource missing an action gets no column for it, rather than a heading over
   an empty column on every row; a resource with neither opens at its first
   attribute.

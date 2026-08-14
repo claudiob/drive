@@ -23,7 +23,7 @@ module Recourse
       def counter_title(association)
         title = association.klass.model_name.human.pluralize
         tag.i class: "bi bi-#{Recourse.model_icon association.klass}", role: :img,
-              aria: { label: title }
+              aria: { label: title }, data: tooltip_on_top(title)
       end
 
       def counter_columns

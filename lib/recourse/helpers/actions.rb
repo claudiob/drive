@@ -26,7 +26,8 @@ module Recourse
         label = t "recourse.#{action}"
         return label unless @recourse_headers
 
-        tag.i class: "bi bi-#{ICONS[action]}", role: :img, aria: { label: label }
+        tag.i class: "bi bi-#{ICONS[action]}", role: :img, aria: { label: label },
+              data: tooltip_on_top(label)
       end
 
       # Eye linking to a record's show page, or nothing when there is not one.
