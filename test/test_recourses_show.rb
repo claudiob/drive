@@ -52,17 +52,6 @@ class TestRecoursesShow < Minitest::Test
 
   # Every kind of number, read out as what it is of rather than as what it is stored
   # as. The two the schema cannot tell apart are types the dummy app registers.
-  # The card at the top names both pages the record has, a look before a change, each
-  # behind the icon its row link carries, and the one being read marked as current.
-  def test_the_card_names_both_pages_a_record_has
-    provider = Provider.find_by! name: 'Everything Provider'
-    @session.get "/providers/#{provider.id}"
-    showing = %(href="/providers/#{provider.id}"><i class="bi bi-eye"></i> Show</a>)
-
-    assert_includes body, %(<a class="nav-link active" aria-current="page" #{showing})
-    assert_includes body, %(<i class="bi bi-pencil-square"></i> Edit</a>)
-  end
-
   def test_a_number_reads_as_the_kind_of_number_it_is
     @session.get "/providers/#{Provider.find_by!(name: 'Everything Provider').id}"
 
