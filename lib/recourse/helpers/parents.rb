@@ -16,7 +16,8 @@ module Recourse
     private
 
       # The crumbs a nested page sits under: the parent's own index, then the record
-      # the path names — `Counties`, then `Alameda County`, before `ZIPs`.
+      # the path names — `Counties`, then `Alameda County`, before `ZIPs`. The
+      # record's crumb links to its show page, where one is routed to link to.
       def parent_breadcrumbs
         parent = resource_parent
         return [] unless parent
@@ -24,8 +25,14 @@ module Recourse
         path = controller.controller_path.rpartition('/').first
         [
           [path, path.split('/').last.humanize, url_for(controller: "/#{path}", action: :index)],
-          [nil, parent.attributes[parent.class.recourse_label.to_s], nil],
+          [nil, parent.attributes[parent.class.recourse_label.to_s], parent_path(parent, path)],
         ]
+      end
+
+      def parent_path(parent, path)
+        return unless routed? path, 'show'
+
+        url_for controller: "/#{path}", action: :show, id: parent
       end
     end
   end

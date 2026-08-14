@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     recourses :franchises, except: :show
     recourses :zips, only: %i[index edit]
     recourses :markets, except: :show
-    recourses :counties, only: :index do
+    recourses :counties, only: %i[index show] do
       # Nested: reached through a county's ZIPs count, not from the sidebar, and
       # bare on purpose — index, new and create are the nested default.
       recourses :zips

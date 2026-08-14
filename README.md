@@ -62,6 +62,9 @@ own top-level routes. The nested pages take the hint: the index lists only the
 parent's rows and drops its column, and the form drops its field — a comment
 under `/posts/2` is for post 2, not for one picked from a menu, so no field
 asks and `create` writes the route's parent whatever a form is made to submit.
+The nested index also sits in the parent record's own card, beside its Show and
+Edit tabs, as a tab named by the count — `42 comments` — and the breadcrumb's
+record crumb links back to the parent's show page where one is routed.
 An explicit `only:` or `except:` is your word and wins:
 
 ```ruby

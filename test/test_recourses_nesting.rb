@@ -15,8 +15,8 @@ class TestRecoursesNesting < Minitest::Test
     assert_includes body, "Displaying #{county.zips_count} items"
     refute_includes body, 'data-cell="County"'
     assert_includes body, '<a class="breadcrumb-link gap-2" href="/counties">'
-    assert_includes body, "<span class='breadcrumb-link'>#{county.name}</span>"
     assert_includes body, 'aria-current="page" data-key="c" href="/counties">'
+    assert_parent_chrome body, county
   end
 
   # A nested form never asks which parent the record is for — the path has already
@@ -65,6 +65,18 @@ class TestRecoursesNesting < Minitest::Test
   end
 
 private
+
+  # The page reads as the parent record's: its crumb links to the record's show
+  # page, icon-less, and the index sits in the record's card — the parent's own
+  # Show tab first, then this page's tab, the count behind the counted model's
+  # icon, marked current.
+  def assert_parent_chrome(body, county)
+    assert_includes body,
+                    %(<a class="breadcrumb-link" href="/counties/#{county.id}">#{county.name}</a>)
+    assert_includes body, %(href="/counties/#{county.id}"><i class="bi bi-eye"></i> Show</a>)
+    assert_includes body, %(#{county.zips_count} ZIPs</a>)
+    assert_includes body, %(aria-current="page" href="/counties/#{county.id}/zips">)
+  end
 
   def actions_by_controller(routes)
     routes.routes.group_by { |route| route.defaults[:controller] }

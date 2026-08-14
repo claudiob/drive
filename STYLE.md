@@ -182,6 +182,10 @@ before writing or editing any layout, view or partial.
   same reason a link does — only `.nav-link` ships a gap of its own.
 - A crumb naming a page rather than a resource gets none. `New market` is not a
   thing with an icon, and the crumb before it is already showing the market's.
+- The record a nested page stands under is a crumb of its own — `Counties`, then
+  `Autauga County`, then `ZIPs` — linking to the record's show page where one is
+  routed, and plain text where none is. Icon-less either way: it names a record,
+  and the crumb before it already carries the resource's.
 - The tab wears it too. The layout draws
   `<link rel='icon' href='data:,' data-controller='favicon'>` and the controller
   replaces the `href` with a data URI it draws, so `/counties` is a map in the tab
@@ -285,6 +289,12 @@ before writing or editing any layout, view or partial.
 - A look before a change, the order the seven actions are drawn and the order the row
   links follow. Each tab wears that link's icon — the eye and the pencil — from one
   `ICONS` map, so a row and a card cannot come to disagree about which is which.
+- After them, one tab per counter cache whose rows have an index nested under the
+  record, named by the count and wearing the counted model's icon: `8 ZIPs`. The
+  number is read off the record itself, like the column, so the tab costs no query.
+- A nested index is one of those pages, so it sits in the same card — the *parent*
+  record's — with the count tab as the current one and the parent's own Show and
+  Edit tabs beside it, each drawn only where its route is.
 - One tab where a resource has only one of the two pages, rather than no card: the
   card is what says which page of a record is being read, and that is worth saying
   even when there is only one.

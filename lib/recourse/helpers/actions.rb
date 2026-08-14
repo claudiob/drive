@@ -8,17 +8,6 @@ module Recourse
       # a model's picture of itself.
       ICONS = { show: 'eye', edit: 'pencil-square' }.freeze
 
-      # The pages a record has, as `[label, path, current]` — a look first and a change
-      # second, each only where its action is drawn, and nothing at all where neither
-      # is. What the card at the top of a record's page draws its tabs from.
-      def resource_tabs(record)
-        paths = { show: show_resource_path(record), edit: edit_resource_path(record) }
-
-        paths.filter_map do |action, path|
-          [tab_label(action), path, current_tab?(action)] if path
-        end
-      end
-
       # An action column's heading: the icon on the header row — the column is as
       # narrow as the icon in it, with no room for a word — and the action's own
       # word in every other, which is what each `data-cell` labels itself with.
@@ -50,16 +39,6 @@ module Recourse
 
       def icon(action)
         tag.i class: "bi bi-#{ICONS[action]}"
-      end
-
-      def tab_label(action)
-        safe_join [icon(action), t("recourse.#{action}")], ' '
-      end
-
-      # `update` redraws the form it rejected, so the edit tab is the current one on
-      # that page too.
-      def current_tab?(action)
-        action == (controller.action_name == 'show' ? :show : :edit)
       end
 
       def show_resource_path(record)
