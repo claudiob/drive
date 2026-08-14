@@ -127,9 +127,28 @@ before writing or editing any layout, view or partial.
 - The count stops at one level on purpose. Every `has_many` costs one `COUNT` on
   an indexed key; counting a state's whole subtree means joining 40,965 ZIPs to
   render an edit page, so `Anything under those goes too` stands in for the rest.
-- Turbo is what shows that dialog. Under a host layout that does not load it the
-  button still deletes, with nothing asked first — the same bargain as everything
-  else the gem's own layout brings.
+- The warning shows in a Bootstrap 6 Dialog — v6's rename of Modal, built on the
+  native `<dialog>` element, whose `showModal()` brings the focus trap, Esc and
+  the top layer for free — never in the browser's own `confirm()` box.
+  `Turbo.config.forms.confirm` is the hook, assigned in the layout; the wording
+  still travels in `data-turbo-confirm`, unchanged, and the dialog is only how it
+  is displayed.
+- The markup is `recourses/_confirm`, rendered once by the layout after the
+  flash, empty: `/recourse/confirm.js` fills the title with the message's first
+  line and the body with a `<p>` per remaining line — `textContent`, never
+  `innerHTML`, because the title carries a record's name and a name is data.
+- `dialog-slide-down` is the animation, shipped by v6 — no CSS of ours — and
+  reduced-motion turns it off in the same stylesheet.
+- The footer reads Cancel then Delete: Cancel is `btn btn-solid theme-secondary`
+  with `data-bs-dismiss='dialog'` and `autofocus`, so Enter lands on the safe
+  answer; Delete is `btn btn-solid theme-danger` with `recourse-confirm-delete`
+  as its JavaScript hook, unstyled.
+- Cancel, Esc and a click on the backdrop all answer no, through one
+  `hidden.bs.dialog` listener; only the Delete button answers yes.
+- Turbo is what asks. Under a host layout that does not load it the button still
+  deletes, with nothing asked first — the same bargain as everything else the
+  gem's own layout brings — and one that loads Turbo without this layout's hook
+  gets the browser's `confirm()` back, which is the graceful floor.
 
 ## Icons on resource links
 

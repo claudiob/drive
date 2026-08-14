@@ -26,6 +26,8 @@ class TestRecoursesDestroy < Minitest::Test
 
     assert_includes body, 'Delete Fix the roof?'
     assert_includes body, '1 message will be kept, without its job.'
+    # The dialog the confirm hook fills with that warning is on the page, empty.
+    assert_includes body, "id='recourse-confirm'"
   end
 
   # And the delete keeps that promise: the message outlives the job it was about.

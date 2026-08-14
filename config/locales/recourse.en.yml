@@ -11,6 +11,7 @@ en:
     add: Add %{model}
     all: All %{models}
     blank: "—"
+    cancel: Cancel
     clear: Clear search
     created: "%{model} was created."
     created_error: "%{model} could not be created."
@@ -38,6 +39,7 @@ en:
     updated: "%{model} was updated."
     updated_error: "%{model} could not be updated."
     deletion:
+      delete: Delete
       title: Delete %{record}?
       going: "%{list} will be deleted with it."
       staying: "%{list} will be kept, without its %{model}."

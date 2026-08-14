@@ -196,8 +196,17 @@
     </div>
 
     <%= render 'flash' %>
+    <%= render 'confirm' %>
 
     <script type='module' src='https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.23/dist/turbo.es2017-esm.js'></script>
     <script type='module' src='/recourse/bootstrap.bundle.min.js'></script>
+    <script type='module'>
+      import confirm from '/recourse/confirm.js'
+
+      // The browser's confirm() becomes the Bootstrap dialog. Re-assigned on every
+      // visit, since body scripts re-run — harmless, the module hands back the same
+      // function each time.
+      window.Turbo.config.forms.confirm = confirm
+    </script>
   </body>
 </html>
