@@ -244,6 +244,17 @@ nothing and running it twice writes the same as once. A polymorphic
 model whose table is not migrated yet, whose pending migration carries its own
 counter already.
 
+The edges are handled the way a hand would handle them. A `counter_cache` named
+by hand is checked, and filled, under its own name. A column that predates its
+option gets a backfill-only migration — whatever it holds counts nothing, so it
+starts over from the rows themselves. Two keys that would share one column are
+both skipped with a note, since Rails would bump that column once per key and
+no single backfill can agree with that; name each `counter_cache` and rerun. A
+`belongs_to` whose key is not named after the parent gets `foreign_key:` on the
+`has_many`, a `belongs_to` wrapped over more lines than one is skipped rather
+than edited blind, and an option appended to a line with a trailing comment
+lands before the comment, not inside it.
+
 ## The screens
 
 | Action | What it answers |

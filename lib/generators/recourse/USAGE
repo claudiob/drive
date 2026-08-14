@@ -12,7 +12,9 @@ Description:
     belongs_to is written with counter_cache: true, and the parent model gains
     the matching has_many, with dependent: :destroy since a child that cannot
     exist without its parent goes with it. The parent's has_many is written only
-    where that model exists already, so generate the parent first.
+    where that model exists already, so generate the parent first. For the
+    models an app already has, `rails generate recourse:counters` writes the
+    same three pieces wherever one is missing.
 
     It also writes db/seeds/<resources>.rb, holding two rows: one with only the
     attributes the row cannot save without, and one with every optional attribute
