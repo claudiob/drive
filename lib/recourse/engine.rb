@@ -17,20 +17,19 @@ module Recourse
 
     # Serves what a page needs, since a host may run no asset pipeline at all. The
     # prefix keeps its slash: without it `/recourses` would be served as a file.
-    # Vendored files answer first and cascade, so our own JavaScript shares the URL.
+    # Turbo answers first, by exact path — matched on the prefix alone, the statics
+    # below would swallow it with a 404 instead of passing it on. Then vendored
+    # files, cascading, so our own JavaScript shares the URL.
     initializer 'recourse.assets' do |app|
-      app.middleware.use Rack::Static, urls: STATIC_URLS, root: Engine.root.join('vendor'),
-                                       cascade: true
-      app.middleware.use Rack::Static, urls: STATIC_URLS, root: Engine.root.join('app/javascript')
-    end
-
-    # Turbo bundled with the cable element, served from the host's own turbo-rails,
-    # so the page runs the version of Turbo that gem signed its streams for.
-    initializer 'recourse.turbo' do |app|
       if defined? Turbo::Engine
+        # The host's own turbo-rails bundle: the same Turbo plus the cable element,
+        # in the version that gem signs its streams for.
         app.middleware.use Rack::Static, urls: { '/recourse/turbo.min.js' => 'turbo.min.js' },
                                          root: Turbo::Engine.root.join('app/assets/javascripts').to_s
       end
+      app.middleware.use Rack::Static, urls: STATIC_URLS, root: Engine.root.join('vendor'),
+                                       cascade: true
+      app.middleware.use Rack::Static, urls: STATIC_URLS, root: Engine.root.join('app/javascript')
     end
   end
 end

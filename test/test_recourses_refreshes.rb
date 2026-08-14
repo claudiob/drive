@@ -19,6 +19,12 @@ class TestRecoursesRefreshes < Minitest::Test
     signed = body[/signed-stream-name="([^"]+)"/, 1]
 
     assert_equal 'contacts', Turbo.signed_stream_verifier.verified(signed)
+
+    # And the script that turns the tag into a connection is actually servable:
+    # the prefix statics sit behind it in the stack and must not swallow the path.
+    @session.get '/recourse/turbo.min.js'
+
+    assert_equal 200, @session.response.status
   end
 
   def test_a_change_broadcasts_a_refresh_on_that_stream
