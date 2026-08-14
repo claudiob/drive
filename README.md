@@ -934,7 +934,11 @@ After checking out the repo, run `bin/setup` to install dependencies. Then run
 also run `bin/console` for an interactive prompt.
 
 The test suite boots a dummy Rails app against PostgreSQL, so it needs a server
-running; the database itself is created on the first run.
+running; the database itself is created on the first run. PostgreSQL is the
+dummy app's choice, not the gem's: nothing in the gem names an adapter, so a
+host running SQLite or MySQL is served the same screens. What follows from a
+column kind only one adapter has follows only there — an array column, a citext
+one — and everything else is read through Active Record's own neutral answers.
 
 To install this gem onto your local machine, run `bundle exec rake install`.
 

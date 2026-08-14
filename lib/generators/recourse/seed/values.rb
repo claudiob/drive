@@ -51,8 +51,11 @@ module Recourse
               .find { |association| association.foreign_key.to_s == column }
       end
 
+      # Only PostgreSQL has array columns, so the constant is guarded: named bare it
+      # would raise on a host running SQLite or MySQL, where no column is one.
       def seed_array?(type)
-        type.is_a? ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array
+        defined?(ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array) &&
+          type.is_a?(ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array)
       end
 
       def seed_literal(column, number, type)

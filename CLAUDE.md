@@ -79,6 +79,11 @@ two is filed under the one a reader would look in first.
 - Running the test suite therefore needs a PostgreSQL server. `test/test_helper`
   creates the database on first run, so `rake test` is still the only command
   needed once the server is up.
+- The rule binds the apps we write and the dummy app — never the gem. The gem's
+  own code names no adapter, so a host on SQLite or MySQL is served the same:
+  column kinds are read through `type_for_attribute` and `defined_enums`, which
+  every adapter answers, and an adapter-only constant like `PostgreSQL::OID::Array`
+  is guarded with `defined?` rather than named bare, which would raise elsewhere.
 
 #### Clear the cache when a table's structure changes
 
