@@ -30,7 +30,7 @@ class TestRecoursesCaching < Minitest::Test
     ZIP.first!.update! market: market
     @session.get '/markets'
 
-    assert_includes @session.response.body, '<td data-cell="ZIPs"><i class="bi bi-geo-alt"></i> 1'
+    assert_includes @session.response.body, '<td data-cell="ZIPs">1</td>'
   ensure
     ZIP.first!.update! market: nil
   end

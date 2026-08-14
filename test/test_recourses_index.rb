@@ -15,8 +15,11 @@ class TestRecoursesIndex < Minitest::Test
     refute_includes body, 'data-cell="Id"'
     # Census data, written once: the model says so, and the two columns go with it.
     refute_includes body, 'data-cell="Created at"'
-    # A counter is headed with what it counts, keeps the acronym, and sorts.
-    assert_includes body, 'q%5Bs%5D=zips_count+asc">ZIPs</a></th>'
+    # A counter is headed with the icon of what it counts, named for a reader
+    # who cannot see it, and sorts; its cells carry the bare figure.
+    icon = '<i class="bi bi-geo-alt" role="img" aria-label="ZIPs"></i>'
+
+    assert_includes body, %(q%5Bs%5D=zips_count+asc">#{icon}</a></th>)
     # And its cell links out of the frame, to the index nested under the row.
     assert_includes body, %(<a data-turbo-frame="_top" href="/counties/#{County.first.id}/zips">)
   end

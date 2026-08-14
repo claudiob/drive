@@ -7,7 +7,6 @@ en:
     formats:
       recourse: "%b %-d at %I:%M%P %Z"
   recourse:
-    actions: Actions
     add: Add %{model}
     all: All %{models}
     blank: "—"

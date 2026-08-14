@@ -3,6 +3,7 @@ require_relative 'helpers/cells'
 require_relative 'helpers/colors'
 require_relative 'helpers/comboboxes'
 require_relative 'helpers/constraints'
+require_relative 'helpers/counters'
 require_relative 'helpers/deletions'
 require_relative 'helpers/examples'
 require_relative 'helpers/fields'
@@ -21,9 +22,9 @@ require_relative 'helpers/values'
 module Recourse
   # View helpers for the pages the gem renders, and what the parts share.
   module Helpers
-    include Actions, Cells, Colors, Comboboxes, Constraints, Deletions, Examples,
-            Fields, Filters, Formats, Inputs, Kinds, Navigation, Parents, References,
-            Refreshes, Searches, Shortcuts, Values
+    include Actions, Cells, Colors, Comboboxes, Constraints, Counters, Deletions,
+            Examples, Fields, Filters, Formats, Inputs, Kinds, Navigation, Parents,
+            References, Refreshes, Searches, Shortcuts, Values
 
     # The grid a record's own two pages lay an attribute out in: two columns on a large
     # viewport, and the same padding on both, so a value and the field that edits it sit

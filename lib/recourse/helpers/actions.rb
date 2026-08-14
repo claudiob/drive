@@ -1,6 +1,6 @@
 module Recourse
   module Helpers
-    # The links at the end of a row: a look at a record, then a change to it.
+    # The action columns a row opens with: a look at a record, then a change to it.
     module Actions
       # Bootstrap Icons for the two pages a record has, so a row's links and a card's
       # tabs cannot drift apart. Written out rather than named as Unicon concepts:
@@ -19,12 +19,14 @@ module Recourse
         end
       end
 
-      # Both of them, in that order, or nothing at all where a row offers neither.
-      def resource_links(record)
-        links = [show_resource_link(record), edit_resource_link(record)].compact
-        return if links.empty?
+      # An action column's heading: the icon on the header row — the column is as
+      # narrow as the icon in it, with no room for a word — and the action's own
+      # word in every other, which is what each `data-cell` labels itself with.
+      def action_header(action)
+        label = t "recourse.#{action}"
+        return label unless @recourse_headers
 
-        tag.div safe_join(links), class: 'd-flex gap-2'
+        tag.i class: "bi bi-#{ICONS[action]}", role: :img, aria: { label: label }
       end
 
       # Eye linking to a record's show page, or nothing when there is not one.
@@ -42,11 +44,6 @@ module Recourse
 
         turbo_link_to icon(:edit), path, aria: { label: t('recourse.edit') }
       end
-
-      # Whether a row has anything to offer at the end of it. A table whose resource
-      # has neither page ends at its last column rather than at a heading over
-      # nothing.
-      def resource_actions? = routed_action?('show') || routed_action?('edit')
 
     private
 

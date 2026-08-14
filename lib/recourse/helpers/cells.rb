@@ -7,15 +7,17 @@ module Recourse
       # schema happens to declare them.
       TIMESTAMPS = %w[created_at updated_at].freeze
 
-      # Columns the table shows: every attribute that is not encrypted and not
-      # read-only, less the primary key — an id is how a row is addressed, not
-      # something to read about it — and with the timestamps moved to the end,
-      # before the actions.
+      # Columns the table shows: every counter first, since a count is a link into
+      # the record's children and belongs beside the action columns that open it;
+      # then every attribute that is not encrypted and not read-only, less the
+      # primary key — an id is how a row is addressed, not something to read about
+      # it — and with the timestamps moved to the end.
       def resource_columns
         columns = resource_model.column_names - hidden_columns
         asked = resource_model.recourse_timestamps.map(&:to_s)
+        counters = counter_columns & columns
 
-        (columns - TIMESTAMPS) + (TIMESTAMPS & columns & asked)
+        counters + (columns - counters - TIMESTAMPS) + (TIMESTAMPS & columns & asked)
       end
 
       # What no table shows: ciphertext nobody can read, a value written once that
@@ -53,9 +55,8 @@ module Recourse
         value = resource.attributes[column]
         counted = resource_model.recourse_counters[column]
 
-        # A count leads with the icon of what it counts rather than the heading: a
-        # column of figures is read down, and by then the heading is a scroll away.
-        # It links to the counted rows where a block nested their index under here.
+        # A count is the bare number — the icon in the heading already says what it
+        # counts — linking to the counted rows where a block nested their index here.
         return counter_cell resource, value, counted if counted
 
         formatted_cell value, column
@@ -76,16 +77,6 @@ module Recourse
       end
 
     private
-
-      def counter_cell(resource, value, association)
-        count = safe_join [tag.i(class: "bi bi-#{Recourse.model_icon association.klass}"), value],
-                          ' '
-        nested = "#{controller.controller_path}/#{association.name}"
-        return count unless routed? nested, 'index'
-
-        turbo_link_to count, url_for(controller: "/#{nested}", action: :index,
-                                     "#{resource_key}_id": resource.id)
-      end
 
       def formatted_cell(value, column)
         return localized value if value.is_a?(Date) || value.is_a?(Time)

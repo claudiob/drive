@@ -7,18 +7,22 @@
       <thead>
         <tr>
           <% @recourse_headers = true %>
+          <%= column header: action_header(:show), class: 'recourse-actions' if routed_action? 'show' %>
+          <%= column header: action_header(:edit), class: 'recourse-actions' if routed_action? 'edit' %>
           <%= render 'row', resource_key => nil %>
-          <%= column header: t('recourse.actions'), class: 'recourse-actions' if resource_actions? %>
         </tr>
       </thead>
       <tbody>
         <% @recourse_headers = false %>
         <% recourses.each do |recourse| %>
           <tr>
-            <%= render 'row', resource_key => recourse %>
-            <% if resource_actions? -%>
-              <%= column header: t('recourse.actions'), class: 'recourse-actions' do %><%= resource_links recourse %><% end %>
+            <% if routed_action? 'show' -%>
+              <%= column header: action_header(:show), class: 'recourse-actions' do %><%= show_resource_link recourse %><% end %>
             <% end -%>
+            <% if routed_action? 'edit' -%>
+              <%= column header: action_header(:edit), class: 'recourse-actions' do %><%= edit_resource_link recourse %><% end %>
+            <% end -%>
+            <%= render 'row', resource_key => recourse %>
           </tr>
         <% end %>
       </tbody>

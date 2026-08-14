@@ -53,8 +53,13 @@ module Recourse
         resource_model.recourse_searchable_columns.include? column.to_s
       end
 
-      # The heading a form and a table already agree on for the same column.
+      # The heading a form and a table already agree on for the same column — except
+      # a counter's header row, which shows the counted model's icon: the cells
+      # under it are bare figures, and the icon is what says what they count.
       def sort_title(column)
+        counted = resource_model.recourse_counters[column.to_s]
+        return counter_title counted if counted && @recourse_headers
+
         reference_title column.to_s, belongs_to_association(column.to_s)
       end
 

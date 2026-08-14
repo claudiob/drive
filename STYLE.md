@@ -653,27 +653,28 @@ before writing or editing any layout, view or partial.
 - Those names cost one query per association rather than one per row, because the
   index eager-loads every `belongs_to` the table can name. Twenty locations still
   cost five queries.
-- A table that has actions ends with an `Actions` column, and `_table` adds it
-  rather than `_row`. That is the whole point of putting it there: a host that
-  writes its own row still gets the column, appended after whatever columns that
-  row defines, so `/contacts` reads `Name | Phone | Created at | Actions`.
-- A row links to what a record has: an eye to the show page, then a pencil to the
-  edit one, each drawn only where its action is both implemented and routed. The
-  content of each is the icon rather than the word —
-  `<i class='bi bi-eye'></i>` and `<i class='bi bi-pencil-square'></i>` — and each
-  carries an `aria-label`, since an icon alone says nothing to a screen reader.
-- The pair sits in one `<div class='d-flex gap-2'>`, so two icons in a cell read as
-  two things to click rather than as one smudge.
-- A look before a change, in the order the seven actions are drawn. Never the other
-  way round: the pencil is the one that matters, and putting it under the cursor
-  first is how a row gets edited by accident.
-- A resource with neither action gets no column at all, rather than a heading over
-  an empty column on every row.
-- It is as narrow as the pencil in it: `.recourse-actions` asks for `width: 1%`,
+- A table that has actions opens with one column per action, and `_table` adds
+  them rather than `_row`. That is the whole point of putting them there: a host
+  that writes its own row still gets the columns, prepended before whatever
+  columns that row defines, so `/contacts` reads `(eye) | (pencil) | ZIPs count |
+  Name | Phone | Created at`.
+- One column for the show page and one for the edit page, each drawn only where
+  its action is routed. The heading and every cell are the icon rather than the
+  word — `<i class='bi bi-eye'></i>` and `<i class='bi bi-pencil-square'></i>` —
+  `action_header` answering the icon on the header pass and the action's word on
+  every other, so each `data-cell` labels itself `Show` or `Edit`. The heading's
+  icon carries `role='img'` and an `aria-label`, and each cell's link an
+  `aria-label`, since an icon alone says nothing to a screen reader.
+- A look before a change, in the order the seven actions are drawn. Never the
+  other way round: the pencil is the one that matters, and putting it under the
+  cursor first is how a row gets edited by accident.
+- A resource missing an action gets no column for it, rather than a heading over
+  an empty column on every row; a resource with neither opens at its first
+  attribute.
+- Each is as narrow as the icon in it: `.recourse-actions` asks for `width: 1%`,
   which is the least a cell can ask for, and a table laying out to 100% hands what
   that cell cannot use to the columns carrying text. `min-content` would still fit
-  the heading, and a length would be a guess. `white-space: nowrap` keeps a second
-  action beside the first rather than under it.
+  the heading, and a length would be a guess.
 - Not while the table is stacked, where every cell is a block and 1% of the row is
   a squashed one. The rule sits in a `@container (width >= 576px)`, which is
   `.sm:table-stacked`'s own query read the other way round, against the
@@ -712,18 +713,20 @@ before writing or editing any layout, view or partial.
 - A model asks for the one that means something. A booking and a contact show
   `created_at`, since when the work came in and when someone first reached the app
   are part of what those rows say; a setting and an app show `updated_at`, since
-  both are written once and edited after — they are what Rails maintains rather than what the
-  record is about, and a reader scanning a table wants its subject first. They
-  still precede the `Actions` column, which `_table` appends after every column a
-  row defines.
+  both are written once and edited after — they are what Rails maintains rather
+  than what the record is about, and a reader scanning a table wants its subject
+  first.
 - Column headings come from `human_attribute_name`, so a host app can rename
   one by translating the attribute.
-- A counter cache is headed with what it counts — `ZIPs`, not `ZIPs count` — and
-  every cell in it leads with that model's icon: `<i class='bi bi-geo-alt'></i> 26`.
-  A column of figures is read down rather than across, and by the row that raises
-  the question the heading is off the top of the screen; the icon travels with the
-  number. It is the same icon the sidebar and the breadcrumb draw for that
-  resource, so the three agree without anyone naming it three times.
+- Counter caches lead the attribute columns, right after the action columns: a
+  count is a link into the record's children, so it sits with the other things a
+  row offers to click before what the row says.
+- A counter cache is headed with the icon of what it counts — the same icon the
+  sidebar and the breadcrumb draw for that resource, so the three agree without
+  anyone naming it three times. The icon carries `role='img'` and an `aria-label`
+  of the counted model's plural — `ZIPs`, not `ZIPs count` — which is also what
+  every `data-cell` under it says. The cells hold the bare figure: `26`, no icon,
+  since the heading already names what the figures count.
 - Column headings that can be sorted are links, which the section below covers.
 
 ## Sorting, searching and filtering
