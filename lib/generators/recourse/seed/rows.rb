@@ -43,14 +43,27 @@ module Recourse
         seed_editable.reject { |column| seed_required? column }
       end
 
+      # What the bare row cannot leave out: a column the model validates against
+      # nil, or one the database itself refuses NULL in with no default to answer
+      # for it. Both gates stand between a row and saving, so both are asked.
+      def seed_required?(column)
+        seed_validated?(column) || seed_constrained?(column)
+      end
+
       # A belongs_to validates the association rather than the column, so `zip_id`
       # asks about `zip` too.
-      def seed_required?(column)
+      def seed_validated?(column)
         [column, column.delete_suffix('_id')].uniq.any? do |attribute|
           @model.validators_on(attribute).any? do |validator|
             REQUIRING.any? { |kind| validator.is_a? kind }
           end
         end
+      end
+
+      def seed_constrained?(column)
+        one = @model.columns_hash[column]
+
+        !one.null && one.default.nil? && one.default_function.nil?
       end
     end
   end

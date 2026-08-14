@@ -2,9 +2,10 @@ Description:
     A seed file for every model your `recourses` routes serve, so every screen
     has rows to show. Each db/seeds/<resources>.rb holds 25 rows: the first
     carries only what a row cannot save without — whatever a presence or
-    inclusion validator demands, and every required belongs_to — the last fills
-    every attribute, and the rest mix which optional attributes are filled, so
-    a nullable column is seen both ways.
+    inclusion validator demands, every required belongs_to, and every column
+    the database refuses NULL in with no default to answer for it — the last
+    fills every attribute, and the rest mix which optional attributes are
+    filled, so a nullable column is seen both ways.
 
     Values are of each column's own type and nothing more, varied by row so a
     unique index is satisfied: strings are numbered, an email column gets an

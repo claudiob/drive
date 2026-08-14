@@ -174,10 +174,12 @@ $ bin/rails generate recourse:seed
 
 A seed file for every model your `recourses` routes already serve — the models
 you have, rather than one you are generating — so every screen has rows to show.
-Each file holds 25 rows: the first carries only what a row cannot save without,
-whatever a presence or inclusion validator demands and every required
-`belongs_to`; the last fills every attribute; and the rest mix which optional
-attributes are filled, so a nullable column is seen both ways on the screens.
+Each file holds 25 rows: the first carries only what a row cannot save without
+— whatever a presence or inclusion validator demands, every required
+`belongs_to`, and every column the database refuses NULL in with no default to
+answer for it; both gates stand between a row and saving, so both are asked.
+The last row fills every attribute, and the rest mix which optional attributes
+are filled, so a nullable column is seen both ways on the screens.
 
 ```ruby
 [
