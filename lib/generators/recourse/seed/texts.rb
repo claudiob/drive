@@ -51,13 +51,14 @@ module Recourse
 
       # Words joined by single spaces, landing exactly on `length`: a draw that
       # would overshoot, or leave one character of room — a space with nothing
-      # after it — stretches to end the string instead.
+      # after it — stretches to end the string instead, but never past what a
+      # word may be. Sixteen left takes fourteen and a letter, not one long run.
       def seed_text(length)
         words = []
         remaining = length
         while remaining.positive?
           drawn = rand WORDS
-          drawn = remaining if drawn >= remaining - 1
+          drawn = remaining <= WORDS.max ? remaining : remaining - 2 if drawn >= remaining - 1
           words << seed_word(drawn)
           remaining -= drawn + 1
         end
