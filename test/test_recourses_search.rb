@@ -56,7 +56,7 @@ class TestRecoursesSearch < Minitest::Test
 
     assert_includes body, 'name="q[code_or_county_name_cont]"'
     assert_includes body, "data-bs-name='q[market_id_in]'"
-    assert_includes body, "Alpha Market<span class='recourse-count fg-2'>1</span>"
+    assert_includes body, "Alpha Market</span></span><span class='recourse-count fg-2'>1</span>"
     refute_includes body, 'q[county_id_in]'
   ensure
     clear_markets markets

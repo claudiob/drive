@@ -75,7 +75,8 @@ class TestRecoursesFields < Minitest::Test
     body = session.response.body
 
     assert_includes body, "data-bs-toggle='combobox' data-bs-name='job[location_id]'"
-    assert_includes body, "data-bs-value='#{location.id}' aria-selected='false'>Comboboxville"
+    assert_includes body, "data-bs-value='#{location.id}' aria-selected='false'>" \
+                          "<span class='menu-item-content'><span>Comboboxville</span></span>"
     refute_includes body, 'name="job[location_id]"'
   ensure
     location&.destroy

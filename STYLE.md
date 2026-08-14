@@ -732,9 +732,11 @@ before writing or editing any layout, view or partial.
   Where the model a filter lists counts the rows being filtered, each option ends
   with that count: a `<span class='recourse-count fg-2'>` at the right of the row, in
   muted text, so the name reads first and the number answers "how many of these?".
-  It takes `margin-inline-start: auto` and the tick beside it gives up its own, since
-  two auto margins would split the free space and leave the count mid-row. The tick
-  keeps its width while hidden, so ticking an option moves nothing.
+  It stays in the menu: the name goes in a `.menu-item-content > span`, which is the
+  one thing the plugin copies into the closed box, so a box showing one chosen option
+  reads `Beverly Hills` and not `Beverly Hills4`. That wrapper is `flex: 1`, which is
+  also what puts the count at the right without a margin of its own. The tick keeps
+  its width while hidden, so ticking an option moves nothing.
 - A counted menu is ordered by that count, descending, and by name where two options
   hold the same number. A menu is read from the top and most requests want the option
   most rows are behind; the name is what keeps two equal ones from swapping places

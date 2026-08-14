@@ -33,13 +33,16 @@
             filtered is `d-none` until `All` asks for it. One already ticked stays put,
             or the box would name a filter its own menu does not offer. -%>
         <% empty = counter && !chosen && recourse.attributes[counter].to_i.zero? -%>
-        <button class='menu-item<%= ' selected' if chosen %><%= ' d-none' if empty %>' type='button' data-bs-value='<%= recourse.id %>' aria-selected='<%= chosen %>'><%= recourse.attributes[label] %><% if counter %><span class='recourse-count fg-2'><%= number_with_delimiter recourse.attributes[counter] %></span><% end %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
+        <%# The name in a `.menu-item-content > span`, which is what the plugin copies into
+            the closed box: a count belongs in the menu and not on the box. Its wrapper
+            is `flex: 1`, so the count needs no margin of its own to sit at the right. -%>
+        <button class='menu-item<%= ' selected' if chosen %><%= ' d-none' if empty %>' type='button' data-bs-value='<%= recourse.id %>' aria-selected='<%= chosen %>'><span class='menu-item-content'><span><%= recourse.attributes[label] %></span></span><% if counter %><span class='recourse-count fg-2'><%= number_with_delimiter recourse.attributes[counter] %></span><% end %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
       <% end %>
     <% end %>
   <% else -%>
     <% values.each do |value| %>
       <% chosen = selected.include? value -%>
-      <button class='menu-item<%= ' selected' if chosen %>' type='button' data-bs-value='<%= value %>' aria-selected='<%= chosen %>'><%= value %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
+      <button class='menu-item<%= ' selected' if chosen %>' type='button' data-bs-value='<%= value %>' aria-selected='<%= chosen %>'><span class='menu-item-content'><span><%= value %></span></span><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
     <% end %>
   <% end -%>
   <div class='combobox-no-results d-none'><%= t 'recourse.no_results' %></div>

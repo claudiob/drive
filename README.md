@@ -529,7 +529,8 @@ for two states at once.
 
 Where the model a filter lists keeps a counter cache of the rows being filtered —
 `markets.zips_count` on `/zips` — every option in that menu ends with the count, at
-the right of its row and in muted text, and the menu is ordered by that count rather
+the right of its row and in muted text and in the menu alone: a closed box showing
+one chosen option reads its name and nothing else. The menu is ordered by that count rather
 than by name: the choice most of the rows are behind is the first offered, with the
 name breaking a tie. A menu with no count to read is still ordered by name. An option counting none of them is in the
 menu without being on it: `d-none` until the `All markets` line at the top is
