@@ -9,7 +9,8 @@ Description:
 
     Values are of each column's own type, drawn at random while generating — so
     the written file never changes between `rails db:seed` runs. A string is a
-    random length inside its length validator's bounds and reads as words, each
+    random length inside its length validator's bounds and its column's SQL
+    limit — whichever gate is tighter wins — and reads as words, each
     one to fifteen characters joined by single spaces, in an alphabet reaching
     past ASCII into accents and emoji, never repeated within its column — a
     column pinned to an exact length gets one solid word, since a code is not

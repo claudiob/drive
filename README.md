@@ -219,7 +219,9 @@ are filled, so a nullable column is seen both ways on the screens.
 Values are of each column's own kind, drawn at random while the file is
 generated — never at seed time, so the written file stays the same on every
 `db:seed` run and `find_or_create_by!` keeps finding its rows. A string is a
-random length inside its length validator's bounds and reads as words — each a
+random length inside its length validator's bounds and its column's SQL limit —
+a value must fit past both gates, so the tighter one wins, and a `limit: 2`
+column with no validator still seeds two characters — and reads as words, each a
 random one to fifteen characters, joined by single spaces, so no run goes
 longer unbroken — from an alphabet that reaches past ASCII into accents and
 emoji, and never repeats within its column, so a unique index is satisfied. A

@@ -32,13 +32,19 @@ module Recourse
         seed_text length
       end
 
-      # Random within the bounds the column's own length validator states, and a
-      # readable 3..24 where the model states none.
+      # Random within the bounds the column's own length validator states, capped
+      # by the column's SQL limit — a value must fit past both gates, so the
+      # tighter one wins, whatever the other says — and a readable 3..24 where
+      # neither speaks. The schema is read here for the same reason
+      # `seed_required?` reads it: no validator can speak for a limit the model
+      # never stated, and a row that overflows it never saves.
       def seed_length(column)
         options = seed_length_options column
         exact = options[:is]
+        longest = [exact || options[:maximum] || 24, @model.columns_hash[column]&.limit].compact.min
+        shortest = [exact || options[:minimum] || 3, longest].min
 
-        rand (exact || options[:minimum] || 3)..(exact || options[:maximum] || 24)
+        rand shortest..longest
       end
 
       def seed_length_options(column)

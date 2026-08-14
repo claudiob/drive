@@ -20,9 +20,10 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
   # One file per model the routes declare — none for a resource with no model — each
   # opening with a bare row of what a row cannot save without. Values are drawn at
   # random while generating, to each column's own shape: 25 distinct strings of
-  # random lengths inside their length validator's bounds, reading as words that
-  # reach past ASCII with no run longer than a word may be, and a reference reading
-  # a random row of its table rather than forever the first.
+  # random lengths inside their length validator's bounds and their column's SQL
+  # limit — a state's code is `limit: 2` with no validator, and still fits —
+  # reading as words that reach past ASCII with no run longer than a word may be,
+  # and a reference reading a random row of its table rather than forever the first.
   def test_it_seeds_twenty_five_rows_for_every_recoursed_model
     run_generator
 
@@ -33,6 +34,7 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
     assert_file('db/seeds/messages.rb') { |messages| assert_wrapped_contents messages }
     assert_file 'db/seeds/counties.rb', /state: State\.offset\(\d+\)\.first/
     assert_file 'db/seeds/providers.rb', /pin: '[^' ]{6}'/
+    assert_file 'db/seeds/states.rb', /code: '[^']{2}', fips: '[^']{2}'/
     assert_no_file 'db/seeds/placeholders.rb'
   end
 
