@@ -1,13 +1,14 @@
-# Creates the providers table, and the Postgres type its team_size column draws
-# from. Email, phone and PIN are encrypted, so none of the three carries a
-# shape constraint in the database — that is the model's job instead.
+# Creates the providers table; a check constraint keeps the team_size column to
+# the words the model admits. Email, phone and PIN are encrypted, so none of the
+# three carries a shape constraint in the database — that is the model's job.
 class CreateProviders < ActiveRecord::Migration[8.1]
   def change
-    create_enum :team_size, Provider::TEAM_SIZES
     create_columns
     add_status_columns
     add_financial_columns
     add_history_columns
+    add_check_constraint :providers, "team_size IN (#{quoted Provider::TEAM_SIZES})",
+                         name: 'providers_team_size_known'
   end
 
 private
@@ -27,7 +28,7 @@ private
       t.boolean :insured, default: true, null: false
       t.boolean :subscribed, default: true, null: false
       t.string :time_zone, null: false
-      t.enum :team_size, enum_type: :team_size
+      t.string :team_size
     end
   end
 
@@ -51,5 +52,10 @@ private
       t.integer :bookings_count, default: 0, null: false
       t.timestamps
     end
+  end
+
+  # The words the column admits, quoted for the constraint that rejects the rest.
+  def quoted(words)
+    words.map { |word| "'#{word}'" }.join ', '
   end
 end

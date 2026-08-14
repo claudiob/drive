@@ -12,8 +12,8 @@ class CreateStates < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_check_constraint :states, "code ~ '^[A-Z]{2}$'", name: 'states_code_two_letters'
-    add_check_constraint :states, "fips ~ '^[0-9]{2}$'", name: 'states_fips_two_digits'
+    add_check_constraint :states, "code GLOB '[A-Z][A-Z]'", name: 'states_code_two_letters'
+    add_check_constraint :states, "fips GLOB '[0-9][0-9]'", name: 'states_fips_two_digits'
 
     reversible { |direction| direction.up { backfill } }
   end
@@ -24,13 +24,12 @@ private
   def backfill
     values = File.readlines(Rails.root.join(STATES), chomp: true).map do |line|
       id, code, fips, name = line.split '|'
-      "(#{id}, #{quote code}, #{quote fips}, #{quote name}, now(), now())"
+      "(#{id}, #{quote code}, #{quote fips}, #{quote name}, current_timestamp, current_timestamp)"
     end
 
     execute <<~SQL.squish
       insert into states (id, code, fips, name, created_at, updated_at)
       values #{values.join ', '}
     SQL
-    execute "select setval('states_id_seq', (select max(id) from states))"
   end
 end

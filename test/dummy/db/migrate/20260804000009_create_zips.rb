@@ -14,10 +14,9 @@ class CreateZIPs < ActiveRecord::Migration[8.1]
       t.references :county, null: false, foreign_key: true
       t.references :market, foreign_key: true
 
+      t.check_constraint "code GLOB '[0-9][0-9][0-9][0-9][0-9]'", name: 'zips_code_five_digits'
       t.timestamps
     end
-
-    add_check_constraint :zips, "code ~ '^[0-9]{5}$'", name: 'zips_code_five_digits'
 
     reversible { |direction| direction.up { backfill } }
   end
@@ -27,13 +26,13 @@ private
   def backfill
     rows = File.readlines Rails.root.join(ZIPS), chomp: true
     rows.each_slice(BATCH) { |slice| insert slice }
-    execute "select setval('zips_id_seq', (select max(id) from zips))"
   end
 
   def insert(lines)
     values = lines.map do |line|
       id, county_id, code, city, time_zone = line.split '|'
-      "(#{id}, #{county_id}, #{quote code}, #{quote city}, #{quote time_zone}, now(), now())"
+      "(#{id}, #{county_id}, #{quote code}, #{quote city}, #{quote time_zone}, " \
+        'current_timestamp, current_timestamp)'
     end
 
     execute <<~SQL.squish

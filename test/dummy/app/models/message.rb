@@ -1,5 +1,7 @@
 # Something said to a contact or heard from one, sometimes about a job.
 class Message < ApplicationRecord
+  include Mediable
+
   belongs_to :contact
   belongs_to :job, optional: true
 

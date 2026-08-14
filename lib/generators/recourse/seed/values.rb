@@ -15,6 +15,10 @@ module Recourse
         datetime: ->(number) { "Time.current - #{number}.hours" },
       }.freeze
 
+      # PostgreSQL's array type by name: the constant itself only exists once that
+      # adapter is loaded, so naming it bare would raise on SQLite and MySQL.
+      PG_ARRAY = 'ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array'
+
       # What an app's own type is a kind of — a Price is a Decimal however it
       # answers `type` — for the columns whose `type` names no entry above.
       KINDS = {
@@ -51,11 +55,12 @@ module Recourse
               .find { |association| association.foreign_key.to_s == column }
       end
 
-      # Only PostgreSQL has array columns, so the constant is guarded: named bare it
-      # would raise on a host running SQLite or MySQL, where no column is one.
+      # A list is an array column on PostgreSQL, or one the model declares with
+      # `serialize type: Array` on any database.
       def seed_array?(type)
-        defined?(ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array) &&
-          type.is_a?(ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array)
+        return true if type.class.name == PG_ARRAY
+
+        type.is_a?(ActiveRecord::Type::Serialized) && type.coder.object_class == Array
       end
 
       def seed_literal(column, number, type)

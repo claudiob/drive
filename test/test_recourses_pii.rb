@@ -86,7 +86,7 @@ private
   def insert_plaintext_contact
     Contact.connection.execute <<~SQL.squish
       insert into contacts (phone, email, surname, created_at, updated_at)
-      values ('5557770001', 'plain@example.com', 'Plaintext', now(), now())
+      values ('5557770001', 'plain@example.com', 'Plaintext', current_timestamp, current_timestamp)
     SQL
   end
 end

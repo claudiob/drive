@@ -46,8 +46,11 @@ private
     Provider.find_or_create_by! phone: '2125550100' do |one|
       one.assign_attributes everything_provider
     end
+    # An email even on the bare row: today's model requires one, and the remake
+    # migration right after this rewrites every provider's address anyway.
     Provider.find_or_create_by! phone: '2125550101' do |provider|
-      provider.assign_attributes name: 'Bare Provider', time_zone: 'Pacific Time (US & Canada)'
+      provider.assign_attributes name: 'Bare Provider', time_zone: 'Pacific Time (US & Canada)',
+                                 email: 'bare-provider@example.com'
     end
   end
 

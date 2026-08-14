@@ -73,17 +73,25 @@ two is filed under the one a reader would look in first.
 
 #### PostgreSQL, always
 
-- When an app needs a database, it is PostgreSQL. Never MySQL, never SQLite —
-  including for test-only apps like `test/dummy`, and including cases where
-  SQLite would be less setup.
-- Running the test suite therefore needs a PostgreSQL server. `test/test_helper`
-  creates the database on first run, so `rake test` is still the only command
-  needed once the server is up.
-- The rule binds the apps we write and the dummy app — never the gem. The gem's
-  own code names no adapter, so a host on SQLite or MySQL is served the same:
-  column kinds are read through `type_for_attribute` and `defined_enums`, which
-  every adapter answers, and an adapter-only constant like `PostgreSQL::OID::Array`
-  is guarded with `defined?` rather than named bare, which would raise elsewhere.
+- When an app needs a database, it is PostgreSQL. Never MySQL, never SQLite,
+  including cases where SQLite would be less setup.
+- The dummy app is the one deliberate exception, on SQLite since 2026-08-14: the
+  gem serves every adapter, and the suite proving that on a second one — with no
+  server to run — outweighs the dummy resembling the apps. The database is a file
+  under `test/dummy/storage`, created and migrated on the first `rake test`, and
+  deleting `storage/*.sqlite3*` is the reset; `dropdb --force` stays the reset
+  for the PostgreSQL apps.
+- The rule binds the apps we write — never the gem. The gem's own code names no
+  adapter, so a host on any of the three is served the same: column kinds are
+  read through `type_for_attribute` and `defined_enums`, which every adapter
+  answers, and the one PostgreSQL constant it recognizes, `PostgreSQL::OID::Array`,
+  is compared by class *name*, since the class only exists once that adapter loads.
+- What PostgreSQL alone offers, the dummy states the portable way: an enum is a
+  string column with an `IN` check constraint reading the model's constant, a
+  list is a text column the model serializes (`Mediable`), a two-letter shape is
+  `GLOB` rather than `~`, backfills say `current_timestamp` rather than `now()`,
+  and there is no citext — the dummy's one plaintext email is a plain string.
+  The enum, array and email rules below still bind the apps we write.
 
 #### Clear the cache when a table's structure changes
 
@@ -343,6 +351,11 @@ two is filed under the one a reader would look in first.
 - An array column is `t.text :media_urls, array: true, default: [], null: false`.
   The default and the null constraint together mean it is always an array, so
   nothing has to ask whether it is nil before treating it as a list.
+- Where the database has no arrays (the dummy, on SQLite), the column is a plain
+  nullable `t.text` and the model says `serialize :media_urls, coder: JSON,
+  type: Array`. Nullable is not optional: the coder stores an *empty* list as
+  NULL and reads NULL back as `[]`, so `null: false` would reject every empty
+  list and the coder — not the constraint — is what keeps it always an array.
 
 #### Trailing comma on a multiline hash or array
 

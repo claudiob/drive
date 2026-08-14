@@ -1,6 +1,6 @@
 # A request for work at a ZIP, from a contact, possibly routed through an app.
 class Booking < ApplicationRecord
-  include Recoursive
+  include Mediable, Recoursive
 
   # The statuses a booking moves through, roughly in the order it moves through them.
   STATUSES = [

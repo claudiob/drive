@@ -1,11 +1,10 @@
 default: &default
-  adapter: postgresql
-  encoding: unicode
+  adapter: sqlite3
 
 development:
   <<: *default
-  database: recourse_dummy_development
+  database: storage/development.sqlite3
 
 test:
   <<: *default
-  database: recourse_dummy_test
+  database: storage/test.sqlite3

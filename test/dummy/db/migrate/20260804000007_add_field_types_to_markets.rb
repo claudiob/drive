@@ -2,7 +2,7 @@
 class AddFieldTypesToMarkets < ActiveRecord::Migration[8.1]
   def change
     change_table :markets, bulk: true do |t|
-      t.citext :email
+      t.string :email
       t.string :color
       t.string :zip, limit: 5
       t.date :opens_on

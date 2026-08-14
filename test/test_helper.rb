@@ -14,16 +14,17 @@ require_relative 'dummy/config/environment'
 
 require 'minitest/autorun'
 
-# Create the database on first run, then migrate; both are no-ops afterwards.
-begin
-  ActiveRecord::Base.lease_connection.verify!
-rescue ActiveRecord::NoDatabaseError
-  ActiveRecord::Tasks::DatabaseTasks.create_current
-end
-
+# SQLite creates the database file on first connection, so migrating is all the
+# first run needs, and it is a no-op afterwards.
 ActiveRecord::Migration.suppress_messages do
   ActiveRecord::MigrationContext.new(Rails.root.join('db/migrate')).migrate
 end
+
+# A model a backfill touches caches its columns mid-history, and a later migration
+# that reshapes the same table leaves the class describing columns that are gone.
+# Reset them once the last migration has spoken; a first run is the only one this
+# changes, since afterwards migrating alters nothing.
+ApplicationRecord.descendants.each(&:reset_column_information)
 
 # Routes load lazily, and `recourses` defines controllers as it draws them, so a
 # test that never issues a request would otherwise not see them.
