@@ -80,14 +80,19 @@
         --bs-breadcrumb-link-hover-color: var(--bs-breadcrumb-link-active-color);
       }
 
-      /* A pencil needs no share of the table's width, so the actions column asks for
-         the least a cell can ask for and the columns carrying text keep the rest.
-         `width: 1%` rather than a length: a table lays out to 100% and hands what a
-         cell cannot use to its neighbours, while `min-content` would still fit the
-         heading. Not while the table is stacked, where every cell is a block and 1%
-         of the row is a squashed one — the query matches `.sm:table-stacked`'s. */
+      /* An action column is as wide as a row is tall — an icon in a square — and a
+         counter column starts at the same square, widening only when a figure like
+         38405 needs the room: a table laying out to 100% reads the width as a
+         preference, never crushes content into it, and hands what these cells do
+         not use to the columns carrying text. Not while the table is stacked, where
+         every cell is a block and a square one is a squashed one — the query
+         matches `.sm:table-stacked`'s. */
       @container (width >= 576px) {
-        .recourse-actions { width: 1%; white-space: nowrap; }
+        .recourse-actions, .recourse-counter {
+          width: calc(1em * var(--bs-body-line-height) + 2 * var(--bs-table-cell-padding-y));
+          white-space: nowrap;
+          text-align: center;
+        }
       }
 
       /* One rule per row of the show page, so a value and its heading read as one thing

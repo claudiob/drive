@@ -671,10 +671,21 @@ before writing or editing any layout, view or partial.
 - A resource missing an action gets no column for it, rather than a heading over
   an empty column on every row; a resource with neither opens at its first
   attribute.
-- Each is as narrow as the icon in it: `.recourse-actions` asks for `width: 1%`,
-  which is the least a cell can ask for, and a table laying out to 100% hands what
-  that cell cannot use to the columns carrying text. `min-content` would still fit
-  the heading, and a length would be a guess.
+- Each is a square: `.recourse-actions` asks for a width of
+  `calc(1em * var(--bs-body-line-height) + 2 * var(--bs-table-cell-padding-y))`,
+  which is exactly what a single-line cell stands tall — line box plus the two
+  vertical paddings, with `box-sizing: border-box` making the two measures the
+  same kind. The icon sits centred in it, and a table laying out to 100% hands
+  what these cells do not use to the columns carrying text.
+- `.recourse-counter` shares that rule, so a counter column starts at the same
+  square — but a table treats the width as a preference, never crushing content
+  into it, so a figure like `38405` widens its column to be read whole;
+  `white-space: nowrap` is what keeps it one line while it does. The class comes
+  from `counter_class(name)`, which `_row` passes on every column and which
+  answers only for a counter.
+- Neither rule applies while the table is stacked, where every cell is a block
+  and a square one is a squashed one — the `@container` query matches
+  `.sm:table-stacked`'s.
 - Not while the table is stacked, where every cell is a block and 1% of the row is
   a squashed one. The rule sits in a `@container (width >= 576px)`, which is
   `.sm:table-stacked`'s own query read the other way round, against the

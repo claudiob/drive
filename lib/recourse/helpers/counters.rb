@@ -2,6 +2,12 @@ module Recourse
   module Helpers
     # A counter cache's column in a table: an icon heading over bare figures.
     module Counters
+      # The class a counter's cells carry, which is what sizes the column like the
+      # action columns beside it rather than like the columns carrying text.
+      def counter_class(column)
+        'recourse-counter' if resource_model.recourse_counters.key? column
+      end
+
     private
 
       def counter_cell(resource, value, association)
