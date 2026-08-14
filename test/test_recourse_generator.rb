@@ -61,15 +61,35 @@ class TestRecourseGenerator < Rails::Generators::TestCase
   end
 
   # Both sides of the association a `references` attribute declares: the column on the
-  # parent, and the option on the child that keeps it.
+  # parent and the `has_many` that says what becomes of its children, and the option on
+  # the child that keeps the count. A parent this app has no model for gets neither.
   def test_a_reference_counts_itself_on_the_parent
     generate_a_widget
+    run_generator %w[author name:string!]
+    run_generator %w[post title author:references]
 
     counter = 'add_column :markets, :widgets_count, :integer, default: 0, null: false'
 
     assert_migration 'db/migrate/create_widgets.rb', /end\n    #{counter}/
     assert_file 'app/models/widget.rb', /belongs_to :market, counter_cache: true/
+    assert_file 'app/models/post.rb', /belongs_to :author, counter_cache: true/
+    assert_file 'app/models/author.rb', /has_many :posts, dependent: :destroy/
   end
+
+  # `references{optional}` is Rails' own way of saying the key may be nil, and Rails
+  # carries it no further than the attribute it parsed: the migration would take
+  # `optional: true` for a column option and write `null: false` beside it anyway. Said
+  # properly, it is a child that outlives its parent rather than going with it.
+  def test_an_optional_reference_leaves_its_children_standing
+    run_generator %w[author name:string!]
+    run_generator ['post', 'title', 'author:references{optional}']
+
+    assert_file 'app/models/post.rb', /belongs_to :author, optional: true, counter_cache: true/
+    assert_file 'app/models/author.rb', /has_many :posts, dependent: :nullify/
+    assert_migration 'db/migrate/create_posts.rb', /t\.references :author, foreign_key: true$/
+  end
+
+  # Both sides of the association a `references` attribute declares:
 
   def test_it_nests_the_route_the_way_the_resource_was_named
     run_generator %w[admin/gadget]
