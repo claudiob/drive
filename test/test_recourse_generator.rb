@@ -26,19 +26,28 @@ class TestRecourseGenerator < Rails::Generators::TestCase
   end
 
   def test_it_writes_what_resource_writes_and_a_recourses_route
-    run_generator %w[widget name:string]
+    generate_a_widget
 
     assert_file 'app/models/widget.rb', /class Widget < ApplicationRecord/
     assert_file 'app/controllers/widgets_controller.rb',
                 /class WidgetsController < RecoursesController/
-    assert_migration 'db/migrate/create_widgets.rb', /t\.string :name/
+    assert_migration 'db/migrate/create_widgets.rb', /t\.string :name, null: false/
     assert_file 'config/routes.rb', /^  recourses :widgets$/
   end
 
-  def test_it_nests_the_route_the_way_the_resource_was_named
-    run_generator %w[admin/gadget]
+  # A bare row and a filled one: `name` is the only attribute the migration marks
+  # `null: false`, so it is what the bare row carries and what both are found by.
+  def test_it_seeds_two_rows_and_teaches_db_seeds_to_load_them
+    generate_a_widget
 
-    assert_file 'config/routes.rb', /namespace :admin do\n    recourses :gadgets\n  end/
+    assert_file 'db/seeds/widgets.rb', /^Widget\.find_or_create_by! name: 'Bare widget'$/
+    assert_file 'db/seeds/widgets.rb', /widget\.nickname = 'Nickname'/
+    assert_file 'db/seeds/widgets.rb', /widget\.quantity = 1\n  widget\.market = Market\.first/
+    assert_file 'db/seeds.rb', %r{Dir\[Rails\.root\.join\('db/seeds/\*\.rb'\)\]}
+  end
+
+  def generate_a_widget
+    run_generator %w[widget name:string! nickname:string quantity:integer market:references]
   end
 
   # Reading the USAGE is what `--help` does, and the parent generator reads it

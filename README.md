@@ -99,6 +99,8 @@ $ bin/rails generate recourse contact name:string phone:string
       create      app/views/contacts
       invoke    helper
       create      app/helpers/contacts_helper.rb
+      create  db/seeds/contacts.rb
+      append  db/seeds.rb
        route  recourses :contacts
 ```
 
@@ -112,6 +114,24 @@ leaving you to write them:
   `ApplicationController`. It has to: a controller of your own is exactly what
   step 2 above steps aside for, so an `ApplicationController` one would leave the
   resource with no actions at all.
+- It writes `db/seeds/contacts.rb`, so a new resource has something to show on the
+  screens it just gained.
+
+That seed file holds two rows, which is the pair every screen is worth looking at
+with: one carrying only the attributes the migration marks `null: false` — write
+`name:string!` to mark one — and one with every optional attribute assigned as
+well. Values are of each column's own type and nothing more, since the model has no
+validators yet to have opinions about them. Both rows are `find_or_create_by!`, so
+seeding twice leaves two rows rather than four.
+
+`db/seeds.rb` gains one line, once, however many resources you generate:
+
+```ruby
+Dir[Rails.root.join('db/seeds/*.rb')].sort.each { |seeds| load seeds }
+```
+
+Alphabetically, so it is deterministic rather than right — reorder by hand where one
+resource's rows need another's to exist first. `--no-seeds` writes no seed file.
 
 It takes every option `resource` takes, including `--actions`, which turns the
 route back into the `get` lines that generator writes for named actions, and

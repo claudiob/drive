@@ -1,15 +1,23 @@
 require 'rails/generators/rails/resource/resource_generator'
 
+require_relative 'seeds'
+
 module Recourse
   module Generators
     # `rails generate recourse` — everything `rails generate resource` writes, with
-    # the route drawn by `recourses`, so the gem serves the seven screens for it.
+    # the route drawn by `recourses` and a seed file, so the gem serves the seven
+    # screens for it and there is something to see on them.
     class RecourseGenerator < Rails::Generators::ResourceGenerator
+      include Seeds
+
+      # Templates live beside this class, which is also what tells the parent where to
+      # read `--help` from: a USAGE one directory above the source root.
+      source_root File.expand_path('templates', __dir__)
+
       remove_invocation :resource_route
 
-      # Where `--help` reads from. The parent looks for a USAGE beside a source root,
-      # and this generator has no templates of its own to need one.
-      def self.usage_path = File.expand_path('USAGE', __dir__)
+      class_option :seeds, type: :boolean, default: true,
+                           desc: 'Add a seed file with a bare row and a filled one'
 
       # The generated controller inherits `RecoursesController`. A controller of the
       # host's own is what `Controllers.define_missing` steps aside for, so the
@@ -26,6 +34,15 @@ module Recourse
       # and every other switch meant for the controller from reaching it.
       hook_for :resource_controller, in: :recourse, required: true do |controller|
         invoke controller, [controller_name, options[:actions]]
+      end
+
+      # Two rows to look at: a bare one and a filled one, in a file of their own under
+      # `db/seeds`, which `db/seeds.rb` is taught to load.
+      def create_seed_file
+        return unless options[:seeds]
+
+        template 'seeds.rb', File.join('db/seeds', "#{file_name.pluralize}.rb")
+        load_seed_files
       end
 
       # The line this generator exists for. `namespace:` nests it the way the routes

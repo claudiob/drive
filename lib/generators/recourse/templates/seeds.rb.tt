@@ -1,0 +1,21 @@
+# Two <%= plural_name.humanize.downcase %>: one with only the attributes it cannot do
+# without, and one with every optional attribute assigned as well. The values are of
+# each column's own type and nothing more — a validator this model has not grown yet
+# will have opinions about them.
+#
+# `find_or_create_by!` throughout, so seeding twice finds these rows rather than
+# making them again.
+<% if attributes.empty? -%>
+<%# Nothing to tell one row from another by, so the count is what says when to stop. -%>
+<%= class_name %>.create! while <%= class_name %>.count < 2
+<% else -%>
+<%= class_name %>.find_or_create_by! <%= seed_keys 'Bare' %>
+<% if seed_rest.any? -%>
+
+<%= class_name %>.find_or_create_by!(<%= seed_keys 'Everything' %>) do |<%= singular_name %>|
+<% seed_rest.each do |attribute| -%>
+  <%= singular_name %>.<%= attribute.name %> = <%= seed_value attribute %>
+<% end -%>
+end
+<% end -%>
+<% end -%>
