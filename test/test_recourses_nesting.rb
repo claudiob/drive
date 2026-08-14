@@ -18,4 +18,19 @@ class TestRecoursesNesting < Minitest::Test
     assert_includes body, "<span class='breadcrumb-link'>#{county.name}</span>"
     assert_includes body, 'aria-current="page" data-key="c" href="/counties">'
   end
+
+  # The namespace only a `recourses` block adds is what every nested page relies on,
+  # so nesting inside a plain `resources` block fails while the routes draw rather
+  # than answering a broken page later.
+  def test_it_refuses_recourses_nested_inside_plain_resources
+    error = assert_raises Recourse::Error do
+      ActionDispatch::Routing::RouteSet.new.draw do
+        resources :counties, only: :index do
+          recourses :zips, only: :index
+        end
+      end
+    end
+
+    assert_includes error.message, 'Nest it under `recourses :counties` instead.'
+  end
 end

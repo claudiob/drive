@@ -4,8 +4,13 @@ module Recourse
     # Draws what `resources` draws, after supplying any controller the host lacks. A
     # block nests what it declares under each resource — ZIPs at
     # `/counties/:county_id/zips` — with the nested controller namespaced after the
-    # parent, so it and the top-level `ZIPsController` stay two controllers.
+    # parent, so it and the top-level `ZIPsController` stay two controllers. Only a
+    # `recourses` block adds that namespace, which every nested page relies on, so
+    # nesting inside a plain `resources` block raises here rather than serving a
+    # broken page.
     def recourses(*names, **, &block)
+      refuse_unscoped_nesting names
+
       names.each do |name|
         # `@scope[:module]` is the namespace being drawn in, so a resource is declared
         # and its controller defined under the path Rails will route to.
@@ -21,6 +26,16 @@ module Recourse
       resources(*names, **) do
         scope module: @scope[:scope_level_resource].name, &block
       end
+    end
+
+  private
+
+    def refuse_unscoped_nesting(names)
+      parent = @scope[:scope_level_resource]
+      return if parent.nil? || @scope[:module].to_s.split('/').last == parent.name
+
+      raise Error, I18n.t('recourse.nested', names: names.map(&:inspect).join(', '),
+                                             parent: parent.name)
     end
   end
 end

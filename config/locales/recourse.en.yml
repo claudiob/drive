@@ -20,6 +20,8 @@ en:
     format: Please match the format %{example}
     missing_model: You declared `recourses :%{name}` in your routes file, but this app
       has no %{model} model.
+    nested: You nested `recourses %{names}` inside `resources :%{parent}`, which does
+      not namespace what it holds. Nest it under `recourses :%{parent}` instead.
     new: New %{model}
     no_results: No results found
     none: "No %{models}."
