@@ -1,3 +1,4 @@
+<%#-*- coding: UTF-8 -*-%>
 # <%= Recourse::Generators::Rows::ROWS %> <%= @model.model_name.plural.humanize.downcase %>: the first carries only what a row
 # cannot save without, the last fills every attribute, and the rest mix which
 # optional attributes are filled. The values are of each column's own type and

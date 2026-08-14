@@ -192,26 +192,54 @@ are filled, so a nullable column is seen both ways on the screens.
 
 ```ruby
 [
-  { phone: '5552340001' },
-  { phone: '5552340002', email: 'email2@example.com' },
-  { phone: '5552340003', name: 'Name 3' },
+  { phone: '5552342554' },
+  { phone: '5552341198', email: 'wzfx@example.com' },
+  { phone: '5552340457', name: 'cMe x' },
   # ... 21 more combinations ...
-  { phone: '5552340025', email: 'email25@example.com', name: 'Name 25', surname: 'Surname 25', app: App.first },
+  { phone: '5552346426', email: 'b4rc2@example.com', name: 'wZWDXTQ', surname: 'TPOi', app: App.offset(1).first },
 ].each { |attributes| Contact.find_or_create_by! attributes }
 ```
 
-Values are of each column's own kind and nothing more, varied by row so a unique
-index is satisfied: strings are numbered, an email column gets an address, a
-phone column ten valid digits, an enum cycles the words it admits, and a
-reference reads the first row of the model it points at — an app's own
-attribute type counts as what it subclasses,
+Values are of each column's own kind, drawn at random while the file is
+generated — never at seed time, so the written file stays the same on every
+`db:seed` run and `find_or_create_by!` keeps finding its rows. A string is a
+random length inside its length validator's bounds, from an alphabet that
+reaches past ASCII into accents and emoji, and never repeats within its column,
+so a unique index is satisfied. An email column gets an address, a phone column
+ten valid digits, an enum cycles the words it admits, a date and a time step
+back a random distance from today, and a reference reads a random row of the
+model it points at — an app's own attribute type counts as what it subclasses,
 so a `Price` seeds as the decimal it is. A validator with stricter opinions is
-yours to satisfy by editing the file, and `find_or_create_by!` keeps every run
-after the first finding the rows rather than making them again.
+yours to satisfy by editing the file.
 
 `db/seeds.rb` gains the same loader line as above, once. A resource whose model
 does not exist is skipped with a note, and a file that already exists asks
 before being overwritten.
+
+## `rails generate recourse:counters`
+
+```
+$ bin/rails generate recourse:counters
+      create  db/migrate/20260814000001_add_jobs_count_to_locations.rb
+        gsub  app/models/job.rb
+      insert  app/models/location.rb
+$ bin/rails db:migrate
+```
+
+The counter cache behind every `belongs_to` of every model your `recourses`
+routes serve — the caches `rails generate recourse` would have written, for the
+models that predate it. Wherever a piece of one is missing it writes that piece:
+a migration adding the integer column to the parent table, backfilled to the
+rows already there; `counter_cache: true, touch: true` on the child's
+`belongs_to`; and the `has_many` on the parent that reads the count back, with
+`dependent: :destroy` for a required child and `dependent: :nullify` for an
+optional one. Run `bin/rails db:migrate` afterwards to add and fill the columns.
+
+A count already kept is left alone, so a run with nothing missing writes
+nothing and running it twice writes the same as once. A polymorphic
+`belongs_to` is passed over — it names no one table to count on — and so is a
+model whose table is not migrated yet, whose pending migration carries its own
+counter already.
 
 ## The screens
 

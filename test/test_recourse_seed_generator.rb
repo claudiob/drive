@@ -18,20 +18,21 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
   end
 
   # One file per model the routes declare — none for a resource with no model — each
-  # opening with a bare row of what a row cannot save without: presence and inclusion
-  # validators, and every required belongs_to, keyed by its association. The other
-  # rows mix which optional attributes are filled, in values of each column's own
-  # kind: an enum cycles its words, a Price reads as the Decimal it is.
+  # opening with a bare row of what a row cannot save without. Values are drawn at
+  # random while generating, to each column's own shape: 25 distinct strings of
+  # random lengths inside their length validator's bounds, reaching past ASCII, and
+  # a reference reading a random row of its table rather than forever the first.
   def test_it_seeds_twenty_five_rows_for_every_recoursed_model
     run_generator
 
-    assert_file 'db/seeds/markets.rb', /^  \{ name: 'Name 1' \},$/
-    assert_file 'db/seeds/markets.rb', /\{ name: 'Name 25' \},\n\]\.each/
+    assert_file 'db/seeds/markets.rb' do |markets|
+      assert_equal 25, markets.scan(/^  \{ name: '[^']+' \},$/).uniq.size
+      assert_match(/[^\x00-\x7F]/, markets)
+    end
     assert_file 'db/seeds/messages.rb',
-                /^  \{ content: 'Content 1', inbound: false, contact: Contact\.first \},$/
-    assert_file 'db/seeds/jobs.rb', /status: :draft/
-    assert_file 'db/seeds/providers.rb', /commission_rate: 1\.5/
-    assert_file 'db/seeds.rb', %r{Dir\[Rails\.root\.join\('db/seeds/\*\.rb'\)\]}
+                /^  \{ content: '[^']+', inbound: (true|false), contact: Contact\./
+    assert_file 'db/seeds/counties.rb', /state: State\.offset\(\d+\)\.first/
+    assert_file 'db/seeds/providers.rb', /pin: '[^']{6}'/
     assert_no_file 'db/seeds/placeholders.rb'
   end
 end
