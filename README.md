@@ -150,12 +150,21 @@ carries a name to vary — an author is the same author in both — so that
 validators yet to have opinions about them. Both rows are `find_or_create_by!`, so
 seeding twice leaves two rows rather than four.
 
-`db/seeds.rb` gains one line, once, however many resources you generate:
+`db/seeds.rb` gains one loader, once, however many resources you generate:
 
 ```ruby
-Dir[Rails.root.join('db/seeds/*.rb')].sort.each { |seeds| load seeds }
+$stdout.sync = true
+Dir[Rails.root.join('db/seeds/*.rb')].sort.each do |seeds|
+  table = File.basename seeds, '.rb'
+  print "Seeding #{table}... ⏳"
+  load seeds
+  rows = ActiveRecord::Base.lease_connection.select_value "select count(*) from #{table}"
+  puts "\r\e[KSeeded #{rows} #{table} ✅"
+end
 ```
 
+so `rails db:seed` says what it is doing — `Seeding contacts... ⏳` while a file
+runs, rewritten in place to `Seeded 45 contacts ✅` once it is done.
 Alphabetically, so it is deterministic rather than right — reorder by hand where one
 resource's rows need another's to exist first. `--no-seeds` writes no seed file.
 
