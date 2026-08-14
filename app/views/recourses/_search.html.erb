@@ -11,11 +11,9 @@
     <%= filter_field predicate, **options %>
   <% end -%>
 
-  <% if field -%>
-    <div class='recourse-search-box form-control form-control-sm form-adorn d-flex'>
-      <span class='form-adorn-icon'><i class='bi bi-search'></i></span>
-      <%= form.search_field field, class: 'form-ghost', placeholder: prompt, aria: { label: prompt },
-                                   data: { action: 'input->search#submit', search_target: 'field' } %>
-    </div>
-  <% end -%>
+  <div class='recourse-search-box form-control form-control-sm form-adorn d-flex'>
+    <span class='form-adorn-icon'><i class='bi bi-search'></i></span>
+    <%= form.search_field field, class: 'form-ghost', placeholder: prompt, aria: { label: prompt },
+                                 data: { action: 'input->search#submit', search_target: 'field' } %>
+  </div>
 <% end %>

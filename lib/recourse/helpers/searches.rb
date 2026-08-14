@@ -22,13 +22,13 @@ module Recourse
       end
 
       # The form that searches and filters the table, or nothing at all where the
-      # model offers neither a search field nor a filter to draw.
+      # model offers nothing to search — filters alone do not earn it.
       def search_form
-        return unless resource_model.recourse_searchable?
+        field = resource_model.search_field
+        return if field.blank?
 
         render 'recourses/search', query: resource_search, url: url_for(action: :index),
-                                   field: resource_model.search_field,
-                                   prompt: resource_model.search_prompt,
+                                   field: field, prompt: resource_model.search_prompt,
                                    filters: resource_model.filter_fields, sort: sort_param
       end
 

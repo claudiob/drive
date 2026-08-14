@@ -705,7 +705,9 @@ before writing or editing any layout, view or partial.
   first page. Ransack's own link already carries every other `q` parameter, so
   sorting keeps whatever search or filter was in force.
 - `search_form` renders `recourses/_search`, or nothing where the model's
-  `recourse_searchable?` is false. The index puts it in `content_for :search`
+  `search_field` is nil. A model with filters but nothing to search gets no form
+  at all: a row of menus with no box to type into is not a search, and the page
+  reads cleaner without it. The index puts it in `content_for :search`
   and never draws it in place, so where it appears is the layout's decision and
   not the table's. It is contributed outside the empty-table branch, so a filter
   that matched nothing can still be cleared from the page it emptied.

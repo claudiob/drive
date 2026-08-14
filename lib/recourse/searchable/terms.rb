@@ -4,7 +4,7 @@ module Recourse
     module Terms
       # The predicate a search box submits: everything it looks through at once,
       # joined by `or`. Nil where a model has nothing worth looking through, which
-      # is also what leaves that model without a search box.
+      # is also what leaves that model's index without the form — filters and all.
       def search_field
         fields, predicate = recourse_search_terms
         return if fields.empty?
