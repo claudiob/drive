@@ -11,7 +11,7 @@ class Provider < ApplicationRecord
     :enterprise, # ... a large regional or national operation
   ]
 
-  belongs_to :franchise, optional: true, counter_cache: true
+  belongs_to :franchise, optional: true, counter_cache: true, touch: true
   has_many :bookings, dependent: :nullify
 
   enum :team_size, TEAM_SIZES.index_by(&:itself)

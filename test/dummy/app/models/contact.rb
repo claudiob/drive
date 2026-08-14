@@ -3,8 +3,8 @@ class Contact < ApplicationRecord
   include Emailable, Phonable, Recoursive
 
   belongs_to :app, optional: true
-  belongs_to :source, optional: true, counter_cache: true
-  belongs_to :agent, optional: true, counter_cache: true
+  belongs_to :source, optional: true, counter_cache: true, touch: true
+  belongs_to :agent, optional: true, counter_cache: true, touch: true
   has_many :bookings, dependent: :destroy
   has_many :messages, dependent: :destroy
 

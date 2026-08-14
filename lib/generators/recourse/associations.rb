@@ -24,9 +24,11 @@ module Recourse
       end
 
       # The other half of the same decision: the column is Rails' to keep, and this is
-      # what tells it to.
+      # what tells it to. `touch:` keeps a cached table honest — `update_counters`
+      # bumps the column without touching `updated_at`, so the count would go stale.
       def count_from_belongs_to(attribute)
-        gsub_file model_file, /^(\s*belongs_to :#{attribute.name}\b.*)$/, '\1, counter_cache: true'
+        gsub_file model_file, /^(\s*belongs_to :#{attribute.name}\b.*)$/,
+                  '\1, counter_cache: true, touch: true'
       end
 
       # And the far side of the association, on the model the key points at — a foreign

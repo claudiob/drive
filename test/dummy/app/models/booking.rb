@@ -18,11 +18,11 @@ class Booking < ApplicationRecord
     :expired, # it went unanswered too long
   ]
 
-  belongs_to :app, optional: true, counter_cache: true
-  belongs_to :contact, counter_cache: true
-  belongs_to :provider, optional: true, counter_cache: true
-  belongs_to :specialty, optional: true, counter_cache: true
-  belongs_to :zip, counter_cache: true
+  belongs_to :app, optional: true, counter_cache: true, touch: true
+  belongs_to :contact, counter_cache: true, touch: true
+  belongs_to :provider, optional: true, counter_cache: true, touch: true
+  belongs_to :specialty, optional: true, counter_cache: true, touch: true
+  belongs_to :zip, counter_cache: true, touch: true
 
   enum :status, STATUSES.index_by(&:itself)
 

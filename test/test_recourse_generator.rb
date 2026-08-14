@@ -71,8 +71,8 @@ class TestRecourseGenerator < Rails::Generators::TestCase
     counter = 'add_column :markets, :widgets_count, :integer, default: 0, null: false'
 
     assert_migration 'db/migrate/create_widgets.rb', /end\n    #{counter}/
-    assert_file 'app/models/widget.rb', /belongs_to :market, counter_cache: true/
-    assert_file 'app/models/post.rb', /belongs_to :author, counter_cache: true/
+    assert_file 'app/models/widget.rb', /belongs_to :market, counter_cache: true, touch: true/
+    assert_file 'app/models/post.rb', /belongs_to :author, counter_cache: true, touch: true/
     assert_file 'app/models/author.rb', /has_many :posts, dependent: :destroy/
   end
 

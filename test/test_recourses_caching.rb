@@ -21,6 +21,20 @@ class TestRecoursesCaching < Minitest::Test
     assert_match(/COUNT/, warm.sole)
   end
 
+  # `counter_cache` bumps the column without touching `updated_at`, so without
+  # `touch: true` beside it the second request serves the cached 0.
+  def test_a_new_child_expires_the_cached_count_on_the_parents_index
+    Market.delete_all
+    market = Market.create! name: 'Caching Market'
+    @session.get '/markets'
+    ZIP.first!.update! market: market
+    @session.get '/markets'
+
+    assert_includes @session.response.body, '<td data-cell="ZIPs"><i class="bi bi-geo-alt"></i> 1'
+  ensure
+    ZIP.first!.update! market: nil
+  end
+
 private
 
   def location_queries
