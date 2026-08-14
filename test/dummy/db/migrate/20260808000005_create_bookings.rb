@@ -30,8 +30,6 @@ private
       t.boolean :subscribed, default: true, null: false
       t.boolean :satisfied
       t.integer :quote_count, default: 1, null: false
-      # Nullable on purpose: `serialize type: Array` stores an empty list as NULL.
-      t.text :media_urls
       t.datetime :nominated_at
       t.datetime :notified_at
     end

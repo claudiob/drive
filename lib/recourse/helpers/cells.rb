@@ -87,9 +87,6 @@ module Recourse
       def formatted_cell(value, column)
         return localized value if value.is_a?(Date) || value.is_a?(Time)
         return number_to_phone value if column == 'phone'
-        # An array column would otherwise print its own inspect output, brackets and
-        # quotes and all, and an empty one would read `[]` rather than as empty.
-        return value.join ', ' if value.is_a? Array
 
         search_highlight value, column
       end

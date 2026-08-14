@@ -84,14 +84,12 @@ two is filed under the one a reader would look in first.
 - The rule binds the apps we write — never the gem. The gem's own code names no
   adapter, so a host on any of the three is served the same: column kinds are
   read through `type_for_attribute` and `defined_enums`, which every adapter
-  answers, and the one PostgreSQL constant it recognizes, `PostgreSQL::OID::Array`,
-  is compared by class *name*, since the class only exists once that adapter loads.
+  answers, and no adapter's own constants are named at all.
 - What PostgreSQL alone offers, the dummy states the portable way: an enum is a
   string column with an `IN` check constraint reading the model's constant, a
-  list is a text column the model serializes (`Mediable`), a two-letter shape is
-  `GLOB` rather than `~`, backfills say `current_timestamp` rather than `now()`,
-  and there is no citext — the dummy's one plaintext email is a plain string.
-  The enum, array and email rules below still bind the apps we write.
+  two-letter shape is `GLOB` rather than `~`, backfills say `current_timestamp`
+  rather than `now()`, and there is no citext — the dummy's one plaintext email
+  is a plain string. The enum and email rules below still bind the apps we write.
 
 #### Clear the cache when a table's structure changes
 
@@ -348,14 +346,9 @@ two is filed under the one a reader would look in first.
   saying what that state means, and the model declares
   `enum :status, STATUSES.index_by(&:itself)`. The migration reads the same constant,
   so the type and the model cannot drift at creation time.
-- An array column is `t.text :media_urls, array: true, default: [], null: false`.
-  The default and the null constraint together mean it is always an array, so
-  nothing has to ask whether it is nil before treating it as a list.
-- Where the database has no arrays (the dummy, on SQLite), the column is a plain
-  nullable `t.text` and the model says `serialize :media_urls, coder: JSON,
-  type: Array`. Nullable is not optional: the coder stores an *empty* list as
-  NULL and reads NULL back as `[]`, so `null: false` would reject every empty
-  list and the coder — not the constraint — is what keeps it always an array.
+- No array columns, on any adapter, and no code for them: the dummy's one such
+  column (`media_urls`) went on 2026-08-14 and the gem's array rendering and
+  seeding went with it. A list of values is a table of its own.
 
 #### Trailing comma on a multiline hash or array
 

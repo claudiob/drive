@@ -88,7 +88,7 @@ private
       contact: Contact.find_by!(phone: '2125550110'), zip: ZIP.first!, quote_count: 3,
       comment: 'Every optional column of a booking, filled.', query: 'leaking roof',
       timeline: 'this week', city: 'Cupertino', street: '1 Infinite Loop', satisfied: true,
-      media_urls: %w[https://example.com/roof.jpg], subscribed: false, status: :scheduled,
+      subscribed: false, status: :scheduled,
       nominated_at: Time.zone.local(2026, 8, 1, 9, 30), notified_at: Time.zone.local(2026, 8, 1, 9),
       app: App.find_by!(name: 'Everything App'), specialty: Specialty.find_by!(name: 'Roofing'),
       provider: Provider.find_by!(name: 'Everything Provider'),

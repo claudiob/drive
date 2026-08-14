@@ -191,9 +191,9 @@ attributes are filled, so a nullable column is seen both ways on the screens.
 
 Values are of each column's own kind and nothing more, varied by row so a unique
 index is satisfied: strings are numbered, an email column gets an address, a
-phone column ten valid digits, an enum cycles the words it admits, an array
-wraps one value of its base type, and a reference reads the first row of the
-model it points at — an app's own attribute type counts as what it subclasses,
+phone column ten valid digits, an enum cycles the words it admits, and a
+reference reads the first row of the model it points at — an app's own
+attribute type counts as what it subclasses,
 so a `Price` seeds as the decimal it is. A validator with stricter opinions is
 yours to satisfy by editing the file, and `find_or_create_by!` keeps every run
 after the first finding the rows rather than making them again.
@@ -303,8 +303,8 @@ of the association rather than from the column's name. Every cell in it leads wi
 the icon of what is counted, so `<i class='bi bi-geo-alt'></i> 26`.
 
 A cell renders by what the column holds: a `belongs_to`'s foreign key as the
-label of the record it points at, a time as `Aug 4 at 03:47pm EDT`, an array as
-its values joined by commas, a `phone` through `number_to_phone`.
+label of the record it points at, a time as `Aug 4 at 03:47pm EDT`, a `phone`
+through `number_to_phone`.
 
 ## What a model can say
 
@@ -938,8 +938,8 @@ run: the database is a file under `test/dummy/storage`, created and migrated on
 the first run, and deleting it is the reset. SQLite is the dummy app's choice,
 not the gem's — nothing in the gem names an adapter, so a host running
 PostgreSQL or MySQL is served the same screens. What follows from a column kind
-only one adapter has follows only there — a PostgreSQL array column, a citext
-one — and everything else is read through Active Record's own neutral answers.
+only one adapter has follows only there — a citext column, say — and everything
+else is read through Active Record's own neutral answers.
 
 To install this gem onto your local machine, run `bundle exec rake install`.
 

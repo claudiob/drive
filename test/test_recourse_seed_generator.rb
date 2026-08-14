@@ -21,7 +21,7 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
   # opening with a bare row of what a row cannot save without: presence and inclusion
   # validators, and every required belongs_to, keyed by its association. The other
   # rows mix which optional attributes are filled, in values of each column's own
-  # kind: an enum cycles its words, an array wraps one, a Price reads as a Decimal.
+  # kind: an enum cycles its words, a Price reads as the Decimal it is.
   def test_it_seeds_twenty_five_rows_for_every_recoursed_model
     run_generator
 
@@ -29,7 +29,6 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
     assert_file 'db/seeds/markets.rb', /\{ name: 'Name 25' \},\n\]\.each/
     assert_file 'db/seeds/messages.rb',
                 /^  \{ content: 'Content 1', inbound: false, contact: Contact\.first \},$/
-    assert_file 'db/seeds/messages.rb', /media_urls: \['Media URLs 2'\]/
     assert_file 'db/seeds/jobs.rb', /status: :draft/
     assert_file 'db/seeds/providers.rb', /commission_rate: 1\.5/
     assert_file 'db/seeds.rb', %r{Dir\[Rails\.root\.join\('db/seeds/\*\.rb'\)\]}

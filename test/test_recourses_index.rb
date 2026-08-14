@@ -35,20 +35,6 @@ class TestRecoursesIndex < Minitest::Test
     assert_includes body, '<i class="bi bi-hammer"></i>'
   end
 
-  # An array column reads as its values, not as the inspect output of an Array. Brings
-  # its own contact and takes both rows away again: a message outliving this test would
-  # break every other one that clears the contacts it points at.
-  def test_it_lists_the_values_of_an_array_column
-    urls = %w[https://example.com/a.jpg https://example.com/b.png]
-    contact = Contact.create! phone: '5559990001'
-    message = Message.create! contact:, inbound: true, media_urls: urls
-
-    assert_includes body_of('/messages'), %(<td data-cell="Media URLs">#{urls.join ', '}</td>)
-  ensure
-    message&.destroy
-    contact&.destroy
-  end
-
 private
 
   def body_of(path)

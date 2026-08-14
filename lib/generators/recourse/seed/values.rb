@@ -15,10 +15,6 @@ module Recourse
         datetime: ->(number) { "Time.current - #{number}.hours" },
       }.freeze
 
-      # PostgreSQL's array type by name: the constant itself only exists once that
-      # adapter is loaded, so naming it bare would raise on SQLite and MySQL.
-      PG_ARRAY = 'ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array'
-
       # What an app's own type is a kind of — a Price is a Decimal however it
       # answers `type` — for the columns whose `type` names no entry above.
       KINDS = {
@@ -38,29 +34,18 @@ module Recourse
         "#{column}: #{seed_value column, number}"
       end
 
-      # A Ruby literal for one cell: an enum cycles the words it admits, an array
-      # wraps its own base type, and everything else is `VALUES`' business.
+      # A Ruby literal for one cell: an enum cycles the words it admits, and
+      # everything else is `VALUES`' business.
       def seed_value(column, number)
         words = @model.defined_enums[column]
         return ":#{words.keys[(number - 1) % words.size]}" if words
 
-        type = @model.type_for_attribute column
-        return "[#{seed_literal column, number, type.subtype}]" if seed_array? type
-
-        seed_literal column, number, type
+        seed_literal column, number, @model.type_for_attribute(column)
       end
 
       def seed_association(column)
         @model.reflect_on_all_associations(:belongs_to)
               .find { |association| association.foreign_key.to_s == column }
-      end
-
-      # A list is an array column on PostgreSQL, or one the model declares with
-      # `serialize type: Array` on any database.
-      def seed_array?(type)
-        return true if type.class.name == PG_ARRAY
-
-        type.is_a?(ActiveRecord::Type::Serialized) && type.coder.object_class == Array
       end
 
       def seed_literal(column, number, type)

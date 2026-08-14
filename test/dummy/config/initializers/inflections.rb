@@ -5,8 +5,7 @@ ActiveSupport::Inflector.inflections :en do |inflect|
   inflect.acronym 'CRM'
   inflect.acronym 'OpenAI'
   inflect.acronym 'PIN'
-  # The plural of each is registered too, or `media_urls` heads a column
-  # 'Media urls' and `zips` humanizes to 'Zips'.
+  # The plural of each is registered too, or `zips` humanizes to 'Zips'.
   inflect.acronym 'URL'
   inflect.acronym 'URLs'
   inflect.acronym 'ZIP'

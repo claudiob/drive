@@ -21,13 +21,6 @@ Layout/AccessModifierIndentation:
 Layout/LineLength:
   Max: 100
 
-# `seed_array?` compares a class name on purpose: the PostgreSQL array class only
-# exists once that adapter is loaded, so `instance_of?` has no constant to name on
-# a host running SQLite or MySQL.
-Style/ClassEqualityComparison:
-  Exclude:
-    - lib/generators/recourse/seed/values.rb
-
 Style/DocumentationMethod:
   Enabled: true
   Exclude:
