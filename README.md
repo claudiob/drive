@@ -519,10 +519,10 @@ the order.
 
 The index builds a GET form — a search box for the model's `search_field`, one
 filter per `filter_fields` entry, nothing at all where `recourse_searchable?` is
-false — and puts it in `content_for :search` rather than drawing it anywhere.
-**Your layout has to `yield :search`**, the same way it yields `:actions`, or
-the form is built and never shown. The layout the gem ships yields it in the
-navbar, to the right of the breadcrumb and the buttons. A filter reuses the combobox from
+false — and puts it in `content_for :search` rather than drawing it anywhere. The
+gem's layout yields it in the navbar, to the right of the breadcrumb and the
+buttons; a layout of your own has to `yield :search` the same way it yields
+`:actions`, or the form is built and never shown. A filter reuses the combobox from
 "Comboboxes for foreign keys" with `multiple: true`, so a request can narrow a
 table to more than one of what a foreign key points at — `?q[state_id_in]=1,2`
 for two states at once.
@@ -830,15 +830,38 @@ The gem vendors what its pages cannot render without and serves it from
 controllers — `clear`, `deselect`, `favicon`, `phone`, `reveal`, `search` and
 `shortcuts`.
 
-It also ships `app/views/layouts/application.html.erb`, which is what renders
-when your app has no layout of its own. When it has one — and most do — the
-pages render inside yours, so copy those two stylesheets and the Stimulus
-module into it to see them styled, and yield what the screens contribute:
-`yield :title`, `yield :actions` and `yield :search`. The last of those is where
-the search and filter form goes; the gem's own layout yields it at the right of
-the navbar. It also sets the favicon from the page's own icon, which a host's
-layout gets by copying the `<link rel='icon' data-controller='favicon'>` line
-and registering the controller.
+It also ships `app/views/layouts/recourses.html.erb`, and that is the layout its
+screens render in — yours is not involved. `RecoursesController` implies
+`layouts/recourses`, which Rails finds in the gem before it falls through to
+`layouts/application`, so the screens arrive styled in an app that has done nothing
+but draw a route: the stylesheets, the Stimulus controllers, the navbar, the
+sidebar, the favicon and the search slot are all the gem's to place.
+
+Two ways to put your own chrome back, where an admin page should carry it:
+
+```erb
+<%# app/views/layouts/recourses.html.erb — yours wins, being earlier in the view paths %>
+<%= render template: 'layouts/application' %>
+```
+
+```ruby
+# or a controller of your own, which keeps everything else the gem defines
+class ContactsController < RecoursesController
+  layout 'application'
+end
+```
+
+Either way the screens are then inside your layout, which has to link the two
+stylesheets from `/recourse/`, register the Stimulus controllers, and yield what
+the screens contribute: `yield :title`, `yield :actions` and `yield :search`. The
+`<link rel='icon' data-controller='favicon'>` line is worth copying too, or the tab
+keeps whatever icon your app already had.
+
+Named `recourses` rather than `application` on purpose. A gem shipping
+`layouts/application` is a layout an app with none of its own would render *its own*
+pages in — the engine's view paths answer for `layouts/application` as readily as
+for anything else — and this one is a navbar and a sidebar for someone else's admin
+screens.
 
 The index table renders inside a `cache_if params[:q].blank?, recourses`
 block, so a sorted or filtered table is drawn live instead of cached — two

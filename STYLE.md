@@ -18,9 +18,17 @@ before writing or editing any layout, view or partial.
   `data-bs-theme="light|dark"` for color modes — though `color-scheme: light
   dark` on `:root` follows the system by default, so most pages need no theme
   attribute at all.
-- The gem ships `app/views/layouts/application.html.erb` for hosts that have
-  none: Bootstrap's CSS in the head, the JS bundle as a module before `</body>`,
-  and Geist and Geist Mono from Google Fonts.
+- The gem ships `app/views/layouts/recourses.html.erb`, and every screen it serves
+  renders in it: Bootstrap's CSS in the head, the JS bundle as a module before
+  `</body>`, and Geist and Geist Mono from Google Fonts.
+- Named for the controller rather than for the app. `RecoursesController` implies
+  `layouts/recourses` and finds it in the gem before Rails falls through to
+  `layouts/application`, so a host's own layout is not involved — and a host with no
+  layout of its own is not left rendering *its* pages in this one, which is what
+  shipping `layouts/application` did.
+- A host puts its chrome back by writing `app/views/layouts/recourses.html.erb` of
+  its own, which wins on being earlier in the view paths, or by declaring
+  `layout 'application'` on a controller that subclasses `RecoursesController`.
 - Bootstrap is *vendored*, not linked. `vendor/recourse/` holds
   `bootstrap.min.css`, `bootstrap.bundle.min.js`, `bootstrap-icons.min.css` and
   the two icon fonts, and the layout asks for `/recourse/…`. A CDN that moves or
@@ -70,11 +78,11 @@ before writing or editing any layout, view or partial.
 - A view contributes buttons with `content_for :actions` and its search form with
   `content_for :search`; the layout only yields. Nothing else belongs in the
   navbar.
-- Both are the *host's* to place. The gem never renders either where it decides:
-  a host that writes its own layout and yields neither gets no buttons and no
-  search box, the same way it gets no styling until it links the stylesheets.
-  The layout the gem ships is what a host's own layout is modelled on, which is
-  why the dummy app — having none of its own — shows the search in the navbar.
+- Where they go is the layout's decision, and the gem's own layout is the one that
+  makes it: the navbar, with the search pushed right. A host that replaces
+  `layouts/recourses` and yields neither gets no buttons and no search box, the same
+  way it gets no styling until it links the stylesheets — the gem's layout is what
+  such a layout is modelled on.
 - A breadcrumb link and its sidebar twin line up vertically, which constrains
   both. The `<nav class='navbar'>` carries no horizontal margin or padding of
   its own, so both columns reduce to `container-fluid` (0.75rem) plus a link
