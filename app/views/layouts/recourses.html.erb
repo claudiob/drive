@@ -15,6 +15,9 @@
     <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap'>
     <link rel='stylesheet' href='/recourse/bootstrap.min.css'>
     <link rel='stylesheet' href='/recourse/bootstrap-icons.min.css'>
+    <%# Preloaded from the head instead of discovered at the end of the body, so the
+        module the toast controller and the dismiss X import is already in flight. -%>
+    <link rel='modulepreload' href='/recourse/bootstrap.bundle.min.js'>
     <%# After the stylesheet, which is what makes it win: both selectors are `:root`. -%>
     <%= primary_color_style %>
 
@@ -31,6 +34,7 @@
       import RevealController from '/recourse/reveal_controller.js'
       import SearchController from '/recourse/search_controller.js'
       import ShortcutsController from '/recourse/shortcuts_controller.js'
+      import ToastController from '/recourse/toast_controller.js'
 
       // In the head, and guarded: Turbo re-runs body scripts on every visit, and a
       // second application would connect every controller twice.
@@ -43,6 +47,7 @@
         window.Stimulus.register('reveal', RevealController)
         window.Stimulus.register('search', SearchController)
         window.Stimulus.register('shortcuts', ShortcutsController)
+        window.Stimulus.register('toast', ToastController)
       }
     </script>
 
@@ -51,6 +56,11 @@
         --bs-body-font-family: 'Geist', system-ui, sans-serif;
         --bs-font-mono: 'Geist Mono', ui-monospace, monospace;
       }
+
+      /* Bootstrap's .15s fade reads as vanishing. Only the hide ever transitions here
+         — the toast is born visible — and reduced-motion still wins, because its rule
+         sets `transition: none` outright rather than through this variable. */
+      .toast { --bs-transition-fade: opacity 1s linear; }
 
       /* A marked match is part of the word it sits in, so it carries no padding of
          its own: 'Nash' in 'Nashville' must not read as a word standing apart. */
@@ -189,11 +199,5 @@
 
     <script type='module' src='https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.23/dist/turbo.es2017-esm.js'></script>
     <script type='module' src='/recourse/bootstrap.bundle.min.js'></script>
-    <script type='module'>
-      import { Toast } from '/recourse/bootstrap.bundle.min.js'
-
-      // A toast stays hidden until shown, and only then starts its autohide timer.
-      for (const toast of document.querySelectorAll('.toast')) Toast.getOrCreateInstance(toast).show()
-    </script>
   </body>
 </html>

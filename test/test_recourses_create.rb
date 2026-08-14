@@ -23,7 +23,7 @@ class TestRecoursesCreate < Minitest::Test
     @session.post '/jobs', params: { job: { title: '' } }
 
     assert_equal 422, @session.response.status
-    assert_includes body, "<div class='toast theme-danger' role='alert'"
+    assert_includes body, "<div class='toast fade show theme-danger' role='alert'"
     assert_includes body, "<span class='me-auto'>Job could not be created.</span>"
     assert_includes body, "class='form-control is-invalid combobox-toggle'"
     assert_includes body, "<small class='invalid-feedback' id='job_location_id_error'>Must exist"

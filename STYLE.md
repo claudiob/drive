@@ -527,12 +527,17 @@ before writing or editing any layout, view or partial.
   `.toast-container.position-fixed.bottom-0.end-0.p-3` at the end of `<body>`.
   `.toast-container` is `position: absolute` in v6, so `position-fixed` is not
   optional — without it the toast scrolls away with the page.
+- The container carries `data-turbo-temporary`: a toast born visible would
+  otherwise replay from the page snapshot on every Back, announcing a save that
+  happened a page ago.
 - The variant is the flash key: `toast theme-success` for a notice, `toast
   theme-danger` for an alert, and a neutral `theme-primary` for a key a host
   invents. The theme goes on the `.toast` itself.
 - The message goes in the *header*, and the body is kept but hidden:
 
-      <div class='toast theme-success' role='alert' aria-live='assertive' aria-atomic='true'>
+      <div class='toast fade show theme-success' role='alert' aria-live='assertive' aria-atomic='true'
+           data-controller='toast'
+           data-action='mouseenter->toast#stopTimer mouseleave->toast#startTimer focusin->toast#stopTimer focusout->toast#startTimer'>
         <div class='toast-header border-0'>
           <span class='me-auto'>Contact was created.</span>
           <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='Close'></button>
@@ -550,16 +555,29 @@ before writing or editing any layout, view or partial.
   close button needs nothing else: v6 gives it margins through
   `.toast-header .btn-close`, which a headerless toast would have had to supply
   itself.
-- It autohides, which is the Toast default — nothing to declare.
+- It autohides after five seconds, but not through the Toast default: the `toast`
+  Stimulus controller owns the timer (see below), and hovering or focusing the
+  toast holds it open — Bootstrap's own pause-on-hover only guards the timer *it*
+  armed, so the controller's actions redo it.
 - The wording names the model, never the record: `Contact was created.` and
   `Contact could not be created.`, both from `model_name.human`. Interpolating the
   record instead prints `#<Contact:0x000000012b6febc8>`, because Active Record
   leaves `to_s` as Object's.
-- Toasts need JavaScript twice over. `.toast:not(.show)` is `display: none`, so
-  one has to be shown, and the autohide timer only starts when it is. The layout
-  imports `Toast` from the bundle and calls `show()` on every `.toast` it finds.
-  `data-bs-dismiss='toast'` needs the component loaded too, so the X is dead
-  without it.
+- The server ships every toast `fade show`, so *appearing* needs no JavaScript at
+  all: the toast paints with the page instead of waiting for the bundle to load
+  and run. Bootstrap's `show()` must never run on one — it re-adds `showing` and
+  blinks the toast through transparent — and it is also the only place Bootstrap
+  arms its autohide, which is why the `toast` controller keeps `autohide: false`
+  and runs its own five-second timer. Only the *hiding* is Bootstrap's, so the
+  timer and the dismiss X share one code path and one fade.
+- The exit is slower than the entrance it no longer has: the layout stretches
+  `--bs-transition-fade` to one second on `.toast`, so the toast fades away
+  rather than vanishing. Reduced-motion still wins — the vendored CSS sets
+  `transition: none` outright under the media query, which no custom-property
+  override can defeat.
+- `data-bs-dismiss='toast'` still needs the component loaded, so the X is dead
+  without the bundle — a `modulepreload` in the head is what has it in flight at
+  first paint instead of discovered at the end of the body.
 
 ## Validation errors
 
