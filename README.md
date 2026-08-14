@@ -124,9 +124,25 @@ leaving you to write them:
   the count on.
 
 That seed file holds two rows, which is the pair every screen is worth looking at
-with: one carrying only the attributes the migration marks `null: false` — write
-`name:string!` to mark one — and one with every optional attribute assigned as
-well. Values are of each column's own type and nothing more, since the model has no
+with: one carrying only what the row cannot save without, and one with every
+optional attribute assigned as well. A row cannot save without whatever the
+migration marks `null: false` — write `name:string!` to mark one — nor without a
+`references` attribute, since `belongs_to` requires one. So the bare post below
+carries its author, and only its author:
+
+```ruby
+Post.find_or_create_by! author: Author.first
+
+Post.find_or_create_by!(author: Author.first, title: 'Everything post') do |post|
+  post.content = 'Content'
+  post.published_on = Date.current
+  post.private = true
+end
+```
+
+The filled row takes one key more than the bare one wherever nothing required
+carries a name to vary — an author is the same author in both — so that
+`find_or_create_by!` finds each of them rather than the second finding the first. Values are of each column's own type and nothing more, since the model has no
 validators yet to have opinions about them. Both rows are `find_or_create_by!`, so
 seeding twice leaves two rows rather than four.
 

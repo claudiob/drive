@@ -5,17 +5,20 @@
 #
 # `find_or_create_by!` throughout, so seeding twice finds these rows rather than
 # making them again.
-<% if attributes.empty? -%>
-<%# Nothing to tell one row from another by, so the count is what says when to stop. -%>
-<%= class_name %>.create! while <%= class_name %>.count < 2
+<% if bare_seed_keys == filled_seed_keys -%>
+<%# Nothing tells one row from the other: no optional attribute to fill, and nothing
+    required that a name could vary. The count is what says when to stop. -%>
+<%= class_name %>.create!<%= " #{bare_seed_keys}" if attributes.any? %> while <%= class_name %>.count < 2
 <% else -%>
-<%= class_name %>.find_or_create_by! <%= seed_keys 'Bare' %>
-<% if seed_rest.any? -%>
+<%= class_name %>.find_or_create_by! <%= bare_seed_keys %>
 
-<%= class_name %>.find_or_create_by!(<%= seed_keys 'Everything' %>) do |<%= singular_name %>|
-<% seed_rest.each do |attribute| -%>
+<% if seed_filled_attributes.any? -%>
+<%= class_name %>.find_or_create_by!(<%= filled_seed_keys %>) do |<%= singular_name %>|
+<% seed_filled_attributes.each do |attribute| -%>
   <%= singular_name %>.<%= attribute.name %> = <%= seed_value attribute %>
 <% end -%>
 end
+<% else -%>
+<%= class_name %>.find_or_create_by! <%= filled_seed_keys %>
 <% end -%>
 <% end -%>

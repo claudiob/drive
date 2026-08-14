@@ -40,10 +40,24 @@ class TestRecourseGenerator < Rails::Generators::TestCase
   def test_it_seeds_two_rows_and_teaches_db_seeds_to_load_them
     generate_a_widget
 
-    assert_file 'db/seeds/widgets.rb', /^Widget\.find_or_create_by! name: 'Bare widget'$/
+    assert_file 'db/seeds/widgets.rb',
+                /^Widget\.find_or_create_by! name: 'Bare widget', market: Market\.first$/
     assert_file 'db/seeds/widgets.rb', /widget\.nickname = 'Nickname'/
-    assert_file 'db/seeds/widgets.rb', /widget\.quantity = 1\n  widget\.market = Market\.first/
+    assert_file 'db/seeds/widgets.rb', /widget\.quantity = 1\nend/
     assert_file 'db/seeds.rb', %r{Dir\[Rails\.root\.join\('db/seeds/\*\.rb'\)\]}
+  end
+
+  # A foreign key is required however bare the row is meant to be — `belongs_to` says
+  # so — and where nothing a row must have carries a name, the filled row takes one
+  # more key, so the two are found apart rather than the second finding the first.
+  def test_a_bare_row_carries_the_keys_it_cannot_save_without
+    run_generator %w[author name:string! email:string!]
+    run_generator %w[post title content:text author:references published_on:date]
+
+    assert_file 'db/seeds/authors.rb', /name: 'Bare author', email: 'bare@example.com'/
+    assert_file 'db/seeds/posts.rb', /^Post\.find_or_create_by! author: Author\.first$/
+    assert_file 'db/seeds/posts.rb',
+                /find_or_create_by!\(author: Author\.first, title: 'Everything post'\)/
   end
 
   # Both sides of the association a `references` attribute declares: the column on the
