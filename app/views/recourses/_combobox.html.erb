@@ -29,7 +29,11 @@
     <% cache [recourses, multiple, selected] do %>
       <% recourses.each do |recourse| %>
         <% chosen = selected.include? recourse.id.to_s -%>
-        <button class='menu-item<%= ' selected' if chosen %>' type='button' data-bs-value='<%= recourse.id %>' aria-selected='<%= chosen %>'><%= recourse.attributes[label] %><% if counter %><span class='recourse-count fg-2'><%= number_with_delimiter recourse.attributes[counter] %></span><% end %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
+        <%# In the menu but not on it: an option accounting for none of the rows being
+            filtered is `d-none` until `All` asks for it. One already ticked stays put,
+            or the box would name a filter its own menu does not offer. -%>
+        <% empty = counter && !chosen && recourse.attributes[counter].to_i.zero? -%>
+        <button class='menu-item<%= ' selected' if chosen %><%= ' d-none' if empty %>' type='button' data-bs-value='<%= recourse.id %>' aria-selected='<%= chosen %>'><%= recourse.attributes[label] %><% if counter %><span class='recourse-count fg-2'><%= number_with_delimiter recourse.attributes[counter] %></span><% end %><% if multiple %><i class='bi bi-check menu-item-check'></i><% end %></button>
       <% end %>
     <% end %>
   <% else -%>

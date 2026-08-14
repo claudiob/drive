@@ -50,18 +50,36 @@ class TestRecoursesSearch < Minitest::Test
   # market in that menu says how many of the rows being filtered are its own, since
   # a market is one of the models that counts its ZIPs.
   def test_a_long_table_is_searched_rather_than_listed
-    market = Market.create! name: 'Chicago Metro'
+    market = Market.create! name: 'Counted Market'
     ZIP.first!.update! market: market
     @session.get '/zips'
     body = @session.response.body
 
     assert_includes body, 'name="q[code_or_county_name_cont]"'
     assert_includes body, "data-bs-name='q[market_id_in]'"
-    assert_includes body, "Chicago Metro<span class='recourse-count fg-2'>1</span>"
+    assert_includes body, "Counted Market<span class='recourse-count fg-2'>1</span>"
     refute_includes body, 'q[county_id_in]'
   ensure
     ZIP.first!.update! market: nil
     market&.destroy
+  end
+
+  # A market with none of the rows being filtered is in the menu without being on it —
+  # `d-none` until `All` asks for it — and one already ticked is on it either way, or
+  # the box would name a filter its own menu does not offer.
+  def test_a_filter_keeps_an_option_with_nothing_behind_it_hidden
+    empty = Market.create! name: 'Empty Market'
+    @session.get '/zips'
+
+    assert_includes @session.response.body,
+                    "class='menu-item d-none' type='button' data-bs-value='#{empty.id}'"
+
+    @session.get "/zips?q%5Bmarket_id_in%5D=#{empty.id}"
+
+    assert_includes @session.response.body,
+                    "class='menu-item selected' type='button' data-bs-value='#{empty.id}'"
+  ensure
+    empty&.destroy
   end
 
   # A foreign key whose label is typed is offered no filter of its own: that menu

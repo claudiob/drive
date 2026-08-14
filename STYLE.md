@@ -735,6 +735,12 @@ before writing or editing any layout, view or partial.
   It takes `margin-inline-start: auto` and the tick beside it gives up its own, since
   two auto margins would split the free space and leave the count mid-row. The tick
   keeps its width while hidden, so ticking an option moves nothing.
+- An option counting none of the rows is `d-none` rather than absent: the markup is
+  there and the `All …` line reveals it, which is one more thing that line does
+  besides unticking. `.d-none` and not a class of ours, since Bootstrap's utilities
+  come last in its stylesheet and win over `.menu-item`'s own display without needing
+  `!important` — and the plugin's search sets `style.display` rather than a class, so
+  the two never fight. An option already ticked keeps its place in the menu.
   An enum's filter is the same menu over the words the column admits rather than over
   records: headed by the attribute — `Status`, not `Booking status` — since the row it
   sits in names other tables and this one names the table already being read. Its
