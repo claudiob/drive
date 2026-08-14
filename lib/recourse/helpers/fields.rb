@@ -25,23 +25,18 @@ module Recourse
         options = { class: 'form-control', size: nil }.merge field_html(column, type)
 
         return form.text_field column, **options, type: type if type
-        # A phone is a phone before it is ciphertext: the field types its own
-        # separators as they are keyed, and a password box would hide the fact.
-        return kind_field form, column, **options if attribute_kind(column) == :phone
-        return encrypted_field form, column, **options if encrypted_column? column
+        # Only a password gets a password field, and it renders empty on purpose:
+        # a stored password is written, never read back. An encrypted column is
+        # not a password — it follows its own kind, value in the clear, since
+        # editing one record is already a deliberate act. The mask stays on the
+        # show page, where values are read rather than changed.
+        return form.password_field column, **options if column == 'password'
         return form.email_field column, **options if column == 'email'
 
         kind_field form, column, **options
       end
 
     private
-
-      def encrypted_field(form, column, **)
-        # A password field renders no value of its own, so a required encrypted column
-        # would demand its value be retyped before anything else could be saved. It
-        # carries the record's, which the browser masks the way the show page does.
-        form.password_field column, **, value: form.object.attributes[column]
-      end
 
       def encrypted_column?(column)
         Array(resource_model.encrypted_attributes).map(&:to_s).include? column

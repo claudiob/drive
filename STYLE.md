@@ -392,11 +392,12 @@ before writing or editing any layout, view or partial.
   the browser turns the form back before the server ever sees it. It is the same
   judgement the placeholder makes, from the same validators — the two are
   readings of one fact and never disagree.
-- An encrypted attribute's password field carries the record's own value, which is
-  the revisiting that bullet used to defer. A password field renders empty by
-  default, so a required encrypted column would have demanded its value be retyped
-  before anything else about the record could be saved. The browser masks it in the
-  box, which is the protection the show page's asterisks give.
+- An encrypted attribute's field carries the record's own value in the clear, in
+  the field its kind earns — a text box for a surname, an email input for an
+  encrypted email. Editing one record is already a deliberate act, so the mask
+  stays on the show page, where values are only read. A password field is for a
+  column named `password`, and it renders empty on purpose: a stored password is
+  written, never read back.
 - A required field shows the shape it expects instead: `555-555-5555` for a
   phone, `michael@example.com` for an email. Every other required field has no
   placeholder, since there is nothing useful to show.
@@ -408,18 +409,18 @@ before writing or editing any layout, view or partial.
   fields without rewriting `form_with` or the submit button. It renders one
   `field` per editable column; a host writes the calls it wants by hand.
 - `field` takes the column name and two options: `label:` for the heading and
-  `type:` for the input. `field :phone, type: :phone` beats every rule below,
-  including the encrypted-column one — an explicit type is an instruction.
+  `type:` for the input. `field :pin, type: :password` beats every rule below —
+  an explicit type is an instruction, and it is how a secret not named
+  `password` earns the box that hides it.
 - The field type otherwise follows the column, and the rules are in this order: a
-  foreign key is a combobox; an encrypted column is a password field; one named
-  `email` gets an email input; a `date` or `datetime` attribute gets its own
-  field, the second as `datetime-local`; everything else is text.
+  foreign key is a combobox; a column named `password` is a password field; one
+  named `email` gets an email input; a `date` or `datetime` attribute gets its
+  own field, the second as `datetime-local`; everything else follows its kind,
+  encrypted or not.
 - A `color` input and a `time` one were here and are not: the dummy app's only
   columns of those kinds went with the market they belonged to, and a branch no
   page reaches is a branch nothing tests. Both are four lines to restore beside a
   column that wants them.
-- Encryption wins over the name, so an encrypted `email` is masked rather than
-  typed as an email — protecting the value matters more than the keyboard.
 - Length, format and numericality travel to the browser, and all three are read
   from the model's *validators*, never from the column: `maxlength` and
   `minlength` from a length validator's `maximum`, `minimum` or `is`, `pattern`

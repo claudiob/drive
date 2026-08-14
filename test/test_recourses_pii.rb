@@ -54,15 +54,15 @@ class TestRecoursesPii < Minitest::Test
     agent&.destroy
   end
 
-  # The edit form carries one too, in a field the browser masks. A password field
-  # renders no value of its own, so a required encrypted column would otherwise
-  # demand its value be retyped before anything else about the record could be saved.
-  def test_the_edit_form_prefills_an_encrypted_field
+  # The edit form carries one too, in the clear and in the field its kind earns —
+  # not a password box, which is for passwords. Editing one record is already a
+  # deliberate act; the mask stays on the show page, where values are only read.
+  def test_the_edit_form_prefills_an_encrypted_field_in_the_clear
     contact = Contact.create! phone: '5552234567', surname: 'Lovelace'
     @session.get "/contacts/#{contact.id}/edit"
     field = body[/<input[^>]*name="contact\[surname\]"[^>]*>/]
 
-    assert_includes field, 'type="password"'
+    assert_includes field, 'type="text"'
     assert_includes field, 'value="Lovelace"'
   end
 

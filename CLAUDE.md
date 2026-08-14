@@ -200,10 +200,14 @@ two is filed under the one a reader would look in first.
 - A *show* page is the other way round: it draws every encrypted column, because
   this is an admin tool for agents and reading a record's PII is part of the job.
   Encryption settles what the database keeps, not what a page may say.
-- Which makes the screen the risk rather than the disk, so a page that shows PII
-  masks it: one asterisk per character, and a `Show` beside it that swaps the
-  plaintext in. A screenshot then discloses nothing nobody asked to see, and
+- Which makes the screen the risk rather than the disk, so the show page masks
+  what it shows: one asterisk per character, and a `Show` beside it that swaps
+  the plaintext in. A screenshot then discloses nothing nobody asked to see, and
   reading one value is a deliberate click. Markup in `STYLE.md`.
+- The *edit* form shows an encrypted value in the clear, in the field its kind
+  earns. Editing one record is already a deliberate act, and a password box is
+  for passwords — a column named `password`, or a `field ..., type: :password`
+  the host writes. Asked and settled — do not mask form fields.
 
 #### Phone numbers
 
@@ -260,10 +264,10 @@ two is filed under the one a reader would look in first.
   leaves is small on purpose — six tests for 146 lines.
 - Two kinds of assertion are exempt, because a covered line cannot stand in for
   them. How many queries a page costs, and how an encrypted column reaches the
-  page — masked on a show page, not at all on an index: both run exactly the same
-  lines whether they hold or not, so coverage stays green while the behavior
-  breaks. The PII leak that prompted the second exemption printed an address at
-  100%.
+  page — masked on a show page, not at all on an index, in the clear in its own
+  kind of field on a form: they run exactly the same lines whether they hold or
+  not, so coverage stays green while the behavior breaks. The PII leak that
+  prompted the second exemption printed an address at 100%.
 - Nothing else is exempt. Markup, titles, breadcrumbs, icons, pagination links
   and the order of the sidebar are all asserted by whichever test happens to
   render the page, and no test is added to pin them down further.
