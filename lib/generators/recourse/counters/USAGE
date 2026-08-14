@@ -6,6 +6,14 @@ Description:
     on the parent that reads the count back, with dependent: :destroy for a
     required child and dependent: :nullify for an optional one.
 
+    A parent that just gained its has_many also gains the route that reads it
+    back: `recourses :jobs, only: %i[index new create]` nested under the
+    parent's own `recourses` line — growing a block from a bare line, or
+    joining one already open — so the count on the parent's index has somewhere
+    to link. Nothing is nested where the parent draws no `recourses`, where its
+    line declares several resources at once, or where the children are nested
+    already.
+
     Each piece is written only where it is missing, so a run with nothing
     missing writes nothing, and running it twice writes the same as once. A
     counter_cache named by hand is checked, and filled, under its own name; a

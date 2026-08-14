@@ -244,6 +244,24 @@ nothing and running it twice writes the same as once. A polymorphic
 model whose table is not migrated yet, whose pending migration carries its own
 counter already.
 
+A parent that just gained its `has_many` also gains the route that reads it
+back: the children nested under the parent's own `recourses` line, so the count
+on the parent's index has somewhere to link — their rows, and a form to add
+one. A bare `recourses :locations, only: :index` grows a block,
+
+```ruby
+recourses :locations, only: :index do
+  recourses :jobs, only: %i[index new create]
+end
+```
+
+and a block already open is joined instead. Nothing is nested where the parent
+draws no `recourses` of its own, where its line declares several resources at
+once — a block would nest under every name on it — or where the block already
+nests the children, however their actions are worded. The route rides on the
+`has_many`: a parent that could already read its children back is assumed to
+have the routes it wants.
+
 The edges are handled the way a hand would handle them. A `counter_cache` named
 by hand is checked, and filled, under its own name. A column that predates its
 option gets a backfill-only migration — whatever it holds counts nothing, so it

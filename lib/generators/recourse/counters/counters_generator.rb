@@ -3,6 +3,7 @@ require 'rails/generators/active_record'
 require_relative '../associations'
 require_relative '../declared'
 require_relative 'migrations'
+require_relative 'nesting'
 
 module Recourse
   module Generators
@@ -13,7 +14,8 @@ module Recourse
     # back. A count already kept is left alone, so a run with nothing missing
     # writes nothing, and `rails db:migrate` applies whatever one wrote.
     class CountersGenerator < Rails::Generators::Base
-      include ActiveRecord::Generators::Migration, Associations, Declared, Migrations
+      include ActiveRecord::Generators::Migration, Associations, Declared, Migrations,
+              Nesting
 
       # Templates live beside this class, which is also what tells the parent where
       # to read `--help` from: a USAGE one directory above the source root.
@@ -38,8 +40,11 @@ module Recourse
       def add_counter(child, reflection)
         add_counter_migration child, reflection
         count_from_belongs_to "app/models/#{child.name.underscore}.rb", reflection.name
-        declare_has_many klass: reflection.klass.name, children: children_of(child),
-                         line: far_side_of(child, reflection)
+        added = declare_has_many klass: reflection.klass.name, children: children_of(child),
+                                 line: far_side_of(child, reflection)
+        # A parent that just learned to read its children back gets somewhere to
+        # read them: their index and a form to add one, nested under its own route.
+        nest_route reflection.klass, children_of(child) if added
       end
 
       def counted_reflections

@@ -29,6 +29,7 @@ module Recourse
       # generate the parent first, or add the line by hand — nothing where it reads
       # its children back already, however its own line is worded, and nothing where
       # the class is not declared in the one-line form an injection can find.
+      # Answers true only when it wrote the line, which is what earns more.
       def declare_has_many(klass:, children:, line:)
         parent = File.join 'app/models', "#{klass.underscore}.rb"
         return say_status :skip, "#{parent} does not exist" unless exist? parent
@@ -38,6 +39,7 @@ module Recourse
         return say_status :skip, "#{parent} hides class #{klass} — declare it by hand" unless opened
 
         inject_into_class parent, klass, "  #{line}\n"
+        true
       end
 
       def counting_options(declaration)
