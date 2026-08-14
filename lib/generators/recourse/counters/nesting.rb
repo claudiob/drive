@@ -2,11 +2,9 @@ module Recourse
   module Generators
     # The route a fresh `has_many` earns: the children nested under the parent's
     # own declaration, so the count on the parent's index has somewhere to link —
-    # their rows, and a form to add one. Private for the reason `Seeds` is.
+    # their rows, and a form to add one, which is what a bare nested `recourses`
+    # answers by default. Private for the reason `Seeds` is.
     module Nesting
-      # What a nested child answers: enough to read the parent's rows and add one.
-      NESTED = 'only: %i[index new create]'
-
     private
 
       # Turns `recourses :providers` into a block nesting `recourses :bookings`,
@@ -37,7 +35,7 @@ module Recourse
 
       def nest(file, line, children)
         indent = line[/\A[ \t]*/]
-        nested = "#{indent}  recourses :#{children}, #{NESTED}\n"
+        nested = "#{indent}  recourses :#{children}\n"
         return inject_into_file file, nested, after: "#{line}\n" if line.end_with? ' do'
 
         gsub_file file, line, "#{line} do\n#{nested}#{indent}end"

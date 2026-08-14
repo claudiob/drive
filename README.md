@@ -55,6 +55,18 @@ block to nest in — and for each name it does three things:
 Because the third step is plain `resources`, `recourses :contacts` routes all
 seven actions, and all seven are answered.
 
+A *nested* `recourses` is the one exception: it defaults to
+`only: %i[index new create]` — the collection actions, which are what makes
+sense reached through a parent, while the member pages belong to the resource's
+own top-level routes. An explicit `only:` or `except:` is your word and wins:
+
+```ruby
+recourses :posts do
+  recourses :comments                    # index, new and create — the default
+  recourses :ratings, only: %i[index show] # exactly what it says
+end
+```
+
 A resource with no `index` route gets no sidebar entry, which is what
 `only: []` is for.
 
@@ -247,11 +259,12 @@ counter already.
 A parent that just gained its `has_many` also gains the route that reads it
 back: the children nested under the parent's own `recourses` line, so the count
 on the parent's index has somewhere to link — their rows, and a form to add
-one. A bare `recourses :locations, only: :index` grows a block,
+one, which is exactly what a bare nested `recourses` answers by default. A bare
+`recourses :locations, only: :index` grows a block,
 
 ```ruby
 recourses :locations, only: :index do
-  recourses :jobs, only: %i[index new create]
+  recourses :jobs
 end
 ```
 

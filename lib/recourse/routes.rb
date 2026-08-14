@@ -7,8 +7,9 @@ module Recourse
     # parent, so it and the top-level `ZIPsController` stay two controllers. Only a
     # `recourses` block adds that namespace, which every nested page relies on, so
     # nesting inside a plain `resources` block raises here rather than serving a
-    # broken page.
-    def recourses(*names, **, &block)
+    # broken page. A nested resource defaults to `only: %i[index new create]`,
+    # and an explicit `only:` or `except:` is the host's word, which wins.
+    def recourses(*names, **options, &block)
       refuse_unscoped_nesting names
 
       names.each do |name|
@@ -21,14 +22,24 @@ module Recourse
         Controllers.define_missing path
       end
 
-      return resources(*names, **) unless block
+      return resources(*names, **default_nested_actions(options)) unless block
 
-      resources(*names, **) do
+      resources(*names, **default_nested_actions(options)) do
         scope module: @scope[:scope_level_resource].name, &block
       end
     end
 
   private
+
+    # Reached through a parent, a nested resource answers its collection actions —
+    # list the parent's rows, add one — unless the host names its own. The member
+    # actions belong to a resource's own top-level routes.
+    def default_nested_actions(options)
+      nested = @scope[:scope_level_resource]
+      return options if !nested || options.key?(:only) || options.key?(:except)
+
+      options.merge only: %i[index new create]
+    end
 
     def refuse_unscoped_nesting(names)
       parent = @scope[:scope_level_resource]

@@ -70,13 +70,12 @@ private
   # became a block around the jobs it just learned to read, and the jobs block —
   # already open — gained the messages line without disturbing what it nested.
   def assert_nested_routes(routes)
-    nested = "  recourses :locations, only: :index do\n    " \
-             "recourses :jobs, only: %i[index new create]\n  end"
+    nested = "  recourses :locations, only: :index do\n    recourses :jobs\n  end"
 
     assert_includes routes, nested
-    assert_equal 1, routes.scan('recourses :jobs, only: %i[index new create]').count
+    assert_equal 1, routes.scan("recourses :jobs\n").count
     assert_includes routes, "recourses :jobs, only: :index do\n    " \
-                            "recourses :messages, only: %i[index new create]\n    " \
+                            "recourses :messages\n    " \
                             'recourses :bookings, only: :index'
     # Contacts read their messages back too, but share a line: skipped, not nested.
     assert_includes routes, "recourses :contacts, :sources, only: :index\n"

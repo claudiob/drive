@@ -19,6 +19,24 @@ class TestRecoursesNesting < Minitest::Test
     assert_includes body, 'aria-current="page" data-key="c" href="/counties">'
   end
 
+  # Reached through a parent, a nested resource defaults to its collection actions
+  # — list the parent's rows, add one — and an explicit `only:` is the host's word,
+  # which wins. Drawn into a fresh route set over names the dummy app already
+  # declares, so the app's own routes and sidebar gain nothing.
+  def test_a_nested_recourses_defaults_to_its_collection_actions
+    routes = ActionDispatch::Routing::RouteSet.new
+    routes.draw do
+      recourses :jobs, only: [] do
+        recourses :messages
+        recourses :bookings, only: :show
+      end
+    end
+    actions = actions_by_controller routes
+
+    assert_equal %w[create index new], actions['jobs/messages']
+    assert_equal %w[show], actions['jobs/bookings']
+  end
+
   # The namespace only a `recourses` block adds is what every nested page relies on,
   # so nesting inside a plain `resources` block fails while the routes draw rather
   # than answering a broken page later.
@@ -32,5 +50,12 @@ class TestRecoursesNesting < Minitest::Test
     end
 
     assert_includes error.message, 'Nest it under `recourses :counties` instead.'
+  end
+
+private
+
+  def actions_by_controller(routes)
+    routes.routes.group_by { |route| route.defaults[:controller] }
+          .transform_values { |drawn| drawn.map { |route| route.defaults[:action] }.sort }
   end
 end
