@@ -13,7 +13,7 @@ class AddCountersToExistingTables < ActiveRecord::Migration[8.1]
     add_reference :contacts, :source, foreign_key: true
     add_reference :contacts, :agent, foreign_key: true
 
-    reversible { |direction| direction.up { backfill } }
+    up_only { backfill }
   end
 
 private

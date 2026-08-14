@@ -636,6 +636,15 @@ two is filed under the one a reader would look in first.
   `EnforcedStyle: omit_parentheses`. The cop is off by default, so it needs
   `Enabled: true` as well as the style.
 
+#### Prefer `up_only` in migrations
+
+- A migration step that runs only on the way up is `up_only { backfill }`, never
+  `reversible { |direction| direction.up { backfill } }`. The short form has been
+  Rails' since 5.2, it says what it means, and it leaves no down branch to read
+  past.
+- `reversible` keeps its place where a migration genuinely writes both
+  directions.
+
 #### List concerns alphabetically, on one line
 
 - Concerns are included in alphabetical order: `include Emailable, Phonable`,
