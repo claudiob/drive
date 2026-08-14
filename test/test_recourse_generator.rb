@@ -76,21 +76,6 @@ class TestRecourseGenerator < Rails::Generators::TestCase
     assert_file 'app/models/author.rb', /has_many :posts, dependent: :destroy/
   end
 
-  # `references{optional}` is Rails' own way of saying the key may be nil, and Rails
-  # carries it no further than the attribute it parsed: the migration would take
-  # `optional: true` for a column option and write `null: false` beside it anyway. Said
-  # properly, it is a child that outlives its parent rather than going with it.
-  def test_an_optional_reference_leaves_its_children_standing
-    run_generator %w[author name:string!]
-    run_generator ['post', 'title', 'author:references{optional}']
-
-    assert_file 'app/models/post.rb', /belongs_to :author, optional: true, counter_cache: true/
-    assert_file 'app/models/author.rb', /has_many :posts, dependent: :nullify/
-    assert_migration 'db/migrate/create_posts.rb', /t\.references :author, foreign_key: true$/
-  end
-
-  # Both sides of the association a `references` attribute declares:
-
   def test_it_nests_the_route_the_way_the_resource_was_named
     run_generator %w[admin/gadget]
 

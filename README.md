@@ -120,18 +120,12 @@ leaving you to write them:
   it declares. The migration adds
   `add_column :authors, :posts_count, :integer, default: 0, null: false` after the
   `create_table`; the child reads `belongs_to :author, counter_cache: true`; and the
-  parent gains the matching `has_many :posts` — `dependent: :destroy` where the key
-  is required, `dependent: :nullify` where it is optional, since a child that cannot
-  exist without its parent goes with it and one that can is kept and left without.
+  parent gains the matching `has_many :posts`, with `dependent: :destroy` since a
+  child that cannot exist without its parent goes with it.
   A polymorphic reference gets none of it: it names no one table to count on.
 
-`author:references{optional}` is how a key is made optional, which is Rails' own
-attribute syntax and something Rails then carries no further: the migration would
-take `optional: true` for a column option and write `null: false` beside it anyway,
-and the model would declare an association that is required after all. This
-generator says it properly in all three places — the column, the `belongs_to`, and
-the parent's `dependent:`. The parent's `has_many` is written only where that model
-exists already, so generate the parent first.
+The parent's `has_many` is written only where that model exists already, so
+generate the parent first.
 
 That seed file holds two rows, which is the pair every screen is worth looking at
 with: one carrying only what the row cannot save without, and one with every

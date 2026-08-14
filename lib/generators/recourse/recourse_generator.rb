@@ -44,7 +44,6 @@ module Recourse
       def add_associations
         counted_attributes.each do |attribute|
           add_counter_column attribute
-          allow_a_missing_parent attribute
           count_from_belongs_to attribute
           declare_has_many attribute
         end

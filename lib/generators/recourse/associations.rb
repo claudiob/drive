@@ -36,32 +36,15 @@ module Recourse
         parent = File.join 'app/models', "#{attribute.name}.rb"
         return say_status :skip, "#{parent} does not exist" unless exist? parent
 
-        inject_into_class parent, attribute.name.camelize, "  #{far_side_of attribute}\n"
+        inject_into_class parent, attribute.name.camelize, "  #{far_side}\n"
       end
 
-      # What a child needs of its parent decides what becomes of it: one that cannot
-      # exist without it goes with it, one that can is kept and left without.
-      def far_side_of(attribute)
+      # A generated child requires its parent — `belongs_to` says so — so deleting
+      # the parent takes its children with it.
+      def far_side
         naming = ", class_name: '#{class_name}'" if class_path.any?
-        dependent = optional_reference?(attribute) ? :nullify : :destroy
 
-        "has_many :#{plural_name}#{naming}, dependent: :#{dependent}"
-      end
-
-      # `references{optional}` is Rails' own way of saying a key may be nil, and Rails
-      # carries it no further than the parsed attribute: the migration would take
-      # `optional: true` for a column option and write `null: false` beside it anyway,
-      # and the model would declare an association that is required after all. Both are
-      # said properly here, and then the counter cache is appended to the same line.
-      def allow_a_missing_parent(attribute)
-        return unless optional_reference? attribute
-
-        gsub_file migration_file, ', optional: true, null: false', '' if migration_file
-        gsub_file model_file, /^(\s*belongs_to :#{attribute.name})\b/, '\1, optional: true'
-      end
-
-      def optional_reference?(attribute)
-        attribute.attr_options[:optional].present? || !attribute.required?
+        "has_many :#{plural_name}#{naming}, dependent: :destroy"
       end
 
       def exist?(path)
