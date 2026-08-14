@@ -7,11 +7,8 @@ class TestRecoursesIndex < Minitest::Test
   # title as text, so a narrow screen labels the cell with a word and not a link. The
   # foreign key's heading sorts by nothing, and no column shows the id.
   def test_it_serves_a_resource_that_belongs_to_another
-    session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/counties'
-    body = session.response.body
+    body = body_of '/counties'
 
-    assert_equal 200, session.response.status
     assert_includes body, 'href="/counties?q%5Bs%5D=name+asc">Name</a></th>'
     assert_includes body, '<th scope="col">State</th>'
     assert_includes body, '<td data-cell="State">Alabama</td>'
@@ -20,14 +17,14 @@ class TestRecoursesIndex < Minitest::Test
     refute_includes body, 'data-cell="Created at"'
     # A counter is headed with what it counts, keeps the acronym, and sorts.
     assert_includes body, 'q%5Bs%5D=zips_count+asc">ZIPs</a></th>'
+    # And its cell links out of the frame, to the index nested under the row.
+    assert_includes body, %(<a data-turbo-frame="_top" href="/counties/#{County.first.id}/zips">)
   end
 
   # A sidebar link answers to a letter of its own title, and the first one free: both
   # of these start with C, and Counties is declared first.
   def test_each_sidebar_entry_marks_the_letter_that_reaches_it
-    session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/counties'
-    body = session.response.body
+    body = body_of '/counties'
 
     assert_includes body, '<span class="recourse-key">C</span>ounties'
     assert_includes body, 'Co<span class="recourse-key">n</span>tacts'
@@ -45,12 +42,20 @@ class TestRecoursesIndex < Minitest::Test
     urls = %w[https://example.com/a.jpg https://example.com/b.png]
     contact = Contact.create! phone: '5559990001'
     message = Message.create! contact:, inbound: true, media_urls: urls
-    session = ActionDispatch::Integration::Session.new Rails.application
-    session.get '/messages'
 
-    assert_includes session.response.body, %(<td data-cell="Media URLs">#{urls.join ', '}</td>)
+    assert_includes body_of('/messages'), %(<td data-cell="Media URLs">#{urls.join ', '}</td>)
   ensure
     message&.destroy
     contact&.destroy
+  end
+
+private
+
+  def body_of(path)
+    session = ActionDispatch::Integration::Session.new Rails.application
+    session.get path
+
+    assert_equal 200, session.response.status
+    session.response.body
   end
 end

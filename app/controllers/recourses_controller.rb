@@ -1,6 +1,6 @@
 # Superclass of the controllers the gem defines when a host app has none.
 class RecoursesController < ApplicationController
-  include Pagy::Method, Recourse::ReferenceResolution
+  include Pagy::Method, Recourse::ParentResolution, Recourse::ReferenceResolution
 
   helper Recourse::Helpers
 
@@ -12,12 +12,12 @@ class RecoursesController < ApplicationController
   def index
     search = Recourse::Search.new resource_class, params[:q]
     @q = search.query
-    @pagy, @resources = pagy search.scope
+    @pagy, @resources = pagy search.scope.where(parent_columns)
   end
 
   # Builds a blank record under the name Rails would use: @contact for contacts.
   def new
-    assign resource_class.new
+    assign resource_class.new(parent_columns)
   end
 
   # Saves a submitted record, then shows the index again or redraws the form.
@@ -81,7 +81,9 @@ private
 
   def resource_params
     permitted = Recourse.editable_columns resource_class
+    attributes = resolve_references params.expect(controller_name.singularize.to_sym => permitted)
 
-    resolve_references params.expect(controller_name.singularize.to_sym => permitted)
+    # After resolving, so the parent the route names is never mistaken for a label.
+    attributes.merge parent_columns
   end
 end

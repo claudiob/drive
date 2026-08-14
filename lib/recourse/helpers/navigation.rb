@@ -2,13 +2,15 @@ module Recourse
   module Helpers
     # Helpers for the navbar and the sidebar.
     module Navigation
-      # Trail to the current page as [title, path] pairs; a nil path is this page.
+      # Trail to the current page as [resource, title, path] triples, opening with
+      # the parent a nested page sits under; a nil path is not a link.
       def resource_breadcrumbs
+        crumbs = parent_breadcrumbs
         leaf = breadcrumb_leaf
         here = controller.controller_path
-        return [[here, resources_name, nil]] unless leaf
+        return crumbs << [here, resources_name, nil] unless leaf
 
-        [[here, resources_name, url_for(action: :index)], [nil, leaf, nil]]
+        crumbs << [here, resources_name, url_for(action: :index)] << [nil, leaf, nil]
       end
 
       # A link out of a table. Every cell is inside the results frame, and the page a
@@ -61,10 +63,13 @@ module Recourse
         end
       end
 
-      # True when a sidebar entry names the page being shown. The whole path, so a
-      # namespaced resource and its top-level twin are not each other.
+      # True when a sidebar entry names the page being shown, or the parent a nested
+      # page sits under. The whole path, so a namespaced resource and its top-level
+      # twin are not each other.
       def current_resource?(path)
-        path == controller.controller_path
+        here = controller.controller_path
+
+        path == here || here.start_with?("#{path}/")
       end
 
     private

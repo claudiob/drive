@@ -19,10 +19,12 @@ module Recourse
       end
 
       # What no table shows: ciphertext nobody can read, a value written once that
-      # belongs to the row's identity, and the id that addresses it.
+      # belongs to the row's identity, the id that addresses it — and the parent a
+      # nested route already names, which every row would repeat.
       def hidden_columns
         resource_model.recourse_encrypted_names +
-          resource_model.readonly_attributes.to_a + [resource_model.primary_key]
+          resource_model.readonly_attributes.to_a + [resource_model.primary_key] +
+          Array(resource_parent_association&.foreign_key)
       end
 
       # Columns a form offers, the same list `create` permits.
@@ -50,7 +52,8 @@ module Recourse
 
         # A count leads with the icon of what it counts rather than the heading: a
         # column of figures is read down, and by then the heading is a scroll away.
-        return counter_cell value, counted.klass if counted
+        # It links to the counted rows where a block nested their index under here.
+        return counter_cell resource, value, counted if counted
 
         formatted_cell value, column
       end
@@ -71,8 +74,14 @@ module Recourse
 
     private
 
-      def counter_cell(value, model)
-        safe_join [tag.i(class: "bi bi-#{Recourse.model_icon model}"), value], ' '
+      def counter_cell(resource, value, association)
+        count = safe_join [tag.i(class: "bi bi-#{Recourse.model_icon association.klass}"), value],
+                          ' '
+        nested = "#{controller.controller_path}/#{association.name}"
+        return count unless routed? nested, 'index'
+
+        turbo_link_to count, url_for(controller: "/#{nested}", action: :index,
+                                     "#{resource_key}_id": resource.id)
       end
 
       def formatted_cell(value, column)
