@@ -235,7 +235,9 @@ alone, an enum cycles the words it admits, a date and a time step
 back a random distance from today, and a reference reads a random row of the
 model it points at — an app's own attribute type counts as what it subclasses,
 so a `Price` seeds as the decimal it is. A validator with stricter opinions is
-yours to satisfy by editing the file.
+yours to satisfy by editing the file — and a row the database itself refuses
+(`ActiveRecord::StatementInvalid`) is skipped rather than stopping the run, so
+the count the loader prints reports only the rows that stand.
 
 `db/seeds.rb` gains the same loader line as above, once. A resource whose model
 does not exist is skipped with a note, and a file that already exists asks

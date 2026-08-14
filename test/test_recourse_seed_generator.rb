@@ -33,6 +33,7 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
     end
     assert_file('db/seeds/messages.rb') { |messages| assert_wrapped_contents messages }
     assert_file 'db/seeds/counties.rb', /state: State\.offset\(\d+\)\.first/
+    assert_file 'db/seeds/markets.rb', /rescue ActiveRecord::StatementInvalid/
     assert_shaped_strings
     assert_no_file 'db/seeds/placeholders.rb'
   end

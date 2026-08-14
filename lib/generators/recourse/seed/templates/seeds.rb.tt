@@ -10,4 +10,9 @@
 <% seed_rows.each do |row| -%>
   { <%= row %> },
 <% end -%>
-].each { |attributes| <%= @model.name %>.find_or_create_by! attributes }
+].each do |attributes|
+  <%= @model.name %>.find_or_create_by! attributes
+rescue ActiveRecord::StatementInvalid
+  # A row the database refuses is skipped rather than stopping the seed, and the
+  # count the loader prints — rows standing in the table — never sees it.
+end
