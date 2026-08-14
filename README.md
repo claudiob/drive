@@ -163,6 +163,45 @@ It takes every option `resource` takes, including `--actions`, which turns the
 route back into the `get` lines that generator writes for named actions, and
 `admin/market`, which nests the route in a `namespace :admin` block.
 
+## `rails generate recourse:seed`
+
+```
+$ bin/rails generate recourse:seed
+      create  db/seeds/contacts.rb
+      create  db/seeds/markets.rb
+      append  db/seeds.rb
+```
+
+A seed file for every model your `recourses` routes already serve — the models
+you have, rather than one you are generating — so every screen has rows to show.
+Each file holds 25 rows: the first carries only what a row cannot save without,
+whatever a presence or inclusion validator demands and every required
+`belongs_to`; the last fills every attribute; and the rest mix which optional
+attributes are filled, so a nullable column is seen both ways on the screens.
+
+```ruby
+[
+  { phone: '5552340001' },
+  { phone: '5552340002', email: 'email2@example.com' },
+  { phone: '5552340003', name: 'Name 3' },
+  # ... 21 more combinations ...
+  { phone: '5552340025', email: 'email25@example.com', name: 'Name 25', surname: 'Surname 25', app: App.first },
+].each { |attributes| Contact.find_or_create_by! attributes }
+```
+
+Values are of each column's own kind and nothing more, varied by row so a unique
+index is satisfied: strings are numbered, an email column gets an address, a
+phone column ten valid digits, an enum cycles the words it admits, an array
+wraps one value of its base type, and a reference reads the first row of the
+model it points at — an app's own attribute type counts as what it subclasses,
+so a `Price` seeds as the decimal it is. A validator with stricter opinions is
+yours to satisfy by editing the file, and `find_or_create_by!` keeps every run
+after the first finding the rows rather than making them again.
+
+`db/seeds.rb` gains the same loader line as above, once. A resource whose model
+does not exist is skipped with a note, and a file that already exists asks
+before being overwritten.
+
 ## The screens
 
 | Action | What it answers |

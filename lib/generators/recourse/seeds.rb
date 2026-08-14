@@ -4,10 +4,6 @@ module Recourse
     # than inherited, and every method private: Thor reads a class's own methods as the
     # tasks it runs, and these are what one of those tasks is written in.
     module Seeds
-      # What loads one file per resource, alphabetically. Reorder by hand where one
-      # resource's rows need another's to exist first.
-      LOADER = "\nDir[Rails.root.join('db/seeds/*.rb')].sort.each { |seeds| load seeds }\n"
-
       # A value of each column's own type, since a string in every one of them would be
       # a row the database refuses.
       VALUES = {
@@ -16,16 +12,6 @@ module Recourse
       }.freeze
 
     private
-
-      # Once, however many resources are generated: `db/seeds.rb` loads the directory
-      # rather than naming every file in it.
-      def load_seed_files
-        path = File.join destination_root, 'db/seeds.rb'
-        create_file 'db/seeds.rb', '' unless File.exist? path
-        return if File.exist?(path) && File.read(path).include?(LOADER.strip)
-
-        append_to_file 'db/seeds.rb', LOADER
-      end
 
       # The bare row is found by everything it must have to save at all.
       def bare_seed_keys

@@ -1,6 +1,7 @@
 require 'rails/generators/rails/resource/resource_generator'
 
 require_relative 'associations'
+require_relative 'loading'
 require_relative 'seeds'
 
 module Recourse
@@ -9,7 +10,7 @@ module Recourse
     # the route drawn by `recourses` and a seed file, so the gem serves the seven
     # screens for it and there is something to see on them.
     class RecourseGenerator < Rails::Generators::ResourceGenerator
-      include Associations, Seeds
+      include Associations, Loading, Seeds
 
       # Templates live beside this class, which is also what tells the parent where to
       # read `--help` from: a USAGE one directory above the source root.
