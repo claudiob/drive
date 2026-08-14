@@ -415,8 +415,9 @@ before writing or editing any layout, view or partial.
 - The field type otherwise follows the column, and the rules are in this order: a
   foreign key is a combobox; a column named `password` is a password field; one
   named `email` gets an email input; a `date` or `datetime` attribute gets its
-  own field, the second as `datetime-local`; everything else follows its kind,
-  encrypted or not.
+  own field, the second as `datetime-local`; a `text` attribute gets a textarea
+  of a single row — the kind says the value may grow long, not that it starts
+  big; everything else follows its kind, encrypted or not.
 - A `color` input and a `time` one were here and are not: the dummy app's only
   columns of those kinds went with the market they belonged to, and a branch no
   page reaches is a branch nothing tests. Both are four lines to restore beside a

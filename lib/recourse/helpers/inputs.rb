@@ -13,6 +13,9 @@ module Recourse
         when :enum then enum_combobox form, column
         when :date then form.date_field(column, **)
         when :datetime then form.datetime_local_field(column, **)
+        # One row, like the text box beside it: a text column says the value may
+        # grow long, not that it starts big — the resize handle is for when it does.
+        when :text then form.text_area(column, **, rows: 1)
         else form.text_field(column, **)
         end
       end
