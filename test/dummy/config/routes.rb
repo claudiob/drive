@@ -19,7 +19,10 @@ Rails.application.routes.draw do
     end
     recourses :specialties, except: :show
     recourses :settings, only: %i[index edit update]
-    recourses :sources, except: :show
+    recourses :sources, except: :show do
+      # Nested: what proves the parent's own filter leaves the search form.
+      recourses :contacts, only: :index
+    end
     recourses :contacts, except: :show
     recourses :agents, only: %i[index show]
     recourses :apps, only: %i[index edit update]

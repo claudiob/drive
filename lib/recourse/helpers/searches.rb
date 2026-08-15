@@ -29,7 +29,7 @@ module Recourse
 
         render 'recourses/search', query: resource_search, url: url_for(action: :index),
                                    field: field, prompt: resource_model.search_prompt,
-                                   filters: resource_model.filter_fields, sort: sort_param
+                                   filters: resource_filters, sort: sort_param
       end
 
       # A value with the searched text marked, so a row says why it is in the table.

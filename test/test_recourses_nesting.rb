@@ -19,6 +19,21 @@ class TestRecoursesNesting < Minitest::Test
     assert_parent_chrome body, county
   end
 
+  # The search form drops the parent's own filter the way the table drops its
+  # column: /sources/1/contacts is filtered by source_id in the URL itself, and a
+  # menu for it would only offer to re-ask. Every other filter stands.
+  def test_a_nested_index_offers_no_filter_for_the_parent
+    source = Source.create! name: 'Nested filters'
+    session = ActionDispatch::Integration::Session.new Rails.application
+    session.get "/sources/#{source.id}/contacts"
+    body = session.response.body
+
+    assert_includes body, "data-bs-name='q[agent_id_in]'"
+    refute_includes body, 'q[source_id_in]'
+  ensure
+    source&.destroy
+  end
+
   # A nested form never asks which parent the record is for — the path has already
   # answered, so the county field is off the page while every other field stands,
   # and `create` writes the route's county whatever a form is made to submit.

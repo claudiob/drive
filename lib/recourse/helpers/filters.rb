@@ -2,6 +2,17 @@ module Recourse
   module Helpers
     # The menus beside a search box, one per foreign key a table can be narrowed by.
     module Filters
+      # The model's filters, less the one a nested route already answered:
+      # /markets/1/sectors is filtered by market_id in the URL itself, and a menu
+      # for it would only offer to re-ask — or to contradict — the address.
+      def resource_filters
+        filters = resource_model.filter_fields
+        parent = resource_parent_association
+        return filters unless parent
+
+        filters.except "#{parent.foreign_key}_in"
+      end
+
       # One filter: a menu of the records a foreign key points at, holding whichever
       # of them the request already asked for. Nothing where that key's label is
       # typed rather than picked, since the menu would be a table of its own — the

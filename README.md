@@ -59,7 +59,8 @@ A *nested* `recourses` is the one exception: it defaults to
 `only: %i[index new create]` — the collection actions, which are what makes
 sense reached through a parent, while the member pages belong to the resource's
 own top-level routes. The nested pages take the hint: the index lists only the
-parent's rows and drops its column, and the form drops its field — a comment
+parent's rows and drops its column, the search form drops the parent's own
+filter, and the form drops its field — a comment
 under `/posts/2` is for post 2, not for one picked from a menu, so no field
 asks and `create` writes the route's parent whatever a form is made to submit.
 The nested index also sits in the parent record's own card, beside its Show and
