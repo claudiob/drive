@@ -333,6 +333,11 @@ before writing or editing any layout, view or partial.
   the whole difference from the edit page.
 - One row per *editable* column, the same list the form offers, so the two pages
   never disagree about which attributes a record has. Encrypted columns included.
+- Then `created_at` and `updated_at`, always, at the end and in that order. A
+  record's own page is where "when" belongs — however firmly its index keeps the
+  two off the table unless `recourse_timestamps` asks — and the form never offers
+  them, since Rails keeps them. The shared rows still line up with the edit page;
+  the show page is simply two rows longer.
 - Each value reads as what it is *of*, not as what it is stored as. A foreign key is
   the label of what it points at, a date is `Aug 12, 2026`, an integer carries its
   delimiters, a decimal is rounded to its own scale, a price wears the currency and a

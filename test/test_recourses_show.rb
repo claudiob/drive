@@ -35,6 +35,10 @@ class TestRecoursesShow < Minitest::Test
     # a button rather than a form, which is the whole difference from the edit page.
     assert_includes body, 'data-reveal-plain-value="1 Infinite Loop"'
     refute_includes body, '<form'
+    # And the timestamps after them, which the form never offers: a record's own
+    # page is where "when" belongs, however its index keeps them off the table.
+    assert_includes body, '<div class="form-label">Created at</div>'
+    assert_includes body, '<div class="form-label">Updated at</div>'
   end
 
   # `false` is something a record says, so only nothing at all reads as a dash.
