@@ -788,6 +788,7 @@ Anything your app defines wins, because your app's view paths come first and
 | Define this | To replace |
 | --- | --- |
 | `app/controllers/contacts_controller.rb` | the whole controller |
+| `app/controllers/recourses_controller.rb` | what every recoursed controller inherits — authentication above all |
 | `app/views/contacts/index.html.erb` | the index template — `show`, `new` and `edit` the same way |
 | `app/views/contacts/_row.html.erb` | the cells of one row |
 | `app/views/contacts/_fields.html.erb` | the fields of the form |
@@ -859,6 +860,38 @@ with `value`. It needs no builder at all, so `label:` is the only option:
 <%= value :name, label: 'First name' %>
 <%= value :phone %>
 ```
+
+## Behavior on every screen, authentication above all
+
+The screens are served by two classes, in the relation `ActionController::Base`
+and `ApplicationController` have: `RecourseController::Base` holds every action,
+filter and helper the gem provides, and `RecoursesController` inherits it and
+adds nothing. Every recoursed controller descends from the second one, so that
+is the seam — define it in your own app and your copy wins, since your
+`app/controllers` comes before any engine's:
+
+```ruby
+# app/controllers/recourses_controller.rb
+class RecoursesController < RecourseController::Base
+  before_action :authenticate_agent!
+end
+```
+
+Every screen the gem serves now requires a signed-in agent — the ones whose
+controllers the gem defines as much as the ones you wrote, since
+`ContactsController < RecoursesController` either way. Nothing else changes:
+the actions, the strong parameters and the view prefixes all come from the base
+class, so a file of four lines costs you none of them.
+
+Keep the class named `RecoursesController`. Its name is what puts the gem's own
+templates under the `recourses/` prefix, so a differently named class of your
+own would find none of them.
+
+An `ApplicationController` filter reaches the screens too, since
+`RecourseController::Base` inherits from it like the rest of your app. Redefining
+`RecoursesController` is for what only the administered screens should do —
+which is the usual shape of an admin area, and what a host with a public site in
+the same app needs.
 
 ## Rewording anything it says
 
@@ -1070,6 +1103,9 @@ what is cached from correct into cheap.
   paginates
 - `Recourse::Error` — the class every failure the gem reports will be, so a host
   can rescue one type
+- `RecourseController::Base` — every action and filter the screens are served
+  by, and what a host's own `RecoursesController` inherits to add behavior of
+  its own
 - `Recourse::Routes`, `Recourse::Controllers`, `Recourse::Engine` — the wiring
   behind `recourses`
 

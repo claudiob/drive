@@ -1,0 +1,35 @@
+module Recourse
+  # Resolves what a route names: the model behind it, the record an id points at,
+  # and the attributes a form may submit for one.
+  module ResourceResolution
+  private
+
+    def find_resource
+      assign resource_class.find(params.expect(:id))
+    end
+
+    def assign(record)
+      @recourse = record
+      instance_variable_set "@#{controller_name.singularize}", record
+    end
+
+    def resource_class
+      Recourse.model controller_name
+    end
+
+    def human_name
+      resource_class.model_name.human
+    end
+
+    def resource_params
+      permitted = Recourse.editable_columns resource_class
+      key = controller_name.singularize.to_sym
+      # A bare `Create` submits no attributes at all, so the key may be absent: the
+      # parent a nested route names is everything such a record starts from.
+      attributes = params.key?(key) ? resolve_references(params.expect(key => permitted)) : {}
+
+      # After resolving, so the parent the route names is never mistaken for a label.
+      attributes.merge parent_columns
+    end
+  end
+end
