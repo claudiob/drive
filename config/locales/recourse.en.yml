@@ -12,6 +12,7 @@ en:
     blank: "—"
     cancel: Cancel
     clear: Clear search
+    create: Create
     created: "%{model} was created."
     created_error: "%{model} could not be created."
     delete: Delete %{model}

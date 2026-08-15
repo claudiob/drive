@@ -121,6 +121,10 @@ before writing or editing any layout, view or partial.
   `new` route has to be drawn *and* the controller has to implement the action,
   or the button would 404 or raise. Its classes are
   `btn theme-primary btn-sm btn-outline ms-3`.
+- Where `create` is routed with no `new` — and no column but the route's parent
+  is required, so there is nothing a form would ask — the same spot holds a
+  `Create` button instead: a `button_to` posting the record whole, wearing the
+  Add link's classes with the `ms-3` on its form, which is the flex item.
 
 ## Deleting a record
 

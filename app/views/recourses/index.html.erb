@@ -5,6 +5,13 @@
     <%= link_to t('recourse.add', model: resource_name), new_path,
                 class: 'btn theme-primary btn-sm btn-outline ms-3' %>
   <% end %>
+<% elsif bare_create? %>
+  <%# `create` routed without `new`: there is nothing to ask for, so a button
+      posts the record whole and the index comes back holding it. -%>
+  <% content_for :actions do %>
+    <%= button_to t('recourse.create'), url_for(action: :create),
+                  class: 'btn theme-primary btn-sm btn-outline', form_class: 'ms-3' %>
+  <% end %>
 <% end %>
 
 <% content_for :search do %>

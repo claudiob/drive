@@ -10,7 +10,11 @@ Rails.application.routes.draw do
     recourses :bookings, only: %i[index show destroy]
     recourses :providers
     recourses :franchises, except: :show
-    recourses :zips, only: %i[index edit]
+    recourses :zips, only: %i[index edit] do
+      # `create` with no `new`, on a model requiring only its parent: the navbar
+      # offers the one-click Create button in the Add link's place.
+      recourses :locations, only: %i[index create]
+    end
     recourses :markets, except: :show
     recourses :counties, only: %i[index show] do
       # Nested: reached through a county's ZIPs count, not from the sidebar, and

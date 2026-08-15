@@ -21,6 +21,12 @@ Layout/AccessModifierIndentation:
 Layout/LineLength:
   Max: 100
 
+# A routes file is one block by design, and the dummy's grows a line per feature
+# it demonstrates — its length measures the gem's surface, not a design choice.
+Metrics/BlockLength:
+  Exclude:
+    - 'test/dummy/config/routes.rb'
+
 Style/DocumentationMethod:
   Enabled: true
   Exclude:

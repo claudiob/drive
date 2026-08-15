@@ -86,7 +86,10 @@ private
 
   def resource_params
     permitted = Recourse.editable_columns resource_class
-    attributes = resolve_references params.expect(controller_name.singularize.to_sym => permitted)
+    key = controller_name.singularize.to_sym
+    # A bare `Create` submits no attributes at all, so the key may be absent: the
+    # parent a nested route names is everything such a record starts from.
+    attributes = params.key?(key) ? resolve_references(params.expect(key => permitted)) : {}
 
     # After resolving, so the parent the route names is never mistaken for a label.
     attributes.merge parent_columns
