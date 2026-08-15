@@ -189,9 +189,9 @@
 
       /* The icon font drops every glyph an eighth of an em to sit on a text
          baseline, which inside an icon link reads as the arrow resting on the
-         line. Lifted by the same eighth, its bottom clears the baseline — on the
+         line. A sixteenth up clears the baseline without floating — on the
          ::before, so the hover transform on the .bi box itself is untouched. */
-      .icon-link > .bi::before { vertical-align: .125em; }
+      .icon-link > .bi::before { vertical-align: .0625em; }
     </style>
   </head>
 

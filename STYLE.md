@@ -785,8 +785,8 @@ before writing or editing any layout, view or partial.
   go. Words around an address, or two addresses, stay text.
 - The arrow rides clear of the baseline: bootstrap-icons drops every glyph
   `-.125em` to sit on a text line, so the layout lifts `.icon-link > .bi::before`
-  back by the same eighth — on the `::before`, never on the `.bi` box, whose
-  transform is the hover step's to write.
+  to `.0625em` — clear of the line without floating, and on the `::before`,
+  never on the `.bi` box, whose transform is the hover step's to write.
 - Column headings that can be sorted are links, which the section below covers.
 
 ## Sorting, searching and filtering
