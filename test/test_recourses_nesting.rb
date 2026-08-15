@@ -23,19 +23,20 @@ class TestRecoursesNesting < Minitest::Test
   # column: /sources/1/contacts is filtered by source_id in the URL itself, and a
   # menu for it would only offer to re-ask. Every other filter stands.
   def test_a_nested_index_offers_no_filter_for_the_parent
-    source = Source.create! name: 'Nested filters'
+    source = Source.create! name: 'A source whose name runs far past the forty a crumb holds'
     session = ActionDispatch::Integration::Session.new Rails.application
     session.get "/sources/#{source.id}/contacts"
     body = session.response.body
 
     assert_includes body, "data-bs-name='q[agent_id_in]'"
-    refute_includes body, 'q[source_id_in]'
+    # And the crumb naming the parent stops at forty characters of its label.
+    assert_includes body, 'A source whose name runs far past the...'
+    ['q[source_id_in]', 'forty a crumb holds'].each { |gone| refute_includes body, gone }
   ensure
     source&.destroy
   end
 
-  # A nested form never asks which parent the record is for — the path has already
-  # answered, so the county field is off the page while every other field stands,
+  # A nested form never asks which parent the record is for — the path answered,
   # and `create` writes the route's county whatever a form is made to submit.
   def test_a_nested_form_does_not_ask_for_the_parent
     county = County.first
@@ -47,9 +48,8 @@ class TestRecoursesNesting < Minitest::Test
   end
 
   # Reached through a parent, a nested resource defaults to its collection actions
-  # — list the parent's rows, add one — and an explicit `only:` is the host's word,
-  # which wins. Drawn into a fresh route set over names the dummy app already
-  # declares, so the app's own routes and sidebar gain nothing.
+  # — list the parent's rows, add one — and an explicit `only:` is the host's word.
+  # Drawn into a fresh route set, so the dummy's own routes gain nothing.
   def test_a_nested_recourses_defaults_to_its_collection_actions
     routes = ActionDispatch::Routing::RouteSet.new
     routes.draw do

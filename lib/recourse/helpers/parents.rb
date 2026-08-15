@@ -25,8 +25,14 @@ module Recourse
         path = controller.controller_path.rpartition('/').first
         [
           [path, path.split('/').last.humanize, url_for(controller: "/#{path}", action: :index)],
-          [nil, parent.attributes[parent.class.recourse_label.to_s], parent_path(parent, path)],
+          [nil, parent_title(parent), parent_path(parent, path)],
         ]
+      end
+
+      def parent_title(parent)
+        # Forty characters of the label, no more: a record named by an address or a
+        # sentence would otherwise walk the crumb into the navbar's search form.
+        truncate parent.attributes[parent.class.recourse_label.to_s], length: 40
       end
 
       def parent_path(parent, path)
