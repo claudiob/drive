@@ -43,8 +43,9 @@ module Recourse
       # with the letter at `key` marked where the link answers to one.
       def resource_label(resource, title, key = nil)
         name = key ? shortcut_title(title, key) : title
+        icon = Recourse.known_icon resource
 
-        safe_join [tag.i(class: "bi bi-#{Recourse.icon resource}"), name], ' '
+        safe_join [icon && tag.i(class: "bi bi-#{icon}"), name].compact, ' '
       end
 
       # Sidebar entries as [name, title, path, key], in the order routes.rb declares

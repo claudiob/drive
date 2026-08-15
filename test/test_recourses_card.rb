@@ -20,12 +20,15 @@ class TestRecoursesCard < Minitest::Test
   end
 
   # A nested index earns its tab from the route alone: no counter cache behind
-  # agents' settings, so the tab is the bare capitalized name, no figure before it.
+  # agents' settings, so the tab is the bare capitalized name, no figure before
+  # it — and no icon either, since Setting names a concept Unicon has never
+  # heard of, and a tab shows nothing rather than the fallback circle.
   def test_an_uncounted_nested_index_reads_as_the_bare_name
     agent = Agent.create! email: 'tabs@example.com'
     @session.get "/agents/#{agent.id}"
 
-    assert_includes @session.response.body, %(<i class="bi bi-gear"></i> Settings</a>)
+    assert_includes @session.response.body, %(>Settings</a>)
+    refute_includes @session.response.body, 'bi-circle'
   ensure
     agent&.destroy
   end

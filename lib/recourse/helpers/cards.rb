@@ -61,7 +61,7 @@ module Recourse
       # is what earns the downcase: a word that leads keeps its capital, like the
       # Show and Edit beside it. The icon is the counted model's own either way.
       def association_tab_label(record, association)
-        icon = tag.i class: "bi bi-#{Recourse.model_icon association.klass}"
+        icon = Recourse.known_model_icon association.klass
         column = counter_column_of record.class, association
         label = if column
                   counted_tab_name record.attributes[column], association
@@ -69,7 +69,7 @@ module Recourse
                   association.klass.model_name.human.pluralize
                 end
 
-        safe_join [icon, label], ' '
+        safe_join [icon && tag.i(class: "bi bi-#{icon}"), label].compact, ' '
       end
 
       def counter_column_of(model, association)

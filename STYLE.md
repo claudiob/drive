@@ -72,7 +72,10 @@ before writing or editing any layout, view or partial.
   a `<span class='breadcrumb-link active'>` inside an
   `<li class='breadcrumb-item' aria-current='page'>`. Bootstrap's own example
   uses an `<a>` there; we deliberately do not.
-- Earlier items are links and carry the resource icon, separated by empty
+- Earlier items are links and carry the resource icon — or none at all where
+  Unicon has never heard the model's concept: no picture beats the fallback
+  circle, which pictures nothing. The sidebar reads through the same label, so
+  it goes without in the same case. Separated by empty
   `<li class='breadcrumb-divider'>` elements — v6 draws the chevron from that
   element, not from a CSS `content` string on `::before` as v5 did.
 - An index has one item, its own name. Any other page links back to the index
@@ -293,7 +296,10 @@ before writing or editing any layout, view or partial.
   links follow. Each tab wears that link's icon — the eye and the pencil — from one
   `ICONS` map, so a row and a card cannot come to disagree about which is which.
 - After them, one tab per has_many whose rows have an index nested under the
-  record, wearing that model's icon. The nested route is the whole requirement; a
+  record, wearing that model's icon — or none where Unicon has never heard its
+  concept, the same judgement the breadcrumb makes; only a counter *heading*
+  keeps the fallback circle, being nothing but its icon. The nested route is the
+  whole requirement; a
   counter cache only decides how the tab reads: `8 ZIPs` where the record keeps
   one — the number read off the record itself, like the column, so the tab costs
   no query — and the bare `ZIPs` where it does not. The count is what earns the
