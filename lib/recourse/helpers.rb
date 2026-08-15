@@ -71,9 +71,10 @@ module Recourse
 
   private
 
-    # `?q=anything` arrives as a String, which has no parameters to read.
+    # `?q=anything` arrives as a String, which has no parameters to read — the
+    # same test `Recourse::Search` makes, spelled the same way.
     def query_params
-      params[:q].respond_to?(:dig) ? params[:q] : {}
+      params[:q].is_a?(ActionController::Parameters) ? params[:q] : {}
     end
 
     def resource_model

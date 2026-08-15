@@ -309,9 +309,18 @@ two is filed under the one a reader would look in first.
   `resource.attributes[column]`, not `resource.public_send column`.
 - No `define_method`, `method_missing`, `instance_variable_get` / `_set`,
   `const_set`, `constantize`, or `eval` of any kind.
-- The single exception is an explicit instruction to use it. Never reach for
-  metaprogramming on your own initiative, and never treat the places that
-  already use it as permission to add another — ask instead.
+- The sanctioned exceptions, by name — everything else still needs an explicit
+  instruction. `Recourse::Controllers` (`const_defined?`/`const_get`/`const_set`/
+  `Class.new`) is the gem's core promise: a routes line conjures a controller.
+  `Recourse.model`'s `safe_constantize` is its input step: a route name becomes
+  a class or a routes-file error. `ResourceResolution`'s
+  `instance_variable_set "@#{name}"` keeps the host-template contract — a host's
+  view reads `@contact` the way a hand-written controller would set it.
+- Reading an association without `public_send` is a *trade*, not a loophole:
+  `record.association(name).reader` (deletions, references) leans on a `:nodoc:`
+  Rails API to honor this rule. Keep the trade; never widen it.
+- Never reach for metaprogramming on your own initiative, and never treat the
+  places above as permission to add another — ask instead.
 
 #### Both sides of an association
 

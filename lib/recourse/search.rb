@@ -35,7 +35,7 @@ module Recourse
     def conditions(params)
       # `?q=anything` reaches here as a String rather than as parameters of its own,
       # and a search nobody asked for reaches here as nil. Neither is a condition.
-      return {} unless params.respond_to? :to_unsafe_h
+      return {} unless params.is_a? ActionController::Parameters
 
       params.to_unsafe_h.filter_map do |key, value|
         next if value.blank?
