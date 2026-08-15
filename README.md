@@ -417,7 +417,7 @@ defaults are there without a model mentioning them.
 | `recourse_includes` | every `belongs_to` the table names | what the index eager-loads, in any shape `includes` accepts |
 | `recourse_order` | `:id` | how the index sorts, in any shape `order` accepts |
 | `recourse_timestamps` | `[]` | which of `created_at` and `updated_at` the table ends with |
-| `recourse_hidden` | `[]` | columns kept off every screen — the table, the show page and the form, which also stops permitting them. One name or a list: `def recourse_hidden = :name` and `%i[name title]` both read |
+| `recourse_hidden` | `[]` | columns kept off every screen — the table, the show page, the form (which also stops permitting them) and the search box. One name or a list: `def recourse_hidden = :name` and `%i[name title]` both read |
 | `recourse_broadcasts?` | `true` | whether saving a record refreshes every open index listing it — see [Live index refreshes](#live-index-refreshes) |
 
 Overriding one means overriding a class method, which is what the `Recoursive`

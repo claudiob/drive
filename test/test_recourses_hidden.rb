@@ -10,6 +10,9 @@ class TestRecoursesHidden < Minitest::Test
     form = page "/apps/#{app.id}/edit"
 
     assert_includes index, 'data-cell="Name">Hidden Fields<'
+    # The whole page: no column, no field — and no search term, though the
+    # hidden column is indexed, which would otherwise put it in the box.
+    assert_includes index, 'name="q[name_cont]"'
     refute_includes index, 'Webhook'
     assert_includes form, 'name="app[name]"'
     refute_includes form, 'webhook_url'

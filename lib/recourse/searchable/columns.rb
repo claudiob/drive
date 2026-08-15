@@ -10,9 +10,11 @@ module Recourse
       # Columns worth searching: the indexed strings a table also shows. An index is
       # the only signal a schema carries about which column identifies a row rather
       # than describes it, and a column no page draws is not one to search by — a row
-      # would arrive with nothing on it explaining why.
+      # would arrive with nothing on it explaining why. That is also what keeps a
+      # `recourse_hidden` column out: hidden from every screen means hidden here.
       def recourse_searchable_columns
-        recourse_indexed_strings - recourse_encrypted_names - readonly_attributes.to_a
+        recourse_indexed_strings - recourse_encrypted_names - readonly_attributes.to_a -
+          Recourse.hidden_columns(self)
       end
 
       # The same columns where they are encrypted, which a search matches whole
@@ -21,7 +23,8 @@ module Recourse
       # still finds it. A column encrypted any other way is left out, since two
       # writes of one address do not compare equal.
       def recourse_encrypted_searchable_columns
-        columns = (recourse_indexed_strings & recourse_encrypted_names) - readonly_attributes.to_a
+        columns = (recourse_indexed_strings & recourse_encrypted_names) -
+                  readonly_attributes.to_a - Recourse.hidden_columns(self)
         columns.select do |column|
           type_for_attribute(column).scheme.deterministic?
         end

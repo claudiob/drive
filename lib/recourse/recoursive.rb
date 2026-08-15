@@ -12,9 +12,9 @@ module Recourse
     # — and Unicon answers with a circle for a name it has never heard of.
     def recourse_icon = model_name.singular.to_sym
 
-    # Columns the model keeps off its screens — the table, the show page and the
-    # form — none by default. One name or a list: `def recourse_hidden = :name`
-    # reads as well as `%i[name title]`, and both are taken.
+    # Columns the model keeps off its screens — the table, the show page, the
+    # form and the search box — none by default. One name or a list:
+    # `def recourse_hidden = :name` reads as well as `%i[name title]`.
     def recourse_hidden = []
 
     # Which of `created_at` and `updated_at` a table ends with, in that order.
