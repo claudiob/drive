@@ -87,8 +87,11 @@ module Recourse
     private
 
       def formatted_cell(value, column)
+        # Numbers read as the show page reads them, through Formats' one ladder.
+        # Only text is highlighted: a search never looked through a number.
+        kind = attribute_kind column
+        return formatted_number kind, column, value if numeric_kind? kind
         return localized value if value.is_a?(Date) || value.is_a?(Time)
-        return number_to_phone value if column == 'phone'
 
         search_highlight value, column
       end

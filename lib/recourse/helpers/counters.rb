@@ -11,10 +11,13 @@ module Recourse
     private
 
       def counter_cell(resource, value, association)
+        # Delimited like every other count on the page: the filter menu beside the
+        # table already reads 38,405, and one figure in two spellings reads as two.
+        count = number_with_delimiter value
         nested = "#{controller.controller_path}/#{association.name}"
-        return value unless routed? nested, 'index'
+        return count unless routed? nested, 'index'
 
-        turbo_link_to value, url_for(controller: "/#{nested}", action: :index,
+        turbo_link_to count, url_for(controller: "/#{nested}", action: :index,
                                      "#{resource_key}_id": resource.id)
       end
 

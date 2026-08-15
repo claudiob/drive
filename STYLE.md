@@ -714,7 +714,7 @@ before writing or editing any layout, view or partial.
   what these cells do not use to the columns carrying text.
 - `.recourse-counter` shares that rule, so a counter column starts at the same
   square — but a table treats the width as a preference, never crushing content
-  into it, so a figure like `38405` widens its column to be read whole;
+  into it, so a figure like `38,405` widens its column to be read whole;
   `white-space: nowrap` is what keeps it one line while it does. The class comes
   from `counter_class(name)`, which `_row` passes on every column and which
   answers only for a counter.
@@ -771,8 +771,13 @@ before writing or editing any layout, view or partial.
   sidebar and the breadcrumb draw for that resource, so the three agree without
   anyone naming it three times. The icon carries `role='img'` and an `aria-label`
   of the counted model's plural — `ZIPs`, not `ZIPs count` — which is also what
-  every `data-cell` under it says. The cells hold the bare figure: `26`, no icon,
-  since the heading already names what the figures count.
+  every `data-cell` under it says. The cells hold the figure alone — `38,405`,
+  no icon, delimited like the filter-menu counts beside the table — since the
+  heading already names what the figures count.
+- Every other numeric cell reads the way the show page reads it, through the one
+  `formatted_number` ladder Formats keeps: integers delimited, prices as
+  currency, percentages and decimals at their column's own precision. Only text
+  cells are search-highlighted — a search never looked through a number.
 - Column headings that can be sorted are links, which the section below covers.
 
 ## Sorting, searching and filtering
