@@ -507,6 +507,17 @@ before writing or editing any layout, view or partial.
 - `data-bs-name` is what makes it a form control: the plugin inserts a hidden
   input of that name before the toggle and writes the chosen `data-bs-value`
   into it. Never put `name=` on the toggle itself.
+- That input is a node the server never renders, which Turbo's DOM surgery
+  knows nothing about — a morphing refresh deletes it while the plugin instance
+  keeps writing to the detached node, and a snapshot restore resurrects an old
+  one beside the input a fresh instance makes, so a click would submit a filter
+  that is stale, doubled or missing. The toggle therefore carries
+  `data-controller='combobox'`, whose lifecycle keeps input and instance one
+  thing: `connect` removes any restored stale inputs and adopts the instance,
+  `disconnect` disposes it (which takes its input with it), and a `turbo:morph`
+  disposes and remakes it whole — the constructor reads the `.selected` items
+  the morph just made truthful, so one move resyncs the input, the toggle's
+  text and the listeners.
 - `data-bs-search='true'` enables filtering, but the search input has to be in
   the markup — the plugin only wires up a `.combobox-search-input` it finds.
 - That input carries an X inside its right edge once there is anything to clear,

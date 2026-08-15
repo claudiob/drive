@@ -1,6 +1,6 @@
 <%# locals: (name:, id:, invalid:, feedback:, placeholder:, required:, label: nil, counter: nil, recourses: nil, values: [], multiple: false, selected: [], aria_label: nil, small: false, all: nil) -%>
 <button class='form-control<%= ' form-control-sm' if small %><%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
-        data-bs-toggle='combobox' data-bs-name='<%= name %>'
+        data-bs-toggle='combobox' data-bs-name='<%= name %>' data-controller='combobox'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
         aria-required='<%= required %>' <%= tag.attributes 'data-bs-multiple': ('true' if multiple), 'aria-label': aria_label, 'aria-describedby': feedback && "#{id}_error" %>>
   <span class='combobox-value'><%= placeholder %></span>
