@@ -24,6 +24,14 @@ module Dummy
     # Action View logs a line per partial, which buries the request itself.
     config.action_view.logger = nil
 
+    # The cable is not what a log is about either. The middleware is the one
+    # `silence_healthcheck_path` uses, aimed at `/cable`, so no `Started GET`
+    # line; the nil cable logger is what swallows `Successfully upgraded` and
+    # every `Turbo::StreamsChannel is streaming` line.
+    config.middleware.insert_before Rails::Rack::Logger, Rails::Rack::SilenceRequest,
+                                    path: '/cable'
+    config.action_cable.logger = ActiveSupport::Logger.new nil
+
     # Bootstrap wants `is-invalid` on the control and the message beside it, which
     # Rails' default `field_with_errors` wrapper gives neither. Labels pass through.
     config.action_view.field_error_proc = proc do |html_tag, instance|

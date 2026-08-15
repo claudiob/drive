@@ -391,6 +391,19 @@ two is filed under the one a reader would look in first.
 - Set `config.action_view.logger = nil` in `config/application.rb`. Everything
   else stays: the request, the SQL, and the `Completed 200 OK` timing line,
   which still reports view time.
+- The page's chrome is not the log's subject either: no `Started GET` for a
+  stylesheet, a script or a font, none for `/cable`, and no WebSocket or
+  `Turbo::StreamsChannel` chatter.
+- The gem's own files go quiet by *placement*: its `Rack::Static` middleware
+  sits before `Rails::Rack::Logger`, so a `/recourse/*` fetch is answered before
+  the logger ever sees it — which is why the gem may do this for every host
+  without touching anyone's logging config.
+- The cable goes quiet in the app: `Rails::Rack::SilenceRequest, path: '/cable'`
+  — the middleware `silence_healthcheck_path` already uses — inserted before the
+  request logger, plus `config.action_cable.logger = ActiveSupport::Logger.new(nil)`,
+  which is what swallows `Successfully upgraded` and every
+  `Turbo::StreamsChannel is streaming` line. Silencing is per-thread and lifts
+  for errors, so a page request alongside stays loud.
 - This is a rule for apps we write. The gem never touches a host's logging.
 
 #### Keep RuboCop current
