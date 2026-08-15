@@ -21,7 +21,7 @@ before writing or editing any layout, view or partial.
 - The gem ships `app/views/layouts/recourses.html.erb`, and every screen it serves
   renders in it: Bootstrap's CSS in the head, the JS bundle as a module before
   `</body>`, and no webfont: text is `helvetica, verdana, arial, sans-serif` at
-  13px (`0.8125rem`, so a browser's text-size setting still scales it), set
+  14px (`0.875rem`, so a browser's text-size setting still scales it), set
   through `--bs-body-font-family` and `--bs-body-font-size` in the layout's own
   `<style>`. Nothing on the page reaches an external host.
 - Named for the controller rather than for the app. `RecoursesController` implies
