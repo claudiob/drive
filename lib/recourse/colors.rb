@@ -3,7 +3,7 @@ module Recourse
   # Colour families a host may call primary. Five of the sixteen Bootstrap ships:
   # each is dark enough at its 500 step to carry white text, which is what
   # `--bs-primary-contrast` assumes and what the others would quietly break.
-  COLORS = %i[blue orange purple pink brown].freeze
+  COLORS = %i[blue gray orange purple pink brown].freeze
 
   class << self
     # Which family the pages call primary, or nil for Bootstrap's own blue.
