@@ -452,6 +452,38 @@ two is filed under the one a reader would look in first.
   and gemspecs naming what we depend on; the README line is advice to hosts
   pinning *us*, which is exactly what SemVer is for.
 
+#### A gem's page draws its mark once and renders every icon a service asks for
+
+- A gem that gets a GitHub page with colours and artwork of its own gets the
+  whole icon set with it, in the same breath — the browser's, iOS', and the
+  avatar GitHub and the social networks show. A page whose tab is a blank sheet
+  and whose repository is a grey identicon is the page half-built.
+- One drawing answers all of them: `icon.svg` beside `index.html`, holding the
+  page's own mark at the scale a tab can carry, and a `build-icons.sh` that
+  renders the rest from it. Run it after editing the SVG and commit what
+  changes; never touch a PNG by hand, or the set drifts apart one file at a
+  time.
+- What each service asks for, and why that size:
+  - `favicon.ico`, holding 16, 32 and 48 — what a browser reaches for when the
+    page links nothing, and what Windows and older Safari prefer regardless.
+  - `favicon-96x96.png`, the tab's own.
+  - `apple-touch-icon.png` at 180, for a home-screen bookmark.
+  - `web-app-manifest-192x192.png` and `-512x512.png`, named in
+    `site.webmanifest`.
+  - `avatar.png` at 1024, for GitHub and for every social network that asks for
+    a picture. One file: they all crop a square themselves, and 1024 is the
+    largest any of them wants.
+- Corners are the one thing that varies: iOS masks a bookmark and every avatar
+  is shown round, so those two render from an SVG whose `rx` is 0. A corner
+  rounded twice reads as a mistake.
+- Adapt the drawing, never the rendering. What a 16-pixel tab cannot carry — a
+  halo, eyelashes, a sparkle — comes out of `icon.svg`, so every size says the
+  same thing at the fidelity it can hold, and the mark on the avatar is the mark
+  in the tab.
+- `rsvg-convert` and `magick` do the rendering: `brew install librsvg
+  imagemagick`, named in a comment at the top of the script, since a machine
+  without them fails at the first line.
+
 #### No code of conduct, no ideology
 
 - Never add a `CODE_OF_CONDUCT.md`, and never link to or mention one from the
