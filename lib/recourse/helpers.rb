@@ -47,12 +47,12 @@ module Recourse
 
     # Human, plural name of the resource on the page, e.g. 'Contacts'.
     def resources_name
-      controller.controller_name.humanize
+      Recourse.title controller.controller_name
     end
 
     # Singular, lowercase name of the resource, e.g. 'contact'.
     def resource_name
-      Recourse.downcase controller.controller_name.singularize.humanize
+      Recourse.downcase resource_model.model_name.human
     end
 
     # Local name a row partial receives its record under, e.g. :contact.

@@ -498,6 +498,17 @@ prompt reads in lower case, except for the words Rails was told are acronyms:
 the gem lower-cases goes through `Recourse.downcase`, which leaves a registered
 acronym as it found it — the same call behind `No ZIPs.` and `All ZIPs`.
 
+Register the singular only. `inflect.acronym 'ZIP'` is the whole of what a host
+has to say: every plural the gem writes is its model's own name pluralized —
+`ZIP.model_name.human.pluralize` — so the sidebar entry, the breadcrumb, the page
+title and the tab all read `ZIPs` without `ZIPs` being registered as a word of
+its own. Registering it would rename what Rails computes from the `zips` path
+instead, down to `ZIPsController` and a `create_zips.rb` migration that has to
+define `CreateZIPs`. The gem takes the labels and leaves Rails its own names.
+Reading a title off the model has a second effect worth knowing: rename the model
+in a locale file, under `activerecord.models`, and every one of those labels
+follows.
+
 Five of those eight hooks are yours. `search_field`, `search_prompt` and
 `recourse_searchable?` are the gem's own working: they are derived from the rest,
 and they are written down here so you can see what a page will do, not so a model

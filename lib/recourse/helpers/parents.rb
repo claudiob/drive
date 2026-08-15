@@ -24,7 +24,7 @@ module Recourse
 
         path = controller.controller_path.rpartition('/').first
         [
-          [path, path.split('/').last.humanize, url_for(controller: "/#{path}", action: :index)],
+          [path, Recourse.title(path), url_for(controller: "/#{path}", action: :index)],
           [nil, parent_title(parent), parent_path(parent, path)],
         ]
       end

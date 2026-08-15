@@ -1,5 +1,5 @@
 # Creates the zips table and backfills it from db/zips.txt.
-class CreateZIPs < ActiveRecord::Migration[8.1]
+class CreateZips < ActiveRecord::Migration[8.1]
   # id|county_id|code|city|time_zone for every ZIP the host app knows.
   ZIPS = 'db/zips.txt'
 

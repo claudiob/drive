@@ -58,10 +58,24 @@ module Recourse
 
   # Lower case, but for the words Rails was told are acronyms: `ZIP code` reads as
   # `ZIP code` and never `zip code`, while `Code or Name` becomes `code or name`.
+  # The plural of one counts as one, so `8 ZIPs` survives a host that registered
+  # `ZIP` alone — pluralizing an acronym is the gem's job, not the host's.
   def self.downcase(text)
     acronyms = ActiveSupport::Inflector.inflections.acronyms
 
-    text.split.map { |word| acronyms.key?(word.downcase) ? word : word.downcase }.join ' '
+    text.split.map do |word|
+      known = [word, word.singularize].any? { |one| acronyms.key? one.downcase }
+
+      known ? word : word.downcase
+    end.join ' '
+  end
+
+  # The plural title a resource is shown under, read off its model rather than out
+  # of its path: `ZIP` pluralizes to `ZIPs`, where humanizing `zips` says `Zips`
+  # unless the host registers that word as an acronym of its own. It also follows a
+  # model renamed in a locale file, which humanizing a path never would.
+  def self.title(name)
+    model(name).model_name.human.pluralize
   end
 
   # The model a resource is named after. A controller the gem defined has nothing

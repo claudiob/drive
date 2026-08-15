@@ -63,7 +63,7 @@ module Recourse
         Recourse.declared.filter_map do |path|
           next unless routed? path, 'index'
 
-          title = path.split('/').last.humanize
+          title = Recourse.title path
           [
             path, title, url_for(controller: "/#{path}", action: :index),
             shortcut_index(title, taken),

@@ -5,9 +5,8 @@ ActiveSupport::Inflector.inflections :en do |inflect|
   inflect.acronym 'CRM'
   inflect.acronym 'OpenAI'
   inflect.acronym 'PIN'
-  # The plural of each is registered too, or `zips` humanizes to 'Zips'.
+  # Singulars only: the gem pluralizes a model's own human name, so `ZIPs` reads
+  # right on a page without `zips` camelizing to `ZIPs` for Rails.
   inflect.acronym 'URL'
-  inflect.acronym 'URLs'
   inflect.acronym 'ZIP'
-  inflect.acronym 'ZIPs'
 end

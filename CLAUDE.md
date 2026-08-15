@@ -776,9 +776,20 @@ two is filed under the one a reader would look in first.
   lower-cases a word the gem shows, and it leaves a registered acronym alone: a
   plain `.downcase` turns `ZIP code` into `zip code` and `No ZIPs.` into `No
   zips.`, undoing the registration two lines above.
-- Register the plural as its own acronym, always. `URL` alone leaves a
-  `media_urls` column heading a table `Media urls`, the same way `ZIP` alone
-  leaves `zips` reading `Zips`.
+- Register the singular and stop there. `inflect.acronym 'ZIPs'` beside `'ZIP'`
+  was the old rule and is now wrong: registering the plural renames what Rails
+  computes from a path — `zips` camelizes to `ZIPs`, so the controller becomes
+  `ZIPsController` and `create_zips.rb` has to define `CreateZIPs` — which is
+  Rails' own naming, and not ours to bend.
+- The plural is the gem's job instead. `Recourse.title` reads a resource's title
+  off its model, `ZIP.model_name.human.pluralize`, so a sidebar entry and a
+  breadcrumb say `ZIPs` while the class behind them stays `ZipsController`. And
+  `Recourse.downcase` counts a word whose *singular* is registered as an acronym,
+  so `8 ZIPs` on a tab survives too.
+- What this does not reach is a plural inside a column name: `media_urls` still
+  heads a table `Media urls`, because that is `human_attribute_name` humanizing
+  the whole name and not a model title. Name the column in the singular, or live
+  with it — do not register `URLs` to work around it.
 - An app registers the acronyms *it* says, and only those. A rule for apps we
   write: the gem registers none, the same line drawn for the time zone, the
   logger and `field_error_proc`. Inflections are global, and a gem that quietly
@@ -924,11 +935,11 @@ two is filed under the one a reader would look in first.
 
 - A `ZIP` has a unique non-null 5-digit `code`, a non-null `city`, a non-null
   `time_zone`, belongs to a `county`, and optionally belongs to a `market`.
-- The class is `ZIP`, not `Zip`, because the acronym is registered. Register the
-  plural too — `inflect.acronym 'ZIPs'` — or every heading reads `Zips`.
-- Registering the plural renames more than headings: Rails camelizes a migration
-  filename to find its class, so `create_zips.rb` must define `CreateZIPs`. It
-  only breaks on a migrate from zero, which is why a reset is the real test.
+- The class is `ZIP`, not `Zip`, because the acronym is registered. The plural is
+  not registered, so everything Rails names from the `zips` path keeps Rails'
+  spelling: `ZipsController`, and `create_zips.rb` defining `CreateZips`. A
+  migration whose class does not match only breaks on a migrate from zero, which
+  is why a reset is the real test.
 - Creating a zips table always comes with a migration that backfills it: every
   ZIP, matched to the county it mostly belongs to and the main city in it.
 - `time_zone` holds a Rails zone name, never an IANA identifier. The source mixes
