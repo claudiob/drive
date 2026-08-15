@@ -17,6 +17,10 @@ en:
     created_error: "%{model} could not be created."
     delete: Delete %{model}
     deleted: "%{model} was deleted."
+    displaying:
+      one: Displaying 1 item
+      other: Displaying %{count} items
+    displaying_slice: Displaying items %{from}-%{to} of %{total} in total
     edit: Edit
     format: Please match the format %{example}
     missing_model: You declared `recourses :%{name}` in your routes file, but this app

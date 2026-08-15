@@ -15,10 +15,11 @@ module Recourse
       def count_from_belongs_to(file, name)
         return say_status :skip, "#{file} does not exist" unless exist? file
 
-        wrapped = /^\s*belongs_to :#{name}\b[^#\n]*,\s*(?:#[^\n]*)?$/.match? read(file)
+        declared = /^\s*belongs_to :#{Regexp.escape name.to_s}\b/
+        wrapped = /#{declared}[^#\n]*,\s*(?:#[^\n]*)?$/.match? read(file)
         return say_status :skip, "#{file} wraps belongs_to :#{name} — count it by hand" if wrapped
 
-        gsub_file file, /^\s*belongs_to :#{name}\b.*$/ do |line|
+        gsub_file file, /#{declared}.*$/ do |line|
           declaration, comment = line.match(/\A([^#]*?)(\s*#.*)?\z/).captures
           "#{declaration}#{counting_options declaration}#{comment}"
         end
@@ -33,9 +34,11 @@ module Recourse
       def declare_has_many(klass:, children:, line:)
         parent = File.join 'app/models', "#{klass.underscore}.rb"
         return say_status :skip, "#{parent} does not exist" unless exist? parent
-        return if /^\s*has_many :#{children}\b/.match? read(parent)
+        return if /^\s*has_many :#{Regexp.escape children}\b/.match? read(parent)
 
-        opened = /class #{klass}[\s<]/.match? read(parent)
+        # Exactly the anchor Thor's inject_into_class matches — bare or before a
+        # space — so what passes this guard is what the injection can really find.
+        opened = /^\s*class #{Regexp.escape klass}(\n| )/.match? read(parent)
         return say_status :skip, "#{parent} hides class #{klass} — declare it by hand" unless opened
 
         inject_into_class parent, klass, "  #{line}\n"

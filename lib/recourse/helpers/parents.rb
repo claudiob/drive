@@ -4,13 +4,13 @@ module Recourse
     module Parents
       # The record a nested route names above this page, or nil at the top level.
       def resource_parent
-        controller.view_assigns['recourse_parent']
+        controller_assign 'recourse_parent'
       end
 
       # The belongs_to that record is reached through, which names the foreign key
       # every row on the page shares.
       def resource_parent_association
-        controller.view_assigns['recourse_parent_association']
+        controller_assign 'recourse_parent_association'
       end
 
     private

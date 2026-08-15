@@ -30,7 +30,9 @@ module Recourse
       end
 
       def pending_migration?
-        self.class.migration_exists? File.join(destination_root, 'db/migrate'), migration_name
+        # Found by glob, the way References finds the ORM's migration: Rails'
+        # migration_exists? answers the same question through an unpublished module.
+        Dir.glob(File.join(destination_root, 'db/migrate', "*_#{migration_name}.rb")).any?
       end
 
       def column_of(child, reflection)

@@ -44,9 +44,9 @@ module Recourse
         resource_model.recourse_searchable_columns.include? column.to_s
       end
 
-      # The search the action built, read from the assigns rather than by ivar name.
+      # The search the action built, under Ransack's own name for one.
       def resource_search
-        controller.view_assigns['q']
+        controller_assign 'q'
       end
     end
   end

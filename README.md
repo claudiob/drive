@@ -498,6 +498,22 @@ prompt reads in lower case, except for the words Rails was told are acronyms:
 the gem lower-cases goes through `Recourse.downcase`, which leaves a registered
 acronym as it found it — the same call behind `No ZIPs.` and `All ZIPs`.
 
+Five of those eight hooks are yours. `search_field`, `search_prompt` and
+`recourse_searchable?` are the gem's own working: they are derived from the rest,
+and they are written down here so you can see what a page will do, not so a model
+can answer them differently. Their shape moves when the gem's does. A model that
+wants something else searched changes what the schema says — an index is the
+signal both hooks read — and one that wants a control of its own draws it with a
+`filter_fields` entry.
+
+That extension is global, and worth knowing before you write a search of your
+own: every model in the app answers `ransackable_attributes`, whether or not a
+`recourses` line ever names it. Ransack's own default allows nothing until a
+model opts in, and the gem replaces that default with every column but the
+encrypted ones. So a `Model.ransack(params[:q])` you write inherits the same
+allowance, and a request can filter on any column the model has. Narrow it in the
+model where that is more than you meant to offer.
+
 A foreign key is the other half of what a search looks through, and what decides
 is how long the other table is. A menu is a control while every row fits in one;
 past that it is a page of HTML nobody reads. So a `belongs_to` whose model is not
@@ -531,9 +547,8 @@ another table, and the id under it is not the order that label reads in.
 ten million. A table that crosses the line is noticed at the next boot.
 
 Overriding one is the same shape as `Recoursive`: a same-named concern beside
-the model, defining inside `class_methods do`. The dummy app's `Market` widens
-its search past what an index suggests, and renames the filter it is narrowed
-with:
+the model, defining inside `class_methods do`. A `Market` that renames the filter
+it is narrowed with, and keeps a timestamp out of its sortable headings:
 
 ```ruby
 # app/models/market/searchable.rb
@@ -542,9 +557,7 @@ class Market
     extend ActiveSupport::Concern
 
     class_methods do
-      def search_field = 'name_or_email_cont'
-
-      def search_prompt = 'Filter by name or email'
+      def ransortable_attributes(auth = nil) = super - ['audited_at']
 
       def filter_fields = { 'state_id_in' => { label: 'Home state' } }
     end
@@ -804,9 +817,9 @@ Anything your app defines wins, because your app's view paths come first and
 No cache stands in the way. The index table renders inside a fragment, and its
 key carries the digest of whichever `_row` the lookup resolved — so a row
 partial added, edited or deleted expires the table by itself, with nothing to
-clear. The digest covers the row file itself; a partial your row renders from
-inside is beyond its sight, so nest sparingly or touch the row when you edit
-one.
+clear. The digest is Action View's own, so it follows what that row renders from
+inside as well: a partial two levels down expires the table the same way its row
+does.
 
 Templates are looked up under `contacts/`, then `recourses/`, then
 `application/`, since those are the controller's prefixes. That is what lets a

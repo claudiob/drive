@@ -4,13 +4,15 @@ module Recourse
     # defined — every column its own — and the gem's generic row otherwise.
     module Rows
       # What the cache key reads so the table notices its row partial. Rails
-      # resolves `render 'row'` per request, but no template digest follows it
-      # there — the digestor reads the gem's own views — so a host `_row` added or
-      # edited after a fragment was written would keep serving the row it replaced.
+      # resolves `render 'row'` per request, but the fragment's own digest never
+      # follows it there — so a host `_row` added or edited after a fragment was
+      # written would keep serving the row it replaced. The digestor walks the
+      # resolved template's own dependencies too, so a partial a host's row
+      # renders from inside expires the table as well.
       def row_digest
         row = lookup_context.find 'row', lookup_context.prefixes, true
 
-        Digest::MD5.hexdigest row.source
+        ActionView::Digestor.digest name: row.virtual_path, format: :html, finder: lookup_context
       end
     end
   end

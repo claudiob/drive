@@ -8,7 +8,9 @@ module Recourse
       def declared_models
         # Generators run before a lazy route set is drawn, and drawing is the only
         # thing that tells `recourses` apart from the rest of the routes file.
-        Rails.application.reload_routes_unless_loaded
+        # Unconditionally: the guarded variant Rails keeps for itself is unpublished,
+        # and a second load costs nothing in a one-shot generator process.
+        Rails.application.reload_routes!
 
         Recourse.declared.filter_map { |path| declared_model path }.uniq
       end

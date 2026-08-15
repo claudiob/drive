@@ -16,6 +16,7 @@ require_relative 'helpers/navigation'
 require_relative 'helpers/parents'
 require_relative 'helpers/references'
 require_relative 'helpers/refreshes'
+require_relative 'helpers/routing'
 require_relative 'helpers/rows'
 require_relative 'helpers/searches'
 require_relative 'helpers/shortcuts'
@@ -27,8 +28,8 @@ module Recourse
   module Helpers
     include Actions, Cards, Cells, Colors, Comboboxes, Constraints, Counters,
             Deletions, Examples, Fields, Filters, Formats, Inputs, Kinds, Navigation,
-            Parents, References, Refreshes, Rows, Searches, Shortcuts, Sorts,
-            Values
+            Parents, References, Refreshes, Routing, Rows, Searches, Shortcuts,
+            Sorts, Values
 
     # The grid a record's own two pages lay an attribute out in: two columns on a large
     # viewport, and the same padding on both, so a value and the field that edits it sit
@@ -61,7 +62,14 @@ module Recourse
 
     # The record the action built, read from the assigns rather than by ivar name.
     def resource_record
-      controller.view_assigns[resource_key.to_s]
+      controller_assign resource_key.to_s
+    end
+
+    # The one door to what the controller assigned. `view_assigns` is public API,
+    # and every name the gem reads through it walks this method, so the untyped
+    # contract with the controller's ivar names has a single seam.
+    def controller_assign(name)
+      controller.view_assigns[name]
     end
 
     # What the record on the page is called, by whatever its model labels it with.
@@ -79,21 +87,6 @@ module Recourse
 
     def resource_model
       Recourse.model controller.controller_name
-    end
-
-    # True where this controller both implements an action and has a route drawn to
-    # it. Either alone is a link that 404s or raises.
-    def routed_action?(action)
-      return false unless controller.class.action_methods.include? action
-
-      routed? controller.controller_path, action
-    end
-
-    def routed?(controller_path, action)
-      Rails.application.routes.routes.any? do |route|
-        route.defaults[:controller] == controller_path &&
-          route.defaults[:action] == action
-      end
     end
   end
 end

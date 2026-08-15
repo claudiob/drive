@@ -22,7 +22,9 @@ module Recourse
         column = "    add_column :#{attribute.name.pluralize}, :#{plural_name}_count, " \
                  ":integer, default: 0, null: false\n"
 
-        inject_into_file migration_file, column, after: "    end\n"
+        # A regex saying what is meant — the four-space `end` closing
+        # `create_table` — rather than a string trusting the template's whitespace.
+        inject_into_file migration_file, column, after: /^ {4}end\n/
       end
 
       # A generated child requires its parent — `belongs_to` says so — so deleting

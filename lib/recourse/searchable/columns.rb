@@ -20,21 +20,21 @@ module Recourse
       # The same columns where they are encrypted, which a search matches whole
       # rather than by containment: a LIKE reads ciphertext and matches nothing,
       # while a deterministic value encrypts to the same bytes every time, so `=`
-      # still finds it. A column encrypted any other way is left out, since two
-      # writes of one address do not compare equal.
+      # still finds it. Rails' own `deterministic_encrypted_attributes` is that
+      # list — a column encrypted any other way never compares equal twice.
       def recourse_encrypted_searchable_columns
-        columns = (recourse_indexed_strings & recourse_encrypted_names) -
-                  readonly_attributes.to_a - Recourse.hidden_columns(self)
-        columns.select do |column|
-          type_for_attribute(column).scheme.deterministic?
-        end
+        deterministic = Array(deterministic_encrypted_attributes).map(&:to_s)
+
+        (recourse_indexed_strings & deterministic) -
+          readonly_attributes.to_a - Recourse.hidden_columns(self)
       end
 
       # Every indexed column whose value is a word, whether or not it is encrypted.
+      # Asked through `type_for_attribute` — the one door the whole gem uses — so
+      # an `attribute` override counts here the way it counts on a form.
       def recourse_indexed_strings
-        types = attribute_types
         column_names.intersection(recourse_indexed_columns).select do |column|
-          type = types[column]
+          type = type_for_attribute column
           # An array column answers with its subtype's own name — `text[]` reads as
           # `:text` — and a LIKE against an array is SQL that never runs. A type
           # wrapping a subtype is a collection, not a word, so it stays out.
@@ -60,9 +60,7 @@ module Recourse
       # True where the label is a column a `cont` can match. Reaching through a
       # foreign key to compare an id or a date against typed text says nothing.
       def recourse_searchable_label?
-        type = attribute_types[recourse_label.to_s]
-
-        SEARCHABLE_TYPES.include? type&.type
+        SEARCHABLE_TYPES.include? type_for_attribute(recourse_label.to_s).type
       end
 
       # Those foreign keys as Ransack names them: `zip_code`, for the ZIP that
@@ -75,7 +73,9 @@ module Recourse
       end
 
       # Columns an index covers, the primary key among them. Read from the schema
-      # cache, so asking costs nothing after the first look.
+      # cache, so asking costs nothing after the first look — and the gem's one
+      # reach into that cache, whose spelling moves across Rails majors, is fenced
+      # in this method so an upgrade edits one place.
       def recourse_indexed_columns
         indexes = connection_pool.schema_cache.indexes table_name
         # An expression index reports a string rather than a list of columns, and it
