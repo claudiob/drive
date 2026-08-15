@@ -29,6 +29,18 @@ module Recourse
         ]
       end
 
+      # Where this resource's own routes are drawn. A nested route answers the
+      # collection actions and no more, so a member page — and a count reaching one
+      # of the resource's own nested indexes — is looked up above the nesting: the
+      # parent's segment out of `admin/counties/zips` leaves `admin/zips`.
+      def resource_controller_path
+        path = controller.controller_path
+        return path unless resource_parent
+
+        parts = path.split '/'
+        (parts[0..-3] << parts.last).join '/'
+      end
+
       def parent_title(parent)
         # A label is not always words: a numeric one is spoken as a string —
         # `truncate` has no patience for an Integer — and where a record says

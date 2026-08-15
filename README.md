@@ -81,6 +81,11 @@ Edit tabs — as a tab named by the count where the parent keeps a counter cache
 `42 comments`, and by the bare `Comments` where it does not — and the
 breadcrumb's record crumb links back to the parent's show page where one is
 routed.
+What the nesting does not take away is a row: the eye and the pencil are the
+ones the top-level table draws, pointing at `/comments/2` and
+`/comments/2/edit` — the member pages the nesting left to the resource itself —
+and a counter cell links to the resource's own nested index the same way. A
+nested table is the top-level one, minus the parent's column.
 An explicit `only:` or `except:` is your word and wins:
 
 ```ruby

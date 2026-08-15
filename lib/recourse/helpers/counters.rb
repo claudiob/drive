@@ -14,7 +14,7 @@ module Recourse
         # Delimited like every other count on the page: the filter menu beside the
         # table already reads 38,405, and one figure in two spellings reads as two.
         count = number_with_delimiter value
-        nested = "#{controller.controller_path}/#{association.name}"
+        nested = "#{resource_controller_path}/#{association.name}"
         return count unless routed? nested, 'index'
 
         turbo_link_to count, url_for(controller: "/#{nested}", action: :index,

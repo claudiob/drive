@@ -19,6 +19,14 @@ module Recourse
               data: tooltip_on_top(label)
       end
 
+      # Whether a record's own page is there to be linked to, wherever its routes
+      # were drawn: a nested table's rows lead to the resource's own pages, the ones
+      # a nested route leaves to it, so the columns are the same either way.
+      def resource_action?(action)
+        controller.class.action_methods.include?(action) &&
+          routed?(resource_controller_path, action)
+      end
+
       # Eye linking to a record's show page, or nothing when there is not one.
       def show_resource_link(record)
         path = show_resource_path record
@@ -48,15 +56,20 @@ module Recourse
       end
 
       def show_resource_path(record)
-        return unless routed_action? 'show'
-
-        url_for action: :show, id: record
+        resource_action_path 'show', record
       end
 
       def edit_resource_path(record)
-        return unless routed_action? 'edit'
+        resource_action_path 'edit', record
+      end
 
-        url_for action: :edit, id: record
+      # Named by controller rather than by action alone: on a nested page the two
+      # differ, and a bare `action:` would look for the member route the nesting
+      # does not draw.
+      def resource_action_path(action, record)
+        return unless resource_action? action
+
+        url_for controller: "/#{resource_controller_path}", action: action, id: record
       end
     end
   end
