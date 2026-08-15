@@ -778,6 +778,11 @@ before writing or editing any layout, view or partial.
   `formatted_number` ladder Formats keeps: integers delimited, prices as
   currency, percentages and decimals at their column's own precision. Only text
   cells are search-highlighted — a search never looked through a number.
+- A value that is one absolute web address and nothing else — `WEB_URL` says
+  which — is a link to itself on the table and the show page alike: Bootstrap's
+  `icon-link` in its `icon-link-hover` style, ending in Unicon's `arrow_right`,
+  so the arrow takes a step under the cursor and the value reads as somewhere to
+  go. Words around an address, or two addresses, stay text.
 - Column headings that can be sorted are links, which the section below covers.
 
 ## Sorting, searching and filtering

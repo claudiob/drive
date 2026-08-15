@@ -70,13 +70,6 @@ module Recourse
         formatted_cell value, column
       end
 
-      # A date or a time, in words and in the attribute a machine reads. `l` picks
-      # the date format or the time one by what it is handed, so nothing here has to
-      # ask which it has — and a `DateTime`, which is both, still keeps its time.
-      def localized(value)
-        time_tag value, l(value, format: :recourse)
-      end
-
       # One cell: a heading in the header row, the block's output in every other.
       def column(header:, **, &)
         return tag.th(header, scope: :col, **) if @recourse_headers
@@ -87,11 +80,12 @@ module Recourse
     private
 
       def formatted_cell(value, column)
-        # Numbers read as the show page reads them, through Formats' one ladder.
-        # Only text is highlighted: a search never looked through a number.
+        # Numbers and addresses read as the show page reads them, through Formats.
+        # Only plain text is highlighted: a search never looked through the rest.
         kind = attribute_kind column
         return formatted_number kind, column, value if numeric_kind? kind
         return localized value if value.is_a?(Date) || value.is_a?(Time)
+        return url_link value if web_url? value
 
         search_highlight value, column
       end

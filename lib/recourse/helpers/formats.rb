@@ -7,6 +7,10 @@ module Recourse
       # set calls it, the same way a model names its own icon.
       BOOLEAN_ICONS = { true => :check, false => :close, nil => :square }.freeze
 
+      # One absolute web address and nothing else: a value to follow, not to read.
+      # Anything around it — words, a second address — reads as text instead.
+      WEB_URL = %r{\Ahttps?://\S+\z}
+
       # What the record says for one column, formatted by what the column holds.
       def formatted_value(column)
         association = belongs_to_association column
@@ -42,8 +46,15 @@ module Recourse
         when :boolean then boolean_icon value
         when :enum then enum_badge value
         when :date, :datetime, :time then value && localized(value)
-        else value.is_a?(Array) ? value.join(', ') : value
+        else web_url?(value) ? url_link(value) : value
         end
+      end
+
+      # A date or a time, in words and in the attribute a machine reads. `l` picks
+      # the date format or the time one by what it is handed, so nothing here has to
+      # ask which it has — and a `DateTime`, which is both, still keeps its time.
+      def localized(value)
+        time_tag value, l(value, format: :recourse)
       end
 
       # Labelled with the word it stands for: an icon alone says nothing to a screen
@@ -54,6 +65,17 @@ module Recourse
 
       def enum_badge(value)
         value && tag.span(value, class: 'badge')
+      end
+
+      def web_url?(value)
+        value.is_a?(String) && value.match?(WEB_URL)
+      end
+
+      def url_link(value)
+        # Bootstrap's icon link, in its hover style: the arrow walks a step under
+        # the cursor, saying the value leads somewhere the way plain text cannot.
+        tag.a safe_join([value, icon_tag(:arrow_right)], ' '),
+              href: value, class: 'icon-link icon-link-hover'
       end
     end
   end
