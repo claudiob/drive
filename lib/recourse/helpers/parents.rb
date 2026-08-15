@@ -30,9 +30,15 @@ module Recourse
       end
 
       def parent_title(parent)
+        # A label is not always words: a numeric one is spoken as a string —
+        # `truncate` has no patience for an Integer — and where a record says
+        # nothing at all, the model's own name stands in, as the delete warning's
+        # title already does.
+        label = parent.attributes[parent.class.recourse_label.to_s]
+
         # Forty characters of the label, no more: a record named by an address or a
         # sentence would otherwise walk the crumb into the navbar's search form.
-        truncate parent.attributes[parent.class.recourse_label.to_s], length: 40
+        truncate label.presence&.to_s || parent.class.model_name.human, length: 40
       end
 
       def parent_path(parent, path)
