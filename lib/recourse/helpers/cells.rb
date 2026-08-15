@@ -21,12 +21,13 @@ module Recourse
       end
 
       # What no table shows: ciphertext nobody can read, a value written once that
-      # belongs to the row's identity, the id that addresses it — and the parent a
-      # nested route already names, which every row would repeat.
+      # belongs to the row's identity, the id that addresses it, the parent a
+      # nested route already names — and whatever the model itself asked to hide.
       def hidden_columns
         resource_model.recourse_encrypted_names +
           resource_model.readonly_attributes.to_a + [resource_model.primary_key] +
-          Array(resource_parent_association&.foreign_key)
+          Array(resource_parent_association&.foreign_key) +
+          Recourse.hidden_columns(resource_model)
       end
 
       # Columns a form offers — less the parent a nested route has already

@@ -31,7 +31,14 @@ module Recourse
   # `create` permits these. A counter cache is none of a user's business — Rails keeps
   # it, so a form that offered one would let it be typed over.
   def self.editable_columns(model)
-    model.column_names - %w[id created_at updated_at] - model.recourse_counters.keys
+    model.column_names - %w[id created_at updated_at] -
+      model.recourse_counters.keys - hidden_columns(model)
+  end
+
+  # Columns the model asked to keep off every screen, as the strings the schema
+  # speaks — one name or a list, however `recourse_hidden` said it.
+  def self.hidden_columns(model)
+    Array(model.recourse_hidden).map(&:to_s)
   end
 
   # Lower case, but for the words Rails was told are acronyms: `ZIP code` reads as

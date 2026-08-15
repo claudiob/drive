@@ -5,6 +5,9 @@ class App
     extend ActiveSupport::Concern
 
     class_methods do
+      # One name standing for the list: the webhook is wiring, not reading matter.
+      def recourse_hidden = :webhook_url
+
       def recourse_timestamps = %i[updated_at]
     end
   end
