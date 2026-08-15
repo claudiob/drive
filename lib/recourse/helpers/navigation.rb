@@ -39,13 +39,11 @@ module Recourse
         url_for action: :new
       end
 
-      # True where `create` is routed with no `new` to draw a form, and no column
-      # but the route's parent is required: one click can make a whole record, so
-      # the navbar offers a button in the Add link's place.
+      # True where `create` is routed with no `new` to draw a form: the navbar then
+      # offers a Create button in the Add link's place. Routing it that way is the
+      # host saying a bare record can stand — the routes are the whole check.
       def bare_create?
-        return false if new_resource_path || !routed_action?('create')
-
-        editable_columns.none? { |column| required? resource_model, column }
+        new_resource_path.nil? && routed_action?('create')
       end
 
       # Label for a link to a resource: the icon its model picked, then its title,

@@ -63,9 +63,10 @@ parent's rows and drops its column, the search form drops the parent's own
 filter, and the form drops its field — a comment
 under `/posts/2` is for post 2, not for one picked from a menu, so no field
 asks and `create` writes the route's parent whatever a form is made to submit.
-Routed `create` without `new`, a nested resource whose only requirement is the
-parent offers a one-click `Create` button in the Add link's place: it posts the
-record whole and returns to the index holding it.
+Routed `create` without `new`, a nested resource offers a one-click `Create`
+button in the Add link's place: it posts the record whole and returns to the
+index holding it. Declaring the routes that way is your word that a bare record
+can stand — validations are yours to reconcile.
 The nested index also sits in the parent record's own card, beside its Show and
 Edit tabs — as a tab named by the count where the parent keeps a counter cache,
 `42 comments`, and by the bare `Comments` where it does not — and the

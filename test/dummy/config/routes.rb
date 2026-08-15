@@ -11,8 +11,8 @@ Rails.application.routes.draw do
     recourses :providers
     recourses :franchises, except: :show
     recourses :zips, only: %i[index edit] do
-      # `create` with no `new`, on a model requiring only its parent: the navbar
-      # offers the one-click Create button in the Add link's place.
+      # `create` with no `new`: the navbar offers the one-click Create button in
+      # the Add link's place, on our word that a bare location can stand.
       recourses :locations, only: %i[index create]
     end
     recourses :markets, except: :show

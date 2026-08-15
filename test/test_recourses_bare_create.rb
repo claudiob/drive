@@ -2,8 +2,8 @@ require 'test_helper'
 require 'action_dispatch/testing/integration'
 
 # The navbar of a nested index whose routes say `create` but not `new`: a Create
-# button in the Add link's place, posting the record whole — offered only where
-# no column but the route's parent is required, which is Location's exact shape.
+# button in the Add link's place, posting the record whole. Routing it that way
+# is the host's word that a bare record can stand, as a bare location does.
 class TestRecoursesBareCreate < Minitest::Test
   def setup = @session = ActionDispatch::Integration::Session.new(Rails.application)
 
