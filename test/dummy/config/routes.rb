@@ -29,8 +29,10 @@ Rails.application.routes.draw do
     end
     recourses :contacts, except: :show
     recourses :agents, only: %i[index show] do
-      # Nested with no counter cache behind it: the card tab reads bare `Settings`.
+      # Neither has a counter cache, so both tabs read bare — and settings before
+      # apps on purpose: tabs follow this order, not the has_many declarations'.
       recourses :settings, only: :index
+      recourses :apps, only: :index
     end
     recourses :apps, only: %i[index edit update]
   end

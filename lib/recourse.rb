@@ -21,10 +21,23 @@ module Recourse
   end
 
   @declared = []
+  @nested = {}
 
   # Records a resource as declared, keeping order and ignoring a repeated draw.
   def self.declare(name)
     @declared << name.to_s unless @declared.include? name.to_s
+  end
+
+  # Records a resource nested under a parent path, in routes.rb order like the
+  # sidebar's — which is what the parent record's tabs follow.
+  def self.nest(parent, name)
+    names = @nested[parent.to_s] ||= []
+    names << name.to_s unless names.include? name.to_s
+  end
+
+  # The resources nested under one parent path, in the order they were drawn.
+  def self.nested_under(parent)
+    @nested.fetch parent.to_s, []
   end
 
   # Columns a user may set: the form offers these, the show page reads these out, and

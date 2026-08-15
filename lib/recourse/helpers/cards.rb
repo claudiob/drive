@@ -41,13 +41,16 @@ module Recourse
         action == (controller.action_name == 'show' ? :show : :edit)
       end
 
-      # One tab per has_many whose rows have an index nested under the record. The
+      # One tab per has_many whose rows have an index nested under the record, in
+      # the order routes.rb nested them — the order the sidebar already keeps. The
       # nested route is the whole requirement: a counter cache only decides how the
       # tab reads, never whether it is there.
       def nested_tabs(record, path)
-        record.class.reflect_on_all_associations(:has_many).filter_map do |association|
-          nested = "#{path}/#{association.name}"
-          next unless routed? nested, 'index'
+        Recourse.nested_under(path).filter_map do |name|
+          association = record.class.reflect_on_all_associations(:has_many)
+                              .find { |one| one.name.to_s == name }
+          nested = "#{path}/#{name}"
+          next unless association && routed?(nested, 'index')
 
           [
             association_tab_label(record, association),

@@ -302,7 +302,8 @@ before writing or editing any layout, view or partial.
   links follow. Each tab wears that link's icon — the eye and the pencil — from one
   `ICONS` map, so a row and a card cannot come to disagree about which is which.
 - After them, one tab per has_many whose rows have an index nested under the
-  record, wearing that model's icon — or none where Unicon has never heard its
+  record — in the order routes.rb nested them, the same order the sidebar keeps,
+  never the has_many declarations' — wearing that model's icon — or none where Unicon has never heard its
   concept, the same judgement the breadcrumb makes; only a counter *heading*
   keeps the fallback circle, being nothing but its icon. The nested route is the
   whole requirement; a
