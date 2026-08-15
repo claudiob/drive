@@ -186,6 +186,12 @@
         line-height: 1;
       }
       .combobox-search-clear:hover { background-color: var(--bs-bg-1); color: var(--bs-fg-body); }
+
+      /* The icon font drops every glyph an eighth of an em to sit on a text
+         baseline, which inside an icon link reads as the arrow resting on the
+         line. Lifted by the same eighth, its bottom clears the baseline — on the
+         ::before, so the hover transform on the .bi box itself is untouched. */
+      .icon-link > .bi::before { vertical-align: .125em; }
     </style>
   </head>
 

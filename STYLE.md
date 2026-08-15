@@ -783,6 +783,10 @@ before writing or editing any layout, view or partial.
   `icon-link` in its `icon-link-hover` style, ending in Unicon's `arrow_right`,
   so the arrow takes a step under the cursor and the value reads as somewhere to
   go. Words around an address, or two addresses, stay text.
+- The arrow rides clear of the baseline: bootstrap-icons drops every glyph
+  `-.125em` to sit on a text line, so the layout lifts `.icon-link > .bi::before`
+  back by the same eighth — on the `::before`, never on the `.bi` box, whose
+  transform is the hover step's to write.
 - Column headings that can be sorted are links, which the section below covers.
 
 ## Sorting, searching and filtering
