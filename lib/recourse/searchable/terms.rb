@@ -5,34 +5,38 @@ module Recourse
       # The predicate a search box submits: everything it looks through at once,
       # joined by `or`. Nil where a model has nothing worth looking through, which
       # is also what leaves that model's index without the form — filters and all.
-      def search_field
-        fields, predicate = recourse_search_terms
+      # `except:` takes the association a nested route already answered, so a page
+      # pinned to one provider offers no box to search them all.
+      def search_field(except: nil)
+        fields, predicate = recourse_search_terms(except:)
         return if fields.empty?
 
         "#{fields.join '_or_'}_#{predicate}"
       end
 
       # What a search box looks through, and how it matches: the plaintext columns
-      # and the labels behind foreign keys, on containment — or, for a model that
-      # keeps nothing in plaintext worth searching, its encrypted columns, whole.
-      def recourse_search_terms
-        plain = recourse_searchable_columns + recourse_searchable_references
+      # and the labels behind foreign keys — less the one `except:` names — on
+      # containment; or, for a model that keeps nothing in plaintext worth
+      # searching, its encrypted columns, whole.
+      def recourse_search_terms(except: nil)
+        plain = recourse_searchable_columns + recourse_searchable_references(except:)
         return [plain, 'cont'] if plain.any?
 
         [recourse_encrypted_searchable_columns, 'eq']
       end
 
       # What the search box says while it is empty, naming what it looks through.
-      def search_prompt
-        fields, predicate = recourse_search_terms
+      def search_prompt(except: nil)
+        fields, predicate = recourse_search_terms(except:)
         return if fields.empty?
 
-        I18n.t "recourse.searched_#{predicate}", list: recourse_search_names.join(' or ')
+        list = recourse_search_names(except:).join ' or '
+        I18n.t "recourse.searched_#{predicate}", list: list
       end
 
       # Those same terms as words, lower case but for the acronyms among them.
-      def recourse_search_names
-        fields, = recourse_search_terms
+      def recourse_search_names(except: nil)
+        fields, = recourse_search_terms(except:)
 
         fields.map { |field| Recourse.downcase recourse_term_name(field) }
       end

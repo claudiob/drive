@@ -60,7 +60,9 @@ A *nested* `recourses` is the one exception: it defaults to
 sense reached through a parent, while the member pages belong to the resource's
 own top-level routes. The nested pages take the hint: the index lists only the
 parent's rows and drops its column, the search form drops the parent's own
-filter, and the form drops its field — a comment
+filter and the search box stops reaching through the parent's label — a model
+searched only that way loses the form altogether — and the form drops its
+field — a comment
 under `/posts/2` is for post 2, not for one picked from a menu, so no field
 asks and `create` writes the route's parent whatever a form is made to submit.
 Routed `create` without `new`, a nested resource offers a one-click `Create`

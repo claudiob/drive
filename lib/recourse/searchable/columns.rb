@@ -63,8 +63,9 @@ module Recourse
 
       # Those foreign keys as Ransack names them: `zip_code`, for the ZIP that
       # `/locations` asks to be typed rather than picked out of 40,965 options.
-      def recourse_searchable_references
-        recourse_searchable_associations.map do |association|
+      # `except:` leaves out the one a nested route has already answered.
+      def recourse_searchable_references(except: nil)
+        (recourse_searchable_associations - [except]).map do |association|
           "#{association.name}_#{association.klass.recourse_label}"
         end
       end

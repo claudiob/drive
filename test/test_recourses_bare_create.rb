@@ -12,6 +12,9 @@ class TestRecoursesBareCreate < Minitest::Test
 
     assert_includes body, '>Create</button>'
     refute_includes body, 'Add location'
+    # A location is searched only through its ZIP, which this route has answered:
+    # nothing is left to type, so the whole search form stays home.
+    refute_includes body, 'role="search"'
   end
 
   def test_the_button_posts_the_record_whole_and_returns_to_the_index
