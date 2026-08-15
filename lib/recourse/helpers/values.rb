@@ -7,7 +7,7 @@ module Recourse
       # for the same column is. `label:` overrides the heading.
       def value(name, **options)
         column = name.to_s
-        label = options.fetch :label, value_title(column)
+        label = options.fetch :label, reference_title(column, belongs_to_association(column))
 
         tag.div class: ROW do
           safe_join [tag.div(label, class: 'form-label'), value_control(column)]
@@ -24,16 +24,6 @@ module Recourse
       end
 
     private
-
-      # `Created`, not `Created at`: under an `_at` column's label sits the moment
-      # itself, so the word `at` says nothing the value does not. A host's own
-      # translation without the suffix passes through unchanged.
-      def value_title(column)
-        title = reference_title column, belongs_to_association(column)
-        return title unless column.end_with? '_at'
-
-        title.delete_suffix ' at'
-      end
 
       # Nothing to disclose is nothing to mask: an encrypted column the record has no
       # value for reads as the dash, rather than as one asterisk hiding one.

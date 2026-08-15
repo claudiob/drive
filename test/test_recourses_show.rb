@@ -36,11 +36,9 @@ class TestRecoursesShow < Minitest::Test
     assert_includes body, 'data-reveal-plain-value="1 Infinite Loop"'
     refute_includes body, '<form'
     # And the timestamps after them, which the form never offers: a record's own
-    # page is where "when" belongs, however its index keeps them off the table. An
-    # `_at` label drops its suffix — the moment beneath it says the rest.
-    assert_includes body, '<div class="form-label">Created</div>'
-    assert_includes body, '<div class="form-label">Updated</div>'
-    assert_includes body, '<div class="form-label">Nominated</div>'
+    # page is where "when" belongs, however its index keeps them off the table.
+    assert_includes body, '<div class="form-label">Created at</div>'
+    assert_includes body, '<div class="form-label">Updated at</div>'
   end
 
   # `false` is something a record says, so only nothing at all reads as a dash.
