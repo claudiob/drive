@@ -18,13 +18,20 @@ and defining your own takes precedence over it.
 - `ransack` 4.4 or newer, which sorts, searches and filters every index.
 - `unicon`, which names the icon a model picks in each design system.
 
-## Installation
+## How to install
 
 The gem is called `drive`; the library it loads calls itself `Recourse`.
 
-```ruby
-gem 'drive'
-```
+To install on your system, run
+
+    gem install drive
+
+To use inside a bundled Ruby project, add this line to the Gemfile:
+
+    gem 'drive', '~> 0.1'
+
+Since the gem follows [Semantic Versioning](http://semver.org), indicating `~> *major*.*minor*`
+guarantees your project won’t occur in breaking changes whenever you `bundle update`.
 
 Then run `bundle install`. There is nothing to mount and no initializer to
 write: the engine adds the routing DSL, the model hooks and a file server for

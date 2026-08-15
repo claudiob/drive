@@ -437,6 +437,21 @@ two is filed under the one a reader would look in first.
   there — what would break without it, not what the gem is.
 - The same applies to `add_dependency` in the gemspec.
 
+#### A gem's README says how to install it
+
+- Every gem we publish follows Semantic Versioning, and its README carries a
+  `How to install` section: the system install (`gem install <name>`), then the
+  Gemfile line pinned to the current major — `gem '<name>', '~> 2.0'` — then the
+  sentence saying why the pin is safe: the gem follows
+  [Semantic Versioning](http://semver.org), so `~> major.minor` means
+  `bundle update` never crosses a breaking change.
+- Keep the snippet's version current: a major release updates the README's pin
+  in the same commit that makes it. unicon reads `~> 2.0` since 2.0.0; drive
+  reads `~> 0.1` until it earns 1.0.
+- This does not soften "never use `~>`" above. That rule binds *our* Gemfiles
+  and gemspecs naming what we depend on; the README line is advice to hosts
+  pinning *us*, which is exactly what SemVer is for.
+
 #### No code of conduct, no ideology
 
 - Never add a `CODE_OF_CONDUCT.md`, and never link to or mention one from the
