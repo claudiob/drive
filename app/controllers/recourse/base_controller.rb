@@ -1,12 +1,11 @@
-module RecourseController
+module Recourse
   # Everything a recoursed screen does, in a class of its own so a host can put
-  # its own behavior above it — `class RecoursesController < RecourseController::Base`
+  # its own behavior above it — `class RecoursesController < Recourse::BaseController`
   # with a `before_action :authenticate!` guards every screen the gem serves.
-  class Base < ApplicationController
-    include Pagy::Method, Recourse::ParentResolution, Recourse::ReferenceResolution,
-            Recourse::ResourceResolution
+  class BaseController < ApplicationController
+    include Pagy::Method, ParentResolution, ReferenceResolution, ResourceResolution
 
-    helper Recourse::Helpers
+    helper Helpers
 
     # `find` raises RecordNotFound, so an id that names nothing answers 404.
     before_action :find_resource, only: %i[show edit update destroy]
@@ -19,7 +18,7 @@ module RecourseController
     # Lists one page of the model the route is named after. `@q` is Ransack's own
     # name for a search, which is what its form and sort link helpers look for.
     def index
-      search = Recourse::Search.new resource_class, params[:q]
+      search = Search.new resource_class, params[:q]
       @q = search.query
       @pagy, @resources = pagy search.scope.where(parent_columns)
     end
