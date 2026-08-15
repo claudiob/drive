@@ -31,11 +31,19 @@ export default class extends Controller {
     // The frame is not inside the form, so its events never reach it.
     this.reloaded = () => { typing = false; this.#syncSort() }
     document.addEventListener('turbo:frame-load', this.reloaded)
+
+    // A refresh morph would write the fetched page's older query over what is
+    // mid-typing, so the form's subtree sits a morph out — the text, the caret
+    // and any open filter menu stay. Only a morph: a page visit still renders
+    // every page's own form, which `turbo-permanent` here would carry across.
+    this.morphing = (event) => { if (this.element.contains(event.target)) event.preventDefault() }
+    document.addEventListener('turbo:before-morph-element', this.morphing)
   }
 
   disconnect() {
     this.element.removeEventListener('change.bs.combobox', this.picked)
     document.removeEventListener('turbo:frame-load', this.reloaded)
+    document.removeEventListener('turbo:before-morph-element', this.morphing)
     clearTimeout(this.timer)
     clearTimeout(this.pick)
   }

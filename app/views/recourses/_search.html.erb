@@ -1,14 +1,11 @@
 <%# locals: (query:, url:, field:, prompt:, filters:, sort:) -%>
-<%# `turbo-permanent`: a refresh broadcast morphs the page, and idiomorph would
-    write the fetched page's older query over what is being typed — skipping the
-    form keeps the text, the caret and any open filter menu. The id is what the
-    classic permanent-element path matches under a replace render. -%>
-<%= search_form_for query, url: url, html: { id: 'search',
-                                            class: 'recourse-search d-flex flex-wrap md:flex-nowrap ' \
-                                                   'align-items-center justify-content-end gap-2 ms-auto',
+<%# Never `turbo-permanent`: that spans page visits too, and every index names
+    this form the same, so a sidebar click would keep the last resource's form.
+    The search controller skips the form's subtree during a morph instead. -%>
+<%= search_form_for query, url: url, html: { class: 'recourse-search d-flex flex-wrap md:flex-nowrap ' \
+                                                    'align-items-center justify-content-end gap-2 ms-auto',
                                             role: 'search',
-                                            data: { controller: 'search', turbo_frame: :results,
-                                                    turbo_permanent: '' } } do |form| %>
+                                            data: { controller: 'search', turbo_frame: :results } } do |form| %>
   <%# Always drawn, even empty: a heading clicked after this was rendered has only
       this field to write the new sort into. -%>
   <%= hidden_field_tag 'q[s]', sort %>

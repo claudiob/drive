@@ -999,10 +999,13 @@ before writing or editing any layout, view or partial.
   a refresh replaces the whole body and scrolls back to the top.
 - A refresh re-fetches the *current* URL, so the search, sort and page params
   the frame's `advance` put in the address bar all survive it.
-- The search form carries `data-turbo-permanent` (and the `id` the attribute
-  needs under a replace render): a morph would write the fetched page's older
-  query over what is mid-typing, and skipping the form's subtree keeps the text,
-  the caret and any open filter menu.
+- The search form sits a morph out: a morph would write the fetched page's older
+  query over what is mid-typing, so the search controller cancels
+  `turbo:before-morph-element` for anything in the form's subtree, keeping the
+  text, the caret and any open filter menu. Never with `data-turbo-permanent`,
+  which spans page visits too — every index names this form alike, so a sidebar
+  click would carry the last resource's form, filters, and `action` into the
+  next page's navbar.
 - When turbo-rails is present the layout serves its bundle at
   `/recourse/turbo.min.js` instead of loading plain Turbo from the CDN — the
   same Turbo, plus the `<turbo-cable-stream-source>` element and Action Cable
