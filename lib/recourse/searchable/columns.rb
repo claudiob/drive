@@ -34,7 +34,11 @@ module Recourse
       def recourse_indexed_strings
         types = attribute_types
         column_names.intersection(recourse_indexed_columns).select do |column|
-          SEARCHABLE_TYPES.include? types[column].type
+          type = types[column]
+          # An array column answers with its subtype's own name — `text[]` reads as
+          # `:text` — and a LIKE against an array is SQL that never runs. A type
+          # wrapping a subtype is a collection, not a word, so it stays out.
+          SEARCHABLE_TYPES.include?(type.type) && !type.respond_to?(:subtype)
         end
       end
 
