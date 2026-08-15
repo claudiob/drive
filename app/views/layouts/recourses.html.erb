@@ -10,9 +10,6 @@
 
     <%= yield :head %>
 
-    <link rel='preconnect' href='https://fonts.googleapis.com'>
-    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap'>
     <link rel='stylesheet' href='/recourse/bootstrap.min.css'>
     <link rel='stylesheet' href='/recourse/bootstrap-icons.min.css'>
     <%# Preloaded from the head instead of discovered at the end of the body, so the
@@ -56,9 +53,12 @@
     </script>
 
     <style>
+      /* System faces at a compact size, and no webfont: nothing to download, no
+         swap flash, and the last external host the layout reached for is gone.
+         13px as rem, so a browser's own text-size setting still scales it. */
       :root {
-        --bs-body-font-family: 'Geist', system-ui, sans-serif;
-        --bs-font-mono: 'Geist Mono', ui-monospace, monospace;
+        --bs-body-font-family: helvetica, verdana, arial, sans-serif;
+        --bs-body-font-size: 0.8125rem;
       }
 
       /* Bootstrap's .15s fade reads as vanishing. Only the hide ever transitions here

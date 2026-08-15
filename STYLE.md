@@ -20,7 +20,10 @@ before writing or editing any layout, view or partial.
   attribute at all.
 - The gem ships `app/views/layouts/recourses.html.erb`, and every screen it serves
   renders in it: Bootstrap's CSS in the head, the JS bundle as a module before
-  `</body>`, and Geist and Geist Mono from Google Fonts.
+  `</body>`, and no webfont: text is `helvetica, verdana, arial, sans-serif` at
+  13px (`0.8125rem`, so a browser's text-size setting still scales it), set
+  through `--bs-body-font-family` and `--bs-body-font-size` in the layout's own
+  `<style>`. Nothing on the page reaches an external host.
 - Named for the controller rather than for the app. `RecoursesController` implies
   `layouts/recourses` and finds it in the gem before Rails falls through to
   `layouts/application`, so a host's own layout is not involved — and a host with no
