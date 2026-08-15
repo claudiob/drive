@@ -19,26 +19,26 @@ class TestRecoursesShow < Minitest::Test
     @contact.destroy
   end
 
-  # The heading a form would give the column, the value the table would print, and
-  # the grid the form's fields sit in — two columns on a large viewport.
+  # What one record reads out as: the grid row and the heading a form would give
+  # the column, plain values, a foreign key as what it points at, the encrypted
+  # street masked — and the timestamps the form never offers closing the list,
+  # since a record's own page is where "when" belongs.
+  READOUTS = [
+    '<div class="recourse-row pb-2 mb-3 lg:col-6"><div class="form-label">Summary</div>',
+    '<div class="form-control-plaintext">Everything booking</div>',
+    '<div class="form-control-plaintext">Cupertino</div>',
+    '<div class="form-control-plaintext">Ada</div>',
+    'data-reveal-plain-value="1 Infinite Loop"',
+    '<div class="form-label">Created at</div>',
+    '<div class="form-label">Updated at</div>',
+  ].freeze
+
   def test_it_reads_out_one_record_where_its_form_would_have_been
     visit @filled
 
-    assert_equal 200, @session.response.status
-    assert_includes body, '<div class="recourse-row pb-2 mb-3 lg:col-6">' \
-                          '<div class="form-label">Summary</div>'
-    assert_includes body, '<div class="form-control-plaintext">Everything booking</div>'
-    assert_includes body, '<div class="form-control-plaintext">Cupertino</div>'
-    # A foreign key reads as what it points at, the same as in the table.
-    assert_includes body, '<div class="form-control-plaintext">Ada</div>'
-    # The same columns the form offers, encrypted ones included — masked, and with
-    # a button rather than a form, which is the whole difference from the edit page.
-    assert_includes body, 'data-reveal-plain-value="1 Infinite Loop"'
+    READOUTS.each { |readout| assert_includes body, readout }
+    # A button rather than a form is the whole difference from the edit page.
     refute_includes body, '<form'
-    # And the timestamps after them, which the form never offers: a record's own
-    # page is where "when" belongs, however its index keeps them off the table.
-    assert_includes body, '<div class="form-label">Created at</div>'
-    assert_includes body, '<div class="form-label">Updated at</div>'
   end
 
   # `false` is something a record says, so only nothing at all reads as a dash.

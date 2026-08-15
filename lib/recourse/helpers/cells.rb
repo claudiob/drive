@@ -86,12 +86,6 @@ module Recourse
 
     private
 
-      def tooltip_on_top(title)
-        # `bs_title` is what Bootstrap's tooltip reads, and the controller is what
-        # makes one: Bootstrap never wires a tooltip on its own.
-        { controller: 'tooltip', bs_placement: 'top', bs_title: title }
-      end
-
       def formatted_cell(value, column)
         return localized value if value.is_a?(Date) || value.is_a?(Time)
         return number_to_phone value if column == 'phone'

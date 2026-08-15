@@ -46,9 +46,9 @@ before writing or editing any layout, view or partial.
 ## The primary colour
 
 - Bootstrap's primary is blue, and `Recourse.color` is what changes it — nil by
-  default, and one of `blue`, `orange`, `purple`, `pink` or `brown`.
-- Five of the sixteen families, because `--bs-primary-contrast` is white and these
-  are the five dark enough at their 500 step to carry it. The other eleven are
+  default, and one of `blue`, `gray`, `orange`, `purple`, `pink` or `brown`.
+- Six of the sixteen families, because `--bs-primary-contrast` is white and these
+  are the six dark enough at their 500 step to carry it. The other ten are
   declined rather than forgotten, and anything else raises.
 - Never restyle a component to recolour it. `.theme-primary` maps all nine
   `--bs-primary-*` properties onto `--bs-theme-*`, so redefining those nine is what

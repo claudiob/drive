@@ -1,6 +1,6 @@
 # Reopened for the one thing a host says about how every page looks.
 module Recourse
-  # Colour families a host may call primary. Five of the sixteen Bootstrap ships:
+  # Colour families a host may call primary. Six of the sixteen Bootstrap ships:
   # each is dark enough at its 500 step to carry white text, which is what
   # `--bs-primary-contrast` assumes and what the others would quietly break.
   COLORS = %i[blue gray orange purple pink brown].freeze

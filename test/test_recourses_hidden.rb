@@ -6,18 +6,23 @@ require 'action_dispatch/testing/integration'
 class TestRecoursesHidden < Minitest::Test
   def test_a_model_hides_the_columns_it_names_from_the_table_and_the_form
     app = App.create! name: 'Hidden Fields'
-    session = ActionDispatch::Integration::Session.new Rails.application
+    index = page '/apps'
+    form = page "/apps/#{app.id}/edit"
 
-    session.get '/apps'
-
-    assert_includes session.response.body, 'data-cell="Name">Hidden Fields<'
-    refute_includes session.response.body, 'Webhook'
-
-    session.get "/apps/#{app.id}/edit"
-
-    assert_includes session.response.body, 'name="app[name]"'
-    refute_includes session.response.body, 'webhook_url'
+    assert_includes index, 'data-cell="Name">Hidden Fields<'
+    refute_includes index, 'Webhook'
+    assert_includes form, 'name="app[name]"'
+    refute_includes form, 'webhook_url'
   ensure
     app&.destroy
+  end
+
+private
+
+  def page(path)
+    session = ActionDispatch::Integration::Session.new Rails.application
+    session.get path
+
+    session.response.body
   end
 end

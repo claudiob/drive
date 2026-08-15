@@ -879,7 +879,7 @@ Recourse.color = :orange
 Bootstrap's primary colour is blue, and one line makes it one of five others:
 
 ```ruby
-Recourse::COLORS # => [:blue, :orange, :purple, :pink, :brown]
+Recourse::COLORS # => [:blue, :gray, :orange, :purple, :pink, :brown]
 ```
 
 Every button, link, sorted heading, focus ring and favicon follows, because `.theme-primary`
@@ -1043,7 +1043,7 @@ what is cached from correct into cheap.
   `Recourse::Error` naming the routes line to fix
 - `Recourse.color` / `Recourse.color=` — the Bootstrap colour family the pages
   call primary, one of `Recourse::COLORS`, or nil for Bootstrap's own blue
-- `Recourse::COLORS` — `%i[blue orange purple pink brown]`
+- `Recourse::COLORS` — `%i[blue gray orange purple pink brown]`
 - `Recourse.icon(name)` — what that model's `recourse_icon` is called in
   Bootstrap Icons
 - `Recourse.model_icon(model)` — the same for a model already in hand

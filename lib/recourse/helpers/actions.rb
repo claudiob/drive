@@ -41,6 +41,12 @@ module Recourse
         tag.i class: "bi bi-#{ICONS[action]}"
       end
 
+      def tooltip_on_top(title)
+        # `bs_title` is what Bootstrap's tooltip reads, and the controller is what
+        # makes one: Bootstrap never wires a tooltip on its own.
+        { controller: 'tooltip', bs_placement: 'top', bs_title: title }
+      end
+
       def show_resource_path(record)
         return unless routed_action? 'show'
 
