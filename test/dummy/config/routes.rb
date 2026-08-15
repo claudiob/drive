@@ -24,7 +24,10 @@ Rails.application.routes.draw do
       recourses :contacts, only: :index
     end
     recourses :contacts, except: :show
-    recourses :agents, only: %i[index show]
+    recourses :agents, only: %i[index show] do
+      # Nested with no counter cache behind it: the card tab reads bare `Settings`.
+      recourses :settings, only: :index
+    end
     recourses :apps, only: %i[index edit update]
   end
 

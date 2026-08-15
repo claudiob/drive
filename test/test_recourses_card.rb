@@ -18,4 +18,15 @@ class TestRecoursesCard < Minitest::Test
     assert_includes body, %(<a class="nav-link active" aria-current="page" #{showing})
     assert_includes body, %(<i class="bi bi-pencil-square"></i> Edit</a>)
   end
+
+  # A nested index earns its tab from the route alone: no counter cache behind
+  # agents' settings, so the tab is the bare capitalized name, no figure before it.
+  def test_an_uncounted_nested_index_reads_as_the_bare_name
+    agent = Agent.create! email: 'tabs@example.com'
+    @session.get "/agents/#{agent.id}"
+
+    assert_includes @session.response.body, %(<i class="bi bi-gear"></i> Settings</a>)
+  ensure
+    agent&.destroy
+  end
 end

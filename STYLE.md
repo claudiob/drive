@@ -292,11 +292,14 @@ before writing or editing any layout, view or partial.
 - A look before a change, the order the seven actions are drawn and the order the row
   links follow. Each tab wears that link's icon — the eye and the pencil — from one
   `ICONS` map, so a row and a card cannot come to disagree about which is which.
-- After them, one tab per counter cache whose rows have an index nested under the
-  record, named by the count and wearing the counted model's icon: `8 ZIPs`. The
-  number is read off the record itself, like the column, so the tab costs no query.
+- After them, one tab per has_many whose rows have an index nested under the
+  record, wearing that model's icon. The nested route is the whole requirement; a
+  counter cache only decides how the tab reads: `8 ZIPs` where the record keeps
+  one — the number read off the record itself, like the column, so the tab costs
+  no query — and the bare `ZIPs` where it does not. The count is what earns the
+  downcase; a word that leads keeps its capital, like the Show and Edit beside it.
 - A nested index is one of those pages, so it sits in the same card — the *parent*
-  record's — with the count tab as the current one and the parent's own Show and
+  record's — with its own tab as the current one and the parent's own Show and
   Edit tabs beside it, each drawn only where its route is.
 - One tab where a resource has only one of the two pages, rather than no card: the
   card is what says which page of a record is being read, and that is worth saying

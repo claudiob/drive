@@ -1,17 +1,18 @@
 module Recourse
   module Helpers
     # The tabs on the card a record's pages share: a look, a change, and each
-    # nested index under the record, named by its count.
+    # nested index under the record — counted where the record keeps a count.
     module Cards
       # The pages of the record the card is about, as `[label, path, current]` — a
-      # look first, a change second, then one tab per counted nested index, `8 ZIPs`
-      # style. On a nested index the card is the parent record's, so the tabs are
-      # too, and the count tab is the current one.
+      # look first, a change second, then one tab per nested index: `8 ZIPs` where
+      # a counter cache answers, the bare `Settings` where none does. On a nested
+      # index the card is the parent record's, so the tabs are too, and the nested
+      # tab is the current one.
       def resource_tabs(record)
         path = card_path
         actions = %i[show edit].filter_map { |action| action_tab record, path, action }
 
-        actions + counted_tabs(record, path)
+        actions + nested_tabs(record, path)
       end
 
     private
@@ -40,28 +41,43 @@ module Recourse
         action == (controller.action_name == 'show' ? :show : :edit)
       end
 
-      # One tab per counter cache whose rows have an index nested under the record,
-      # named by the count read off the record itself: no query, like the column.
-      def counted_tabs(record, path)
-        record.class.recourse_counters.filter_map do |column, association|
+      # One tab per has_many whose rows have an index nested under the record. The
+      # nested route is the whole requirement: a counter cache only decides how the
+      # tab reads, never whether it is there.
+      def nested_tabs(record, path)
+        record.class.reflect_on_all_associations(:has_many).filter_map do |association|
           nested = "#{path}/#{association.name}"
           next unless routed? nested, 'index'
 
           [
-            counted_tab_label(record.attributes[column], association),
+            association_tab_label(record, association),
             nested_index_path(record, path, nested), nested == controller.controller_path,
           ]
         end
       end
 
-      # `8 ZIPs`, behind the counted model's icon — the one the sidebar and the
-      # counter heading already draw — with the acronym surviving the downcase.
-      def counted_tab_label(count, association)
-        name = Recourse.downcase association.klass.model_name.human.pluralize(count)
-
+      # `8 ZIPs` where the record keeps a count — read off the record itself, no
+      # query, like the column — and the bare `ZIPs` where it keeps none. The count
+      # is what earns the downcase: a word that leads keeps its capital, like the
+      # Show and Edit beside it. The icon is the counted model's own either way.
+      def association_tab_label(record, association)
         icon = tag.i class: "bi bi-#{Recourse.model_icon association.klass}"
+        column = counter_column_of record.class, association
+        label = if column
+                  counted_tab_name record.attributes[column], association
+                else
+                  association.klass.model_name.human.pluralize
+                end
 
-        safe_join [icon, "#{count} #{name}"], ' '
+        safe_join [icon, label], ' '
+      end
+
+      def counter_column_of(model, association)
+        model.recourse_counters.find { |_, one| one == association }&.first
+      end
+
+      def counted_tab_name(count, association)
+        "#{count} #{Recourse.downcase association.klass.model_name.human.pluralize(count)}"
       end
 
       def nested_index_path(record, path, nested)
