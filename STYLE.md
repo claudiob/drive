@@ -122,9 +122,10 @@ before writing or editing any layout, view or partial.
   or the button would 404 or raise. Its classes are
   `btn theme-primary btn-sm btn-outline ms-3`.
 - Where `create` is routed with no `new`, the same spot holds a `Create` button
-  instead: a `button_to` posting the record whole, wearing the Add link's classes
-  with the `ms-3` on its form, which is the flex item. Routing it that way is the
-  host's word that a bare record can stand — the gem checks nothing further.
+  instead: a `button_to` posting the record whole — `.btn-solid`, being a button
+  and not a link dressed as one — in the Add link's size and colour, with the
+  `ms-3` on its form, which is the flex item. Routing it that way is the host's
+  word that a bare record can stand — the gem checks nothing further.
 
 ## Deleting a record
 
@@ -133,9 +134,10 @@ before writing or editing any layout, view or partial.
   row of pencils with a bin beside each is a mis-click waiting to happen, and the
   warning below is only worth writing if it cannot be bypassed.
 - It is a `button_to` rather than a link, since a delete is not a GET, wearing
-  `btn btn-sm btn-outline theme-danger ms-3` — the `Add <resource>` button's
-  classes in the colour that means this one is different. Its form takes
-  `d-inline-block`, or it would break the navbar's line.
+  `btn btn-sm btn-solid theme-danger ms-3` — solid, because it is a real button
+  and `.btn-outline` is the navbar's dress for links; danger, because this one
+  is different; and the same solid danger the confirm dialog's own Delete wears.
+  Its form takes `d-inline-block`, or it would break the navbar's line.
 - It appears only where the `destroy` action is implemented *and* routed, the two
   guards `Add <resource>` and the edit pencil already answer to.
 - It asks first, through `data-turbo-confirm`, and the wording is settled in
@@ -422,6 +424,10 @@ before writing or editing any layout, view or partial.
 - The submit is `btn btn-solid theme-primary`. In v6 the fill is a separate class
   from the base: `.btn` sizes, `.btn-solid` / `.btn-outline` / `.btn-subtle`
   fill, and `theme-*` colours.
+- The fill is what tells a link from a button, so it never lies: `.btn-outline`
+  is the dress of the navbar's *links* — `Add <resource>`, after the breadcrumb —
+  and a real `<button>` that performs, like Create or Delete, is `.btn-solid`.
+  A button dressed as a link promises a navigation where there is an action.
 - A field whose attribute is not required carries `placeholder='Optional'`.
   Required is judged by the model's validators, not by `null: false` — and a
   `belongs_to` validates the association, so `state_id` counts as required

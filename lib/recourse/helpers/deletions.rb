@@ -17,7 +17,7 @@ module Recourse
         return unless path
 
         options = {
-          method: :delete, class: 'btn btn-sm btn-outline theme-danger ms-3',
+          method: :delete, class: 'btn btn-sm btn-solid theme-danger ms-3',
           form_class: 'd-inline-block', data: { turbo_confirm: destroy_warning(record) },
         }
 
