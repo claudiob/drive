@@ -1,0 +1,5 @@
+<%# locals: (source:) -%>
+<%= column header: sort_header('name') do %>
+  <%= resource_cell source, 'name' %>
+<% end %>
+<%= column header: 'Shouting' do %><%= source.name.upcase %><% end %>

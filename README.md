@@ -777,12 +777,12 @@ Anything your app defines wins, because your app's view paths come first and
 | `app/views/recourses/_card.html.erb` | the tabbed card the show and edit pages sit in |
 | `app/views/recourses/_sidebar.html.erb` | a shared partial, for every resource at once |
 
-Clear the cache after adding one. The index table renders inside a fragment
-whose key is a digest of the templates the gem resolved when it was written, so
-a `_row.html.erb` that appears afterwards does not expire it: the page keeps
-serving the table it drew before your partial existed, and a file watcher will
-not help. `bin/rails tmp:cache:clear` is the whole fix, and it is only ever
-needed the once.
+No cache stands in the way. The index table renders inside a fragment, and its
+key carries the digest of whichever `_row` the lookup resolved — so a row
+partial added, edited or deleted expires the table by itself, with nothing to
+clear. The digest covers the row file itself; a partial your row renders from
+inside is beyond its sight, so nest sparingly or touch the row when you edit
+one.
 
 Templates are looked up under `contacts/`, then `recourses/`, then
 `application/`, since those are the controller's prefixes. That is what lets a

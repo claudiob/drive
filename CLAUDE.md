@@ -115,6 +115,11 @@ two is filed under the one a reader would look in first.
   string. Rails builds the key from a digest of the SQL — so a different page of
   the same table is a different key — and pairs it with a version from the row
   count and the newest `updated_at`, so nothing has to remember to expire it.
+- The table's key carries one rider: `[recourses, row_digest]`, the digest of
+  whichever `_row` the lookup resolved. `render 'row'` resolves host-first at
+  render, which the fragment's own template digest never follows, so without it
+  a host's row partial — added, edited or deleted — would keep serving the table
+  drawn before it.
 - That version check is itself a `SELECT COUNT(*), MAX(updated_at)`, and it is the
   price of never serving a stale menu. Keying on `recourses.cache_key` instead
   skips it and queries nothing at all, at the cost of a list that never notices a
