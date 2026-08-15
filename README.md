@@ -316,8 +316,9 @@ lands before the comment, not inside it.
 
 `index` reads the model's `recourse_includes` and `recourse_order`, so a table
 cell naming a referenced record costs no query of its own. The table hides
-every encrypted column, and a model with no rows renders `No contacts.`
-instead. A heading sorts the table by its own column where the model allows
+every encrypted column — and `type`, the column Rails reserves for single table
+inheritance, stays off every screen: a class name is machinery, not an
+attribute. A model with no rows renders `No contacts.` instead. A heading sorts the table by its own column where the model allows
 it, and the form above the table narrows what it shows, by search or by
 filter.
 

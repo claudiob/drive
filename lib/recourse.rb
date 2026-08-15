@@ -35,10 +35,12 @@ module Recourse
       model.recourse_counters.keys - hidden_columns(model)
   end
 
-  # Columns the model asked to keep off every screen, as the strings the schema
-  # speaks — one name or a list, however `recourse_hidden` said it.
+  # Columns no screen shows: whatever the model asked to hide through
+  # `recourse_hidden` — one name or a list, taken either way — and the column
+  # Rails reserves for single table inheritance, `type` unless the model renamed
+  # it. A class name is machinery, not something to read out or type over.
   def self.hidden_columns(model)
-    Array(model.recourse_hidden).map(&:to_s)
+    Array(model.recourse_hidden).map(&:to_s) + [model.inheritance_column]
   end
 
   # Lower case, but for the words Rails was told are acronyms: `ZIP code` reads as

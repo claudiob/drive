@@ -2,7 +2,9 @@ require 'test_helper'
 require 'action_dispatch/testing/integration'
 
 # A model keeps columns off its screens: App hides webhook_url with
-# `def recourse_hidden = :webhook_url`, one name standing for the list.
+# `def recourse_hidden = :webhook_url`, one name standing for the list — and
+# Rails' own `type`, the single table inheritance column apps carry, hides by
+# itself, asked by nobody.
 class TestRecoursesHidden < Minitest::Test
   def test_a_model_hides_the_columns_it_names_from_the_table_and_the_form
     app = App.create! name: 'Hidden Fields'
@@ -13,9 +15,9 @@ class TestRecoursesHidden < Minitest::Test
     # The whole page: no column, no field — and no search term, though the
     # hidden column is indexed, which would otherwise put it in the box.
     assert_includes index, 'name="q[name_cont]"'
-    refute_includes index, 'Webhook'
+    ['Webhook', 'data-cell="Type"'].each { |gone| refute_includes index, gone }
     assert_includes form, 'name="app[name]"'
-    refute_includes form, 'webhook_url'
+    ['webhook_url', 'app[type]'].each { |gone| refute_includes form, gone }
   ensure
     app&.destroy
   end
