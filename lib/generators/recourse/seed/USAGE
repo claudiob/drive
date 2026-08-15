@@ -17,9 +17,9 @@ Description:
     prose. An email column gets an address, a phone column ten valid digits, a
     column named like an id digits alone, an enum cycles the words it admits, a
     date and a time step back a random distance, and a reference reads a random
-    row of the model it points at. A validator with stricter opinions is yours
-    to satisfy by editing the file, and a row the database itself refuses is
-    skipped rather than stopping the run — the loader's count never sees it.
+    row of the model it points at. A row a validator or the database refuses
+    is skipped rather than stopping the run — the loader's count never sees it
+    — and editing the file is how a skipped row is won back.
 
     db/seeds.rb gains the loader that reads the directory, once, so follow-up
     `rails db:seed` runs pick every file up — alphabetically, so reorder by

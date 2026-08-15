@@ -234,10 +234,11 @@ column named like an id — `uid`, a `user_id` held as a string — digits
 alone, an enum cycles the words it admits, a date and a time step
 back a random distance from today, and a reference reads a random row of the
 model it points at — an app's own attribute type counts as what it subclasses,
-so a `Price` seeds as the decimal it is. A validator with stricter opinions is
-yours to satisfy by editing the file — and a row the database itself refuses
-(`ActiveRecord::StatementInvalid`) is skipped rather than stopping the run, so
-the count the loader prints reports only the rows that stand.
+so a `Price` seeds as the decimal it is. A row a validator with stricter
+opinions rejects (`ActiveRecord::RecordInvalid`), or the database itself
+refuses (`ActiveRecord::StatementInvalid`), is skipped rather than stopping the
+run, so the count the loader prints reports only the rows that stand — and
+editing the file is how a skipped row is won back.
 
 `db/seeds.rb` gains the same loader line as above, once. A resource whose model
 does not exist is skipped with a note, and a file that already exists asks

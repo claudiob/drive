@@ -30,10 +30,10 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
     assert_file 'db/seeds/markets.rb' do |markets|
       assert_equal 25, markets.scan(/^  \{ name: '[^']+' \},$/).uniq.size
       assert_match(/[^\x00-\x7F]/, markets)
+      assert_match(/rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid/, markets)
     end
     assert_file('db/seeds/messages.rb') { |messages| assert_wrapped_contents messages }
     assert_file 'db/seeds/counties.rb', /state: State\.offset\(\d+\)\.first/
-    assert_file 'db/seeds/markets.rb', /rescue ActiveRecord::StatementInvalid/
     assert_shaped_strings
     assert_no_file 'db/seeds/placeholders.rb'
   end

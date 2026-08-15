@@ -12,7 +12,8 @@
 <% end -%>
 ].each do |attributes|
   <%= @model.name %>.find_or_create_by! attributes
-rescue ActiveRecord::StatementInvalid
-  # A row the database refuses is skipped rather than stopping the seed, and the
-  # count the loader prints — rows standing in the table — never sees it.
+rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid
+  # A row a validator or the database refuses is skipped rather than stopping the
+  # seed, and the count the loader prints — rows standing in the table — never
+  # sees it.
 end
