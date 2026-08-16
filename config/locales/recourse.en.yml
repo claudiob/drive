@@ -9,6 +9,7 @@ en:
   recourse:
     add: Add %{model}
     all: All %{models}
+    all_values: All
     blank: "—"
     cancel: Cancel
     clear: Clear search

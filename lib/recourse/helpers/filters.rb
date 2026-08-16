@@ -23,35 +23,23 @@ module Recourse
         filters.except "#{parent.foreign_key}_in"
       end
 
-      # One filter: a menu of the records a foreign key points at, holding whichever
-      # the request already asked for. Nothing where that key's label is typed rather
-      # than picked — the menu would be a table of its own. A `scope:` draws one anyway.
+      # One filter: the values a column of its own admits, or a menu of the records a
+      # foreign key points at, holding whichever the request already asked for.
       def filter_field(predicate, label: nil, scope: nil)
         column = predicate.to_s.sub Search::LIST_PREDICATES, ''
-        return enum_filter predicate, column, label if resource_model.defined_enums.key? column
 
+        choice_filter(predicate, column, label) || reference_filter(predicate, column, label, scope)
+      end
+
+      # A menu of the records a foreign key points at. Nothing where that key's label
+      # is typed rather than picked — the menu would be a table of its own. A `scope:`
+      # draws one anyway.
+      def reference_filter(predicate, column, label, scope)
         association = belongs_to_association column
         return if association.nil? || (scope.nil? && association.klass.recourse_typed_label?)
 
         filter_combobox predicate, label || reference_title(column, association),
                         (scope || association.klass).all
-      end
-
-      # A menu of the words the column admits, which are the words the form's own menu
-      # offers and the badge on a show page reads. Headed by the attribute rather than
-      # by a model, since a status is the table's own and not another table's.
-      def enum_filter(predicate, column, label)
-        title = label || resource_model.human_attribute_name(column)
-        values = resource_model.defined_enums[column].keys
-
-        filter_menu predicate, title, values, enum_all(column)
-      end
-
-      # The way back to no filter at all, named after the column: `All statuses`.
-      def enum_all(column)
-        t 'recourse.all', models: Recourse.downcase(
-          resource_model.human_attribute_name(column)
-        ).pluralize
       end
 
       def filter_combobox(predicate, title, recourses)

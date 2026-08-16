@@ -41,11 +41,12 @@ module Recourse
 
     # Filters offered beside the search box, as a Ransack predicate to the options
     # that draw it — `label:` for its heading, `scope:` for the records it offers.
-    # One per enum and then one per belongs_to, less the ones the search box reaches
-    # through instead: a typed label says the other model is too big to list. The
-    # model's own words come first, before the menus that name other tables.
+    # One per enum, one per boolean, then one per belongs_to, less the ones the
+    # search box reaches through instead: a typed label says the other model is too
+    # big to list. The model's own columns come first, before the menus that name
+    # other tables.
     def filter_fields
-      enum_filter_fields.merge reference_filter_fields
+      enum_filter_fields.merge(boolean_filter_fields).merge reference_filter_fields
     end
 
     # True where a foreign key pointing here is typed rather than picked, which a
@@ -68,6 +69,15 @@ module Recourse
     # page, and `_in` is what lets a request tick more than one of them.
     def enum_filter_fields
       defined_enums.keys.index_with({}).transform_keys { |name| "#{name}_in" }
+    end
+
+    # One per boolean: a column admitting two values is a menu for the same reason a
+    # dozen words are, and the two are the type's own rather than anything declared.
+    def boolean_filter_fields
+      booleans = column_names - Recourse.hidden_columns(self)
+
+      booleans.select { |one| type_for_attribute(one).type == :boolean }
+              .index_with({}).transform_keys { |name| "#{name}_in" }
     end
 
     # One per belongs_to the search box does not reach through instead.

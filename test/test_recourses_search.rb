@@ -26,6 +26,11 @@ class TestRecoursesSearch < IntegrationCase
     visit '/places'
 
     assert_includes body, "data-bs-name='q[status_in]'"
+    # A boolean admits two values, so it is a menu for the same reason an enum is —
+    # and the way back is the bare `All`, since `signeds` is nothing anybody writes.
+    assert_includes body, "data-bs-name='q[active_in]'"
+    assert_includes menu_for('q[active_in]'), "data-bs-value='true'"
+    assert_includes menu_for('q[active_in]'), '>All</button>'
     assert_includes body, "data-bs-name='q[team_id_in]'"
     # No menu for the ZIP: 101 rows are more than a menu offers, so the box reaches
     # through that key instead and a filter would only ask the same thing twice.
@@ -64,5 +69,12 @@ class TestRecoursesSearch < IntegrationCase
     refute_includes body, 'bi bi-caret-up-fill'
     # And a search keeps the order a heading asked for, carried as a hidden field.
     assert_includes body, '<input type="hidden" name="q[s]" id="q_s" value="name desc"'
+  end
+
+private
+
+  # One combobox's menu, from its toggle to the end of its options.
+  def menu_for(name)
+    body[/data-bs-name='#{Regexp.escape name}'.*?combobox-no-results/m]
   end
 end
