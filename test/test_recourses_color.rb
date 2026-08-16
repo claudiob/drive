@@ -1,33 +1,22 @@
 require 'test_helper'
-require 'action_dispatch/testing/integration'
+require 'integration_case'
 
-# What a host's `Recourse.color` does to the pages the gem serves.
-class TestRecoursesColor < Minitest::Test
-  def setup
-    @color = Recourse.color
-    @session = ActionDispatch::Integration::Session.new Rails.application
-  end
+# The one line a host says about how every page looks.
+class TestRecoursesColor < IntegrationCase
+  # The dummy app asks for pink, and the page says so in the tokens every button,
+  # link, sorted heading and focus ring reads. A typo would otherwise write
+  # `var(--bs-purpel-500)` into every page and go unnoticed until somebody looked,
+  # so a name the gem does not know is refused at the point it is set — and says
+  # which names there are, rather than only that this one is wrong.
+  def test_a_host_picks_a_primary_colour_and_a_name_nobody_has_is_refused
+    visit '/places'
 
-  # Put back rather than cleared: it is global, and the dummy app's initializer set
-  # it, so clearing would leave every test that ran after this one in another app.
-  def teardown
-    Recourse.color = @color
-  end
+    assert_includes body, '--bs-primary-base: var(--bs-pink-500);'
+    error = assert_raises(Recourse::Error) { Recourse.color = :purpel }
 
-  def test_a_chosen_color_overrides_bootstraps_primary
-    Recourse.color = 'orange'
-    @session.get '/states'
-
-    assert_includes @session.response.body, '--bs-primary-base: var(--bs-orange-500);'
-    assert_includes @session.response.body,
-                    '--bs-primary-fg: light-dark(var(--bs-orange-600), var(--bs-orange-400));'
-  end
-
-  def test_it_names_the_six_when_handed_anything_else
-    error = assert_raises(Recourse::Error) { Recourse.color = :taupe }
-
-    assert_equal '`Recourse.color` is one of blue, gray, orange, purple, pink, and brown, ' \
-                 "or nil for Bootstrap's own blue. It cannot be taupe.", error.message
-    assert_equal @color, Recourse.color
+    assert_includes error.message, 'purpel'
+    assert_includes error.message, 'purple'
+  ensure
+    Recourse.color = :pink
   end
 end

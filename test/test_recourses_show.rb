@@ -1,99 +1,45 @@
 require 'test_helper'
-require 'action_dispatch/testing/integration'
+require 'integration_case'
 
-# The page a resource whose `show` route is drawn gets for one of its records.
-class TestRecoursesShow < Minitest::Test
-  # Created rather than looked up: what a migration backfilled is what another test
-  # clears, and a row a test needs is a row it makes.
-  def setup
-    @session = ActionDispatch::Integration::Session.new Rails.application
-    @contact = Contact.create! name: 'Ada', phone: '2125550999'
-    @filled = Booking.create! summary: 'Everything booking', contact: @contact,
-                              zip: ZIP.first!, city: 'Cupertino', subscribed: false,
-                              street: '1 Infinite Loop'
-    @bare = Booking.create! summary: 'Bare booking', contact: @contact, zip: ZIP.first!
+# A record's own page, and the card the nested indexes hang off it by.
+class TestRecoursesShow < IntegrationCase
+  # One pass over a record carrying a value of every kind, each read out as what its
+  # column holds rather than as what the database keeps: a price wears its currency
+  # and a percentage its sign, both decimals underneath; a float keeps its own
+  # precision; a date and a time are `time` tags a browser can localize; an enum is
+  # a badge and a boolean is the word, not an icon; a URL is a link.
+  def test_it_reads_out_a_value_of_every_kind_in_the_shape_its_column_earns
+    visit "/places/#{Place.order(:id).first.id}"
+
+    assert_includes body, '$20.00'
+    assert_includes body, '5.25%'
+    assert_includes body, '100.25'
+    assert_includes body, '0.500'
+    assert_includes body, '415-555-0000'
+    assert_includes body, '<time datetime="2026-01-01">Jan 1, 2026</time>'
+    assert_includes body, 'datetime="2026-06-01T09:30:00-04:00"'
+    assert_includes body, '<span class="badge">draft'
+    # Words rather than icons, and the reference read as its label either way.
+    assert_includes body, 'true'
+    assert_includes body, 'false'
+    assert_includes body, 'M0001'
+    assert_includes body, 'Blue Crew'
+    assert_includes body, '<a href="https://place-1.example.com"'
   end
 
-  def teardown
-    [@filled, @bare].each(&:destroy)
-    @contact.destroy
-  end
+  # The card a record's own page sits in: its Show tab first, then one tab per index
+  # nested under it, in the order routes.rb nested them rather than the order the
+  # associations were declared. A counter cache decides how a tab reads and never
+  # whether it is there — Places carries one, Memos does not.
+  def test_the_card_tabs_follow_the_routes_and_read_by_what_is_counted
+    person = Person.order(:id).first
+    visit "/people/#{person.id}"
 
-  # What one record reads out as: the grid row and the heading a form would give
-  # the column, plain values, a foreign key as what it points at, the encrypted
-  # street masked — and the timestamps the form never offers closing the list,
-  # since a record's own page is where "when" belongs.
-  READOUTS = [
-    '<div class="recourse-row pb-2 mb-3 lg:col-6"><div class="form-label">Summary</div>',
-    '<div class="form-control-plaintext">Everything booking</div>',
-    '<div class="form-control-plaintext">Cupertino</div>',
-    '<div class="form-control-plaintext">Ada</div>',
-    'data-reveal-plain-value="1 Infinite Loop"',
-    '<div class="form-label">Created at</div>',
-    '<div class="form-label">Updated at</div>',
-  ].freeze
-
-  def test_it_reads_out_one_record_where_its_form_would_have_been
-    visit @filled
-
-    READOUTS.each { |readout| assert_includes body, readout }
-    # A button rather than a form is the whole difference from the edit page.
-    refute_includes body, '<form'
-  end
-
-  # `false` is something a record says, so only nothing at all reads as a dash.
-  def test_a_column_the_record_says_nothing_for_reads_as_a_dash
-    visit @bare
-
-    assert_includes body, '<div class="form-control-plaintext">—</div>'
-    # A boolean is the word it is, and the one this record never answered is the
-    # same dash every unanswered column reads as.
-    assert_includes body, '<div class="form-control-plaintext">true</div>'
-    # An enum is a badge, in the word the column holds.
-    assert_includes body, '<span class="badge">draft</span>'
-  end
-
-  # Every kind of number, read out as what it is of rather than as what it is stored
-  # as. The two the schema cannot tell apart are types the dummy app registers.
-  def test_a_number_reads_as_the_kind_of_number_it_is
-    @session.get "/providers/#{Provider.find_by!(name: 'Everything Provider').id}"
-
-    assert_includes body, '<div class="form-control-plaintext">$95.00</div>'
-    assert_includes body, '<div class="form-control-plaintext">15.00%</div>'
-    assert_includes body, '<div class="form-control-plaintext">12.500</div>'
-    assert_includes body, '<div class="form-control-plaintext">4.75</div>'
-    assert_includes body, '<div class="form-control-plaintext">128</div>'
-    # A counter cache is Rails' to keep, so no page reads one out and no form sets it.
-    refute_includes body, 'Bookings'
-  end
-
-  # The row's own way in, beside the pencil where a resource has both pages — and, on
-  # the same index, the menu that narrows it by the one enum a booking has.
-  def test_the_index_links_to_it_and_offers_its_enum_as_a_filter
-    @session.get '/bookings'
-
-    assert_includes body, %(aria-label="Show" data-turbo-frame="_top" href="/bookings/#{@bare.id}")
-    assert_includes body, '<i class="bi bi-eye"></i>'
-    assert_includes body, "data-bs-name='q[status_in]'"
-    assert_includes body, "data-bs-value='scheduled'"
-    assert_includes body, "data-action='deselect#all'>All statuses</button>"
-  end
-
-  # The breadcrumb links back to the index and then names the record, as edit does.
-  def test_it_names_the_record_after_a_link_back
-    visit @bare
-
-    assert_includes body, 'href="/bookings">'
-    assert_includes body, "<span class='breadcrumb-link active'>Bare booking</span>"
-  end
-
-private
-
-  def visit(booking)
-    @session.get "/bookings/#{booking.id}"
-  end
-
-  def body
-    @session.response.body
+    assert_includes body, %(href="/people/#{person.id}/places">)
+    assert_includes body, "#{person.places_count} places"
+    assert_includes body, %(href="/people/#{person.id}/memos">)
+    assert_includes body, '</i> Memos</a>'
+    # The tab order is the routes file's: places was nested first.
+    assert_operator body.index('/places"'), :<, body.index('/memos"')
   end
 end

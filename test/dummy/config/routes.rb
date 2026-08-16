@@ -1,48 +1,42 @@
 Rails.application.routes.draw do
   # Deliberately not alphabetical: the sidebar follows this order, not a sort. Each
-  # draws a different slice of the seven, so the pages a resource offers — and the
-  # links the gem draws to them — are covered between them.
+  # line draws a different slice of the seven, so the pages a resource offers — and
+  # the links the gem draws to them — are covered between them.
   #
-  # `scope module:` rather than `namespace`: the controllers live under `Admin::`,
-  # while the paths stay where a reader expects them — `/contacts`, not
-  # `/admin/contacts`.
+  # `scope module:` rather than `namespace`: the controllers live under `Admin::`
+  # while the paths stay where a reader expects them — `/places`, not
+  # `/admin/places`.
   scope module: :admin do
-    recourses :bookings, only: %i[index show destroy]
-    recourses :providers
-    recourses :franchises, except: :show
-    recourses :zips, only: %i[index edit] do
-      # `create` with no `new`: the navbar offers the one-click Create button in
-      # the Add link's place, on our word that a bare location can stand.
-      recourses :locations, only: %i[index create]
+    # All seven, and the model that has a column of every kind.
+    recourses :places
+
+    # Everything but making one: a person arrives from somewhere else.
+    recourses :people, except: %i[new create] do
+      # A counted tab on the person's card, since places carry a counter cache.
+      recourses :places, only: :index
+      # And an uncounted one. `create` with no `new`: the navbar offers the
+      # one-click Create button in the Add link's place, on our word that a bare
+      # memo can stand.
+      recourses :memos, only: %i[index create]
     end
-    recourses :markets, except: :show
-    recourses :counties, only: %i[index show] do
-      # Nested: reached through a county's ZIPs count, not from the sidebar, and
-      # bare on purpose — index, new and create are the nested default.
-      recourses :zips
+
+    recourses :teams, except: :show do
+      # A `namespace` between a block and what it nests: the routes and the
+      # controller come out under it, and no tab is drawn for a child filed there.
+      namespace(:active) { recourses :places, only: :index }
     end
-    recourses :specialties, except: :show
-    recourses :settings, only: %i[index edit update]
-    recourses :sources, except: :show do
-      # Nested: what proves the parent's own filter leaves the search form.
-      recourses :contacts, only: :index
+
+    # Edited but never shown, and the table a foreign key is typed to reach.
+    recourses :msas, only: %i[index edit update] do
+      # No `only:` and no `except:`, so a nested resource takes the collection
+      # actions by default: list the parent's rows, and add one.
+      recourses :places
     end
-    recourses :contacts, except: :show
-    recourses :agents, only: %i[index show] do
-      # Neither has a counter cache, so both tabs read bare — and settings before
-      # apps on purpose: tabs follow this order, not the has_many declarations'.
-      recourses :settings, only: :index
-      recourses :apps, only: :index
-    end
-    recourses :apps, only: %i[index edit update]
   end
 
-  # The dummy app's own, which the twelve above came from fountain to sit beside.
-  recourses :states, only: :index
-  recourses :locations, only: %i[index new create]
-  recourses :jobs
-  recourses :messages
+  # Outside the module, and with an index template of the host's own.
+  recourses :memos, except: :show
 
-  # No index action, so no sidebar link.
+  # No index action, so no sidebar link and nothing for the gem to draw.
   recourses :placeholders, only: []
 end

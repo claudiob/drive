@@ -46,10 +46,10 @@ module Recourse
       # nested route is the whole requirement: a counter cache only decides how the
       # tab reads, never whether it is there.
       def nested_tabs(record, path)
-        Recourse.nested_under(path).filter_map do |name|
+        Recourse.nested_under(path).filter_map do |nested|
+          name = nested.split('/').last
           association = record.class.reflect_on_all_associations(:has_many)
                               .find { |one| one.name.to_s == name }
-          nested = "#{path}/#{name}"
           next unless association && routed?(nested, 'index')
 
           [

@@ -32,7 +32,7 @@ module Recourse
         parent = resource_parent
         return [] unless parent
 
-        path = controller.controller_path.rpartition('/').first
+        path = Recourse.parent_of controller.controller_path
         [
           [path, Recourse.title(path), parent_url(path, :index)],
           [nil, parent_title(parent), parent_url(path, :show, id: parent)],
@@ -41,14 +41,16 @@ module Recourse
 
       # Where this resource's own routes are drawn. A nested route answers the
       # collection actions and no more, so a member page — and a count reaching one
-      # of the resource's own nested indexes — is looked up above the nesting: the
-      # parent's segment out of `admin/counties/zips` leaves `admin/zips`.
+      # of the resource's own nested indexes — is looked up above the nesting: this
+      # resource's name, drawn where its parent was drawn, so `admin/counties/zips`
+      # leaves `admin/zips` however many segments the nesting took.
       def resource_controller_path
         path = controller.controller_path
         return path unless resource_parent
 
-        parts = path.split '/'
-        (parts[0..-3] << parts.last).join '/'
+        module_of = Recourse.parent_of(path).rpartition('/').first
+
+        [module_of.presence, path.split('/').last].compact.join '/'
       end
 
       def parent_title(parent)

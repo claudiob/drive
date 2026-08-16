@@ -1,48 +1,49 @@
 require 'test_helper'
-require 'action_dispatch/testing/integration'
+require 'integration_case'
 
-# Sorting a table by one of its headings, and narrowing it with the form above it.
-class TestRecoursesSearch < Minitest::Test
-  def setup
-    @session = ActionDispatch::Integration::Session.new Rails.application
+# The form above a table: the box, the menus beside it, and what a match earns.
+class TestRecoursesSearch < IntegrationCase
+  # What the box looks through is decided by the indexes, and it says so while it is
+  # empty. A match is marked, and only in a column the search actually read — a mark
+  # anywhere else would claim a match that never happened.
+  def test_the_box_searches_the_indexed_columns_and_marks_what_it_matched
+    visit '/places'
+
+    # Its own two indexed strings, and the label behind the one foreign key the
+    # box reaches through rather than lists — an acronym keeping its capitals.
+    assert_includes body, 'name="q[name_or_slug_or_msa_code_cont]"'
+    assert_includes body, 'placeholder="Filter by name or slug or MSA code"'
+    visit '/places?q%5Bname_or_slug_or_msa_code_cont%5D=Place+01'
+
+    assert_includes body, '<mark>Place 01</mark>'
+    # One row matched, so nothing else is on the page to be marked.
+    refute_includes body, 'Place 02'
   end
 
-  # Following a heading's own link: the order it asks for replaces the model's, and
-  # the heading says which way it went.
-  def test_a_heading_sorts_the_table_by_its_column
-    @session.get '/counties?q%5Bs%5D=name+desc'
-    body = @session.response.body
+  # A menu per enum and one per foreign key the box does not reach through instead,
+  # each submitting a list predicate so more than one may be ticked at once.
+  def test_a_filter_narrows_by_an_enum_and_by_a_reference
+    visit '/places'
 
-    assert_includes body, "<td data-cell=\"Name\">#{County.maximum :name}</td>"
+    assert_includes body, "data-bs-name='q[status_in]'"
+    assert_includes body, "data-bs-name='q[team_id_in]'"
+    # No menu for the MSA: 101 rows are more than a menu offers, so the box reaches
+    # through that key instead and a filter would only ask the same thing twice.
+    refute_includes body, "data-bs-name='q[msa_id_in]'"
+    visit "/places?q%5Bstatus_in%5D=#{Place.statuses.keys.last}"
+
+    assert_includes body, Place.statuses.keys.last
+    refute_includes body, '<span class="badge">draft</span>'
+  end
+
+  # A heading that sorted the table says which way, with a caret; the others say
+  # nothing, because an arrow on every heading says nothing about the order in force.
+  def test_the_sorted_heading_wears_the_caret_and_no_other_does
+    visit '/places?q%5Bs%5D=name+desc'
+
     assert_includes body, 'bi bi-caret-down-fill'
-    # The table and its pagination are what a search or a sort replaces, so both sit
-    # inside the frame the form targets, and the edit link inside it breaks back out.
-    assert_includes body, "<turbo-frame id='results' data-turbo-action='advance'>"
-    assert_includes body, 'data-turbo-frame="results"'
-  end
-
-  # What matched is marked, and only in the column that matched it: the state beside
-  # it is not searched, so the word `Alabama` is never marked by a search for one.
-  def test_a_search_marks_what_it_matched
-    @session.get '/counties?q%5Bname_cont%5D=Autauga'
-    body = @session.response.body
-
-    assert_includes body, '<td data-cell="Name"><mark>Autauga</mark> County</td>'
-    assert_includes body, '<td data-cell="State">Alabama</td>'
-  end
-
-  # A foreign key whose label is typed is offered no filter of its own: that menu
-  # would be all 40,965 ZIPs, which is the judgement a form makes too. The search
-  # box reaches through to the label instead, so the ZIP is still narrowed by.
-  def test_a_typed_reference_is_searched_rather_than_filtered
-    @session.get '/locations'
-    body = @session.response.body
-
-    assert_includes body, "data-bs-name='q[source_id_in]'"
-    refute_includes body, 'q[zip_id_in]'
-    assert_includes body, 'name="q[zip_code_cont]"'
-    assert_includes body, 'placeholder="Filter by ZIP code"'
-    # Nor sortable: the cell holds a code, and `zip_id` is not the order it reads in.
-    assert_includes body, '<th scope="col">ZIP code</th>'
+    refute_includes body, 'bi bi-caret-up-fill'
+    # And a search keeps the order a heading asked for, carried as a hidden field.
+    assert_includes body, '<input type="hidden" name="q[s]" id="q_s" value="name desc"'
   end
 end

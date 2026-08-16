@@ -109,8 +109,8 @@ two is filed under the one a reader would look in first.
 
 - Reach for `Rails.cache` wherever the same rows would be read or the same markup
   re-rendered. An index table and the option list behind a combobox are both
-  cached; `/locations/new` costs six queries cold and three warm, and the
-  40,965-row `SELECT` behind its ZIP menu is one of the three that go.
+  cached; `/places/new` reads the rows behind its Team menu on the first request
+  and only checks their version on the next, which is the `SELECT` that goes.
 - Key a fragment on the *relation*, `cache recourses do`, never on a hand-rolled
   string. Rails builds the key from a digest of the SQL — so a different page of
   the same table is a different key — and pairs it with a version from the row
@@ -150,9 +150,9 @@ two is filed under the one a reader would look in first.
   `resource_class.includes(*names)`. Twenty locations cost five queries rather than
   forty-two, and the count no longer grows with the page.
 - Worth a test: assert the query count, so a later edit cannot quietly add one
-  back. `test_it_costs_one_count_and_one_select` does this by subscribing to
-  `sql.active_record`, and it is one of the two tests exempt from "as few tests
-  as coverage needs".
+  back. `TestRecoursesPerformance` does this by subscribing to
+  `sql.active_record` through `IntegrationCase#queries_on`, and it is one of the
+  two kinds of test exempt from "as few tests as coverage needs".
 
 #### Select only the columns a query displays
 
@@ -261,14 +261,16 @@ two is filed under the one a reader would look in first.
   it misses. Line coverage is the whole budget.
 - Never test a migration. A backfill's row count, the values it wrote and the
   invariants between them are data, and asserting them exercises no code of
-  ours. `TestState` was five such tests, so the whole class went, and
-  `TestCounty` and `TestZIP` with it.
+  ours. Whole classes have gone this way — the dummy's reference tables each had
+  one asserting a row count and a backfill's values, and none of them ran a line
+  of the gem.
 - A model that only declares validations, associations and encryption is in the
-  same position: nothing measured runs, so it gets no test file. That took
-  `TestPhonable` and `TestEmails` too.
+  same position: nothing measured runs, so it gets no test file. The dummy's
+  concerns went the same way.
 - This narrows the baseline's "every behavior change comes with a test": the
   test comes with it only if it reaches a line nothing else does. The suite it
-  leaves is small on purpose — six tests for 146 lines.
+  leaves is small on purpose — 43 runs for 1,427 lines, across fourteen files, each
+  rendering one page and asserting everything true of it.
 - Two kinds of assertion are exempt, because a covered line cannot stand in for
   them. How many queries a page costs, and how an encrypted column reaches the
   page — masked on a show page, not at all on an index, in the clear in its own

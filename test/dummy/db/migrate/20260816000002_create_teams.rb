@@ -1,0 +1,31 @@
+class CreateTeams < ActiveRecord::Migration[8.1]
+  # Three of them, well under MENU_LIMIT, so a foreign key pointing here is picked
+  # from a menu — the other half of what the MSAs table proves.
+  TEAMS = ['Blue Crew', 'Green Watch', 'Red Shift'].freeze
+
+  def change
+    create_table :teams do |t|
+      t.string :name, null: false
+      # Named like an identifier, which is what a seed reads to know it holds
+      # digits rather than words.
+      t.string :uid
+      t.integer :places_count, null: false, default: 0
+
+      t.timestamps
+    end
+
+    add_index :teams, :name, unique: true
+
+    up_only { TEAMS.each { |name| connection.execute team_row(name) } }
+  end
+
+private
+
+  def team_row(name)
+    <<~SQL.squish
+      insert into teams (name, uid, places_count, created_at, updated_at)
+      values ('#{name}', '#{format '%06d', TEAMS.index(name) + 1}', 0,
+              current_timestamp, current_timestamp)
+    SQL
+  end
+end

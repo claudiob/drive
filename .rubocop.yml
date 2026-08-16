@@ -27,6 +27,20 @@ Metrics/BlockLength:
   Exclude:
     - 'test/dummy/config/routes.rb'
 
+# Two places where length is not a design choice either, so measuring it says
+# nothing. A migration is as long as the table it makes and the rows it carries,
+# which is why `rake file_length` already exempts them. And a test here renders one
+# page and asserts everything true of it: the suite is small on purpose — forty
+# runs for the whole gem — so each run is broad by design, and splitting one to
+# satisfy a count would add tests that reach no line the others do not.
+Metrics/AbcSize:
+  Exclude: &long_by_nature
+    - 'test/dummy/db/migrate/*.rb'
+    - 'test/test_*.rb'
+
+Metrics/MethodLength:
+  Exclude: *long_by_nature
+
 # Demands that a memo's variable be named after its method. Every variable this
 # gem puts on a view carries a `recourse_` prefix, since the view is the host's
 # too and an unprefixed name is one to collide with — so the two cannot both hold.

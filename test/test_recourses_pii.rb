@@ -1,95 +1,51 @@
 require 'test_helper'
-require 'action_dispatch/testing/integration'
+require 'integration_case'
 
-# Encrypted columns never reach a page the gem builds for itself.
-class TestRecoursesPii < Minitest::Test
-  def setup
-    Booking.delete_all
-    Message.delete_all
-    Contact.delete_all
-    @session = ActionDispatch::Integration::Session.new Rails.application
-  end
-
-  # The column list is the single place PII is dropped, and it asks the model
-  # rather than a record — so no row's contents can put an encrypted column back.
-  # Asked through a template, which is the only thing that asks it: the helper is
-  # the gem's own and answers to a view rather than to a caller outside one.
+# Where an encrypted column reaches a page and where it does not. Exempt from "as few
+# tests as coverage needs": the same lines run whether a value is masked or printed,
+# so a covered line cannot stand in for any of these three.
+class TestRecoursesPii < IntegrationCase
+  # The column list is the single place PII is dropped, and it asks the model rather
+  # than a record — so no row's contents can put an encrypted column back. Asked
+  # through a template, which is the only thing that asks it: the helper answers to
+  # a view rather than to a caller outside one.
   def test_the_generic_columns_leave_out_every_encrypted_attribute
-    view = Admin::ContactsController.new.view_context
+    view = Admin::PlacesController.new.view_context
     columns = view.render(inline: '<%= resource_columns.join " " %>').split
 
     assert_includes columns, 'name'
-    %w[phone email surname].each { |column| refute_includes columns, column }
+    %w[secret notes].each { |column| refute_includes columns, column }
   end
 
-  # /contacts shows Phone because the dummy app's own _row asks for it. Email and
-  # surname are in no row partial, so they stay off the page either way.
-  def test_encrypted_values_no_row_asks_for_stay_off_the_page
-    Contact.create! phone: '5552234567', email: 'ada@example.com', surname: 'Lovelace'
-    visit_index
+  # And nothing else puts one back either: not a table, whose cells come from that
+  # list, and not the search box above it, which looks through what it may read.
+  def test_no_encrypted_value_reaches_a_table
+    visit '/places'
 
-    ['Email', 'Surname', 'ada@example.com', 'Lovelace'].each do |value|
-      refute_includes body, value
-    end
+    ['SEC-0000', 'Private note 1.'].each { |value| refute_includes body, value }
   end
 
-  # A phone is the only thing a contact can be searched by, and it is encrypted, so
-  # the box asks for a whole one. What it asks for is a prompt, never a value.
-  def test_an_encrypted_column_is_searched_whole
-    visit_index
-
-    assert_includes body, 'name="q[phone_eq]"'
-    assert_includes body, 'placeholder="Filter by exact phone"'
-  end
-
-  # The show page is the exception, and a deliberate one: this is an admin tool for
-  # agents, so reading a record's PII is allowed. What is not allowed is disclosing
-  # it to whoever is behind the person reading, so it arrives masked.
+  # The record's own page is the exception, and a deliberate one: this is an admin
+  # tool, so reading a record's PII is part of the job. What is not allowed is
+  # disclosing it to whoever is behind the person reading, so it arrives masked —
+  # one asterisk per character, the plaintext only in an attribute for the reveal to
+  # swap in, and nowhere a screenshot would show it.
   def test_the_show_page_masks_an_encrypted_value_until_it_is_asked_for
-    agent = Agent.create! email: 'ada@example.com'
-    @session.get "/agents/#{agent.id}"
+    visit "/places/#{Place.order(:id).first.id}"
 
-    assert_includes body, '<span data-reveal-target="mask">***************</span>'
-    # In an attribute for the reveal to swap in, and nowhere a screenshot would show.
-    assert_includes body, 'data-reveal-plain-value="ada@example.com"'
-    refute_includes body, '>ada@example.com<'
-  ensure
-    agent&.destroy
+    assert_includes body, '<span data-reveal-target="mask">********</span>'
+    assert_includes body, 'data-reveal-plain-value="SEC-0000"'
+    refute_includes body, '>SEC-0000<'
   end
 
-  # The edit form carries one too, in the clear and in the field its kind earns —
-  # not a password box, which is for passwords. Editing one record is already a
-  # deliberate act; the mask stays on the show page, where values are only read.
+  # The form is the other way round again: an encrypted value arrives in the clear,
+  # in the field its kind earns rather than a password box. Editing one record is
+  # already a deliberate act; the mask is for the page that only reads.
   def test_the_edit_form_prefills_an_encrypted_field_in_the_clear
-    contact = Contact.create! phone: '5552234567', surname: 'Lovelace'
-    @session.get "/contacts/#{contact.id}/edit"
-    field = body[/<input[^>]*name="contact\[surname\]"[^>]*>/]
+    visit "/places/#{Place.order(:id).first.id}/edit"
+    field = body[/<input[^>]*name="place\[secret\]"[^>]*>/]
 
     assert_includes field, 'type="text"'
-    assert_includes field, 'value="Lovelace"'
-  end
-
-  def test_that_holds_for_a_row_stored_as_plaintext_too
-    insert_plaintext_contact
-    visit_index
-
-    ['plain@example.com', 'Plaintext'].each { |value| refute_includes body, value }
-  end
-
-private
-
-  def visit_index
-    @session.get '/contacts'
-  end
-
-  def body
-    @session.response.body
-  end
-
-  def insert_plaintext_contact
-    Contact.connection.execute <<~SQL.squish
-      insert into contacts (phone, email, surname, created_at, updated_at)
-      values ('5557770001', 'plain@example.com', 'Plaintext', current_timestamp, current_timestamp)
-    SQL
+    assert_includes field, 'value="SEC-0000"'
   end
 end

@@ -18,7 +18,7 @@ module Recourse
         # The module is the namespace being drawn in, so a resource is declared
         # and its controller defined under the path Rails will route to.
         path = [current_module, name].compact.join '/'
-        record_declaration path, name
+        record_declaration path
         Controllers.define_missing path
       end
 
@@ -43,14 +43,21 @@ module Recourse
       @scope[:scope_level_resource]
     end
 
-    def record_declaration(path, name)
+    def record_declaration(path)
       # A nested resource is reached through its parent rather than the sidebar,
       # so it is recorded under the parent's path — that order is its tabs' order.
-      if parent_resource
-        Recourse.nest current_module, name
-      else
-        Recourse.declare path
-      end
+      return Recourse.declare path unless parent_resource
+
+      Recourse.nest parent_path, path
+    end
+
+    # The parent's own controller path: the module being drawn in, cut off after the
+    # parent resource's own segment, so a `namespace` between the two is left out
+    # rather than mistaken for the parent itself.
+    def parent_path
+      parts = current_module.to_s.split '/'
+
+      parts[0..parts.rindex(parent_resource.name)].join '/'
     end
 
     # Reached through a parent, a nested resource answers its collection actions —
