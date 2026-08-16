@@ -520,6 +520,22 @@ two is filed under the one a reader would look in first.
 - Never add these gems: `sorbet`, `sorbet-runtime`, `rbs`, `steep`, `tapioca`.
 - Convey intent through clear names, short methods, and tests instead.
 
+#### Rebase, never merge
+
+- A repo of ours contains no merge commits. `git log --merges` on any branch is
+  empty, and stays that way.
+- "Merge that branch into main" always means *rebase* it. `git rebase main` on
+  the branch, then fast-forward main onto it — never `git merge`, and never
+  `--no-ff`, which exists to make the merge commit this rule forbids.
+- Fix the conflicts a rebase raises. Only a genuinely hard one — where two
+  changes disagree about what the code should now do, rather than about how to
+  put two edits in one file — is worth stopping to ask about.
+- A merge commit that got in is regenerated away: rebase onto the commit before
+  it, check the resulting tree matches what was there (`git rev-parse
+  <branch>^{tree}` either side), and re-run the suite. Rewriting is only safe
+  while the commits are unpushed — check `git log origin/<branch>` first, and
+  rebase every other branch and worktree that was based on what moved.
+
 #### Branch and commit per prompt
 
 - Before starting a code change, if the current branch is `main`, create a
