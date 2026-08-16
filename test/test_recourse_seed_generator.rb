@@ -8,7 +8,12 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
   tests Recourse::Generators::SeedGenerator
   destination File.expand_path('../tmp/generated_seeds', __dir__)
 
-  def setup = prepare_destination
+  def setup
+    prepare_destination
+    # One file is already there, to be left alone rather than offered for overwriting.
+    FileUtils.mkdir_p File.join(destination_root, 'db/seeds')
+    File.write File.join(destination_root, 'db/seeds/settings.rb'), "# ours\n"
+  end
 
   # `rails generate recourse:seed` has to reach it by that name, which is the file's
   # path and the class's namespace agreeing rather than anything declared.
@@ -35,10 +40,17 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
     assert_file('db/seeds/messages.rb') { |messages| assert_wrapped_contents messages }
     assert_file 'db/seeds/counties.rb', /state: State\.offset\(\d+\)\.first/
     assert_shaped_strings
-    assert_no_file 'db/seeds/placeholders.rb'
+    assert_skipped_files
   end
 
 private
+
+  # Neither file is written: one was already there and is the host's to keep, and
+  # the other names a resource with no model behind it.
+  def assert_skipped_files
+    assert_file 'db/seeds/settings.rb', "# ours\n"
+    assert_no_file 'db/seeds/placeholders.rb'
+  end
 
   # Every shape fits its own gates: a PIN is its validator's six characters, a
   # state's code and FIPS are their columns' two, and a string named like an id —
