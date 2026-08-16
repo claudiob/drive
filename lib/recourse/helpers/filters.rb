@@ -2,6 +2,8 @@ module Recourse
   module Helpers
     # The menus beside a search box, one per foreign key a table can be narrowed by.
     module Filters
+    private
+
       # The filters this page draws, as the markup each one is. A declared filter
       # that draws nothing falls out here — a foreign key whose label is typed
       # rather than picked — so what is left is what a form would hold, which is
@@ -34,8 +36,6 @@ module Recourse
         filter_combobox predicate, label || reference_title(column, association),
                         (scope || association.klass).all
       end
-
-    private
 
       # A menu of the words the column admits, which are the words the form's own menu
       # offers and the badge on a show page reads. Headed by the attribute rather than

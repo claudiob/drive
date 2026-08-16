@@ -8,6 +8,8 @@ module Recourse
       # so the two cannot drift apart — and its order is the order a row opens with.
       ICONS = { show: :view, edit: :edit }.freeze
 
+    private
+
       # Which of those two this table draws a column for. Read into a local by the
       # table, so the routes are asked once per render rather than twice for the
       # heading and twice more for every row.
@@ -40,8 +42,6 @@ module Recourse
 
         turbo_link_to icon_tag(ICONS[action]), path, aria: { label: t("recourse.#{action}") }
       end
-
-    private
 
       # Named by controller rather than by action alone: on a nested page the two
       # differ, and a bare `action:` would look for the member route the nesting

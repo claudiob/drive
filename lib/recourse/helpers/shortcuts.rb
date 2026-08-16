@@ -2,6 +2,8 @@ module Recourse
   module Helpers
     # The letter each sidebar link answers to, and where in its title that letter is.
     module Shortcuts
+    private
+
       # The first letter of the title nothing above it has claimed, so `Contacts`
       # answers to C and `Counties`, declared after it, answers to O. Nil where a
       # title has no letter left to give, which leaves that entry without a shortcut.

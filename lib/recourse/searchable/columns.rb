@@ -17,6 +17,29 @@ module Recourse
           Recourse.hidden_columns(self)
       end
 
+      # The attributes Active Record Encryption holds, as column names.
+      def recourse_encrypted_names
+        Array(encrypted_attributes).map(&:to_s)
+      end
+
+      # Foreign keys a search reaches through rather than filters by: the ones whose
+      # other model is too long to list, since a menu is only a control while every
+      # row fits in one. The label has to be a word for the search to match, too.
+      def recourse_searchable_associations
+        reflect_on_all_associations(:belongs_to).select do |association|
+          klass = association.klass
+          !klass.recourse_listable? && klass.recourse_searchable_label?
+        end
+      end
+
+      # True where the label is a column a `cont` can match. Reaching through a
+      # foreign key to compare an id or a date against typed text says nothing.
+      def recourse_searchable_label?
+        SEARCHABLE_TYPES.include? type_for_attribute(recourse_label.to_s).type
+      end
+
+    private
+
       # The same columns where they are encrypted, which a search matches whole
       # rather than by containment: a LIKE reads ciphertext and matches nothing,
       # while a deterministic value encrypts to the same bytes every time, so `=`
@@ -40,27 +63,6 @@ module Recourse
           # wrapping a subtype is a collection, not a word, so it stays out.
           SEARCHABLE_TYPES.include?(type.type) && !type.respond_to?(:subtype)
         end
-      end
-
-      # The attributes Active Record Encryption holds, as column names.
-      def recourse_encrypted_names
-        Array(encrypted_attributes).map(&:to_s)
-      end
-
-      # Foreign keys a search reaches through rather than filters by: the ones whose
-      # other model is too long to list, since a menu is only a control while every
-      # row fits in one. The label has to be a word for the search to match, too.
-      def recourse_searchable_associations
-        reflect_on_all_associations(:belongs_to).select do |association|
-          klass = association.klass
-          !klass.recourse_listable? && klass.recourse_searchable_label?
-        end
-      end
-
-      # True where the label is a column a `cont` can match. Reaching through a
-      # foreign key to compare an id or a date against typed text says nothing.
-      def recourse_searchable_label?
-        SEARCHABLE_TYPES.include? type_for_attribute(recourse_label.to_s).type
       end
 
       # Those foreign keys as Ransack names them: `zip_code`, for the ZIP that

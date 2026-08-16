@@ -2,6 +2,8 @@ module Recourse
   module Helpers
     # Chooses the form field a column deserves, and labels it.
     module Fields
+    private
+
       # One labelled field in the form's grid. `label:` overrides the heading and
       # `type:` overrides the input the column would otherwise have chosen.
       def field(name, **options)
@@ -35,8 +37,6 @@ module Recourse
 
         kind_field form, column, **options
       end
-
-    private
 
       def encrypted_column?(column)
         resource_model.recourse_encrypted_names.include? column

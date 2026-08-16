@@ -3,6 +3,8 @@ module Recourse
     # The pictures a page draws: an icon on its own, and an icon standing in for a
     # heading where a column is too narrow to carry the word.
     module Pictures
+    private
+
       # One icon, named by the concept it means rather than by what this set calls it.
       # Whatever else the caller hands over — a role, a tooltip's data — rides along.
       def icon_tag(concept, label: nil, **)
@@ -16,8 +18,6 @@ module Recourse
       def icon_heading(concept, title)
         icon_tag concept, label: title, role: :img, data: tooltip_on_top(title)
       end
-
-    private
 
       def tooltip_on_top(title)
         # `bs_title` is what Bootstrap's tooltip reads, and the controller is what

@@ -14,6 +14,17 @@ module Recourse
         "#{fields.join '_or_'}_#{predicate}"
       end
 
+      # What the search box says while it is empty, naming what it looks through.
+      def search_prompt(except: nil)
+        fields, predicate = recourse_search_terms(except:)
+        return if fields.empty?
+
+        list = recourse_search_names(except:).join ' or '
+        I18n.t "recourse.searched_#{predicate}", list: list
+      end
+
+    private
+
       # What a search box looks through, and how it matches: the plaintext columns
       # and the labels behind foreign keys — less the one `except:` names — on
       # containment; or, for a model that keeps nothing in plaintext worth
@@ -23,15 +34,6 @@ module Recourse
         return [plain, 'cont'] if plain.any?
 
         [recourse_encrypted_searchable_columns, 'eq']
-      end
-
-      # What the search box says while it is empty, naming what it looks through.
-      def search_prompt(except: nil)
-        fields, predicate = recourse_search_terms(except:)
-        return if fields.empty?
-
-        list = recourse_search_names(except:).join ' or '
-        I18n.t "recourse.searched_#{predicate}", list: list
       end
 
       # Those same terms as words, lower case but for the acronyms among them.

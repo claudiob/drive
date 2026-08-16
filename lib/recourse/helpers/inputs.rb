@@ -2,6 +2,8 @@ module Recourse
   module Helpers
     # The control an attribute is typed into, chosen by what the attribute holds.
     module Inputs
+    private
+
       # A field for a column whose kind is what decides it, the fallback being a text
       # box for anything that never said what it holds.
       def kind_field(form, column, **)
@@ -19,8 +21,6 @@ module Recourse
         else form.text_field(column, **)
         end
       end
-
-    private
 
       # `step` is what limits a field to whole numbers, and what admits the decimals a
       # column keeps: two of them for a `scale: 2`, any number at all for a float,

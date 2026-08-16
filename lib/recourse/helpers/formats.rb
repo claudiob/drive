@@ -6,6 +6,8 @@ module Recourse
       # Anything around it — words, a second address — reads as text instead.
       WEB_URL = %r{\Ahttps?://\S+\z}
 
+    private
+
       # What the record says for one column, formatted by what the column holds.
       def formatted_value(column)
         association = belongs_to_association column
@@ -24,8 +26,6 @@ module Recourse
 
         formatted_text kind, value, &
       end
-
-    private
 
       def formatted_number(kind, column, value)
         case kind

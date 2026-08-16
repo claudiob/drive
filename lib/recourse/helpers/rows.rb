@@ -3,6 +3,8 @@ module Recourse
     # The row partial a table renders: the host's for this resource where one is
     # defined — every column its own — and the gem's generic row otherwise.
     module Rows
+    private
+
       # What the cache key reads so the table notices its row partial. Rails
       # resolves `render 'row'` per request, but the fragment's own digest never
       # follows it there — so a host `_row` added or edited after a fragment was

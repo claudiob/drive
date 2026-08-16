@@ -2,6 +2,17 @@ module Recourse
   module Helpers
     # Helpers for the cells of a table and the fields of a form.
     module Cells
+      # One cell: a heading in the header row, the block's output in every other.
+      # Public because a row partial of a host's own is written out of these, and
+      # is rendered once for the header row and once for each row after it.
+      def column(header:, **, &)
+        return tag.th(header, scope: :col, **) if @recourse_headers
+
+        tag.td(capture(&), 'data-cell': header, **)
+      end
+
+    private
+
       # Columns the table shows: every counter first, since a count is a link into
       # the record's children and belongs beside the action columns that open it;
       # then every attribute that is not encrypted and not read-only, less the
@@ -64,13 +75,6 @@ module Recourse
         # The same ladder the show page comes down, with the search's own marking
         # handed in: a table is the only page a search ever reached.
         formatted_attribute(column, value) { |text| search_highlight text, column }
-      end
-
-      # One cell: a heading in the header row, the block's output in every other.
-      def column(header:, **, &)
-        return tag.th(header, scope: :col, **) if @recourse_headers
-
-        tag.td(capture(&), 'data-cell': header, **)
       end
     end
   end

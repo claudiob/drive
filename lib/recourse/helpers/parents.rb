@@ -3,6 +3,8 @@ module Recourse
     # What a page knows about the records either side of it: the one a nested route
     # names above it, and the ones a count or a tab reaches below.
     module Parents
+    private
+
       # The record a nested route names above this page, or nil at the top level.
       def resource_parent
         controller_assign 'recourse_parent'
@@ -22,8 +24,6 @@ module Recourse
         url_for controller: "/#{nested}", action: :index,
                 "#{path.split('/').last.singularize}_id": record.id
       end
-
-    private
 
       # The crumbs a nested page sits under: the parent's own index, then the record
       # the path names — `Counties`, then `Alameda County`, before `ZIPs`. The

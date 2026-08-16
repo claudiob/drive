@@ -2,6 +2,8 @@ module Recourse
   module Helpers
     # The menu a foreign key offers when its label is too long to be typed.
     module Comboboxes
+    private
+
       # A combobox of labels. The query fetches the two columns the menu shows and
       # nothing else, and the errors are its own work: `field_error_proc` only ever
       # sees the tags a form builder drew, and this is a partial.
@@ -25,8 +27,6 @@ module Recourse
           required: required?(resource_model, column),
         }
       end
-
-    private
 
       def combobox_options(klass, label)
         klass.select(:id, label).order label

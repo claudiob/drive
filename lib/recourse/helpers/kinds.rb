@@ -6,6 +6,8 @@ module Recourse
       # Numbers, which differ by what they are of rather than by how they are stored.
       NUMERIC_KINDS = %i[integer decimal float phone price percentage].freeze
 
+    private
+
       # Whether a kind is one of those, which is what both pages branch on first.
       def numeric_kind?(kind) = NUMERIC_KINDS.include?(kind)
 

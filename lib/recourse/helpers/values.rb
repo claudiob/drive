@@ -2,6 +2,8 @@ module Recourse
   module Helpers
     # What one record reads as, laid out where its form's fields would be.
     module Values
+    private
+
       # One labelled value in the show page's grid: the heading a form would give the
       # column, and under it what the record says, formatted the way the table's cell
       # for the same column is. `label:` overrides the heading.
@@ -22,8 +24,6 @@ module Recourse
 
         value.to_s.empty? ? t('recourse.blank') : value
       end
-
-    private
 
       # Nothing to disclose is nothing to mask: an encrypted column the record has no
       # value for reads as the dash, rather than as one asterisk hiding one.

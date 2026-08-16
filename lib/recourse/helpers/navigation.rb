@@ -2,6 +2,8 @@ module Recourse
   module Helpers
     # Helpers for the navbar and the sidebar.
     module Navigation
+    private
+
       # Trail to the current page as [resource, title, path] triples, opening with
       # the parent a nested page sits under; a nil path is not a link.
       def resource_breadcrumbs
@@ -79,8 +81,6 @@ module Recourse
 
         path == here || here.start_with?("#{path}/")
       end
-
-    private
 
       # Only a page beneath the index names itself, and names what it is showing.
       def breadcrumb_leaf

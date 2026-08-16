@@ -15,7 +15,7 @@ module Recourse
 
     # The module a namespaced controller belongs in, made where the host has none of
     # its own: `namespace :admin` draws routes whether or not an `Admin` exists.
-    def self.namespace(name)
+    private_class_method def self.namespace(name)
       name.split('::').reduce Object do |scope, part|
         next scope.const_get part, false if scope.const_defined? part, false
 

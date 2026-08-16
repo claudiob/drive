@@ -48,20 +48,6 @@ module Recourse
       enum_filter_fields.merge reference_filter_fields
     end
 
-    # One per enum: a dozen words a column admits are a menu whatever else is on the
-    # page, and `_in` is what lets a request tick more than one of them.
-    def enum_filter_fields
-      defined_enums.keys.index_with({}).transform_keys { |name| "#{name}_in" }
-    end
-
-    # One per belongs_to the search box does not reach through instead.
-    def reference_filter_fields
-      searched = recourse_searchable_associations
-      reflect_on_all_associations(:belongs_to).filter_map do |association|
-        ["#{association.foreign_key}_in", {}] unless searched.include? association
-      end.to_h
-    end
-
     # True where a foreign key pointing here is typed rather than picked, which a
     # form and the controller reading its parameters back have to agree on: the label
     # is bounded, or the table is too long to list.
@@ -74,6 +60,22 @@ module Recourse
       return @recourse_listable unless @recourse_listable.nil?
 
       @recourse_listable = limit(MENU_LIMIT + 1).count <= MENU_LIMIT
+    end
+
+  private
+
+    # One per enum: a dozen words a column admits are a menu whatever else is on the
+    # page, and `_in` is what lets a request tick more than one of them.
+    def enum_filter_fields
+      defined_enums.keys.index_with({}).transform_keys { |name| "#{name}_in" }
+    end
+
+    # One per belongs_to the search box does not reach through instead.
+    def reference_filter_fields
+      searched = recourse_searchable_associations
+      reflect_on_all_associations(:belongs_to).filter_map do |association|
+        ["#{association.foreign_key}_in", {}] unless searched.include? association
+      end.to_h
     end
   end
 end

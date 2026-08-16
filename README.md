@@ -1172,28 +1172,47 @@ what is cached from correct into cheap.
 
 ## Ruby API
 
-- `Recourse::VERSION`
-- `Recourse.declared` — the resources drawn, in `routes.rb` order
-- `Recourse.declare(name)` — records one, ignoring a repeated draw
-- `Recourse.model(name)` — the model a resource is named after, or a
-  `Recourse::Error` naming the routes line to fix
+Everything below is what a host app may call, and the list is drawn from what
+host apps do call. Anything else the gem defines is private — not because Ruby
+will stop you (a template reaches a private helper the same as a public one),
+but because it is the gem's own working and moves without notice.
+
+Drawn in `config/routes.rb`:
+
+- `recourses :contacts` — the DSL, taking everything `resources` takes,
+  including `only:`, `param:`, `constraints:`, several names at once, and a
+  block that nests
+
+Written in an initializer:
+
 - `Recourse.color` / `Recourse.color=` — the Bootstrap colour family the pages
   call primary, one of `Recourse::COLORS`, or nil for Bootstrap's own blue
 - `Recourse::COLORS` — `%i[blue gray orange purple pink brown]`
-- `Recourse.icon(name)` — what that model's `recourse_icon` is called in
-  Bootstrap Icons
-- `Recourse.model_icon(model)` — the same for a model already in hand
-- `Recourse.editable_columns(model)` — what a form offers and `create` permits
-- `Recourse::Search` — the Ransack search behind an index; `query` is the
-  `Ransack::Search` the views read as `@q`, `scope` is the relation `index`
-  paginates
+
+Declared on a model, each overriding a default:
+
+- `recourse_label` — the column a record is named by
+- `recourse_hidden` — a column, or a list of them, no screen shows
+- `recourse_order` — how an index sorts before anyone clicks a heading
+- `recourse_timestamps` — which of `created_at` and `updated_at` a table ends with
+
+Subclassed or reopened in `app/controllers`:
+
+- `RecoursesController` — what every generated controller inherits, and what to
+  reopen to add a `before_action` of your own
+- `Recourse::BaseController` — what that inherits, holding all seven actions
+
+Called from a template of your own:
+
+- `column(header:, **, &)` — one cell, drawn as a heading in the header row and
+  as the block's output in every other
+- `sort_header(column, title = nil)` — a heading that sorts by its column
+- `search_highlight(value, column)` — a value with the searched text marked
+
+And what a failure is:
+
 - `Recourse::Error` — the class every failure the gem reports will be, so a host
   can rescue one type
-- `Recourse::BaseController` — every action and filter the screens are served
-  by, and what a host's own `RecoursesController` inherits to add behavior of
-  its own
-- `Recourse::Routes`, `Recourse::Controllers`, `Recourse::Engine` — the wiring
-  behind `recourses`
 
 ## Development
 

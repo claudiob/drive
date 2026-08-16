@@ -13,6 +13,8 @@ module Recourse
       # First character a bracket class offers, past the bracket and any negation.
       CLASS_SAMPLE = /[^\[^]/
 
+    private
+
       # What the pattern accepts, so a field can name the shape it wants instead of
       # only reporting that what was typed is wrong.
       def pattern_example(pattern)
@@ -20,8 +22,6 @@ module Recourse
 
         tokens.map { |token, count| pattern_sample(token) * (count || 1).to_i }.join
       end
-
-    private
 
       def pattern_sample(token)
         case token

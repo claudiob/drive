@@ -14,6 +14,8 @@ module Recourse
         controller: 'phone', action: 'keydown->phone#down input->phone#input',
       }.freeze
 
+    private
+
       # Browser-side constraints, every one read from the validators of `model` —
       # which is the page's model unless a field asks about another one's attribute.
       def field_html(column, type = nil, model = resource_model)
@@ -29,8 +31,6 @@ module Recourse
           data: (PHONE_CONTROLLER if key == 'phone'),
         }.compact
       end
-
-    private
 
       # The canonical sample where the field has one, so the title agrees with the
       # placeholder; otherwise a shape read off the pattern itself.

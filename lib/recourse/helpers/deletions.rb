@@ -10,6 +10,8 @@ module Recourse
       # `has_many`, a `:restrict` — is left unsaid rather than guessed at.
       NULLIFIED = %i[nullify].freeze
 
+    private
+
       # Deletes the record on the page, or nothing at all where no action is routed
       # to delete it with — the same two guards the edit link answers to.
       def destroy_resource_button(record)
@@ -32,8 +34,6 @@ module Recourse
 
         [*lines, *dependent_lines(record), nil, t('recourse.deletion.undone')].join "\n"
       end
-
-    private
 
       def destroy_resource_path(record)
         return unless routed_action? 'destroy'

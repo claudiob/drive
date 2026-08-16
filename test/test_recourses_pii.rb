@@ -12,8 +12,11 @@ class TestRecoursesPii < Minitest::Test
 
   # The column list is the single place PII is dropped, and it asks the model
   # rather than a record — so no row's contents can put an encrypted column back.
+  # Asked through a template, which is the only thing that asks it: the helper is
+  # the gem's own and answers to a view rather than to a caller outside one.
   def test_the_generic_columns_leave_out_every_encrypted_attribute
-    columns = Admin::ContactsController.new.view_context.resource_columns
+    view = Admin::ContactsController.new.view_context
+    columns = view.render(inline: '<%= resource_columns.join " " %>').split
 
     assert_includes columns, 'name'
     %w[phone email surname].each { |column| refute_includes columns, column }

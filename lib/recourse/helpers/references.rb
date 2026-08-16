@@ -2,6 +2,8 @@ module Recourse
   module Helpers
     # Fields for a foreign key: a value to type, or a list to pick from.
     module References
+    private
+
       # The belongs_to a column is the foreign key of, or nil when it is not one.
       # Every key at once and once per render, rather than a scan of the model's
       # associations for each cell of each row that holds one.
@@ -36,8 +38,6 @@ module Recourse
 
         association.klass.recourse_reference_name
       end
-
-    private
 
       def typed_reference?(association)
         association&.klass&.recourse_typed_reference?

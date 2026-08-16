@@ -3,6 +3,8 @@ module Recourse
     # The tabs on the card a record's pages share: a look, a change, and each
     # nested index under the record — counted where the record keeps a count.
     module Cards
+    private
+
       # The pages of the record the card is about, as `[label, path, current]` — a
       # look first, a change second, then one tab per nested index: `8 ZIPs` where
       # a counter cache answers, the bare `Settings` where none does. On a nested
@@ -14,8 +16,6 @@ module Recourse
 
         actions + nested_tabs(record, path)
       end
-
-    private
 
       # The resource the card belongs to: the parent's, on a page nested under it.
       def card_path

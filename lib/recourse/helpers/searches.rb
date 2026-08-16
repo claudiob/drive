@@ -2,6 +2,19 @@ module Recourse
   module Helpers
     # The form above a table: the box, its filters, and the marks a match earns.
     module Searches
+      # A value with the searched text marked, so a row says why it is in the table.
+      # Only what the search looked through is marked: a word marked in a column
+      # nobody searched would claim a match that never happened. Public because a
+      # row partial of a host's own draws its cells itself and marks them the same.
+      def search_highlight(value, column)
+        term = query_params[resource_search_field]
+        return value if term.blank? || !searched_column?(column)
+
+        highlight value.to_s, term
+      end
+
+    private
+
       # The form above the table, or nothing at all where the model offers neither
       # of the two things it holds: a box to type in, and menus to narrow by. Either
       # earns it — a table with nothing worth searching may still be worth filtering,
@@ -21,18 +34,6 @@ module Recourse
       def resource_search_field
         resource_model.search_field except: resource_parent_association
       end
-
-      # A value with the searched text marked, so a row says why it is in the table.
-      # Only what the search looked through is marked: a word marked in a column
-      # nobody searched would claim a match that never happened.
-      def search_highlight(value, column)
-        term = query_params[resource_search_field]
-        return value if term.blank? || !searched_column?(column)
-
-        highlight value.to_s, term
-      end
-
-    private
 
       def resource_search_prompt
         resource_model.search_prompt except: resource_parent_association
