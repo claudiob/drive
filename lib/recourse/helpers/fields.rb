@@ -27,12 +27,6 @@ module Recourse
         options = { class: 'form-control', size: nil }.merge field_html(column, type)
 
         return form.text_field column, **options, type: type if type
-        # Only a password gets a password field, and it renders empty on purpose:
-        # a stored password is written, never read back. An encrypted column is
-        # not a password — it follows its own kind, value in the clear, since
-        # editing one record is already a deliberate act. The mask stays on the
-        # show page, where values are read rather than changed.
-        return form.password_field column, **options if column == 'password'
         return form.email_field column, **options if column == 'email'
 
         kind_field form, column, **options

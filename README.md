@@ -474,9 +474,9 @@ same one:
   come last when it does, after whatever the record is actually about.
 - A form offers, and `create` permits, `Recourse.editable_columns` — every
   column except `id`, `created_at`, `updated_at` and any counter cache. Encrypted
-  columns are offered, as password fields carrying the record's own value — masked
-  by the browser, and there so that saving a change to one column does not demand
-  every encrypted one be retyped.
+  columns are offered too, carrying the record's own value in the field its kind
+  earns — so saving a change to one column does not demand every encrypted one be
+  retyped, and so a value can be read before it is changed.
 
 The show page reads from the second of those two, the form's list, which is why an
 encrypted column reaches it — masked — while no index table draws one at all. A
@@ -669,7 +669,7 @@ case.
 | any other foreign key | a searchable combobox of every record, by label |
 | a counter cache | none: Rails keeps it, so no form offers it and `create` does not permit it |
 | `phone` | telephone field, typing its own separators as it goes |
-| an encrypted attribute | password field, prefilled |
+| an encrypted attribute | the field its kind earns, prefilled — ciphertext is not a kind |
 | `email` | email field |
 | a `boolean` | checkbox, under its label like every other control |
 | an `enum` | a combobox of the words it admits, one at a time |
@@ -729,8 +729,8 @@ decision said twice, once to the database and once to the page. `test/dummy` doe
 all of this, for `:price` and `:percentage` both.
 
 A phone is a phone before it is ciphertext: an encrypted `phone` gets the
-telephone field rather than the password one, since the field types its own
-separators and a password box would hide the fact. The show page still masks it.
+telephone field, which types its own separators as you go. Encryption settles what
+the database keeps, not what a form may show. The show page still masks it.
 
 What the browser then enforces is read from the validators, never from the
 schema: `maxlength` and `minlength` from a length validator, `pattern` from a

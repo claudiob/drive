@@ -440,9 +440,10 @@ before writing or editing any layout, view or partial.
 - An encrypted attribute's field carries the record's own value in the clear, in
   the field its kind earns — a text box for a surname, an email input for an
   encrypted email. Editing one record is already a deliberate act, so the mask
-  stays on the show page, where values are only read. A password field is for a
-  column named `password`, and it renders empty on purpose: a stored password is
-  written, never read back.
+  stays on the show page, where values are only read. No column name earns a
+  password box: a value nobody can read is a value nobody can change, so a masked
+  field would either wipe the column on save or need a rule of its own about what
+  blank means.
 - A required field shows the shape it expects instead: `555-555-5555` for a
   phone, `michael@example.com` for an email. Every other required field has no
   placeholder, since there is nothing useful to show.
@@ -454,12 +455,11 @@ before writing or editing any layout, view or partial.
   fields without rewriting `form_with` or the submit button. It renders one
   `field` per editable column; a host writes the calls it wants by hand.
 - `field` takes the column name and two options: `label:` for the heading and
-  `type:` for the input. `field :pin, type: :password` beats every rule below —
-  an explicit type is an instruction, and it is how a secret not named
-  `password` earns the box that hides it.
+  `type:` for the input, and an explicit type beats every rule below. It is the
+  gem's own, not a host's: private for now, and not part of what 4.0 promises.
 - The field type otherwise follows the column, and the rules are in this order: a
-  foreign key is a combobox; a column named `password` is a password field; one
-  named `email` gets an email input; a `date` or `datetime` attribute gets its
+  foreign key is a combobox; a column named `email` gets an email input; a
+  `date` or `datetime` attribute gets its
   own field, the second as `datetime-local`; a `text` attribute gets a textarea
   of a single row — the kind says the value may grow long, not that it starts
   big; everything else follows its kind, encrypted or not.

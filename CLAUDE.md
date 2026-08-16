@@ -209,9 +209,10 @@ two is filed under the one a reader would look in first.
   the plaintext in. A screenshot then discloses nothing nobody asked to see, and
   reading one value is a deliberate click. Markup in `STYLE.md`.
 - The *edit* form shows an encrypted value in the clear, in the field its kind
-  earns. Editing one record is already a deliberate act, and a password box is
-  for passwords — a column named `password`, or a `field ..., type: :password`
-  the host writes. Asked and settled — do not mask form fields.
+  earns. Editing one record is already a deliberate act, and a value nobody can
+  read is a value nobody can change: a masked box would either wipe the column on
+  save or need a `leave blank to keep it` rule of its own. Asked and settled — do
+  not mask form fields, and no column name earns a password box.
 
 #### Phone numbers
 
