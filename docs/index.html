@@ -145,7 +145,7 @@
     box-shadow: inset 0 0 0 1px var(--green-dim), 0 0 9px rgba(53, 208, 127, 0.75);
   }
 
-  /* the grid: fifteen slots, one per thing the recipe hands over */
+  /* the grid: sixteen slots, one per thing the recipe hands over */
   .grid {
     display: flex;
     gap: 3px;
@@ -287,7 +287,7 @@
   .hero .screen { max-width: 32rem; }
   .install { font-size: 0.92rem; max-width: 32rem; }
 
-  /* =============== the list of fifteen =============== */
+  /* =============== the list of sixteen =============== */
   ol.needs {
     list-style: none;
     margin-top: 1.8rem;
@@ -430,7 +430,7 @@
       <span class='lamp'></span><span class='lamp'></span><span class='lamp'></span><span class='lamp'></span><span class='lamp'></span>
     </div>
     <div class='grid'>
-      <span class='slot' data-slot='01'>01</span><span class='slot' data-slot='02'>02</span><span class='slot' data-slot='03'>03</span><span class='slot' data-slot='04'>04</span><span class='slot' data-slot='05'>05</span><span class='slot' data-slot='06'>06</span><span class='slot' data-slot='07'>07</span><span class='slot' data-slot='08'>08</span><span class='slot' data-slot='09'>09</span><span class='slot' data-slot='10'>10</span><span class='slot' data-slot='11'>11</span><span class='slot' data-slot='12'>12</span><span class='slot' data-slot='13'>13</span><span class='slot' data-slot='14'>14</span><span class='slot' data-slot='15'>15</span>
+      <span class='slot' data-slot='01'>01</span><span class='slot' data-slot='02'>02</span><span class='slot' data-slot='03'>03</span><span class='slot' data-slot='04'>04</span><span class='slot' data-slot='05'>05</span><span class='slot' data-slot='06'>06</span><span class='slot' data-slot='07'>07</span><span class='slot' data-slot='08'>08</span><span class='slot' data-slot='09'>09</span><span class='slot' data-slot='10'>10</span><span class='slot' data-slot='11'>11</span><span class='slot' data-slot='12'>12</span><span class='slot' data-slot='13'>13</span><span class='slot' data-slot='14'>14</span><span class='slot' data-slot='15'>15</span><span class='slot' data-slot='16'>16</span>
     </div>
     <div class='chequer'></div>
   </div>
@@ -518,10 +518,13 @@
         gives them away.</span><span class='from'>step 7</span></li>
       <li><span class='no'>14</span><span>No caching. Every request rebuilds the whole table,
         and adding it later is the job everyone puts off.</span><span class='from'>step 1</span></li>
-      <li><span class='no'>15</span><span>And no icons.</span><span class='from'>step 1</span></li>
+      <li><span class='no'>15</span><span>Nothing Turbo-enabled: change a record and the table it
+        came from sits there, stale, until somebody reloads.</span><span class='from'>step 1</span></li>
+      <li><span class='no'>16</span><span>No breadcrumbs: a few levels down a nested route, nothing
+        says where you are or leads back up.</span><span class='from'>step 6</span></li>
     </ol>
 
-    <p class='note'>Fifteen, and with them this is usable. The tag on each line is the step below
+    <p class='note'>Sixteen, and with them this is usable. The tag on each line is the step below
     that gets you it.</p>
   </div>
 </section>
@@ -536,7 +539,7 @@
     <code>resources :posts</code> and Rails already knows which model, view, helper and controller
     to expect. So once the model exists, why ask you to write the view, the helper and the
     controller — if what you want is the conventional one?</p>
-    <p>If you agree with the fifteen above about what conventional means, that is the whole of it.
+    <p>If you agree with the sixteen above about what conventional means, that is the whole of it.
     Here is the recipe.</p>
 
     <div class='step'>
@@ -629,7 +632,7 @@
         <div class='screen'>
           <pre><code><span class='c-dollar'>$</span> rails g recourse:counters &amp;&amp; rails db:migrate</code></pre>
         </div>
-        <div class='gives'>Gives you <b data-need='12'>12</b></div>
+        <div class='gives'>Gives you <b data-need='12'>12</b> <b data-need='16'>16</b></div>
       </div>
     </div>
 
