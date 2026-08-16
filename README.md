@@ -16,6 +16,8 @@ and defining your own takes precedence over it.
 - Rails 8.1 or newer — `actionpack`, `activerecord` and `railties`.
 - `pagy` 43.6 or newer, which paginates every index.
 - `ransack` 4.4 or newer, which sorts, searches and filters every index.
+- `turbo-rails`, which every frame, every morph and every warning before a delete
+  is drawn through.
 - `unicon`, which names the icon a model picks in each design system.
 
 ## How to install
@@ -846,16 +848,15 @@ class_methods do
 end
 ```
 
-What the host needs, all standard turbo-rails: the gem in the bundle, Action
+What the host needs beyond turbo-rails itself, which is a dependency: Action
 Cable mounted with a real adapter in production (and
 `config.action_cable.allowed_request_origins` set), and an Active Job backend —
 refreshes are broadcast through `broadcast_refresh_later_to`, so a job adapter
-that is down means pages that quietly stop refreshing. The gem then serves
-turbo-rails' own Turbo bundle instead of the CDN's, so the cable element and
-the signed streams come from the same gem version.
+that is down means pages that quietly stop refreshing. Every page is served
+turbo-rails' own Turbo bundle, so the cable element and the signed streams come
+from the same gem version.
 
-Without turbo-rails, none of this exists: no subscription, no broadcasts, and
-the pages behave exactly as before. Broadcasts attach the first time a model's
+Broadcasts attach the first time a model's
 recourse is served in a process; a process that changes records without ever
 serving one — a job runner, a console — does not broadcast unless the model
 declares `broadcasts_refreshes_to` itself.

@@ -24,13 +24,12 @@ module Recourse
     # a file is not what a log is about, and placement says so without the gem
     # touching a host's logging.
     initializer 'recourse.assets' do |app|
-      if defined? Turbo::Engine
-        # The host's own turbo-rails bundle: the same Turbo plus the cable element,
-        # in the version that gem signs its streams for.
-        app.middleware.insert_before Rails::Rack::Logger, Rack::Static,
-                                     urls: { '/recourse/turbo.min.js' => 'turbo.min.js' },
-                                     root: Turbo::Engine.root.join('app/assets/javascripts').to_s
-      end
+      # turbo-rails' own bundle: the same Turbo plus the cable element, in the
+      # version that gem signs its streams for. A dependency rather than something
+      # to find, since a page here cannot do without it.
+      app.middleware.insert_before Rails::Rack::Logger, Rack::Static,
+                                   urls: { '/recourse/turbo.min.js' => 'turbo.min.js' },
+                                   root: Turbo::Engine.root.join('app/assets/javascripts').to_s
       app.middleware.insert_before Rails::Rack::Logger, Rack::Static,
                                    urls: STATIC_URLS, root: Engine.root.join('vendor'),
                                    cascade: true
