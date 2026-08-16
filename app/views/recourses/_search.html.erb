@@ -10,13 +10,15 @@
       this field to write the new sort into. -%>
   <%= hidden_field_tag 'q[s]', sort %>
 
-  <% filters.each do |predicate, options| -%>
-    <%= filter_field predicate, **options %>
-  <% end -%>
+  <%= safe_join filters %>
 
-  <div class='recourse-search-box form-control form-control-sm form-adorn d-flex'>
-    <span class='form-adorn-icon'><i class='bi bi-search'></i></span>
-    <%= form.search_field field, class: 'form-ghost', placeholder: prompt, aria: { label: prompt },
-                                 data: { action: 'input->search#submit', search_target: 'field' } %>
-  </div>
+  <%# Only where there is something to search: a model may have nothing worth
+      typing at and still be worth narrowing, and the filters above are the form. -%>
+  <% if field.present? -%>
+    <div class='recourse-search-box form-control form-control-sm form-adorn d-flex'>
+      <span class='form-adorn-icon'><i class='bi bi-search'></i></span>
+      <%= form.search_field field, class: 'form-ghost', placeholder: prompt, aria: { label: prompt },
+                                   data: { action: 'input->search#submit', search_target: 'field' } %>
+    </div>
+  <% end -%>
 <% end %>

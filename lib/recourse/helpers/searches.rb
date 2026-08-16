@@ -2,15 +2,18 @@ module Recourse
   module Helpers
     # The form above a table: the box, its filters, and the marks a match earns.
     module Searches
-      # The form that searches and filters the table, or nothing at all where the
-      # model offers nothing left to search — filters alone do not earn it.
+      # The form above the table, or nothing at all where the model offers neither
+      # of the two things it holds: a box to type in, and menus to narrow by. Either
+      # earns it — a table with nothing worth searching may still be worth filtering,
+      # and a model whose only columns are an enum and a foreign key is the case.
       def search_form
         field = resource_search_field
-        return if field.blank?
+        filters = resource_filter_fields
+        return if field.blank? && filters.empty?
 
         render 'recourses/search', query: resource_search, url: url_for(action: :index),
                                    field: field, prompt: resource_search_prompt,
-                                   filters: resource_filters, sort: sort_param
+                                   filters: filters, sort: sort_param
       end
 
       # The model's search field, less the reach-through a nested route already

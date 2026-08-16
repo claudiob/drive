@@ -1,12 +1,10 @@
 module Recourse
   module Generators
     # What a seed file is written from, read off a model whose table is migrated —
-    # the source `rails generate recourse:seed` runs against. `rails generate
-    # recourse` has no table yet and answers the same questions from the attributes
-    # it was handed, in `AttributeFacts`.
+    # what `recourse:seed` runs against. `rails generate recourse` has no table yet
+    # and answers the same questions from its attributes, in `AttributeFacts`.
     class ModelFacts
-      # What an app's own type is a kind of, for the types whose own name is not one
-      # a value is drawn for: a Price is a Decimal however it answers `type`.
+      # What an app's own type is a kind of: a Price is a Decimal however it answers.
       KINDS = {
         ActiveModel::Type::Integer => :integer, ActiveModel::Type::Float => :float,
         ActiveModel::Type::Decimal => :decimal, ActiveModel::Type::Boolean => :boolean,
@@ -20,38 +18,33 @@ module Recourse
         ActiveModel::Validations::InclusionValidator,
       ].freeze
 
-      # The model being seeded, which is what the file is named and written for.
-      attr_reader :model
+      # What the file is called after, and the class the rows in it are made of.
+      attr_reader :plural, :class_name
 
-      # Takes the model, and answers for it from here on.
+      # Takes the model being seeded, and answers for it from here on.
       def initialize(model)
         @model = model
+        @plural = model.model_name.plural
+        @class_name = model.name
       end
 
-      # What the file is called after.
-      def plural = model.model_name.plural
-
-      # And the class the rows in it are made of.
-      def class_name = model.name
-
       # Columns a row may fill: the ones a form would offer.
-      def columns = Recourse.editable_columns(model)
+      def columns = Recourse.editable_columns(@model)
 
-      # What the bare row cannot leave out: a column the model validates against
-      # nil, or one the database itself refuses NULL in with no default to answer
-      # for it. Both gates stand between a row and saving, so both are asked.
+      # The words an enum admits, for a column that is one.
+      def enum(column) = @model.defined_enums[column]
+
+      # What the bare row cannot leave out: a column the model validates against nil,
+      # or one the database refuses NULL in with no default. Both gates stand between
+      # a row and saving, so both are asked.
       def required?(column)
         validated?(column) || constrained?(column)
       end
 
-      # The words an enum admits, for a column that is one.
-      def enum(column) = model.defined_enums[column]
-
       # The kind a value is drawn for. An attribute reporting a name of its own —
-      # `:price` — is asked what it is a kind of, and anything else answers for
-      # itself, a string included.
+      # `:price` — is asked what it is a kind of; anything else answers for itself.
       def kind(column)
-        type = model.type_for_attribute column
+        type = @model.type_for_attribute column
         return type.type if KINDS.value? type.type
 
         KINDS.find { |klass, _| type.is_a? klass }&.last || type.type
@@ -69,40 +62,38 @@ module Recourse
         [association.name, "#{association.klass.name}#{picked}.first"]
       end
 
-      # How long a string may be: what the column's own length validator states,
-      # capped by the column's SQL limit — a value must fit past both gates. The
-      # schema is read for the reason `constrained?` reads it: no validator can
-      # speak for a limit the model never stated, and a row over it never saves.
+      # How long a string may be: the length validator's bounds, capped by the column's
+      # SQL limit, since a value must fit past both. The schema is read for the reason
+      # `constrained?` reads it — no validator speaks for a limit never stated.
       def bounds(column)
         length(column).slice(:is, :maximum, :minimum)
-                      .merge(limit: model.columns_hash[column]&.limit).compact
+                      .merge(limit: @model.columns_hash[column]&.limit).compact
       end
 
     private
 
-      # A belongs_to validates the association rather than the column, so `zip_id`
-      # asks about `zip` too.
+      # A belongs_to validates the association, not the column, so `zip_id` asks `zip`.
       def validated?(column)
         [column, column.delete_suffix('_id')].uniq.any? do |attribute|
-          model.validators_on(attribute).any? { |one| REQUIRING.any? { |kind| one.is_a? kind } }
+          @model.validators_on(attribute).any? { |one| REQUIRING.any? { |kind| one.is_a? kind } }
         end
       end
 
       def constrained?(column)
-        one = model.columns_hash[column]
+        one = @model.columns_hash[column]
 
         !one.null && one.default.nil? && one.default_function.nil?
       end
 
       def length(column)
-        model.validators_on(column).find do |one|
+        @model.validators_on(column).find do |one|
           one.is_a? ActiveModel::Validations::LengthValidator
         end&.options || {}
       end
 
       def belongs_to(column)
-        model.reflect_on_all_associations(:belongs_to)
-             .find { |association| association.foreign_key.to_s == column }
+        @model.reflect_on_all_associations(:belongs_to)
+              .find { |association| association.foreign_key.to_s == column }
       end
     end
   end

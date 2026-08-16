@@ -12,9 +12,11 @@ class TestRecoursesBareCreate < Minitest::Test
 
     assert_includes body, '>Create</button>'
     refute_includes body, 'Add location'
-    # A location is searched only through its ZIP, which this route has answered:
-    # nothing is left to type, so the whole search form stays home.
-    refute_includes body, 'role="search"'
+    # A location is searched only through its ZIP, which this route has answered, so
+    # there is nothing left to type and no box to type it in. The filters are a
+    # control of their own and stand without one.
+    refute_includes body, 'type="search"'
+    assert_includes body, "data-bs-name='q[source_id_in]'"
   end
 
   def test_the_button_posts_the_record_whole_and_returns_to_the_index

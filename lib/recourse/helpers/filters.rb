@@ -2,21 +2,28 @@ module Recourse
   module Helpers
     # The menus beside a search box, one per foreign key a table can be narrowed by.
     module Filters
+      # The filters this page draws, as the markup each one is. A declared filter
+      # that draws nothing falls out here — a foreign key whose label is typed
+      # rather than picked — so what is left is what a form would hold, which is
+      # what decides whether there is a form at all.
+      def resource_filter_fields
+        resource_filters.filter_map { |predicate, options| filter_field predicate, **options }
+      end
+
       # The model's filters, less the one a nested route already answered:
       # /markets/1/sectors is filtered by market_id in the URL itself, and a menu
       # for it would only offer to re-ask — or to contradict — the address.
       def resource_filters
-        filters = resource_model.filter_fields
         parent = resource_parent_association
+        filters = resource_model.filter_fields
         return filters unless parent
 
         filters.except "#{parent.foreign_key}_in"
       end
 
       # One filter: a menu of the records a foreign key points at, holding whichever
-      # of them the request already asked for. Nothing where that key's label is
-      # typed rather than picked, since the menu would be a table of its own — the
-      # judgement a form makes too. Naming a `scope:` is what draws one anyway.
+      # the request already asked for. Nothing where that key's label is typed rather
+      # than picked — the menu would be a table of its own. A `scope:` draws one anyway.
       def filter_field(predicate, label: nil, scope: nil)
         column = predicate.to_s.sub Search::LIST_PREDICATES, ''
         return enum_filter predicate, column, label if resource_model.defined_enums.key? column
@@ -50,8 +57,7 @@ module Recourse
       def filter_combobox(predicate, title, recourses)
         label = recourses.klass.recourse_label
         counter = filter_counter recourses.klass
-        # What the filter reads as when nothing is ticked, so the way back to it is a
-        # line in the menu rather than unticking whatever was ticked.
+        # What it reads as when nothing is ticked, so the way back is a line in the menu.
         models = Recourse.downcase recourses.klass.model_name.human.pluralize
 
         filter_menu predicate, title, nil, t('recourse.all', models: models),
@@ -61,8 +67,8 @@ module Recourse
 
       # The commonest choice first where the model keeps a count, since a menu is read
       # from the top and most requests want the option most rows are behind — and by
-      # name where it keeps none. The name breaks the tie either way, or two markets
-      # holding the same number would swap places between one request and the next.
+      # name where it keeps none. The name breaks ties, or two markets on the same
+      # number would swap places between one request and the next.
       def filter_options(recourses, label, counter)
         return recourses.select(:id, label).order label unless counter
 
@@ -72,7 +78,7 @@ module Recourse
       # The column on the model a filter lists that counts the rows being filtered —
       # `markets.zips_count` on `/zips`. Read from the counter caches that model keeps
       # rather than from a column named after this one, so a `zips_count` nobody
-      # maintains is not mistaken for a count of anything.
+      # maintains is not a count.
       def filter_counter(klass)
         klass.recourse_counters.find { |_, one| one.klass == resource_model }&.first
       end
@@ -85,8 +91,7 @@ module Recourse
                                      all: all, values: Array(values), **)
       end
 
-      # A multiple combobox submits one input holding every value it was given, so
-      # what a menu shows as chosen is read back out of the same comma-joined string.
+      # A multiple combobox submits one comma-joined input, read back out the same way.
       def filter_values(predicate)
         query_params[predicate].to_s.split ','
       end
