@@ -504,18 +504,6 @@ two is filed under the one a reader would look in first.
   Turbo re-runs body scripts on every visit, and a second application connects
   every controller a second time.
 
-#### Seed data lives in migrations, so schema.rb cannot load a database
-
-- `config.active_record.dump_schema_after_migration = false`, so no `schema.rb`
-  is ever written. Gitignoring it is not enough: it regenerates on every migrate
-  and then Rails loads it into the next empty database, stamping every version at
-  or below its own as already migrated — silently skipping the backfills and
-  leaving the tables empty for the next foreign key to trip over.
-- Build a database with `db:migrate` from zero. Never `db:schema:load`, and be
-  wary of `db:prepare` for the same reason.
-- `db:drop` will not drop a database with open connections and reports success
-  anyway; `dropdb --force` is the reliable reset.
-
 #### Design lives in STYLE.md
 
 - Every decision about how a page looks — Bootstrap conventions, class choices,
@@ -586,38 +574,6 @@ two is filed under the one a reader would look in first.
 - Enforced by `Style/MethodCallWithArgsParentheses` with
   `EnforcedStyle: omit_parentheses`. The cop is off by default, so it needs
   `Enabled: true` as well as the style.
-
-#### Spell acronyms as acronyms
-
-- An acronym is written in capitals wherever it appears: ZIP code, not Zip code;
-  PIN, not Pin. That covers prose, comments, class names and labels alike.
-- When a model or column names one, register it so Rails agrees:
-  `inflect.acronym 'ZIP'` in `config/initializers/inflections.rb`. Without it
-  `human_attribute_name` renders `Zip` and every heading and label is wrong.
-- Registering it also fixes `camelize`, so `zip_code` becomes `ZIPCode` rather
-  than `ZipCode` — worth knowing before naming a class after one.
-- Never call `.downcase` on anything Rails humanized. `Recourse.downcase` is what
-  lower-cases a word the gem shows, and it leaves a registered acronym alone: a
-  plain `.downcase` turns `ZIP code` into `zip code` and `No ZIPs.` into `No
-  zips.`, undoing the registration two lines above.
-- Register the singular and stop there. `inflect.acronym 'ZIPs'` beside `'ZIP'`
-  was the old rule and is now wrong: registering the plural renames what Rails
-  computes from a path — `zips` camelizes to `ZIPs`, so the controller becomes
-  `ZIPsController` and `create_zips.rb` has to define `CreateZIPs` — which is
-  Rails' own naming, and not ours to bend.
-- The plural is the gem's job instead. `Recourse.title` reads a resource's title
-  off its model, `ZIP.model_name.human.pluralize`, so a sidebar entry and a
-  breadcrumb say `ZIPs` while the class behind them stays `ZipsController`. And
-  `Recourse.downcase` counts a word whose *singular* is registered as an acronym,
-  so `8 ZIPs` on a tab survives too.
-- What this does not reach is a plural inside a column name: `media_urls` still
-  heads a table `Media urls`, because that is `human_attribute_name` humanizing
-  the whole name and not a model title. Name the column in the singular, or live
-  with it — do not register `URLs` to work around it.
-- An app registers the acronyms *it* says, and only those. A rule for apps we
-  write: the gem registers none, the same line drawn for the time zone, the
-  logger and `field_error_proc`. Inflections are global, and a gem that quietly
-  renamed a host's `Api` to `API` would be reaching well past its own pages.
 
 #### Name non-trivial regular expressions
 
