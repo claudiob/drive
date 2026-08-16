@@ -16,6 +16,16 @@ module Recourse
 
     private
 
+      # Every line the attributes earn, appended to the model in one go.
+      def declare_validations
+        return say_status :skip, "#{model_file} does not exist" unless exist? model_file
+
+        lines = attributes.filter_map { |attribute| validation_line attribute }
+        return if lines.empty?
+
+        inject_into_file model_file, validation_block(lines), before: /^end\n/
+      end
+
       # One line per attribute that earns one, or nothing at all.
       def validation_line(attribute)
         options = [

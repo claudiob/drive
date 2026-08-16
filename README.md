@@ -169,6 +169,30 @@ leaving you to write them:
 The parent's `has_many` is written only where that model exists already, so
 generate the parent first.
 
+Run it a second time over a resource your routes already draw and it adds to the
+table rather than refusing the name it finds taken:
+
+```
+$ bin/rails generate recourse comment author:references
+      invoke  active_record
+      create    db/migrate/20260816005023_add_author_to_comments.rb
+      insert    db/migrate/20260816005023_add_author_to_comments.rb
+      insert  app/models/comment.rb
+        gsub  app/models/comment.rb
+      insert  app/models/author.rb
+```
+
+`recourses :comments` in `config/routes.rb` is the whole test — that line is only
+ever drawn for a table that exists — so the model, the controller, the route and
+the seed file are all left as they are, and the migration is Rails' own
+`add_reference :comments, :author, null: false, foreign_key: true` rather than a
+`create_table`. Everything a `references` earns when a table is made is earned
+again when it is added to: the count on the parent, the `belongs_to` carrying
+`counter_cache:` and `touch:`, and the `has_many` on the other side. New columns
+earn their validators the same way.
+
+A resource drawn some other way is created, and fails the way it always did.
+
 That last one is the difference between a rule the database keeps and a rule
 anyone filling in the form is told about. `null: false` alone gives a field no
 `required` attribute and no message, only a 500 when the insert fails, and a

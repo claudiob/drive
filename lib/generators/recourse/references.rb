@@ -12,8 +12,7 @@ module Recourse
 
     private
 
-      # After `create_table`, which is the first line indented that far, and before the
-      # indexes the template writes under it.
+      # Into the migration this run just wrote, wherever its own last line is.
       def add_counter_column(attribute)
         return unless migration_file
 
@@ -22,9 +21,16 @@ module Recourse
         column = "    add_column :#{attribute.name.pluralize}, :#{plural_name}_count, " \
                  ":integer, default: 0, null: false\n"
 
-        # A regex saying what is meant — the four-space `end` closing
-        # `create_table` — rather than a string trusting the template's whitespace.
-        inject_into_file migration_file, column, after: /^ {4}end\n/
+        inject_into_file migration_file, column, after: counter_anchor
+      end
+
+      # A regex saying what is meant rather than a string trusting the template's
+      # whitespace: the four-space `end` closing `create_table` for a table being
+      # made, and the reference itself for one being added to.
+      def counter_anchor
+        return /^ {4}end\n/ unless altering?
+
+        /^\s*add_reference .*\n/
       end
 
       # A generated child requires its parent — `belongs_to` says so — so deleting
@@ -42,7 +48,8 @@ module Recourse
       # Named by the ORM generator with a timestamp this one never saw, so it is found
       # rather than known. Nothing is there to find under `--pretend`.
       def migration_file
-        pattern = File.join destination_root, 'db/migrate', "*_create_#{table_name}.rb"
+        named = altering? ? alter_migration_name : "create_#{table_name}"
+        pattern = File.join destination_root, 'db/migrate', "*_#{named}.rb"
 
         Dir.glob(pattern).max
       end

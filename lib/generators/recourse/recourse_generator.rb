@@ -1,5 +1,6 @@
 require 'rails/generators/rails/resource/resource_generator'
 
+require_relative 'altering'
 require_relative 'associations'
 require_relative 'loading'
 require_relative 'references'
@@ -12,13 +13,20 @@ module Recourse
     # the route drawn by `recourses` and a seed file, so the gem serves the seven
     # screens for it and there is something to see on them.
     class RecourseGenerator < Rails::Generators::ResourceGenerator
-      include Associations, Loading, References, Seeds, Validations
+      include Altering, Associations, Loading, References, Seeds, Validations
 
       # Templates live beside this class, which is also what tells the parent where to
       # read `--help` from: a USAGE one directory above the source root.
       source_root File.expand_path('templates', __dir__)
 
       remove_invocation :resource_route
+
+      # The model is written by this gem's own ORM generator rather than by Rails',
+      # for the reason the controller is: a resource already drawn is one whose
+      # table is there to add to, and Rails' generator can only create. `in:
+      # :recourse` puts `recourse:active_record` ahead of `active_record:model` in
+      # the hook's lookup, so a host on another ORM still reaches its own.
+      hook_for :orm, in: :recourse, required: true
 
       class_option :seeds, type: :boolean, default: true,
                            desc: 'Add a seed file with a bare row and a filled one'
@@ -36,8 +44,11 @@ module Recourse
       # Invoked with arguments and nothing else, exactly as the parent invokes it:
       # handing `invoke` an options hash is what stops `--pretend`, `--no-helper`
       # and every other switch meant for the controller from reaching it.
+      #
+      # Nothing where the resource is already drawn: its controller is written, and
+      # would arrive without whatever the host has since put in it.
       hook_for :resource_controller, in: :recourse, required: true do |controller|
-        invoke controller, [controller_name, options[:actions]]
+        invoke controller, [controller_name, options[:actions]] unless altering?
       end
 
       # A `references` attribute is a `belongs_to`, and a `belongs_to` is two sides of
@@ -47,6 +58,7 @@ module Recourse
       def add_associations
         counted_attributes.each do |attribute|
           add_counter_column attribute
+          declare_belongs_to attribute.name if altering?
           count_from_belongs_to model_file, attribute.name
           declare_has_many klass: attribute.name.camelize, children: plural_name, line: far_side
         end
@@ -59,17 +71,13 @@ module Recourse
       # schema, so a column constrained in the database alone constrains nothing
       # anyone filling in the form is told about.
       def add_validations
-        return say_status :skip, "#{model_file} does not exist" unless exist? model_file
-
-        lines = attributes.filter_map { |attribute| validation_line attribute }
-        return if lines.empty?
-
-        inject_into_file model_file, validation_block(lines), before: /^end\n/
+        declare_validations
       end
 
       # Two rows to look at: a bare one and a filled one, in a file of their own under
       # `db/seeds`, which `db/seeds.rb` is taught to load.
       def create_seed_file
+        return if altering?
         return unless options[:seeds]
 
         template 'seeds.rb', File.join('db/seeds', "#{file_name.pluralize}.rb")
@@ -80,7 +88,7 @@ module Recourse
       # were asked for, so `rails generate recourse admin/market` draws `recourses
       # :markets` inside `namespace :admin`.
       def add_recourse_route
-        return if options[:actions].present?
+        return if altering? || options[:actions].present?
 
         route "recourses :#{file_name.pluralize}", namespace: regular_class_path
       end

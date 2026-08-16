@@ -29,6 +29,15 @@ module Recourse
         end
       end
 
+      # The declaration itself, where the model was written before this reference
+      # was. Bare on purpose: `count_from_belongs_to` is what puts the counting
+      # options on it, the same line it writes for a model made with the key.
+      def declare_belongs_to(name)
+        return if /^\s*belongs_to :#{Regexp.escape name.to_s}\b/.match? read(model_file)
+
+        inject_into_class model_file, class_name, "  belongs_to :#{name}\n"
+      end
+
       # And the far side, on the model the key points at — a foreign key read from
       # one side only is half a model. Nothing where that model is not written yet —
       # generate the parent first, or add the line by hand — nothing where it reads
