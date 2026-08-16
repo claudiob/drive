@@ -83,12 +83,14 @@ Edit tabs — as a tab named by the count where the parent keeps a counter cache
 `42 comments`, and by the bare `Comments` where it does not — and the
 breadcrumb's record crumb links back to the parent's show page where one is
 routed.
-A `namespace` may sit between a `recourses` block and what it nests, and the
-routes and controllers come out where you would expect —
-`/posts/1/featured/comments` served by `Posts::Featured::CommentsController`.
-The card is the one thing that does not follow: a tab is looked up by the
-association's own name under the parent's own path, so a namespaced child gets
-no tab. Its pages work; they are reached by a link you write.
+A `namespace` may sit between a `recourses` block and what it nests, and
+everything follows it: the routes and controllers come out where you would
+expect — `/posts/1/featured/comments` served by
+`Posts::Featured::CommentsController` — and so do the crumbs, the card and the
+count. The namespace leads the tab it earns, so two nestings of one model read
+apart: `12 featured comments` beside `4 flagged comments`, and
+`Featured comments` beside `Flagged comments` where no counter cache answers.
+The icon is the counted model's own either way.
 What the nesting does not take away is a row: the eye and the pencil are the
 ones the top-level table draws, pointing at `/comments/2` and
 `/comments/2/edit` — the member pages the nesting left to the resource itself —

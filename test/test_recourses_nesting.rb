@@ -52,7 +52,9 @@ class TestRecoursesNesting < IntegrationCase
     # And the card is the parent's, tabs and all: no Show, since teams are never
     # shown, then this page's own tab carrying the count and marked current.
     assert_includes body, %(href="/teams/#{team.id}/edit")
-    assert_includes body, %(#{team.places_count} places)
+    # The namespace leads the tab, so two nestings of one model read apart — and
+    # it is the routes that say so, not the model, which knows nothing of either.
+    assert_includes body, %(#{team.places_count} visited places)
     assert_includes body, %(active" aria-current="page" href="/teams/#{team.id}/visited/places")
   end
 
