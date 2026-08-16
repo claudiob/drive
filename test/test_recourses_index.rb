@@ -58,10 +58,10 @@ class TestRecoursesIndex < IntegrationCase
 
     assert_includes body, 'Displaying items 1-20 of 101 in total'
     assert_includes body, 'href="/zips?page=2"'
-    # Three teams fit on one page, so that page says so and offers no nav.
+    # Four teams fit on one page, so that page says so and offers no nav.
     visit '/teams'
 
-    assert_includes body, 'Displaying 3 items'
+    assert_includes body, 'Displaying 4 items'
     refute_includes body, 'pagination'
   end
 end

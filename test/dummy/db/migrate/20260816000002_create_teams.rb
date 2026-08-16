@@ -1,7 +1,10 @@
 class CreateTeams < ActiveRecord::Migration[8.1]
-  # Three of them, well under MENU_LIMIT, so a foreign key pointing here is picked
-  # from a menu — the other half of what the ZIPs table proves.
-  TEAMS = ['Blue Crew', 'Green Watch', 'Red Shift'].freeze
+  # Four of them, well under MENU_LIMIT, so a foreign key pointing here is picked
+  # from a menu — the other half of what the ZIPs table proves. The fourth is given
+  # no places on purpose: a filter menu counts what each option would narrow to and
+  # hides the ones that would narrow to nothing, so this is the row that proves
+  # `All …` has something to reveal.
+  TEAMS = ['Blue Crew', 'Green Watch', 'Red Shift', 'Night Shift'].freeze
 
   def change
     create_table :teams do |t|

@@ -36,6 +36,25 @@ class TestRecoursesSearch < IntegrationCase
     refute_includes body, '<span class="badge">draft</span>'
   end
 
+  # A menu counts what each option would narrow to, and an option that would narrow
+  # to nothing is in the menu but not on it — until `All …` asks for it, which is
+  # also the way back to no filter at all. One already ticked stays put regardless,
+  # or the box would name a filter its own menu does not offer.
+  def test_a_filter_hides_the_options_that_would_narrow_to_nothing
+    empty = Team.order(:id).last
+    visit '/places'
+    menu = body[/data-bs-name='q\[team_id_in\]'.*?combobox-no-results/m]
+
+    assert_includes menu, "d-none' type='button' data-bs-value='#{empty.id}'"
+    assert_includes menu, 'All teams'
+    refute_includes menu, "d-none' type='button' data-bs-value='#{Team.order(:id).first.id}'"
+    # Ticked, it stays on the menu however few rows are behind it.
+    visit "/places?q%5Bteam_id_in%5D=#{empty.id}"
+    menu = body[/data-bs-name='q\[team_id_in\]'.*?combobox-no-results/m]
+
+    refute_includes menu, "d-none' type='button' data-bs-value='#{empty.id}'"
+  end
+
   # A heading that sorted the table says which way, with a caret; the others say
   # nothing, because an arrow on every heading says nothing about the order in force.
   def test_the_sorted_heading_wears_the_caret_and_no_other_does
