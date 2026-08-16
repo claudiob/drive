@@ -1,4 +1,4 @@
-<%# locals: (name:, id:, invalid:, feedback:, placeholder:, required:, label: nil, counter: nil, recourses: nil, values: [], multiple: false, selected: [], aria_label: nil, small: false, all: nil) -%>
+<%# locals: (name:, id:, placeholder:, invalid: false, feedback: nil, required: false, label: nil, counter: nil, recourses: nil, values: [], multiple: false, selected: [], aria_label: nil, small: false, all: nil) -%>
 <button class='form-control<%= ' form-control-sm' if small %><%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>' data-controller='combobox'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'

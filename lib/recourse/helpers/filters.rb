@@ -83,10 +83,10 @@ module Recourse
         klass.recourse_counters.find { |_, one| one.klass == resource_model }&.first
       end
 
+      # Never invalid and never required: a filter narrows rather than sets.
       def filter_menu(predicate, title, values, all, **)
         render('recourses/combobox', name: "q[#{predicate}]", id: "q_#{predicate}",
-                                     invalid: false, feedback: nil, placeholder: title,
-                                     required: false, multiple: true, aria_label: title,
+                                     placeholder: title, multiple: true, aria_label: title,
                                      selected: filter_values(predicate), small: true,
                                      all: all, values: Array(values), **)
       end
