@@ -18,7 +18,8 @@ and defining your own takes precedence over it.
 - `ransack` 4.4 or newer, which sorts, searches and filters every index.
 - `turbo-rails`, which every frame, every morph and every warning before a delete
   is drawn through.
-- `unicon`, which names the icon a model picks in each design system.
+- `unicon` 3.0 or newer, which names every icon drawn — a model's own, and the
+  gem's — in each design system. 3.0 is where its actions became verbs.
 
 ## How to install
 
@@ -423,7 +424,7 @@ gives away.
 `show` and `edit` are what an index row links to, an eye then a pencil, and each
 appears only where its action is both implemented and routed. A resource with
 neither gets no `Actions` column at all. Those two are named as Unicon concepts
-like every other icon here — `:view` and `:pencil` — so what draws them is the
+like every other icon here — `:view` and `:edit` — so what draws them is the
 icon set's business rather than a Bootstrap class written into the gem.
 
 Both pages wrap their content in a Bootstrap card whose header is a row of tabs,

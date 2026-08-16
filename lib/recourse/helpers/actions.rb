@@ -6,7 +6,7 @@ module Recourse
       # than as one set's own word for them, so what draws them is Unicon's business
       # here as everywhere else. A row's links and a card's tabs read the same map,
       # so the two cannot drift apart.
-      ICONS = { show: :view, edit: :pencil }.freeze
+      ICONS = { show: :view, edit: :edit }.freeze
 
       # An action column's heading: the icon on the header row — the column is as
       # narrow as the icon in it, with no room for a word — and the action's own

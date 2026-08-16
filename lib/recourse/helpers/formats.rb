@@ -5,7 +5,7 @@ module Recourse
       # A boolean is a picture rather than the words `true` and `false`, and a column
       # of them scans in one pass. The concept is named here and Unicon says what the
       # set calls it, the same way a model names its own icon.
-      BOOLEAN_ICONS = { true => :check, false => :close, nil => :square }.freeze
+      BOOLEAN_ICONS = { true => :confirm, false => :close, nil => :square }.freeze
 
       # One absolute web address and nothing else: a value to follow, not to read.
       # Anything around it — words, a second address — reads as text instead.
@@ -88,7 +88,7 @@ module Recourse
       def url_link(value)
         # Bootstrap's icon link, in its hover style: the arrow walks a step under
         # the cursor, saying the value leads somewhere the way plain text cannot.
-        tag.a safe_join([value, icon_tag(:arrow_right)], ' '),
+        tag.a safe_join([value, icon_tag(:point_right)], ' '),
               href: value, class: 'icon-link icon-link-hover'
       end
     end
