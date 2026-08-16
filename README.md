@@ -7,7 +7,8 @@ controller and views needed to browse and edit a resource. Nothing is written
 into your app: every controller, template and partial it supplies is a default,
 and defining your own takes precedence over it.
 
-> **Status:** early development. All seven actions work; the eject generator is
+> **Status:** version 4 is a rewrite of the gem published as `recourse` 1 to 3,
+> and continues its version line. All seven actions work; the eject generator is
 > not implemented yet.
 
 ## Requirements
@@ -23,15 +24,13 @@ and defining your own takes precedence over it.
 
 ## How to install
 
-The gem is called `drive`; the library it loads calls itself `Recourse`.
-
 To install on your system, run
 
-    gem install drive
+    gem install recourse
 
 To use inside a bundled Ruby project, add this line to the Gemfile:
 
-    gem 'drive', '~> 0.1'
+    gem 'recourse', '~> 4.0'
 
 Since the gem follows [Semantic Versioning](http://semver.org), indicating `~> *major*.*minor*`
 guarantees your project won’t occur in breaking changes whenever you `bundle update`.
@@ -1233,7 +1232,7 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at
-https://github.com/claudiob/drive.
+https://github.com/claudiob/recourse.
 
 ## License
 

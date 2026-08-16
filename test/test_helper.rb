@@ -9,7 +9,7 @@ end
 ENV['RAILS_ENV'] = 'test'
 
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
-require 'drive'
+require 'recourse'
 require_relative 'dummy/config/environment'
 
 require 'minitest/autorun'

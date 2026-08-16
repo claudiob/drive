@@ -1,7 +1,7 @@
 require_relative 'lib/recourse/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'drive'
+  spec.name = 'recourse'
   spec.version = Recourse::VERSION
   spec.authors = ['claudiob']
   spec.email = ['claudiob@users.noreply.github.com']
@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
                      'browse and edit a resource, with no files added to the host ' \
                      'app. Any controller, view or partial can be overridden by ' \
                      'defining it in the app.'
-  spec.homepage = 'https://github.com/claudiob/drive'
+  spec.homepage = 'https://github.com/claudiob/recourse'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.2.0'
   spec.metadata['source_code_uri'] = spec.homepage
@@ -20,10 +20,11 @@ Gem::Specification.new do |spec|
 
   # Whatever git tracks, less what only a contributor needs, so nothing untracked leaks in.
   gemspec = File.basename __FILE__
+  contributor_only = %w[bin/ docs/ ios/ test/ .gitignore .rubocop.yml
+                        CLAUDE.md Gemfile Rakefile STYLE.md]
   spec.files = IO.popen(%w[git ls-files -z], chdir: __dir__, err: IO::NULL) do |ls|
     ls.readlines("\x0", chomp: true).reject do |f|
-      (f == gemspec) ||
-        f.start_with?(*%w[bin/ Gemfile .gitignore test/ .rubocop.yml])
+      (f == gemspec) || f.start_with?(*contributor_only)
     end
   end
   spec.bindir = 'exe'

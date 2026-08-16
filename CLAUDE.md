@@ -455,8 +455,8 @@ two is filed under the one a reader would look in first.
   [Semantic Versioning](http://semver.org), so `~> major.minor` means
   `bundle update` never crosses a breaking change.
 - Keep the snippet's version current: a major release updates the README's pin
-  in the same commit that makes it. unicon reads `~> 2.0` since 2.0.0; drive
-  reads `~> 0.1` until it earns 1.0.
+  in the same commit that makes it. unicon reads `~> 2.0` since 2.0.0; recourse
+  reads `~> 4.0` since 4.0.0.
 - This does not soften "never use `~>`" above. That rule binds *our* Gemfiles
   and gemspecs naming what we depend on; the README line is advice to hosts
   pinning *us*, which is exactly what SemVer is for.
