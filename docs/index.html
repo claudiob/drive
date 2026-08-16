@@ -279,6 +279,7 @@
   .c-was { color: var(--faint); text-decoration: line-through; }
   .c-dollar { color: var(--faint); user-select: none; }
   .hero .screen { max-width: 32rem; }
+  .install { font-size: 0.92rem; max-width: 32rem; }
 
   /* =============== the list of fifteen =============== */
   ol.needs {
@@ -454,6 +455,15 @@
       <pre><code><span class='c-was'>resources :posts</span>
 <span class='c-sig'>recourses</span> <span class='c-sym'>:posts</span></code></pre>
     </div>
+
+    <div class='screen'>
+      <div class='screen-bar'><span>Gemfile</span></div>
+      <pre><code>gem <span class='c-str'>'recourse'</span>, <span class='c-str'>'~&gt; 4.0'</span></code></pre>
+    </div>
+    <p class='install'>Version 4 is a rewrite, and continues the version line of the
+    <code>recourse</code> gem it grew out of. It follows
+    <a href='http://semver.org'>Semantic Versioning</a>, so pinning the major means
+    <code>bundle update</code> never crosses a breaking change.</p>
   </div>
 </header>
 
