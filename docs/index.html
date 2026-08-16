@@ -510,8 +510,8 @@
         a way to add one there.</span><span class='from'>step 6</span></li>
       <li><span class='no'>13</span><span>Sensitive columns printed in full, where a screenshot
         gives them away.</span><span class='from'>step 7</span></li>
-      <li><span class='no'>14</span><span>Tables that never notice a change, and are re-rendered
-        every time regardless.</span><span class='from'>step 1</span></li>
+      <li><span class='no'>14</span><span>No caching. Every request rebuilds the whole table,
+        and adding it later is the job everyone puts off.</span><span class='from'>step 1</span></li>
       <li><span class='no'>15</span><span>And no icons.</span><span class='from'>step 1</span></li>
     </ol>
 
@@ -546,6 +546,19 @@
   <span class='c-sig'>recourses</span> <span class='c-sym'>:comments</span>
 <span class='c-sig'>end</span></code></pre>
         </div>
+        <p>The table is a cached fragment from the first request, which is the part most
+        apps leave until last and many never reach. You write no key and no sweeper: the
+        key <em>is</em> the relation, so Rails digests its SQL and pairs that with the row
+        count and the newest <code>updated_at</code>. Edit a row and the fragment expires
+        itself.</p>
+        <div class='screen'>
+          <div class='screen-bar'><span>what the index renders</span></div>
+          <pre><code><span class='c-sig'>cache_if</span> params[<span class='c-sym'>:q</span>].blank?, [recourses, row_digest, resource_columns]</code></pre>
+        </div>
+        <p>Two riders ride along, because two things a page draws are decided in Ruby that
+        no digest can see: which <code>_row</code> the lookup resolved, so overriding one
+        redraws the table, and the list of columns, so hiding one does too. A search is
+        left uncached on purpose — that is a different table every time somebody types.</p>
         <div class='gives'>Gives you <b data-need='01'>01</b> <b data-need='02'>02</b> <b data-need='03'>03</b> <b data-need='04'>04</b> <b data-need='08'>08</b> <b data-need='14'>14</b>
           <b data-need='15'>15</b></div>
       </div>
