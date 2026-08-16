@@ -18,7 +18,7 @@ class Place < ApplicationRecord
   enum :status, STATUSES.index_by(&:itself)
 
   # 101 of them, so a form asks for a code; three teams, so a form lists them.
-  belongs_to :msa, counter_cache: true
+  belongs_to :zip, counter_cache: true
   belongs_to :team, counter_cache: true, touch: true
   # The parent a nested route answers, and optional, so a place can stand alone.
   # Counted, which is what earns the person's card a tab reading `3 places`.

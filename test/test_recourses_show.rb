@@ -22,7 +22,7 @@ class TestRecoursesShow < IntegrationCase
     # Words rather than icons, and the reference read as its label either way.
     assert_includes body, 'true'
     assert_includes body, 'false'
-    assert_includes body, 'M0001'
+    assert_includes body, '90001'
     assert_includes body, 'Blue Crew'
     assert_includes body, '<a href="https://place-1.example.com"'
   end

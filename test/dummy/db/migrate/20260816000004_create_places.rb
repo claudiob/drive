@@ -4,8 +4,8 @@ class CreatePlaces < ActiveRecord::Migration[8.1]
 
   def change
     create_table :places do |t|
-      # Typed on a form, because 101 MSAs are too many to list.
-      t.references :msa, null: false, foreign_key: true
+      # Typed on a form, because 101 ZIPs are too many to list.
+      t.references :zip, null: false, foreign_key: true
       # Picked from a menu, because three teams are not.
       t.references :team, null: false, foreign_key: true
       # Optional, and the one a nested route answers: /people/1/places.
@@ -69,7 +69,7 @@ private
   # rest fill the table out — so one page shows both a full row and an empty one.
   def attributes_for(number)
     required = {
-      msa_id: (number % 101) + 1, team_id: (number % 3) + 1,
+      zip_id: (number % 101) + 1, team_id: (number % 3) + 1,
       name: "Place #{format '%02d', number + 1}", slug: format('place-%02d', number + 1),
       capacity: (number + 1) * 5, status: Place::STATUSES[number % Place::STATUSES.size],
       active: number.even?,

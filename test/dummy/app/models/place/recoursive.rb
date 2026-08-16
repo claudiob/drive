@@ -5,7 +5,7 @@ class Place
 
     class_methods do
       # `place` is a word Unicon has never heard of, and a circle is a poor thing to
-      # head a column with. MSA says nothing here on purpose, so the page it draws is
+      # head a column with. ZIP says nothing here on purpose, so the page it draws is
       # what the fallback looks like.
       def recourse_icon = :building
 

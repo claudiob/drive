@@ -16,7 +16,7 @@ class TestRecourseCountersGenerator < Rails::Generators::TestCase
       recourses :teams, only: :index do
         recourses :places, only: :index
       end
-      recourses :msas, :memos, only: :index
+      recourses :zips, :memos, only: :index
     end
   RUBY
 
@@ -80,7 +80,7 @@ private
     assert_includes routes, nested
     assert_equal 1, routes.scan("recourses :memos\n").count
     # A line naming more than one resource is left exactly as it was.
-    assert_includes routes, "recourses :msas, :memos, only: :index\n"
+    assert_includes routes, "recourses :zips, :memos, only: :index\n"
   end
 
   def write(path, content)

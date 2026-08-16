@@ -27,7 +27,7 @@ Rails.application.routes.draw do
     end
 
     # Edited but never shown, and the table a foreign key is typed to reach.
-    recourses :msas, only: %i[index edit update] do
+    recourses :zips, only: %i[index edit update] do
       # No `only:` and no `except:`, so a nested resource takes the collection
       # actions by default: list the parent's rows, and add one.
       recourses :places

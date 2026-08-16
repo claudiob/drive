@@ -30,26 +30,26 @@ class TestRecoursesForm < IntegrationCase
     assert_includes body, '<input name="place[active]" type="hidden" value="0" />'
     # And a typed reference opens on the record's own label, so an edit that
     # changes something else does not have to retype this one to save.
-    assert_includes body, %(value="#{Place.order(:id).first.msa.code}")
+    assert_includes body, %(value="#{Place.order(:id).first.zip.code}")
   end
 
   # A foreign key is picked or typed by what the other table can offer: three teams
-  # fit in a menu, and 101 MSAs do not — so one is a combobox and the other is a
+  # fit in a menu, and 101 ZIPs do not — so one is a combobox and the other is a
   # field asking for the label itself, under the foreign key's own name, carrying
   # that label's length so the browser can hold it to five characters.
   def test_a_reference_is_a_menu_or_a_field_by_what_it_points_at
     visit '/places/new'
 
-    assert_includes body, 'name="place[msa_id]"'
+    assert_includes body, 'name="place[zip_id]"'
     # The label's own length and format, since that is what is being typed — and an
     # example read off the pattern, so the field names the shape it wants rather
     # than only reporting that what was typed is wrong.
-    assert_includes body, 'maxlength="5" minlength="5" pattern="[A-Z]\d{4}"'
-    assert_includes body, 'title="Please match the format A0000"'
+    assert_includes body, 'maxlength="5" minlength="5" pattern="\d{5}"'
+    assert_includes body, 'title="Please match the format 00000"'
     assert_includes body, %(data-bs-name='place[team_id]' data-controller='combobox')
     # The menu holds the labels, not the ids, and the typed one holds no menu at all.
     assert_includes body, 'Blue Crew'
-    refute_includes body, 'M0001'
+    refute_includes body, '90001'
   end
 
   # A key that may be nothing has to be settable back to it, which a menu of records

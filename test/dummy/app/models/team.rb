@@ -1,5 +1,5 @@
 # A crew a place belongs to. Few enough of them that a form lists every one, which
-# is the other half of what MSA proves.
+# is the other half of what ZIP proves.
 class Team < ApplicationRecord
   has_many :places, dependent: :destroy
 

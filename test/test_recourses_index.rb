@@ -47,17 +47,17 @@ class TestRecoursesIndex < IntegrationCase
     # Declared outside the module, and linking where its own routes were drawn.
     assert_includes body, 'href="/memos"'
     # An acronym keeps its capitals in a title the gem pluralized itself.
-    assert_includes body, '<span class="recourse-key">M</span>SAs'
+    assert_includes body, '<span class="recourse-key">Z</span>IPs'
   end
 
   # Twenty to a page, the count delimited, and the nav only where there is a second
   # page to reach. Exempt from "as few tests as coverage needs": the same lines run
   # whether the figures are right or wrong.
   def test_it_paginates_at_twenty_rows_and_says_what_it_is_showing
-    visit '/msas'
+    visit '/zips'
 
     assert_includes body, 'Displaying items 1-20 of 101 in total'
-    assert_includes body, 'href="/msas?page=2"'
+    assert_includes body, 'href="/zips?page=2"'
     # Three teams fit on one page, so that page says so and offers no nav.
     visit '/teams'
 

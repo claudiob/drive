@@ -19,7 +19,7 @@ class TestRecoursesWrites < IntegrationCase
     assert_equal '/places', URI.parse(@session.response.headers['Location']).path
     place = Place.find_by! slug: 'a-new-place'
 
-    assert_equal MSA.find_by!(code: 'M0002'), place.msa
+    assert_equal ZIP.find_by!(code: '90002'), place.zip
     follow_and_assert_flash 'Place was created.'
   end
 
@@ -27,7 +27,7 @@ class TestRecoursesWrites < IntegrationCase
   # the message beside the field that earned it and Bootstrap's own two classes on
   # the pair — which the host app's `field_error_proc` is what supplies.
   def test_a_rejected_record_redraws_the_form_with_the_message_beside_the_field
-    rejected = new_place_params.merge name: '', team_id: '', msa_id: 'ZZZZZ'
+    rejected = new_place_params.merge name: '', team_id: '', zip_id: '00000'
     @session.post '/places', params: { place: rejected }
 
     assert_equal 422, @session.response.status
@@ -40,7 +40,7 @@ class TestRecoursesWrites < IntegrationCase
     assert_equal 2, body.scan('Must exist').size
     # A code matching nothing was never assigned, so only the request still knows
     # what was typed — and that is what the field has to keep showing.
-    assert_includes body, 'value="ZZZZZ"'
+    assert_includes body, 'value="00000"'
   end
 
   def test_update_saves_and_says_so
@@ -67,7 +67,7 @@ class TestRecoursesWrites < IntegrationCase
   def test_destroy_warns_by_name_and_count_then_removes_the_row
     person = Person.create! name: 'Kip', email: 'kip@example.com'
     person.memos.create! body: 'About Kip'
-    person.places.create! msa: MSA.order(:id).first, team: Team.order(:id).first,
+    person.places.create! zip: ZIP.order(:id).first, team: Team.order(:id).first,
                           name: 'Kips place', slug: 'kips-place', capacity: 4, active: true
     visit "/people/#{person.id}/edit"
     warning = CGI.unescape_html body[/data-turbo-confirm="([^"]*)"/, 1]
@@ -88,7 +88,7 @@ class TestRecoursesWrites < IntegrationCase
 private
 
   def new_place_params
-    { msa_id: 'M0002', team_id: Team.order(:id).first.id, name: 'A new place',
+    { zip_id: '90002', team_id: Team.order(:id).first.id, name: 'A new place',
       slug: 'a-new-place', capacity: 10, status: 'draft', active: '1', }
   end
 

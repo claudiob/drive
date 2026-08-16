@@ -45,7 +45,7 @@ class TestRecoursesPerformance < IntegrationCase
     # a namespace — read off the routes rather than joined onto the parent's path.
     cell = %r{<td data-cell="Places"[^>]*><a[^>]*href="/teams/#{team.id}/visited/places">(\d+)</a>}
     before = body[cell, 1].to_i
-    place = team.places.create! msa: MSA.order(:id).first, name: 'Counted', slug: 'counted',
+    place = team.places.create! zip: ZIP.order(:id).first, name: 'Counted', slug: 'counted',
                                 capacity: 1, active: true
     visit '/teams'
 

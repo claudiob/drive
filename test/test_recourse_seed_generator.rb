@@ -32,13 +32,13 @@ class TestRecourseSeedGenerator < Rails::Generators::TestCase
   def test_it_seeds_twenty_five_rows_for_every_recoursed_model
     run_generator
 
-    assert_file 'db/seeds/msas.rb' do |msas|
-      assert_equal 25, msas.scan(/^  \{ code: '[^']+', fips: '[^']+', name: '[^']+' \},$/).uniq.size
-      assert_match(/[^\x00-\x7F]/, msas)
-      assert_match(/rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid/, msas)
+    assert_file 'db/seeds/zips.rb' do |zips|
+      assert_equal 25, zips.scan(/^  \{ code: '[^']+', fips: '[^']+', city: '[^']+' \},$/).uniq.size
+      assert_match(/[^\x00-\x7F]/, zips)
+      assert_match(/rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid/, zips)
     end
     assert_file('db/seeds/memos.rb') { |memos| assert_wrapped_contents memos }
-    assert_file 'db/seeds/places.rb', /msa: MSA\.offset\(\d+\)\.first/
+    assert_file 'db/seeds/places.rb', /zip: ZIP\.offset\(\d+\)\.first/
     assert_shaped_strings
     assert_skipped_files
   end
@@ -52,11 +52,11 @@ private
     assert_no_file 'db/seeds/placeholders.rb'
   end
 
-  # Every shape fits its own gates: an MSA's code and FIPS are their columns' five
+  # Every shape fits its own gates: a ZIP's code and FIPS are their columns' five
   # characters, a phone is a phone, and a string named like an id — the app's
   # `uid` — is digits and nothing else.
   def assert_shaped_strings
-    assert_file 'db/seeds/msas.rb', /code: '[^']{5}', fips: '[^']{5}'/
+    assert_file 'db/seeds/zips.rb', /code: '[^']{5}', fips: '[^']{5}'/
     assert_file 'db/seeds/places.rb', /phone: '555234\d{4}'/
     assert_file 'db/seeds/teams.rb', /uid: '\d+'/
   end

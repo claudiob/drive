@@ -11,9 +11,9 @@ class TestRecoursesSearch < IntegrationCase
 
     # Its own two indexed strings, and the label behind the one foreign key the
     # box reaches through rather than lists — an acronym keeping its capitals.
-    assert_includes body, 'name="q[name_or_slug_or_msa_code_cont]"'
-    assert_includes body, 'placeholder="Filter by name or slug or MSA code"'
-    visit '/places?q%5Bname_or_slug_or_msa_code_cont%5D=Place+01'
+    assert_includes body, 'name="q[name_or_slug_or_zip_code_cont]"'
+    assert_includes body, 'placeholder="Filter by name or slug or ZIP code"'
+    visit '/places?q%5Bname_or_slug_or_zip_code_cont%5D=Place+01'
 
     assert_includes body, '<mark>Place 01</mark>'
     # One row matched, so nothing else is on the page to be marked.
@@ -27,9 +27,9 @@ class TestRecoursesSearch < IntegrationCase
 
     assert_includes body, "data-bs-name='q[status_in]'"
     assert_includes body, "data-bs-name='q[team_id_in]'"
-    # No menu for the MSA: 101 rows are more than a menu offers, so the box reaches
+    # No menu for the ZIP: 101 rows are more than a menu offers, so the box reaches
     # through that key instead and a filter would only ask the same thing twice.
-    refute_includes body, "data-bs-name='q[msa_id_in]'"
+    refute_includes body, "data-bs-name='q[zip_id_in]'"
     visit "/places?q%5Bstatus_in%5D=#{Place.statuses.keys.last}"
 
     assert_includes body, Place.statuses.keys.last

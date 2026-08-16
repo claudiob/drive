@@ -1,6 +1,6 @@
 class CreateTeams < ActiveRecord::Migration[8.1]
   # Three of them, well under MENU_LIMIT, so a foreign key pointing here is picked
-  # from a menu — the other half of what the MSAs table proves.
+  # from a menu — the other half of what the ZIPs table proves.
   TEAMS = ['Blue Crew', 'Green Watch', 'Red Shift'].freeze
 
   def change

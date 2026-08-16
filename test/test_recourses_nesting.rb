@@ -27,16 +27,16 @@ class TestRecoursesNesting < IntegrationCase
   # the collection ones: list the parent's rows, and add one. The form it draws
   # never asks which parent, because the path already said.
   def test_a_nested_resource_defaults_to_its_collection_actions
-    msa = MSA.order(:code).first
-    visit "/msas/#{msa.id}/places/new"
+    zip = ZIP.order(:code).first
+    visit "/zips/#{zip.id}/places/new"
 
-    refute_includes body, 'name="place[msa_id]"'
-    assert_includes body, %(action="/msas/#{msa.id}/places")
+    refute_includes body, 'name="place[zip_id]"'
+    assert_includes body, %(action="/zips/#{zip.id}/places")
     # And the member actions stay with the resource's own routes: the row's pencil
-    # points at /places/1/edit, not at one nested under this MSA.
-    visit "/msas/#{msa.id}/places"
+    # points at /places/1/edit, not at one nested under this ZIP.
+    visit "/zips/#{zip.id}/places"
 
-    assert_includes body, %(href="/places/#{msa.places.order(:id).first.id}/edit")
+    assert_includes body, %(href="/places/#{zip.places.order(:id).first.id}/edit")
   end
 
   # A `namespace` may sit between a block and what it nests: the routes, the
