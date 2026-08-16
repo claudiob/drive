@@ -25,12 +25,6 @@ module Recourse
         formatted_text kind, value, &
       end
 
-      # One icon, named by the concept it means rather than by what this set calls it.
-      # Whatever else the caller hands over — a role, a tooltip's data — rides along.
-      def icon_tag(concept, label: nil, **)
-        tag.i class: "bi bi-#{Unicon[concept][:bootstrap]}", aria: { label: }, **
-      end
-
     private
 
       def formatted_number(kind, column, value)

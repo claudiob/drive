@@ -14,19 +14,17 @@ module Recourse
         # Delimited like every other count on the page: the filter menu beside the
         # table already reads 38,405, and one figure in two spellings reads as two.
         count = number_with_delimiter value
-        nested = "#{resource_controller_path}/#{association.name}"
+        path = resource_controller_path
+        nested = "#{path}/#{association.name}"
         return count unless routed? nested, 'index'
 
-        turbo_link_to count, url_for(controller: "/#{nested}", action: :index,
-                                     "#{resource_key}_id": resource.id)
+        turbo_link_to count, nested_index_url(resource, path, nested)
       end
 
       # The icon the sidebar and the breadcrumb already draw for the counted model,
       # speaking the heading's word to a screen reader.
       def counter_title(association)
-        title = Recourse.model_title association.klass
-        tag.i class: "bi bi-#{Recourse.model_icon association.klass}", role: :img,
-              aria: { label: title }, data: tooltip_on_top(title)
+        icon_heading association.klass.recourse_icon, Recourse.model_title(association.klass)
       end
 
       def counter_columns

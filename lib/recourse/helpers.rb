@@ -14,6 +14,7 @@ require_relative 'helpers/inputs'
 require_relative 'helpers/kinds'
 require_relative 'helpers/navigation'
 require_relative 'helpers/parents'
+require_relative 'helpers/pictures'
 require_relative 'helpers/references'
 require_relative 'helpers/refreshes'
 require_relative 'helpers/routing'
@@ -28,8 +29,8 @@ module Recourse
   module Helpers
     include Actions, Cards, Cells, Colors, Comboboxes, Constraints, Counters,
             Deletions, Examples, Fields, Filters, Formats, Inputs, Kinds, Navigation,
-            Parents, References, Refreshes, Routing, Rows, Searches, Shortcuts,
-            Sorts, Values
+            Parents, Pictures, References, Refreshes, Routing, Rows, Searches,
+            Shortcuts, Sorts, Values
 
     # The grid a record's own two pages lay an attribute out in: two columns on a large
     # viewport, and the same padding on both, so a value and the field that edits it sit

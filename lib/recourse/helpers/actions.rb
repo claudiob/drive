@@ -22,7 +22,7 @@ module Recourse
         label = t "recourse.#{action}"
         return label unless @recourse_headers
 
-        icon_tag ICONS[action], label: label, role: :img, data: tooltip_on_top(label)
+        icon_heading ICONS[action], label
       end
 
       # Whether a record's own page is there to be linked to, wherever its routes
@@ -42,12 +42,6 @@ module Recourse
       end
 
     private
-
-      def tooltip_on_top(title)
-        # `bs_title` is what Bootstrap's tooltip reads, and the controller is what
-        # makes one: Bootstrap never wires a tooltip on its own.
-        { controller: 'tooltip', bs_placement: 'top', bs_title: title }
-      end
 
       # Named by controller rather than by action alone: on a nested page the two
       # differ, and a bare `action:` would look for the member route the nesting

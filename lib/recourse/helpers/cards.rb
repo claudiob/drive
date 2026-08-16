@@ -54,7 +54,7 @@ module Recourse
 
           [
             association_tab_label(record, association),
-            nested_index_path(record, path, nested), nested == controller.controller_path,
+            nested_index_url(record, path, nested), nested == controller.controller_path,
           ]
         end
       end
@@ -81,11 +81,6 @@ module Recourse
 
       def counted_tab_name(count, association)
         "#{count} #{Recourse.model_title association.klass, count: count, lower: true}"
-      end
-
-      def nested_index_path(record, path, nested)
-        url_for controller: "/#{nested}", action: :index,
-                "#{path.split('/').last.singularize}_id": record.id
       end
 
       def tab_label(action)

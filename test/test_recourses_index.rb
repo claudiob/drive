@@ -17,7 +17,7 @@ class TestRecoursesIndex < Minitest::Test
     refute_includes body, 'data-cell="Created at"'
     # A counter is headed with the icon of what it counts, named for a reader
     # who cannot see it, and sorts; its cells carry the bare figure.
-    icon = '<i class="bi bi-geo-alt" role="img" aria-label="ZIPs" ' \
+    icon = '<i class="bi bi-geo-alt" aria-label="ZIPs" role="img" ' \
            'data-controller="tooltip" data-bs-placement="top" data-bs-title="ZIPs"></i>'
 
     assert_includes body, %(q%5Bs%5D=zips_count+asc">#{icon}</a></th>)

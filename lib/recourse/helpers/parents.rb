@@ -1,6 +1,7 @@
 module Recourse
   module Helpers
-    # What a nested page knows about the record above it.
+    # What a page knows about the records either side of it: the one a nested route
+    # names above it, and the ones a count or a tab reaches below.
     module Parents
       # The record a nested route names above this page, or nil at the top level.
       def resource_parent
@@ -11,6 +12,15 @@ module Recourse
       # every row on the page shares.
       def resource_parent_association
         controller_assign 'recourse_parent_association'
+      end
+
+      # The index of a record's children, nested under the record itself:
+      # `/counties/1/zips`. The key is named after the path the children are nested
+      # under rather than after the page being served, since a page nested one level
+      # up is served by another controller entirely.
+      def nested_index_url(record, path, nested)
+        url_for controller: "/#{nested}", action: :index,
+                "#{path.split('/').last.singularize}_id": record.id
       end
 
     private
