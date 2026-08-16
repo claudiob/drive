@@ -5,7 +5,7 @@ require 'integration_case'
 class TestRecoursesWrites < IntegrationCase
   def teardown
     Place.where(slug: %w[a-new-place kips-place]).destroy_all
-    Memo.where(body: ['Memo', 'About Kip']).destroy_all
+    Memo.where(body: 'About Kip').destroy_all
     Person.where(name: 'Kip').destroy_all
   end
 
@@ -80,22 +80,6 @@ class TestRecoursesWrites < IntegrationCase
 
     assert_equal 303, @session.response.status
     refute Person.exists?(person.id)
-  end
-
-  # A nested resource routed `create` without `new` offers a one-click Create in the
-  # Add link's place: it posts the record whole and comes back to the index holding
-  # it. Our word, in the routes file, that a bare memo can stand.
-  def test_a_bare_create_posts_the_record_whole_from_the_index
-    person = Person.order(:id).first
-    visit "/people/#{person.id}/memos"
-
-    assert_includes body, %(action="/people/#{person.id}/memos")
-    assert_includes body, 'Create'
-    refute_includes body, %(href="/people/#{person.id}/memos/new")
-    @session.post "/people/#{person.id}/memos", params: { memo: { body: 'Memo' } }
-
-    assert_equal 303, @session.response.status
-    assert_equal person, Memo.find_by!(body: 'Memo').person
   end
 
 private

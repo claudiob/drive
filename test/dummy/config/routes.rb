@@ -23,7 +23,7 @@ Rails.application.routes.draw do
     recourses :teams, except: :show do
       # A `namespace` between a block and what it nests: the routes and the
       # controller come out under it, and no tab is drawn for a child filed there.
-      namespace(:active) { recourses :places, only: :index }
+      namespace(:visited) { recourses :places, only: :index }
     end
 
     # Edited but never shown, and the table a foreign key is typed to reach.

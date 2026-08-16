@@ -25,7 +25,18 @@ module Recourse
           feedback: messages.to_sentence.upcase_first.presence,
           placeholder: combobox_placeholder(column),
           required: required?(resource_model, column),
+          selected: combobox_selected(form, column),
         }
+      end
+
+      # What the record already holds, as the menu spells its values: an id for a
+      # foreign key and the word itself for an enum. Without it a form opens on the
+      # placeholder however full the record is — and the plugin's hidden input opens
+      # empty with it, so saving would write that emptiness back.
+      def combobox_selected(form, column)
+        value = form.object&.attributes&.fetch column.to_s, nil
+
+        Array(value).map(&:to_s)
       end
 
       def combobox_options(klass, label)

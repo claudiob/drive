@@ -4,6 +4,10 @@ require 'integration_case'
 # A resource reached through another: what its page lists, what it asks for, and
 # what the routes file may and may not put between the two.
 class TestRecoursesNesting < IntegrationCase
+  def teardown
+    Memo.where(body: 'Memo').destroy_all
+  end
+
   # A nested index lists the parent record's own rows and nothing else — no column
   # for the parent, since the address already answered it, and no filter offering
   # to ask again. The crumbs read the parent's index, then the record, then here.
@@ -40,7 +44,7 @@ class TestRecoursesNesting < IntegrationCase
   # rather than linked here, because teams are never shown.
   def test_a_namespace_may_sit_between_a_parent_and_its_child
     team = Team.order(:id).first
-    visit "/teams/#{team.id}/active/places"
+    visit "/teams/#{team.id}/visited/places"
 
     assert_includes body, %(<a class="breadcrumb-link gap-2" href="/teams">)
     assert_includes body, %(<span class='breadcrumb-link'>#{team.name}</span>)
@@ -61,5 +65,21 @@ class TestRecoursesNesting < IntegrationCase
     end
 
     assert_includes error.message, 'Nest it under `recourses :people` instead.'
+  end
+
+  # A nested resource routed `create` without `new` offers a one-click Create in the
+  # Add link's place: it posts the record whole and comes back to the index holding
+  # it. Our word, in the routes file, that a bare memo can stand.
+  def test_a_bare_create_posts_the_record_whole_from_the_index
+    person = Person.order(:id).first
+    visit "/people/#{person.id}/memos"
+
+    assert_includes body, %(action="/people/#{person.id}/memos")
+    assert_includes body, 'Create'
+    refute_includes body, %(href="/people/#{person.id}/memos/new")
+    @session.post "/people/#{person.id}/memos", params: { memo: { body: 'Memo' } }
+
+    assert_equal 303, @session.response.status
+    assert_equal person, Memo.find_by!(body: 'Memo').person
   end
 end
