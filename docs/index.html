@@ -576,6 +576,11 @@
         <h3>Nothing</h3>
         <p>There is no step two. The screens are served from the gem, so there is no generated code
         to keep, and nothing in your app to maintain.</p>
+        <p>Which is why the schema is the layout: a table's columns come out in the order the
+        database keeps them, which is the order your migrations added them in. Counter caches are
+        pulled to the front, timestamps go to the end where you asked for them, and everything
+        else falls where the schema put it. There is no column list to reorder, because there is
+        no file to reorder it in.</p>
       </div>
     </div>
 
