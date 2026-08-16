@@ -14,8 +14,7 @@ module Recourse
     # back. A count already kept is left alone, so a run with nothing missing
     # writes nothing, and `rails db:migrate` applies whatever one wrote.
     class CountersGenerator < Rails::Generators::Base
-      include ActiveRecord::Generators::Migration, Associations, Declared, Migrations,
-              Nesting
+      include ActiveRecord::Generators::Migration, Associations, Declared, Migrations, Nesting
 
       # Templates live beside this class, which is also what tells the parent where
       # to read `--help` from: a USAGE one directory above the source root.

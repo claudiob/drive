@@ -29,8 +29,7 @@ module Recourse
       # answered: a comment under `/posts/2` is for post 2, not for one picked
       # from a menu, so no field asks.
       def editable_columns
-        Recourse.editable_columns(resource_model) -
-          Array(resource_parent_association&.foreign_key)
+        Recourse.editable_columns(resource_model) - Array(resource_parent_association&.foreign_key)
       end
 
       # Columns the show page reads out: everything the form offers, then the

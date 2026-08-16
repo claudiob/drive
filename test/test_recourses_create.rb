@@ -29,8 +29,7 @@ class TestRecoursesCreate < Minitest::Test
     assert_includes body, "<small class='invalid-feedback' id='job_location_id_error'>Must exist"
     assert_includes body,
                     '<input aria-describedby="job_title_error" class="is-invalid form-control"'
-    assert_includes body,
-                    '<small class="invalid-feedback" id="job_title_error">Can&#39;t be blank'
+    assert_includes body, '<small class="invalid-feedback" id="job_title_error">Can&#39;t be blank'
   end
 
   # A ZIP is typed rather than picked, because its code has a length, so `create`

@@ -28,8 +28,7 @@ module Dummy
     # `silence_healthcheck_path` uses, aimed at `/cable`, so no `Started GET`
     # line; the nil cable logger is what swallows `Successfully upgraded` and
     # every `Turbo::StreamsChannel is streaming` line.
-    config.middleware.insert_before Rails::Rack::Logger, Rails::Rack::SilenceRequest,
-                                    path: '/cable'
+    config.middleware.insert_before Rails::Rack::Logger, Rails::Rack::SilenceRequest, path: '/cable'
     config.action_cable.logger = ActiveSupport::Logger.new nil
 
     # Bootstrap wants `is-invalid` on the control and the message beside it, which

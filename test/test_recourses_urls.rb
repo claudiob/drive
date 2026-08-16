@@ -18,8 +18,7 @@ class TestRecoursesURLs < Minitest::Test
 
     assert_page '/messages', %(<td data-cell="Content">#{LINK}</td>),
                 '<td data-cell="Inbound">false</td>'
-    assert_page "/messages/#{message.id}", LINK,
-                '<div class="form-control-plaintext">false</div>'
+    assert_page "/messages/#{message.id}", LINK, '<div class="form-control-plaintext">false</div>'
   ensure
     contact&.destroy
   end
