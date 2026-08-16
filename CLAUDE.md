@@ -237,18 +237,6 @@ two is filed under the one a reader would look in first.
 
 ### TESTING
 
-#### Coverage stays at 100%
-
-- `simplecov` starts at the very top of `test/test_helper.rb`, before anything
-  else is required, with `minimum_coverage 100`. Below that the suite fails.
-- `skip '/test/'` leaves the dummy app out: it is a fixture, not shipped code.
-  Never `add_filter` — SimpleCov deprecated it in favour of `skip`, same
-  arguments and same behaviour, and it warns on every run until changed.
-- `lib/recourse/version.rb` is not measured, and that is expected rather than a
-  gap. The Gemfile's `gemspec` directive loads it during bundler setup, before
-  SimpleCov can start. Do not add `track_files` to pull it in — it would report
-  as uncovered when in fact it runs.
-
 #### As few tests as coverage needs
 
 - The suite exists to cover the code, so a test that can be deleted while
@@ -279,28 +267,6 @@ two is filed under the one a reader would look in first.
   render the page, and no test is added to pin them down further.
 
 ### MAINTAINABILITY
-
-#### A new kind of value is an Active Record type
-
-- When a page has to tell two columns of the same type apart — money from a share of
-  it, both `decimal(10,2)` — the answer is a custom Active Record type in the *app*,
-  never a hook in the gem. `Price < ActiveRecord::Type::Decimal` reporting
-  `def type = :price`, registered with `ActiveRecord::Type.register`, and the model
-  says `attribute :hourly_rate, :price`.
-- The gem then asks `type_for_attribute` like it does for everything else, and the
-  rule for a price applies exactly where a `:price` type is what answers. No
-  `recourse_formats`, and no guessing from a column's name: `hourly_rate` is money
-  and `commission_rate` is not.
-- Give migrations the same word by extending
-  `ActiveRecord::ConnectionAdapters::TableDefinition` with a column method that
-  delegates to the type it is a kind of. Rails keeps `define_column_methods` private,
-  so write the method out rather than reaching for it.
-- Keep the type's `precision` and `scale` equal to the column's. A type promising
-  five digits over a `decimal(4, 2)` puts a `max` in the browser that the database
-  will refuse.
-- Registered with a block — `register(:price) { |_name, **options| Price.new(**options) }`
-  — so an app under `app/types/` is autoloaded when a model first asks rather than
-  during boot.
 
 #### No metaprogramming
 
@@ -445,68 +411,6 @@ two is filed under the one a reader would look in first.
   there — what would break without it, not what the gem is.
 - The same applies to `add_dependency` in the gemspec.
 
-#### A gem's README says how to install it
-
-- Every gem we publish follows Semantic Versioning, and its README carries a
-  `How to install` section: the system install (`gem install <name>`), then the
-  Gemfile line pinned to the current major — `gem '<name>', '~> 2.0'` — then the
-  sentence saying why the pin is safe: the gem follows
-  [Semantic Versioning](http://semver.org), so `~> major.minor` means
-  `bundle update` never crosses a breaking change.
-- Keep the snippet's version current: a major release updates the README's pin
-  in the same commit that makes it. unicon reads `~> 2.0` since 2.0.0; recourse
-  reads `~> 4.0` since 4.0.0.
-- This does not soften "never use `~>`" above. That rule binds *our* Gemfiles
-  and gemspecs naming what we depend on; the README line is advice to hosts
-  pinning *us*, which is exactly what SemVer is for.
-
-#### A gem's page draws its mark once and renders every icon a service asks for
-
-- A gem that gets a GitHub page with colours and artwork of its own gets the
-  whole icon set with it, in the same breath — the browser's, iOS', and the
-  avatar GitHub and the social networks show. A page whose tab is a blank sheet
-  and whose repository is a grey identicon is the page half-built.
-- One drawing answers all of them: `icon.svg` beside `index.html`, holding the
-  page's own mark at the scale a tab can carry, and a `build-icons.sh` that
-  renders the rest from it. Run it after editing the SVG and commit what
-  changes; never touch a PNG by hand, or the set drifts apart one file at a
-  time.
-- What each service asks for, and why that size:
-  - `favicon.ico`, holding 16, 32 and 48 — what a browser reaches for when the
-    page links nothing, and what Windows and older Safari prefer regardless.
-  - `favicon-96x96.png`, the tab's own.
-  - `apple-touch-icon.png` at 180, for a home-screen bookmark.
-  - `web-app-manifest-192x192.png` and `-512x512.png`, named in
-    `site.webmanifest`.
-  - `avatar.png` at 1024, for GitHub and for every social network that asks for
-    a picture. One file: they all crop a square themselves, and 1024 is the
-    largest any of them wants.
-- Corners are the one thing that varies: iOS masks a bookmark and every avatar
-  is shown round, so those two render from an SVG whose `rx` is 0. A corner
-  rounded twice reads as a mistake.
-- Adapt the drawing, never the rendering. What a 16-pixel tab cannot carry — a
-  halo, eyelashes, a sparkle — comes out of `icon.svg`, so every size says the
-  same thing at the fidelity it can hold, and the mark on the avatar is the mark
-  in the tab.
-- `rsvg-convert` and `magick` do the rendering: `brew install librsvg
-  imagemagick`, named in a comment at the top of the script, since a machine
-  without them fails at the first line.
-
-#### No code of conduct, no ideology
-
-- Never add a `CODE_OF_CONDUCT.md`, and never link to or mention one from the
-  README, gemspec, or any other file. Generators that create one (`bundle
-  gem`) have their output deleted.
-- Keep the codebase free of content about ethics, religion, or politics —
-  including comments, docs, error messages, test fixtures, and sample data.
-- `LICENSE.txt` is not covered by this: a license is a legal notice.
-
-#### Target Rails 8.1+
-
-- All Rails libraries are required at `>= 8.1`. Write against current Rails
-  APIs only.
-- Never add version checks, shims, or fallbacks for older Rails or Ruby.
-
 #### No static typing
 
 - Never write Ruby type signatures, and never add a strong-typing tool.
@@ -516,17 +420,6 @@ two is filed under the one a reader would look in first.
   `T.nilable` / `T.must`, no `srb` or `tapioca`.
 - Never add these gems: `sorbet`, `sorbet-runtime`, `rbs`, `steep`, `tapioca`.
 - Convey intent through clear names, short methods, and tests instead.
-
-#### Branch and commit per prompt
-
-- Before starting a code change, if the current branch is `main`, create a
-  branch first. Short name, lowercase words, underscores only — no dashes,
-  no slashes, no ticket prefixes (`git_conventions`, `dummy_app`).
-- If already on a branch other than `main`, keep working on it.
-- After completing the code change a prompt asked for, commit it. The subject
-  is a short summary of the prompt; the body is the full response given for
-  that prompt.
-- One prompt, one commit.
 
 #### Ask the validators, not the schema
 
@@ -555,29 +448,6 @@ two is filed under the one a reader would look in first.
   column — on an integer it counts bytes, and validating it as a length would
   cap a smallint at two digits.
 
-#### Match Bootstrap with field_error_proc
-
-- Wherever Bootstrap is the CSS framework, set
-  `config.action_view.field_error_proc`. Rails' default wraps a rejected field in
-  `<div class='field_with_errors'>`, which Bootstrap styles not at all: no red
-  border, and the message nowhere on the page.
-- The proc adds `is-invalid` to the control and follows it with a
-  `<small class='invalid-feedback'>`, which is the pair Bootstrap needs — its
-  `.is-invalid ~ .invalid-feedback` reveals one only next to the other.
-- Guard on the control's class, not on the tag's type. A label carries
-  `form-label` and falls straight through, and so does anything else without a
-  `form-control`. Guarding on `instance.is_a? ActionView::Helpers::Tags::Label`
-  instead leaves `html_tag.index 'form-control'` returning nil for every other
-  kind of tag, and `insert nil` raises.
-- The proc is `instance_exec`'d on the view, so `tag` and `safe_join` are in
-  scope — no need to write markup as a string.
-- Which is just as well, because `insert` on a SafeBuffer escapes what it is
-  given: an attribute spliced in by hand arrives as `&#39;`. Build it with
-  `tag.attributes` and join it with `safe_join`.
-- A rule for apps we write. The gem never sets a host's Action View config, the
-  same line drawn for the logger and the time zone — so a control the gem draws
-  outside a form builder, like the combobox, carries this markup itself.
-
 #### Every model says how it is labelled
 
 - A model answers `recourse_label` with the column a combobox shows for one of its
@@ -605,14 +475,6 @@ two is filed under the one a reader would look in first.
 - A typed label is looked up on the way in — `ZIP.find_by code: '90210'` — and the
   form asks for it under the foreign key's own name, so no host model needs a
   virtual attribute and strong parameters need no special case.
-
-#### Git ignores a built gem
-
-- `*.gem` is gitignored. `rake build` puts one under `/pkg/`, which was already
-  ignored, but `gem build` leaves it in the working directory, where `git add -A`
-  would sweep up a megabyte of binary release artifact.
-- Nothing is lost by hiding it. `spec.files` reads `git ls-files`, so a build is
-  never packaged inside the next one either way.
 
 #### Vendor what a page cannot render without
 
@@ -724,53 +586,6 @@ two is filed under the one a reader would look in first.
 - Enforced by `Style/MethodCallWithArgsParentheses` with
   `EnforcedStyle: omit_parentheses`. The cop is off by default, so it needs
   `Enabled: true` as well as the style.
-
-#### Prefer `up_only` in migrations
-
-- A migration step that runs only on the way up is `up_only { backfill }`, never
-  `reversible { |direction| direction.up { backfill } }`. The short form has been
-  Rails' since 5.2, it says what it means, and it leaves no down branch to read
-  past.
-- `reversible` keeps its place where a migration genuinely writes both
-  directions.
-
-#### List concerns alphabetically, on one line
-
-- Concerns are included in alphabetical order: `include Emailable, Phonable`,
-  never the other way round.
-- One `include` carries the whole list. Give each its own statement only when
-  the single line would not fit, and then keep the order.
-- Enforced by `Style/MixinGrouping` with `EnforcedStyle: grouped`. Its default
-  is `separated`, which demands the opposite, so the setting is not optional.
-- `include A, B` inserts them in reverse, so `A` ends up ahead of `B` in
-  `ancestors`. It only matters when both define the same method, which two
-  concerns that were extracted for being distinct features should not.
-
-#### Pass locals to partials explicitly
-
-- A partial never reads a controller's instance variables. Declare strict
-  locals on its first line — `<%# locals: (resources:, pagy:) %>` — and pass
-  them at the call site: `render 'table', resources: @resources, pagy: @pagy`.
-- A partial that takes no locals gets no comment at all. Never write
-  `<%# locals: () %>`.
-- A template rendered by an action may read instance variables. The rule is
-  about partials, which should not depend on who rendered them.
-- Rails enforces this: omit a declared local and the render raises instead of
-  quietly rendering a blank.
-- Where two branches need different locals, write `if`/`else` rather than
-  `render cond ? 'a' : 'b'` — a single call cannot pass the right locals to
-  both.
-- The row partial is the deliberate exception, and it breaks the rule twice.
-  Its record arrives under a name computed at runtime (`contact:`, `state:`),
-  so the gem's own `_row` cannot declare strict locals and reads
-  `local_assigns[resource_key]`. And whether it is drawing the header row or a
-  body row travels in `@recourse_headers`, set by `_table` before each render,
-  which `column` reads. Both were asked for; neither is a pattern to copy.
-- The fields partial is the second exception, for the same two reasons. It is
-  handed the record under the runtime name so a host's `_fields` can declare
-  `<%# locals: (contact:) -%>`, while the gem's own cannot; and the form builder
-  travels in `@recourse_form`, set by `_form`, because `field :phone` is the
-  call site the host writes and threading a form through it would spoil that.
 
 #### Spell acronyms as acronyms
 
@@ -889,24 +704,6 @@ two is filed under the one a reader would look in first.
   warning's four are `deletion.*`, everything else is flat.
 - The point is not translation, which is still nobody's plan. It is that a host
   can reword `Add contact` by writing one key, rather than reopening a helper.
-
-#### No indefinite article in an interpolated string
-
-- Never write `a %{model}` or `an %{model}`. Which one is right is decided by
-  *sound* and not by spelling — an hour, an honest agent, a user, a European
-  market, a one-off — and this gem registers acronyms, where it splits again: a
-  ZIP, an SMS, an API.
-- Rails offers nothing to compute it. `ActiveSupport::Inflector` has no article
-  method and `String#indefinite_article` does not exist; the gems that add one
-  (`indefinite_article`, `a_vs_an`) are guessing from spelling with an exception
-  list, and guess wrong in public.
-- It would not survive the locale file anyway. An article is per-language and
-  usually per-gender — der/die/das, un/une — so an English one computed in Ruby
-  is unusable to whoever translates the key.
-- Write the copy so the question never comes up. `Select…` rather than `Select a
-  State…`, since the label above the field already names it; `without its job`
-  rather than `without a job`. A host who wants `Select an airplane…` writes that
-  one key themselves.
 
 #### The State model
 
