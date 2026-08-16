@@ -25,9 +25,11 @@ module Recourse
 
     # Columns holding a counter cache, each mapped to the association it counts. Read
     # from the `belongs_to` on the other side, which is where `counter_cache` is
-    # declared: a column merely named `quote_count` is not one of these.
+    # declared: a column merely named `quote_count` is not one of these. Worked out
+    # once per class, the way `recourse_listable?` is: associations are declared at
+    # load and a reloaded class is a new one, with a memo of its own.
     def recourse_counters
-      reflect_on_all_associations(:has_many).filter_map do |association|
+      @recourse_counters ||= reflect_on_all_associations(:has_many).filter_map do |association|
         column = association.inverse_of&.counter_cache_column
         [column, association] if column
       end.to_h

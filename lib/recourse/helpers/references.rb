@@ -3,9 +3,13 @@ module Recourse
     # Fields for a foreign key: a value to type, or a list to pick from.
     module References
       # The belongs_to a column is the foreign key of, or nil when it is not one.
+      # Every key at once and once per render, rather than a scan of the model's
+      # associations for each cell of each row that holds one.
       def belongs_to_association(column)
-        resource_model.reflect_on_all_associations(:belongs_to)
-                      .find { |one| one.foreign_key.to_s == column }
+        @recourse_belongs_to ||= resource_model.reflect_on_all_associations(:belongs_to)
+                                               .index_by { |one| one.foreign_key.to_s }
+
+        @recourse_belongs_to[column]
       end
 
       # A field for a foreign key. Where the label has a length it is short enough

@@ -86,8 +86,10 @@ module Recourse
       params[:q].is_a?(ActionController::Parameters) ? params[:q] : {}
     end
 
+    # Looked up once per render: `classify` and `safe_constantize` are cheap, and a
+    # single index page asked for this seven hundred times.
     def resource_model
-      Recourse.model controller.controller_name
+      @recourse_model ||= Recourse.model controller.controller_name
     end
   end
 end
