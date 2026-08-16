@@ -1,8 +1,9 @@
 # Coding Guidelines
 
-**Scope:** This file is the authority for code style in this project. The
-baseline is standard community Ruby/Rails practice, plus the learned preferences
-recorded at the bottom.
+**Scope:** `~/code/guidelines/STYLE.md` is the authority for code style, and this
+repo abides by it. This file carries only what is true of *this* repo and not of
+the others — a rule that belongs to every codebase goes upstream instead, and a
+rule recorded here that turns out to be general is moved rather than copied.
 
 ## Ruby
 
@@ -73,14 +74,10 @@ two is filed under the one a reader would look in first.
 
 #### PostgreSQL, always
 
-- When an app needs a database, it is PostgreSQL. Never MySQL, never SQLite,
-  including cases where SQLite would be less setup.
-- The dummy app is the one deliberate exception, on SQLite since 2026-08-14: the
-  gem serves every adapter, and the suite proving that on a second one — with no
-  server to run — outweighs the dummy resembling the apps. The database is a file
-  under `test/dummy/storage`, created and migrated on the first `rake test`, and
-  deleting `storage/*.sqlite3*` is the reset; `dropdb --force` stays the reset
-  for the PostgreSQL apps.
+- The guidelines' exception for a gem's dummy app is what this one takes, since
+  2026-08-14. The database is a file under `test/dummy/storage`, created and
+  migrated on the first `rake test`, and deleting `storage/*.sqlite3*` is the
+  reset; `dropdb --force` stays the reset for the PostgreSQL apps.
 - The rule binds the apps we write — never the gem. The gem's own code names no
   adapter, so a host on any of the three is served the same: column kinds are
   read through `type_for_attribute` and `defined_enums`, which every adapter
@@ -519,22 +516,6 @@ two is filed under the one a reader would look in first.
   `T.nilable` / `T.must`, no `srb` or `tapioca`.
 - Never add these gems: `sorbet`, `sorbet-runtime`, `rbs`, `steep`, `tapioca`.
 - Convey intent through clear names, short methods, and tests instead.
-
-#### Rebase, never merge
-
-- A repo of ours contains no merge commits. `git log --merges` on any branch is
-  empty, and stays that way.
-- "Merge that branch into main" always means *rebase* it. `git rebase main` on
-  the branch, then fast-forward main onto it — never `git merge`, and never
-  `--no-ff`, which exists to make the merge commit this rule forbids.
-- Fix the conflicts a rebase raises. Only a genuinely hard one — where two
-  changes disagree about what the code should now do, rather than about how to
-  put two edits in one file — is worth stopping to ask about.
-- A merge commit that got in is regenerated away: rebase onto the commit before
-  it, check the resulting tree matches what was there (`git rev-parse
-  <branch>^{tree}` either side), and re-run the suite. Rewriting is only safe
-  while the commits are unpushed — check `git log origin/<branch>` first, and
-  rebase every other branch and worktree that was based on what moved.
 
 #### Branch and commit per prompt
 
