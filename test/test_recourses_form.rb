@@ -48,4 +48,25 @@ class TestRecoursesForm < IntegrationCase
     assert_includes body, 'Blue Crew'
     refute_includes body, 'M0001'
   end
+
+  # A key that may be nothing has to be settable back to it, which a menu of records
+  # cannot otherwise say. The item carries an empty value of its own, since the
+  # plugin builds its hidden input from whichever item is selected — and only where
+  # the model permits it: a required key offers no way to leave itself empty.
+  def test_only_an_optional_menu_offers_a_way_to_choose_nothing
+    visit "/places/#{Place.order(:id).first.id}/edit"
+
+    assert_includes menu_for('place[person_id]'), %(data-bs-value='' aria-selected='false')
+    assert_includes menu_for('place[person_id]'), '<span>None</span>'
+    refute_includes menu_for('place[team_id]'), %(data-bs-value='' )
+    # `status` is `null: false` and the model says so, so it is required too.
+    refute_includes menu_for('place[status]'), %(data-bs-value='' )
+  end
+
+private
+
+  # One combobox's menu, from its toggle to the end of its options.
+  def menu_for(name)
+    body[/data-bs-name='#{Regexp.escape name}'.*?combobox-no-results/m]
+  end
 end

@@ -19,12 +19,16 @@ module Recourse
       # as choices: the enum one asks for these too, and gives `values:` instead.
       def combobox_locals(form, column)
         messages = errors_on column
+        required = required? resource_model, column
 
         {
           name: form.field_name(column), id: form.field_id(column), invalid: messages.any?,
           feedback: messages.to_sentence.upcase_first.presence,
           placeholder: combobox_placeholder(column),
-          required: required?(resource_model, column),
+          required: required,
+          # A menu of records can say which one; only this can say none of them, and
+          # a key that may be nothing has to be settable back to it.
+          none: (t 'recourse.unset' unless required),
           selected: combobox_selected(form, column),
         }
       end

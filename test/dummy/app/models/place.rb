@@ -34,6 +34,10 @@ class Place < ApplicationRecord
   encrypts :notes
 
   validates :name, presence: true
+  # The column is `null: false`, so the model says so too — a constraint the model
+  # keeps quiet about is one the browser cannot show and one a form finds out about
+  # from the database, as a 500 rather than as a message beside the field.
+  validates :status, presence: true
   validates :capacity, presence: true, numericality: { only_integer: true, greater_than: 0 }
   # A non-null boolean is included in the two, never present: `presence` rejects
   # `false` along with nil.

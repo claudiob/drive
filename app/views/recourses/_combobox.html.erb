@@ -1,4 +1,4 @@
-<%# locals: (name:, id:, placeholder:, invalid: false, feedback: nil, required: false, label: nil, counter: nil, recourses: nil, values: [], multiple: false, selected: [], aria_label: nil, small: false, all: nil) -%>
+<%# locals: (name:, id:, placeholder:, invalid: false, feedback: nil, required: false, label: nil, counter: nil, recourses: nil, values: [], multiple: false, selected: [], aria_label: nil, small: false, all: nil, none: nil) -%>
 <button class='form-control<%= ' form-control-sm' if small %><%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>' data-controller='combobox'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
@@ -21,6 +21,15 @@
       is ours; and never `.selected`, which it counts whatever the element is. -%>
   <% if all -%>
     <button type='button' class='menu-item' data-controller='deselect' data-action='deselect#all'><%= all %></button>
+    <div class='menu-divider'></div>
+  <% end -%>
+  <%# A value of its own, and an empty one: the plugin builds its hidden input from
+      whichever item is selected, so this is what sets an optional key back to
+      nothing. `deselect` cannot serve here — in a single menu the plugin selects
+      whatever is clicked rather than toggling it, so re-clicking the chosen item
+      would change nothing at all. -%>
+  <% if none -%>
+    <button type='button' class='menu-item' data-bs-value='' aria-selected='false'><span class='menu-item-content'><span><%= none %></span></span></button>
     <div class='menu-divider'></div>
   <% end -%>
   <%# Records are cached on the relation, and a list of words is not worth caching:

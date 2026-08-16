@@ -42,6 +42,7 @@ en:
       blue. It cannot be %{color}."
     updated: "%{model} was updated."
     updated_error: "%{model} could not be updated."
+    unset: None
     deletion:
       delete: Delete
       title: Delete %{record}?
