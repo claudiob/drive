@@ -49,6 +49,11 @@ class TestRecoursesNesting < IntegrationCase
     assert_includes body, %(<a class="breadcrumb-link gap-2" href="/teams">)
     assert_includes body, %(<span class='breadcrumb-link'>#{team.name}</span>)
     assert_equal team.places_count, body.scan('data-cell="Name"').size
+    # And the card is the parent's, tabs and all: no Show, since teams are never
+    # shown, then this page's own tab carrying the count and marked current.
+    assert_includes body, %(href="/teams/#{team.id}/edit")
+    assert_includes body, %(#{team.places_count} places)
+    assert_includes body, %(active" aria-current="page" href="/teams/#{team.id}/visited/places")
   end
 
   # What is refused is a nesting that adds no namespace at all: only a `recourses`

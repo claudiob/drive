@@ -17,9 +17,11 @@ module Recourse
         actions + nested_tabs(record, path)
       end
 
-      # The resource the card belongs to: the parent's, on a page nested under it.
+      # The resource the card belongs to: the parent's, on a page nested under it —
+      # read off the routes rather than chopped off this page's own path, which a
+      # `namespace` between the two would leave pointing at the namespace.
       def card_path
-        return controller.controller_path.rpartition('/').first if resource_parent
+        return Recourse.parent_of controller.controller_path if resource_parent
 
         controller.controller_path
       end
