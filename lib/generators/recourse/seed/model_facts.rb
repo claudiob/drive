@@ -72,9 +72,8 @@ module Recourse
 
     private
 
-      # A belongs_to validates the association, not the column, so `zip_id` asks `zip`.
       def validated?(column)
-        [column, column.delete_suffix('_id')].uniq.any? do |attribute|
+        Recourse.validated_names(column).any? do |attribute|
           @model.validators_on(attribute).any? { |one| REQUIRING.any? { |kind| one.is_a? kind } }
         end
       end

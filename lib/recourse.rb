@@ -49,8 +49,7 @@ module Recourse
   # `create` permits these. A counter cache is none of a user's business — Rails keeps
   # it, so a form that offered one would let it be typed over.
   def self.editable_columns(model)
-    model.column_names - ['id', *TIMESTAMPS] -
-      model.recourse_counters.keys - hidden_columns(model)
+    model.column_names - ['id', *TIMESTAMPS] - model.recourse_counters.keys - hidden_columns(model)
   end
 
   # Columns no screen shows: whatever the model asked to hide through
@@ -59,6 +58,14 @@ module Recourse
   # it. A class name is machinery, not something to read out or type over.
   def self.hidden_columns(model)
     Array(model.recourse_hidden).map(&:to_s) + [model.inheritance_column]
+  end
+
+  # The names a column is validated under: its own, and — where it is a foreign key
+  # — the association's, since `belongs_to` validates the record it points at rather
+  # than the number pointing there. Two questions where a column is a key, one
+  # everywhere else.
+  def self.validated_names(column)
+    [column, column.delete_suffix('_id')].uniq
   end
 
   # The model a resource is named after. A controller the gem defined has nothing

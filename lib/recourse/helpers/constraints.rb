@@ -66,10 +66,8 @@ module Recourse
         t 'recourse.optional' unless required? model, column
       end
 
-      # A belongs_to validates its association, not the column, so both are asked.
       def required?(model, column)
-        presence_validated?(model, column) ||
-          presence_validated?(model, column.delete_suffix('_id'))
+        Recourse.validated_names(column).any? { |name| presence_validated? model, name }
       end
 
       def presence_validated?(model, attribute)

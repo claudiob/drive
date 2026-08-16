@@ -39,7 +39,7 @@ module Recourse
     private
 
       def encrypted_column?(column)
-        Array(resource_model.encrypted_attributes).map(&:to_s).include? column
+        resource_model.recourse_encrypted_names.include? column
       end
     end
   end
