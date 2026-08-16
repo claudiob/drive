@@ -2,11 +2,6 @@ module Recourse
   module Helpers
     # How one attribute reads on a page that only reads it.
     module Formats
-      # A boolean is a picture rather than the words `true` and `false`, and a column
-      # of them scans in one pass. The concept is named here and Unicon says what the
-      # set calls it, the same way a model names its own icon.
-      BOOLEAN_ICONS = { true => :confirm, false => :close, nil => :square }.freeze
-
       # One absolute web address and nothing else: a value to follow, not to read.
       # Anything around it — words, a second address — reads as text instead.
       WEB_URL = %r{\Ahttps?://\S+\z}
@@ -51,7 +46,6 @@ module Recourse
 
       def formatted_text(kind, value, &)
         case kind
-        when :boolean then boolean_icon value
         when :enum then value && enum_badge(marked(value, &))
         when :date, :datetime, :time then value && localized(value)
         else web_url?(value) ? url_link(value) : marked(value, &)
@@ -69,12 +63,6 @@ module Recourse
       # ask which it has — and a `DateTime`, which is both, still keeps its time.
       def localized(value)
         time_tag value, l(value, format: :recourse)
-      end
-
-      # Labelled with the word it stands for: an icon alone says nothing to a screen
-      # reader, and `true` and `false` are the words the table uses.
-      def boolean_icon(value)
-        icon_tag BOOLEAN_ICONS[value], label: value.to_s.presence || t('recourse.blank')
       end
 
       def enum_badge(value)

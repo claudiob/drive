@@ -406,7 +406,9 @@ lists the same columns the form offers, so the two pages never disagree about
 which attributes a record has.
 
 Each value reads as what it is of rather than as what it is stored as: a boolean is
-an icon — a tick, a cross, or an empty square for the one a record never answered —
+the word it is, `true` or `false` — a column the record never answered reads as the
+dash any unanswered column does, and `false` never does, since what earns a dash is
+formatting to nothing rather than being falsy —
 an enum is a badge, an integer carries its delimiters, a decimal is rounded to its
 own scale, a `:price` wears the currency and a `:percentage` a `%`, and a phone is
 punctuated. A counter cache is not shown at all, being Rails' to keep rather than

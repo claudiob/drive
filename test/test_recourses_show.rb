@@ -46,10 +46,9 @@ class TestRecoursesShow < Minitest::Test
     visit @bare
 
     assert_includes body, '<div class="form-control-plaintext">—</div>'
-    # A boolean is a picture either way, and the one a record never answered is a
-    # third picture rather than a dash.
-    assert_includes body, '<i class="bi bi-check" aria-label="true"></i>'
-    assert_includes body, '<i class="bi bi-square" aria-label="—"></i>'
+    # A boolean is the word it is, and the one this record never answered is the
+    # same dash every unanswered column reads as.
+    assert_includes body, '<div class="form-control-plaintext">true</div>'
     # An enum is a badge, in the word the column holds.
     assert_includes body, '<span class="badge">draft</span>'
   end
