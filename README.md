@@ -541,7 +541,6 @@ heading, a search box and a filter:
 | `search_field` | every indexed string column a table shows, plus the label behind every foreign key whose model is too long to list, ORed and matched on containment — or, for a model with none of those, its deterministically encrypted indexed columns, matched whole | what the search box searches — nil where there is nothing to look through, and no search box either |
 | `search_prompt` | `Filter by`, then those same columns joined by `or`, in lower case but for the acronyms | what the search box says while it is empty |
 | `filter_fields` | one `_in` entry per enum, then one per `belongs_to`, less the ones the search box reaches through | which columns get a filter, and what draws each |
-| `recourse_searchable?` | true when there is a search field or any filter | whether the form above the table renders at all |
 | `recourse_listable?` | true when the table holds no more than `MENU_LIMIT` rows | whether a foreign key pointing here gets a menu or joins the search |
 
 A `State` answers `'code_or_fips_or_name_cont'` for the first and `'Filter by
@@ -566,13 +565,12 @@ Reading a title off the model has a second effect worth knowing: rename the mode
 in a locale file, under `activerecord.models`, and every one of those labels
 follows.
 
-Five of those eight hooks are yours. `search_field`, `search_prompt` and
-`recourse_searchable?` are the gem's own working: they are derived from the rest,
-and they are written down here so you can see what a page will do, not so a model
-can answer them differently. Their shape moves when the gem's does. A model that
-wants something else searched changes what the schema says — an index is the
-signal both hooks read — and one that wants a control of its own draws it with a
-`filter_fields` entry.
+Five of those seven hooks are yours. `search_field` and `search_prompt` are the
+gem's own working: they are derived from the rest, and they are written down here
+so you can see what a page will do, not so a model can answer them differently.
+Their shape moves when the gem's does. A model that wants something else searched
+changes what the schema says — an index is the signal both hooks read — and one
+that wants a control of its own draws it with a `filter_fields` entry.
 
 That extension is global, and worth knowing before you write a search of your
 own: every model in the app answers `ransackable_attributes`, whether or not a
@@ -753,8 +751,8 @@ whatever the request was already searching or filtering by and only replaces
 the order.
 
 The index builds a GET form — a search box for the model's `search_field`, one
-filter per `filter_fields` entry, nothing at all where `recourse_searchable?` is
-false — and puts it in `content_for :search` rather than drawing it anywhere. The
+filter per `filter_fields` entry, nothing at all where the model offers neither —
+and puts it in `content_for :search` rather than drawing it anywhere. The
 gem's layout yields it in the navbar, to the right of the breadcrumb and the
 buttons; a layout of your own has to `yield :search` the same way it yields
 `:actions`, or the form is built and never shown. A filter reuses the combobox from

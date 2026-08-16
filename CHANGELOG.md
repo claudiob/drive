@@ -27,13 +27,26 @@ its indexes. Most of what a host used to override is now something it no longer 
   one they all inherit, and a host defines it — `class RecoursesController <
   Recourse::BaseController` — to put a `before_action` above every screen at once.
 
-* [BREAKING CHANGE] The search and sort hooks on a model are gone
+* [BREAKING CHANGE] `search_field` and `search_prompt` are no longer yours to define
 
-  `search_field`, `search_prompt`, `filter_fields`, `searchable_fields`,
-  `ransackable_attributes`, `ransackable_associations` and `ransortable_attributes` are
-  no longer host-facing. A column is sortable, filterable and searchable when it carries
-  an index — the only signal a schema gives about which columns identify a row rather
-  than describe it — and the prompt is written from the columns it looks through.
+  They are derived now, and written down in the README so you can see what a page will
+  do rather than so a model can answer differently. A search box looks through every
+  indexed string column the table shows, plus the label behind a foreign key too long
+  to list, and says so in its own placeholder. `searchable_fields` is gone outright.
+
+* [BREAKING CHANGE] The Ransack hooks default to something instead of to nothing
+
+  `ransackable_attributes`, `ransackable_associations`, `ransortable_attributes` and
+  `filter_fields` are still yours to override, but a model that says nothing is now
+  fully searchable, sortable and filterable rather than not at all: a column is
+  sortable when an index covers it — the only signal a schema gives about which
+  columns identify a row rather than describe it — an enum earns a filter, and so
+  does each `belongs_to`. A host that listed columns by hand can delete those methods.
+
+* [BREAKING CHANGE] A `filter_fields` entry changed shape
+
+  It is keyed by the predicate and carries its options:
+  `{ 'state_id_in' => { label: 'Home state' } }`.
 
 * [BREAKING CHANGE] `recourse_searchable?`, `recourse_sortable?` and `recourse_cachable?`
   are gone
