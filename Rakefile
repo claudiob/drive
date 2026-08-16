@@ -10,8 +10,10 @@ RuboCop::RakeTask.new
 # Ceiling for every code file, blank and comment lines included.
 MAX_FILE_LINES = 100
 
-# Prose and markup are exempt: docs and views of any length.
-EXEMPT_EXTENSIONS = %w[.erb .html .md .txt].freeze
+# Prose and markup are exempt: docs and views of any length. So is artwork — a
+# drawing has no lines to count, and a PNG rendered from one is only as many as
+# its bytes happen to hold a newline.
+EXEMPT_EXTENSIONS = %w[.erb .html .ico .md .png .svg .txt].freeze
 
 # Two directories are exempt: a backfill is as long as the data it carries, and
 # upstream's formatting is not ours to fix.
