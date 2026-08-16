@@ -16,7 +16,7 @@ class TestRecoursesCard < Minitest::Test
     showing = %(href="/providers/#{provider.id}"><i class="bi bi-eye"></i> Show</a>)
 
     assert_includes body, %(<a class="nav-link active" aria-current="page" #{showing})
-    assert_includes body, %(<i class="bi bi-pencil-square"></i> Edit</a>)
+    assert_includes body, %(<i class="bi bi-pencil"></i> Edit</a>)
   end
 
   # A nested index earns its tab from the route alone: no counter cache behind

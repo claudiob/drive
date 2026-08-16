@@ -2,11 +2,11 @@ module Recourse
   module Helpers
     # The action columns a row opens with: a look at a record, then a change to it.
     module Actions
-      # Bootstrap Icons for the two pages a record has, so a row's links and a card's
-      # tabs cannot drift apart. Written out rather than named as Unicon concepts:
-      # these are the gem's own chrome, like the chevron and the search glass, and not
-      # a model's picture of itself.
-      ICONS = { show: 'eye', edit: 'pencil-square' }.freeze
+      # The two pages a record has, named as the concepts an icon set knows rather
+      # than as one set's own word for them, so what draws them is Unicon's business
+      # here as everywhere else. A row's links and a card's tabs read the same map,
+      # so the two cannot drift apart.
+      ICONS = { show: :view, edit: :pencil }.freeze
 
       # An action column's heading: the icon on the header row — the column is as
       # narrow as the icon in it, with no room for a word — and the action's own
@@ -15,8 +15,7 @@ module Recourse
         label = t "recourse.#{action}"
         return label unless @recourse_headers
 
-        tag.i class: "bi bi-#{ICONS[action]}", role: :img, aria: { label: label },
-              data: tooltip_on_top(label)
+        icon_tag ICONS[action], label: label, role: :img, data: tooltip_on_top(label)
       end
 
       # Whether a record's own page is there to be linked to, wherever its routes
@@ -32,7 +31,7 @@ module Recourse
         path = show_resource_path record
         return unless path
 
-        turbo_link_to icon(:show), path, aria: { label: t('recourse.show') }
+        turbo_link_to icon_tag(ICONS[:show]), path, aria: { label: t('recourse.show') }
       end
 
       # Pencil linking to a record's edit page, or nothing when there is not one.
@@ -40,14 +39,10 @@ module Recourse
         path = edit_resource_path record
         return unless path
 
-        turbo_link_to icon(:edit), path, aria: { label: t('recourse.edit') }
+        turbo_link_to icon_tag(ICONS[:edit]), path, aria: { label: t('recourse.edit') }
       end
 
     private
-
-      def icon(action)
-        tag.i class: "bi bi-#{ICONS[action]}"
-      end
 
       def tooltip_on_top(title)
         # `bs_title` is what Bootstrap's tooltip reads, and the controller is what

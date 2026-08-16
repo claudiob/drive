@@ -17,7 +17,7 @@ class TestRecoursesUpdate < Minitest::Test
 
     @session.follow_redirect!
 
-    markup = '<i class="bi bi-pencil-square" role="img" aria-label="Edit" ' \
+    markup = '<i class="bi bi-pencil" aria-label="Edit" role="img" ' \
              'data-controller="tooltip" data-bs-placement="top" data-bs-title="Edit"></i>'
 
     assert_includes body, %(<th scope="col" class="recourse-actions">#{markup}</th>)

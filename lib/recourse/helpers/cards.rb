@@ -89,7 +89,7 @@ module Recourse
       end
 
       def tab_label(action)
-        safe_join [icon(action), t("recourse.#{action}")], ' '
+        safe_join [icon_tag(Actions::ICONS[action]), t("recourse.#{action}")], ' '
       end
     end
   end

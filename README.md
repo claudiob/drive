@@ -422,7 +422,9 @@ gives away.
 
 `show` and `edit` are what an index row links to, an eye then a pencil, and each
 appears only where its action is both implemented and routed. A resource with
-neither gets no `Actions` column at all.
+neither gets no `Actions` column at all. Those two are named as Unicon concepts
+like every other icon here — `:view` and `:pencil` — so what draws them is the
+icon set's business rather than a Bootstrap class written into the gem.
 
 Both pages wrap their content in a Bootstrap card whose header is a row of tabs,
 one per page the record has — `Show` behind the eye, then `Edit` behind the
