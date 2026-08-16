@@ -4,6 +4,32 @@ module Recourse
     module Tabs
     private
 
+      # What a nested index's tab reads as. A `has_many` of that name counts its rows
+      # and lends its icon; a route the parent has no association for is named after
+      # the path instead — an aggregate the host assembles, an Active Storage
+      # attachment, a full index reached under a record. There is no model to ask
+      # then, so such a tab carries neither an icon nor a count.
+      def nested_tab_label(record, name, namespace)
+        association = nested_association record, name
+        return association_tab_label record, association, namespace if association
+
+        routed_tab_name name, namespace
+      end
+
+      def nested_association(record, name)
+        record.class.reflect_on_all_associations(:has_many).find { |one| one.name.to_s == name }
+      end
+
+      # `Messages`, and `Booked messages` where a namespace leads — the same shape
+      # the counted tab keeps, humanized off the path since nothing else answers.
+      def routed_tab_name(name, namespace)
+        lead = namespace_words namespace
+        title = name.humanize
+        title = Recourse.downcase title if lead.present?
+
+        [lead.presence&.upcase_first, title].compact.join ' '
+      end
+
       # The icon is the counted model's own, whatever leads the words beside it.
       def association_tab_label(record, association, namespace)
         icon = Recourse.known_model_icon association.klass

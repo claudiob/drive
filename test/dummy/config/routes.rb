@@ -24,6 +24,11 @@ Rails.application.routes.draw do
       # A `namespace` between a block and what it nests: the routes and the
       # controller come out under it, and no tab is drawn for a child filed there.
       namespace(:visited) { recourses :places, only: :index }
+      # A nested index the parent has no `has_many` for, which a host draws over an
+      # aggregate, an attachment, or the whole of a table read under one record. The
+      # tab is named after the route, since there is no association to count or to
+      # take an icon from.
+      recourses :memos, only: :index
     end
 
     # Edited but never shown, and the table a foreign key is typed to reach.
