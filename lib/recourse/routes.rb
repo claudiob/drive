@@ -7,8 +7,10 @@ module Recourse
     # parent, so it and the top-level `ZIPsController` stay two controllers. Only a
     # `recourses` block adds that namespace, which every nested page relies on, so
     # nesting inside a plain `resources` block raises here rather than serving a
-    # broken page. A nested resource defaults to `only: %i[index new create]`,
-    # and an explicit `only:` or `except:` is the host's word, which wins.
+    # broken page. A `namespace` may sit in between — what is refused is a nesting
+    # that adds no namespace at all. A nested resource defaults to
+    # `only: %i[index new create]`, and an explicit `only:` or `except:` is the
+    # host's word, which wins.
     def recourses(*names, **options, &block)
       refuse_unscoped_nesting names
 
@@ -62,7 +64,7 @@ module Recourse
 
     def refuse_unscoped_nesting(names)
       parent = parent_resource
-      return if parent.nil? || current_module.to_s.split('/').last == parent.name
+      return if parent.nil? || current_module.to_s.split('/').include?(parent.name)
 
       raise Error, I18n.t('recourse.nested', names: names.map(&:inspect).join(', '),
                                              parent: parent.name)
