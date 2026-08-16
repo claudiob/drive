@@ -5,8 +5,15 @@ module Recourse
       # The two pages a record has, named as the concepts an icon set knows rather
       # than as one set's own word for them, so what draws them is Unicon's business
       # here as everywhere else. A row's links and a card's tabs read the same map,
-      # so the two cannot drift apart.
+      # so the two cannot drift apart — and its order is the order a row opens with.
       ICONS = { show: :view, edit: :edit }.freeze
+
+      # Which of those two this table draws a column for. Read into a local by the
+      # table, so the routes are asked once per render rather than twice for the
+      # heading and twice more for every row.
+      def resource_actions
+        ICONS.keys.select { |action| resource_action? action }
+      end
 
       # An action column's heading: the icon on the header row — the column is as
       # narrow as the icon in it, with no room for a word — and the action's own
@@ -22,24 +29,16 @@ module Recourse
       # were drawn: a nested table's rows lead to the resource's own pages, the ones
       # a nested route leaves to it, so the columns are the same either way.
       def resource_action?(action)
-        controller.class.action_methods.include?(action) &&
-          routed?(resource_controller_path, action)
+        routed_action? action.to_s, resource_controller_path
       end
 
-      # Eye linking to a record's show page, or nothing when there is not one.
-      def show_resource_link(record)
-        path = show_resource_path record
+      # The icon linking to one of those pages, or nothing where the page is not
+      # routed. Which of the two it is, is the whole difference between them.
+      def resource_action_link(action, record)
+        path = resource_action_path action, record
         return unless path
 
-        turbo_link_to icon_tag(ICONS[:show]), path, aria: { label: t('recourse.show') }
-      end
-
-      # Pencil linking to a record's edit page, or nothing when there is not one.
-      def edit_resource_link(record)
-        path = edit_resource_path record
-        return unless path
-
-        turbo_link_to icon_tag(ICONS[:edit]), path, aria: { label: t('recourse.edit') }
+        turbo_link_to icon_tag(ICONS[action]), path, aria: { label: t("recourse.#{action}") }
       end
 
     private
@@ -48,14 +47,6 @@ module Recourse
         # `bs_title` is what Bootstrap's tooltip reads, and the controller is what
         # makes one: Bootstrap never wires a tooltip on its own.
         { controller: 'tooltip', bs_placement: 'top', bs_title: title }
-      end
-
-      def show_resource_path(record)
-        resource_action_path 'show', record
-      end
-
-      def edit_resource_path(record)
-        resource_action_path 'edit', record
       end
 
       # Named by controller rather than by action alone: on a nested page the two

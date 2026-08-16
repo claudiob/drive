@@ -6,13 +6,15 @@
     And the column list: which columns a table shows is decided in Ruby —
     `recourse_hidden`, timestamps, counters — that no digest covers either. -%>
 <% cache_if params[:q].blank?, [recourses, row_digest, resource_columns] do %>
+  <% actions = resource_actions %>
   <div class='table-responsive'>
     <table class='table caption-top table-hover align-middle sm:table-stacked'>
       <thead>
         <tr>
           <% @recourse_headers = true %>
-          <%= column header: action_header(:show), class: 'recourse-actions' if resource_action? 'show' %>
-          <%= column header: action_header(:edit), class: 'recourse-actions' if resource_action? 'edit' %>
+          <% actions.each do |action| -%>
+            <%= column header: action_header(action), class: 'recourse-actions' %>
+          <% end -%>
           <%= render 'row', resource_key => nil %>
         </tr>
       </thead>
@@ -20,11 +22,8 @@
         <% @recourse_headers = false %>
         <% recourses.each do |recourse| %>
           <tr>
-            <% if resource_action? 'show' -%>
-              <%= column header: action_header(:show), class: 'recourse-actions' do %><%= show_resource_link recourse %><% end %>
-            <% end -%>
-            <% if resource_action? 'edit' -%>
-              <%= column header: action_header(:edit), class: 'recourse-actions' do %><%= edit_resource_link recourse %><% end %>
+            <% actions.each do |action| -%>
+              <%= column header: action_header(action), class: 'recourse-actions' do %><%= resource_action_link action, recourse %><% end %>
             <% end -%>
             <%= render 'row', resource_key => recourse %>
           </tr>

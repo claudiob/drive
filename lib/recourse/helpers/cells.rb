@@ -2,11 +2,6 @@ module Recourse
   module Helpers
     # Helpers for the cells of a table and the fields of a form.
     module Cells
-      # What Rails maintains rather than what a record is about. A table ends with
-      # whichever of these its model asks for, in this order, whichever way round the
-      # schema happens to declare them.
-      TIMESTAMPS = %w[created_at updated_at].freeze
-
       # Columns the table shows: every counter first, since a count is a link into
       # the record's children and belongs beside the action columns that open it;
       # then every attribute that is not encrypted and not read-only, less the
@@ -52,7 +47,7 @@ module Recourse
         counted = resource_model.recourse_counters[column]
         return resource_model.human_attribute_name column unless counted
 
-        counted.klass.model_name.human.pluralize
+        Recourse.model_title counted.klass
       end
 
       # Value for one cell, formatted according to what the column holds.

@@ -24,7 +24,7 @@ module Recourse
       # The icon the sidebar and the breadcrumb already draw for the counted model,
       # speaking the heading's word to a screen reader.
       def counter_title(association)
-        title = association.klass.model_name.human.pluralize
+        title = Recourse.model_title association.klass
         tag.i class: "bi bi-#{Recourse.model_icon association.klass}", role: :img,
               aria: { label: title }, data: tooltip_on_top(title)
       end

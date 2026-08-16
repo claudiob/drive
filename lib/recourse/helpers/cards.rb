@@ -69,7 +69,7 @@ module Recourse
         label = if column
                   counted_tab_name record.attributes[column], association
                 else
-                  association.klass.model_name.human.pluralize
+                  Recourse.model_title association.klass
                 end
 
         safe_join [icon && tag.i(class: "bi bi-#{icon}"), label].compact, ' '
@@ -80,7 +80,7 @@ module Recourse
       end
 
       def counted_tab_name(count, association)
-        "#{count} #{Recourse.downcase association.klass.model_name.human.pluralize(count)}"
+        "#{count} #{Recourse.model_title association.klass, count: count, lower: true}"
       end
 
       def nested_index_path(record, path, nested)

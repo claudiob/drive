@@ -10,11 +10,16 @@ require_relative 'recourse/controllers'
 require_relative 'recourse/helpers'
 require_relative 'recourse/recoursive'
 require_relative 'recourse/search'
+require_relative 'recourse/titles'
 require_relative 'recourse/searchable'
 require_relative 'recourse/engine'
 
 # Namespace for the gem: the routes.rb DSL and the screens it mounts.
 module Recourse
+  # What Rails keeps rather than what a record is about, in the order a page shows
+  # them. Named once: three places ask which columns these are.
+  TIMESTAMPS = %w[created_at updated_at].freeze
+
   class << self
     # Resources `recourses` has drawn, in the order config/routes.rb lists them.
     attr_reader :declared
@@ -44,7 +49,7 @@ module Recourse
   # `create` permits these. A counter cache is none of a user's business — Rails keeps
   # it, so a form that offered one would let it be typed over.
   def self.editable_columns(model)
-    model.column_names - %w[id created_at updated_at] -
+    model.column_names - ['id', *TIMESTAMPS] -
       model.recourse_counters.keys - hidden_columns(model)
   end
 
@@ -54,28 +59,6 @@ module Recourse
   # it. A class name is machinery, not something to read out or type over.
   def self.hidden_columns(model)
     Array(model.recourse_hidden).map(&:to_s) + [model.inheritance_column]
-  end
-
-  # Lower case, but for the words Rails was told are acronyms: `ZIP code` reads as
-  # `ZIP code` and never `zip code`, while `Code or Name` becomes `code or name`.
-  # The plural of one counts as one, so `8 ZIPs` survives a host that registered
-  # `ZIP` alone — pluralizing an acronym is the gem's job, not the host's.
-  def self.downcase(text)
-    acronyms = ActiveSupport::Inflector.inflections.acronyms
-
-    text.split.map do |word|
-      known = [word, word.singularize].any? { |one| acronyms.key? one.downcase }
-
-      known ? word : word.downcase
-    end.join ' '
-  end
-
-  # The plural title a resource is shown under, read off its model rather than out
-  # of its path: `ZIP` pluralizes to `ZIPs`, where humanizing `zips` says `Zips`
-  # unless the host registers that word as an acronym of its own. It also follows a
-  # model renamed in a locale file, which humanizing a path never would.
-  def self.title(name)
-    model(name).model_name.human.pluralize
   end
 
   # The model a resource is named after. A controller the gem defined has nothing

@@ -13,3 +13,4 @@
 /tmp/
 /test/dummy/db/schema.rb
 xcuserdata/
+.DS_Store

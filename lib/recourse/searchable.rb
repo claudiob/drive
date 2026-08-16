@@ -32,7 +32,7 @@ module Recourse
     # from the other table, and the id under it is not the order that label reads in.
     def ransortable_attributes(_auth_object = nil)
       readable = ransackable_attributes - recourse_encrypted_names
-      indexed = recourse_indexed_columns + recourse_counters.keys + %w[created_at updated_at]
+      indexed = recourse_indexed_columns + recourse_counters.keys + Recourse::TIMESTAMPS
 
       keys = reflect_on_all_associations(:belongs_to).map { |one| one.foreign_key.to_s }
 

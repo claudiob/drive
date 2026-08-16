@@ -58,7 +58,7 @@ module Recourse
         label = recourses.klass.recourse_label
         counter = filter_counter recourses.klass
         # What it reads as when nothing is ticked, so the way back is a line in the menu.
-        models = Recourse.downcase recourses.klass.model_name.human.pluralize
+        models = Recourse.model_title recourses.klass, lower: true
 
         filter_menu predicate, title, nil, t('recourse.all', models: models),
                     label: label.to_s, counter: counter,

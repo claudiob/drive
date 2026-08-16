@@ -5,11 +5,13 @@ module Recourse
     private
 
       # True where this controller both implements an action and has a route drawn to
-      # it. Either alone is a link that 404s or raises.
-      def routed_action?(action)
+      # it. Either alone is a link that 404s or raises. The path is the one being
+      # served unless a caller names another: a nested page asks about the resource's
+      # own routes, which is where the member actions a nesting leaves out are drawn.
+      def routed_action?(action, path = controller.controller_path)
         return false unless controller.class.action_methods.include? action
 
-        routed? controller.controller_path, action
+        routed? path, action
       end
 
       def routed?(controller_path, action)
