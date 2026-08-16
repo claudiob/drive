@@ -38,6 +38,9 @@ class TestRecoursesWrites < IntegrationCase
     # `field_error_proc` never sees either: each draws its own message, and both
     # have to say what the builder's fields would have said.
     assert_equal 2, body.scan('Must exist').size
+    # A code matching nothing was never assigned, so only the request still knows
+    # what was typed — and that is what the field has to keep showing.
+    assert_includes body, 'value="ZZZZZ"'
   end
 
   def test_update_saves_and_says_so

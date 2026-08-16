@@ -28,6 +28,9 @@ class TestRecoursesForm < IntegrationCase
     assert_includes body, '<textarea class="form-control" placeholder="Optional"'
     # A non-null boolean is a checkbox with the hidden zero beside it.
     assert_includes body, '<input name="place[active]" type="hidden" value="0" />'
+    # And a typed reference opens on the record's own label, so an edit that
+    # changes something else does not have to retype this one to save.
+    assert_includes body, %(value="#{Place.order(:id).first.msa.code}")
   end
 
   # A foreign key is picked or typed by what the other table can offer: three teams

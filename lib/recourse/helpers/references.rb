@@ -46,15 +46,24 @@ module Recourse
       def typed_reference(form, column, association)
         messages = errors_on column
         id = form.field_id column
-        # `params` rather than the record: a code that matched nothing was never
-        # assigned, so only the request still knows what was typed.
         html = typed_html(column, association).merge(
           class: messages.any? ? 'form-control is-invalid' : 'form-control',
-          value: params.dig(resource_key, column),
+          value: typed_reference_value(form, column, association),
           'aria-describedby': ("#{id}_error" if messages.any?)
         )
 
         safe_join [form.text_field(column, **html), invalid_feedback(messages, id)]
+      end
+
+      # What the field opens on: the record's own label, so an edit that changes
+      # something else does not have to retype this. The request wins where it has
+      # anything to say — a code matching nothing was never assigned, so only what
+      # was typed is left to show, and a code cleared on purpose stays cleared.
+      def typed_reference_value(form, column, association)
+        typed = params.dig resource_key, column
+        return typed if typed
+
+        reference_cell form.object, association
       end
 
       # The shape belongs to the attribute typed; whether it is required does not,
