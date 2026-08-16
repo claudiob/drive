@@ -76,7 +76,7 @@ module Recourse
       end
 
       def belongs_to(column)
-        @model.reflect_on_all_associations(:belongs_to)
+        @model.recourse_references
               .find { |association| association.foreign_key.to_s == column }
       end
     end

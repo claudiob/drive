@@ -7,7 +7,7 @@ module Recourse
     # A foreign key whose label is typed arrives as that label, so it is looked up
     # here. Nothing found leaves the key nil, and `belongs_to` reports it missing.
     def resolve_references(attributes)
-      resource_class.reflect_on_all_associations(:belongs_to).each do |association|
+      resource_class.recourse_references.each do |association|
         key = association.foreign_key.to_s
         next unless attributes.key?(key) && association.klass.recourse_typed_reference?
 

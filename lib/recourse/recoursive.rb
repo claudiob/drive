@@ -51,7 +51,21 @@ module Recourse
 
     # Associations the index eager-loads, in any shape `includes` accepts. Every
     # belongs_to by default, since each cell naming one would be a query of its own.
-    def recourse_includes = reflect_on_all_associations(:belongs_to).map(&:name)
+    # The belongs_to associations this gem can follow. A polymorphic key names no
+    # one table, so nothing can label it, list it, filter by it or search through
+    # it — its column reads and edits as the number it holds, like any other.
+    def recourse_references = reflect_on_all_associations(:belongs_to).reject(&:polymorphic?)
+
+    # The columns those keys keep a class name in. Machinery rather than anything a
+    # record is about, so they keep the company of the inheritance column and stay
+    # off every screen — the id beside them is a number and reads as one.
+    def recourse_reference_types
+      reflect_on_all_associations(:belongs_to).select(&:polymorphic?).map(&:foreign_type)
+    end
+
+    # Associations the index eager-loads, in any shape `includes` accepts. Every
+    # belongs_to it can follow, since each cell naming one would be a query of its own.
+    def recourse_includes = recourse_references.map(&:name)
 
     # How the index sorts its rows, in any shape `order` accepts. By id by default,
     # which is the one column every table has and the order rows were created in.

@@ -8,7 +8,7 @@ module Recourse
       # Every key at once and once per render, rather than a scan of the model's
       # associations for each cell of each row that holds one.
       def belongs_to_association(column)
-        @recourse_belongs_to ||= resource_model.reflect_on_all_associations(:belongs_to)
+        @recourse_belongs_to ||= resource_model.recourse_references
                                                .index_by { |one| one.foreign_key.to_s }
 
         @recourse_belongs_to[column]

@@ -25,7 +25,7 @@ module Recourse
       # other model is too long to list, since a menu is only a control while every
       # row fits in one. The label has to be a word for the search to match, too.
       def recourse_searchable_associations
-        reflect_on_all_associations(:belongs_to).select do |association|
+        recourse_references.select do |association|
           klass = association.klass
           !klass.recourse_listable? && klass.recourse_searchable_label?
         end

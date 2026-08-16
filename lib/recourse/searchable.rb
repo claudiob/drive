@@ -34,7 +34,7 @@ module Recourse
       readable = ransackable_attributes - recourse_encrypted_names
       indexed = recourse_indexed_columns + recourse_counters.keys + Recourse::TIMESTAMPS
 
-      keys = reflect_on_all_associations(:belongs_to).map { |one| one.foreign_key.to_s }
+      keys = recourse_references.map { |one| one.foreign_key.to_s }
 
       (readable & indexed) - keys
     end
@@ -73,7 +73,7 @@ module Recourse
     # One per belongs_to the search box does not reach through instead.
     def reference_filter_fields
       searched = recourse_searchable_associations
-      reflect_on_all_associations(:belongs_to).filter_map do |association|
+      recourse_references.filter_map do |association|
         ["#{association.foreign_key}_in", {}] unless searched.include? association
       end.to_h
     end

@@ -28,7 +28,7 @@ module Recourse
     # The belongs_to whose record the path names, or nil at the top level. Path
     # parameters rather than `params`, so a stray `?county_id=` nests nothing.
     def parent_association
-      resource_class.reflect_on_all_associations(:belongs_to).find do |association|
+      resource_class.recourse_references.find do |association|
         request.path_parameters.key? :"#{association.name}_id"
       end
     end

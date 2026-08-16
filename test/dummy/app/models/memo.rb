@@ -4,6 +4,9 @@ class Memo < ApplicationRecord
   include Recoursive
 
   belongs_to :person, optional: true
+  # A key naming no one table, which the gem has to notice before it reaches for
+  # a class that is not there.
+  belongs_to :about, polymorphic: true, optional: true
 
   validates :body, presence: true
 end
