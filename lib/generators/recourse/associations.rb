@@ -1,3 +1,5 @@
+require_relative 'files'
+
 module Recourse
   module Generators
     # Both sides of the association a `belongs_to` declares, written into a host's
@@ -5,6 +7,8 @@ module Recourse
     # for the models already there. Each side is written only where it is missing, so
     # either may run over the same files twice. Private for the reason `Seeds` is.
     module Associations
+      include Files
+
     private
 
       # The child's half of the count, appended before any trailing comment.
@@ -50,14 +54,6 @@ module Recourse
         return ', counter_cache: true' if declaration.match?(/touch:/)
 
         ', counter_cache: true, touch: true'
-      end
-
-      def exist?(path)
-        File.exist? File.join(destination_root, path)
-      end
-
-      def read(path)
-        File.read File.join(destination_root, path)
       end
     end
   end

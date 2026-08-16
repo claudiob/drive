@@ -4,6 +4,7 @@ require_relative 'associations'
 require_relative 'loading'
 require_relative 'references'
 require_relative 'seeds'
+require_relative 'validations'
 
 module Recourse
   module Generators
@@ -11,7 +12,7 @@ module Recourse
     # the route drawn by `recourses` and a seed file, so the gem serves the seven
     # screens for it and there is something to see on them.
     class RecourseGenerator < Rails::Generators::ResourceGenerator
-      include Associations, Loading, References, Seeds
+      include Associations, Loading, References, Seeds, Validations
 
       # Templates live beside this class, which is also what tells the parent where to
       # read `--help` from: a USAGE one directory above the source root.
@@ -49,6 +50,21 @@ module Recourse
           count_from_belongs_to model_file, attribute.name
           declare_has_many klass: attribute.name.camelize, children: plural_name, line: far_side
         end
+      end
+
+      # Whatever the migration constrains, said again in the model: `title:string!`
+      # earns a presence validator beside its `null: false`, `name:string{100}` a
+      # length beside its limit, and `email:string:uniq` a uniqueness beside its
+      # index. The gem reads a field's rules off the validators and never off the
+      # schema, so a column constrained in the database alone constrains nothing
+      # anyone filling in the form is told about.
+      def add_validations
+        return say_status :skip, "#{model_file} does not exist" unless exist? model_file
+
+        lines = attributes.filter_map { |attribute| validation_line attribute }
+        return if lines.empty?
+
+        inject_into_file model_file, validation_block(lines), before: /^end\n/
       end
 
       # Two rows to look at: a bare one and a filled one, in a file of their own under

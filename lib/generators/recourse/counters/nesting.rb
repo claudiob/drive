@@ -1,3 +1,5 @@
+require_relative '../files'
+
 module Recourse
   module Generators
     # The route a fresh `has_many` earns: the children nested under the parent's
@@ -5,6 +7,8 @@ module Recourse
     # their rows, and a form to add one, which is what a bare nested `recourses`
     # answers by default. Private for the reason `Seeds` is.
     module Nesting
+      include Files
+
     private
 
       # Turns `recourses :providers` into a block nesting `recourses :bookings`,

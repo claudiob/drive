@@ -163,9 +163,33 @@ leaving you to write them:
   parent gains the matching `has_many :posts`, with `dependent: :destroy` since a
   child that cannot exist without its parent goes with it.
   A polymorphic reference gets none of it: it names no one table to count on.
+- Every column that says something about itself says it in the model too, as a
+  validator, since that is where the screens read a field's rules from.
 
 The parent's `has_many` is written only where that model exists already, so
 generate the parent first.
+
+That last one is the difference between a rule the database keeps and a rule
+anyone filling in the form is told about. `null: false` alone gives a field no
+`required` attribute and no message, only a 500 when the insert fails, and a
+`limit` alone gives it no `maxlength` — the gem asks the validators and never the
+schema. So the generator writes both halves:
+
+| Written | Column | Model |
+| --- | --- | --- |
+| `title:string!` | `null: false` | `validates :title, presence: true` |
+| `active:boolean!` | `null: false` | `validates :active, inclusion: { in: [true, false] }` |
+| `name:string{100}` | `limit: 100` | `validates :name, length: { maximum: 100 }` |
+| `email:string:uniq` | a unique index | `validates :email, uniqueness: true` |
+
+A boolean names its two values rather than being asked for presence, which would
+reject `false` along with nil. A limit is a length only for a string and a text
+column — on an integer it counts bytes, so `age:integer{2}` asks for a smallint
+and earns no validator. A reference is left alone for presence, since Rails'
+`belongs_to` already requires what it points at, and a polymorphic one is left
+alone for uniqueness, since that is a rule over two columns and only you can name
+the `scope:`. Write the attributes with more than one of these and they arrive on
+one line: `validates :email, presence: true, uniqueness: true`.
 
 That seed file holds two rows, which is the pair every screen is worth looking at
 with: one carrying only what the row cannot save without, and one with every
