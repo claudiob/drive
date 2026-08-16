@@ -41,7 +41,7 @@ module Recourse
       # row two was meant, so a value is drawn again until it is new to its column.
       def seed_unique(column)
         @seed_taken ||= Hash.new { |hash, key| hash[key] = [] }
-        taken = @seed_taken["#{@model}/#{column}"]
+        taken = @seed_taken["#{@facts.class_name}/#{column}"]
         value = loop do
           candidate = yield
           break candidate unless taken.include? candidate

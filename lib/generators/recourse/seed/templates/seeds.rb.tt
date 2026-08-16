@@ -1,5 +1,5 @@
 <%#-*- coding: UTF-8 -*-%>
-# <%= Recourse::Generators::Rows::ROWS %> <%= @model.model_name.plural.humanize.downcase %>: the first carries only what a row
+# <%= Recourse::Generators::Rows::ROWS %> <%= @facts.plural.humanize.downcase %>: the first carries only what a row
 # cannot save without, the last fills every attribute, and the rest mix which
 # optional attributes are filled. The values are of each column's own type and
 # nothing more — a validator this model has grown will have opinions about them.
@@ -11,7 +11,7 @@
   { <%= row %> },
 <% end -%>
 ].each do |attributes|
-  <%= @model.name %>.find_or_create_by! attributes
+  <%= @facts.class_name %>.find_or_create_by! attributes
 rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid
   # A row a validator or the database refuses is skipped rather than stopping the
   # seed, and the count the loader prints — rows standing in the table — never

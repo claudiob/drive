@@ -4,7 +4,7 @@ require_relative 'altering'
 require_relative 'associations'
 require_relative 'loading'
 require_relative 'references'
-require_relative 'seeds'
+require_relative 'seeding'
 require_relative 'validations'
 
 module Recourse
@@ -13,11 +13,14 @@ module Recourse
     # the route drawn by `recourses` and a seed file, so the gem serves the seven
     # screens for it and there is something to see on them.
     class RecourseGenerator < Rails::Generators::ResourceGenerator
-      include Altering, Associations, Loading, References, Seeds, Validations
+      include Altering, Associations, Loading, References, Seeding, Validations
 
-      # Templates live beside this class, which is also what tells the parent where to
-      # read `--help` from: a USAGE one directory above the source root.
+      # Nothing is rendered from the first path, which is there because it tells the
+      # parent where to read `--help` from — a USAGE one directory above the source
+      # root. The seed file is rendered from the second, `recourse:seed`'s own, so
+      # that one engine writes every seed file this gem writes.
       source_root File.expand_path('templates', __dir__)
+      source_paths << File.expand_path('seed/templates', __dir__)
 
       remove_invocation :resource_route
 
@@ -74,14 +77,13 @@ module Recourse
         declare_validations
       end
 
-      # Two rows to look at: a bare one and a filled one, in a file of their own under
-      # `db/seeds`, which `db/seeds.rb` is taught to load.
+      # Rows to look at, in a file of their own under `db/seeds`, which `db/seeds.rb`
+      # is taught to load. The same rows `rails generate recourse:seed` writes, drawn
+      # from the attributes rather than from a table that does not exist yet.
       def create_seed_file
         return if altering?
-        return unless options[:seeds]
 
-        template 'seeds.rb', File.join('db/seeds', "#{file_name.pluralize}.rb")
-        load_seed_files
+        write_seed_file if options[:seeds]
       end
 
       # The line this generator exists for. `namespace:` nests it the way the routes

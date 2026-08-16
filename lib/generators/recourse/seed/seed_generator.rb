@@ -3,6 +3,7 @@ require 'rails/generators'
 require_relative '../declared'
 require_relative '../files'
 require_relative '../loading'
+require_relative 'model_facts'
 require_relative 'rows'
 require_relative 'shapes'
 require_relative 'texts'
@@ -27,8 +28,8 @@ module Recourse
       # all of them to re-seed one. `--force` is how to ask for it back.
       def create_seed_files
         declared_models.each do |model|
-          @model = model
-          path = File.join 'db/seeds', "#{model.model_name.plural}.rb"
+          @facts = ModelFacts.new model
+          path = File.join 'db/seeds', "#{@facts.plural}.rb"
 
           written?(path) ? say_status(:skip, path) : template('seeds.rb', path)
         end

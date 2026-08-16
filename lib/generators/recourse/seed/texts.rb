@@ -27,32 +27,22 @@ module Recourse
       # word; everything else reads as words.
       def seed_words(column)
         length = seed_length column
-        return seed_word length if seed_length_options(column)[:is]
+        return seed_word length if @facts.bounds(column)[:is]
 
         seed_text length
       end
 
-      # Random within the bounds the column's own length validator states, capped
-      # by the column's SQL limit — a value must fit past both gates, so the
-      # tighter one wins, whatever the other says — and a readable 3..24 where
-      # neither speaks. The schema is read here for the same reason
-      # `seed_required?` reads it: no validator can speak for a limit the model
-      # never stated, and a row that overflows it never saves.
+      # Random within every bound the column states — its length validator, and the
+      # limit the column itself carries — since a value must fit past all of them,
+      # so the tightest wins whatever the others say, and a readable 3..24 where
+      # none speaks.
       def seed_length(column)
-        options = seed_length_options column
-        exact = options[:is]
-        longest = [exact || options[:maximum] || 24, @model.columns_hash[column]&.limit].compact.min
-        shortest = [exact || options[:minimum] || 3, longest].min
+        bounds = @facts.bounds column
+        exact = bounds[:is]
+        longest = [exact || bounds[:maximum] || 24, bounds[:limit]].compact.min
+        shortest = [exact || bounds[:minimum] || 3, longest].min
 
         rand shortest..longest
-      end
-
-      def seed_length_options(column)
-        validator = @model.validators_on(column).find do |one|
-          one.is_a? ActiveModel::Validations::LengthValidator
-        end
-
-        validator&.options || {}
       end
 
       # Words joined by single spaces, landing exactly on `length`: a draw that

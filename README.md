@@ -215,28 +215,31 @@ alone for uniqueness, since that is a rule over two columns and only you can nam
 the `scope:`. Write the attributes with more than one of these and they arrive on
 one line: `validates :email, presence: true, uniqueness: true`.
 
-That seed file holds two rows, which is the pair every screen is worth looking at
-with: one carrying only what the row cannot save without, and one with every
-optional attribute assigned as well. A row cannot save without whatever the
-migration marks `null: false` — write `name:string!` to mark one — nor without a
-`references` attribute, since `belongs_to` requires one. So the bare post below
-carries its author, and only its author:
+That seed file is the one `rails generate recourse:seed` writes, described in full
+below: 25 rows, the first carrying only what a row cannot save without, the last
+filling every attribute, and the rest mixing which optional ones are filled. A row
+cannot save without whatever the migration marks `null: false` — write
+`name:string!` to mark one — nor without a `references` attribute, since
+`belongs_to` requires one. So the bare post below carries its author, and only its
+author:
 
 ```ruby
-Post.find_or_create_by! author: Author.first
-
-Post.find_or_create_by!(author: Author.first, title: 'Everything post') do |post|
-  post.content = 'Content'
-  post.published_on = Date.current
-  post.private = true
+[
+  { author: Author.first },
+  { title: 'H4&cñoçsa🍋dfBm', author: Author.first },
+  { title: 'l4zt E', content: 'rQΩk🍋Nx nXn fh', author: Author.first },
+  { title: 'UV62CT', content: 'ja XTWu', author: Author.first, published_on: Date.current - 12 },
+].each do |attributes|
+  Post.find_or_create_by! attributes
+rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid
 end
 ```
 
-The filled row takes one key more than the bare one wherever nothing required
-carries a name to vary — an author is the same author in both — so that
-`find_or_create_by!` finds each of them rather than the second finding the first. Values are of each column's own type and nothing more, since the model has no
-validators yet to have opinions about them. Both rows are `find_or_create_by!`, so
-seeding twice leaves two rows rather than four.
+One engine writes both files, and only where it reads the columns from differs:
+`recourse:seed` asks a model whose table is migrated, and this asks the attributes
+you have just typed, since the table is not there yet. So the values are of each
+column's own type and inside whatever bounds the attribute stated, and no further —
+a validator the model grows later will have opinions about them.
 
 `db/seeds.rb` gains one loader, once, however many resources you generate:
 
