@@ -24,8 +24,8 @@ module Recourse
 
         path = controller.controller_path.rpartition('/').first
         [
-          [path, Recourse.title(path), url_for(controller: "/#{path}", action: :index)],
-          [nil, parent_title(parent), parent_path(parent, path)],
+          [path, Recourse.title(path), parent_url(path, :index)],
+          [nil, parent_title(parent), parent_url(path, :show, id: parent)],
         ]
       end
 
@@ -53,10 +53,13 @@ module Recourse
         truncate label.presence&.to_s || parent.class.model_name.human, length: 40
       end
 
-      def parent_path(parent, path)
-        return unless routed? path, 'show'
+      # One of the parent's own pages, or nil where the host drew no route to it —
+      # a crumb without a path is read out rather than linked. Both crumbs ask,
+      # since a parent reached through a nesting need not be listed or shown at all.
+      def parent_url(path, action, **)
+        return unless routed? path, action
 
-        url_for controller: "/#{path}", action: :show, id: parent
+        url_for controller: "/#{path}", action:, **
       end
     end
   end

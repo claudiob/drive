@@ -67,7 +67,9 @@ module Recourse
         # counts — linking to the counted rows where a block nested their index here.
         return counter_cell resource, value, counted if counted
 
-        formatted_cell value, column
+        # The same ladder the show page comes down, with the search's own marking
+        # handed in: a table is the only page a search ever reached.
+        formatted_attribute(column, value) { |text| search_highlight text, column }
       end
 
       # One cell: a heading in the header row, the block's output in every other.
@@ -75,19 +77,6 @@ module Recourse
         return tag.th(header, scope: :col, **) if @recourse_headers
 
         tag.td(capture(&), 'data-cell': header, **)
-      end
-
-    private
-
-      def formatted_cell(value, column)
-        # Numbers and addresses read as the show page reads them, through Formats.
-        # Only plain text is highlighted: a search never looked through the rest.
-        kind = attribute_kind column
-        return formatted_number kind, column, value if numeric_kind? kind
-        return localized value if value.is_a?(Date) || value.is_a?(Time)
-        return url_link value if web_url? value
-
-        search_highlight value, column
       end
     end
   end

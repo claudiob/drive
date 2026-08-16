@@ -16,11 +16,18 @@ module Recourse
         association = belongs_to_association column
         return reference_cell resource_record, association if association
 
+        formatted_attribute column, resource_record.attributes[column]
+      end
+
+      # One value, formatted by the kind its column holds — the one ladder a table
+      # cell and a show page's value both come down, so a boolean is the same icon
+      # and an enum the same badge on either. A block, where the caller has one,
+      # marks the search terms inside whichever arm ends up as words.
+      def formatted_attribute(column, value, &)
         kind = attribute_kind column
-        value = resource_record.attributes[column]
         return formatted_number kind, column, value if numeric_kind? kind
 
-        formatted_text kind, value
+        formatted_text kind, value, &
       end
 
       # One icon, named by the concept it means rather than by what this set calls it.
@@ -41,13 +48,19 @@ module Recourse
         end
       end
 
-      def formatted_text(kind, value)
+      def formatted_text(kind, value, &)
         case kind
         when :boolean then boolean_icon value
-        when :enum then enum_badge value
+        when :enum then value && enum_badge(marked(value, &))
         when :date, :datetime, :time then value && localized(value)
-        else web_url?(value) ? url_link(value) : value
+        else web_url?(value) ? url_link(value) : marked(value, &)
         end
+      end
+
+      # The caller's own marking, where it has one: a table marks what a search
+      # matched, and a show page, which no search reached, has nothing to mark.
+      def marked(value, &)
+        block_given? ? yield(value) : value
       end
 
       # A date or a time, in words and in the attribute a machine reads. `l` picks
@@ -64,7 +77,7 @@ module Recourse
       end
 
       def enum_badge(value)
-        value && tag.span(value, class: 'badge')
+        tag.span value, class: 'badge'
       end
 
       def web_url?(value)
