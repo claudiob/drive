@@ -518,8 +518,9 @@
         gives them away.</span><span class='from'>step 7</span></li>
       <li><span class='no'>14</span><span>No caching. Every request rebuilds the whole table,
         and adding it later is the job everyone puts off.</span><span class='from'>step 1</span></li>
-      <li><span class='no'>15</span><span>Nothing Turbo-enabled: change a record and the table it
-        came from sits there, stale, until somebody reloads.</span><span class='from'>step 1</span></li>
+      <li><span class='no'>15</span><span>Nothing Turbo-enabled: sorting or filtering reloads the
+        whole page rather than swapping the table, and the delete button asks with the browser's
+        own grey confirm box.</span><span class='from'>step 1</span></li>
       <li><span class='no'>16</span><span>No breadcrumbs: a few levels down a nested route, nothing
         says where you are or leads back up.</span><span class='from'>step 6</span></li>
     </ol>
