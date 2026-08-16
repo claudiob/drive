@@ -19,7 +19,10 @@
     --signal-dim: #c92c15;
     --signal-soft: rgba(255, 59, 31, 0.12);
     --green: #35d07f;
+    --green-dim: #1c6b45;
     --amber: #ffb020;
+    --link: #8ab4ff;
+    --gantry: 46px;
     --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
@@ -35,6 +38,7 @@
     font-family: var(--sans);
     font-size: 17px;
     line-height: 1.65;
+    padding-top: var(--gantry);
     -webkit-font-smoothing: antialiased;
   }
 
@@ -80,11 +84,120 @@
 
   p { color: var(--muted); max-width: 44rem; text-wrap: pretty; }
   p strong { color: var(--text); font-weight: 600; }
-  a { color: var(--signal); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  a:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; border-radius: 2px; }
+  /* links are the one blue thing on the page, and always underlined: nothing else
+     in this palette is either, so a link cannot be mistaken for a red tag */
+  a {
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(138, 180, 255, 0.45);
+  }
+  a:hover { text-decoration-thickness: 2px; text-decoration-color: currentColor; }
+  a:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
 
   section { padding: 4.5rem 0; }
+
+  /* =============== the start line =============== */
+  .gantry {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    height: var(--gantry);
+    background: rgba(10, 11, 13, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .gantry-inner {
+    max-width: 62rem;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  /* five lamps on a gantry, all dark until the recipe starts */
+  .lamps { display: flex; gap: 6px; flex: none; }
+  .lamp {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #202228;
+    box-shadow: inset 0 0 0 1px #34373f, inset 0 2px 3px rgba(0, 0, 0, 0.6);
+    transition: background 0.35s ease, box-shadow 0.35s ease;
+  }
+  .lamp.on {
+    background: var(--signal);
+    box-shadow: inset 0 0 0 1px var(--signal-dim), 0 0 9px rgba(255, 59, 31, 0.75);
+  }
+  .gantry.go .lamp {
+    background: var(--green);
+    box-shadow: inset 0 0 0 1px var(--green-dim), 0 0 9px rgba(53, 208, 127, 0.75);
+  }
+
+  /* the grid: fifteen slots, one per thing the recipe hands over */
+  .grid {
+    display: flex;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+    padding-bottom: 3px;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.4s ease;
+  }
+  .gantry.live .grid { border-bottom-color: rgba(233, 234, 238, 0.35); }
+  .slot {
+    flex: none;
+    width: 19px;
+    height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    font-variant-numeric: tabular-nums;
+    color: #3b3e46;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease,
+                box-shadow 0.3s ease;
+  }
+  .gantry.live .slot { color: var(--faint); border-color: var(--line); }
+  .gantry.live .slot.lit {
+    background: var(--signal);
+    border-color: var(--signal);
+    color: #0b0c0e;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(255, 59, 31, 0.5);
+  }
+
+  /* and the flag at the end of it */
+  .chequer {
+    flex: none;
+    width: 30px;
+    height: 20px;
+    border-radius: 2px;
+    background:
+      repeating-conic-gradient(#eef0f3 0% 25%, #16171b 0% 50%) 0 0 / 10px 10px;
+    box-shadow: 0 0 0 1px var(--line);
+    opacity: 0;
+    transform: scale(0.5) rotate(-10deg);
+    transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.2, 1.5, 0.4, 1);
+  }
+  .gantry.finish .chequer { opacity: 1; transform: none; animation: wave 1.8s ease-in-out infinite; }
+  @keyframes wave {
+    0%, 100% { transform: rotate(-5deg) skewY(-4deg); }
+    50% { transform: rotate(5deg) skewY(4deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gantry.finish .chequer { animation: none; }
+    .chequer { transform: none; }
+  }
 
   /* =============== header =============== */
   header.hero {
@@ -281,6 +394,16 @@
   }
   .sign-off .flag { color: var(--signal); }
 
+  @media (max-width: 620px) {
+    :root { --gantry: 40px; }
+    .gantry-inner { gap: 0.55rem; padding: 0 0.6rem; }
+    .lamp { width: 9px; height: 9px; }
+    .lamps { gap: 4px; }
+    .grid { gap: 1px; }
+    .slot { width: 14px; height: 15px; font-size: 0.5rem; }
+    .chequer { width: 20px; height: 14px; background-size: 7px 7px; }
+  }
+
   @media (max-width: 480px) {
     body { font-size: 16px; }
     section { padding: 3.2rem 0; }
@@ -293,6 +416,18 @@
 </style>
 </head>
 <body>
+
+<div class='gantry' id='gantry' aria-hidden='true'>
+  <div class='gantry-inner'>
+    <div class='lamps'>
+      <span class='lamp'></span><span class='lamp'></span><span class='lamp'></span><span class='lamp'></span><span class='lamp'></span>
+    </div>
+    <div class='grid'>
+      <span class='slot' data-slot='01'>01</span><span class='slot' data-slot='02'>02</span><span class='slot' data-slot='03'>03</span><span class='slot' data-slot='04'>04</span><span class='slot' data-slot='05'>05</span><span class='slot' data-slot='06'>06</span><span class='slot' data-slot='07'>07</span><span class='slot' data-slot='08'>08</span><span class='slot' data-slot='09'>09</span><span class='slot' data-slot='10'>10</span><span class='slot' data-slot='11'>11</span><span class='slot' data-slot='12'>12</span><span class='slot' data-slot='13'>13</span><span class='slot' data-slot='14'>14</span><span class='slot' data-slot='15'>15</span>
+    </div>
+    <div class='chequer'></div>
+  </div>
+</div>
 
 <header class='hero'>
   <div class='wrap'>
@@ -324,7 +459,7 @@
 
 <div class='checker'></div>
 
-<section>
+<section id='needs'>
   <div class='wrap'>
     <span class='label'>The problem</span>
     <h2>A scaffold is not meant to ship</h2>
@@ -377,7 +512,7 @@
 
 <div class='checker'></div>
 
-<section>
+<section id='recipe'>
   <div class='wrap'>
     <span class='label'>The idea</span>
     <h2>Convention, all the way down</h2>
@@ -401,8 +536,8 @@
   <span class='c-sig'>recourses</span> <span class='c-sym'>:comments</span>
 <span class='c-sig'>end</span></code></pre>
         </div>
-        <div class='gives'>Gives you <b>01</b> <b>02</b> <b>03</b> <b>04</b> <b>08</b> <b>14</b>
-          <b>15</b></div>
+        <div class='gives'>Gives you <b data-need='01'>01</b> <b data-need='02'>02</b> <b data-need='03'>03</b> <b data-need='04'>04</b> <b data-need='08'>08</b> <b data-need='14'>14</b>
+          <b data-need='15'>15</b></div>
       </div>
     </div>
 
@@ -421,7 +556,7 @@
         <h3>Index the columns worth sorting, filtering and searching by</h3>
         <p>An index is the only honest signal a schema carries about which column identifies a row
         rather than describing it, so that is the signal read here. No index, no sorting.</p>
-        <div class='gives'>Gives you <b>09</b> <b>10</b> <b>11</b></div>
+        <div class='gives'>Gives you <b data-need='09'>09</b> <b data-need='10'>10</b> <b data-need='11'>11</b></div>
       </div>
     </div>
 
@@ -433,7 +568,7 @@
         sign. An enum becomes a badge on the page and a menu in the form; a foreign key becomes a
         menu of the records it points at, or a field to type into where there are too many to
         list.</p>
-        <div class='gives'>Gives you <b>05</b> <b>06</b></div>
+        <div class='gives'>Gives you <b data-need='05'>05</b> <b data-need='06'>06</b></div>
       </div>
     </div>
 
@@ -446,7 +581,7 @@
         </div>
         <p>Twenty-five rows per model, each value drawn to the shape of its own column — inside
         whatever length its validator states, and inside the column's own limit.</p>
-        <div class='gives'>Gives you <b>07</b></div>
+        <div class='gives'>Gives you <b data-need='07'>07</b></div>
       </div>
     </div>
 
@@ -460,7 +595,7 @@
         <div class='screen'>
           <pre><code><span class='c-dollar'>$</span> rails g recourse:counters &amp;&amp; rails db:migrate</code></pre>
         </div>
-        <div class='gives'>Gives you <b>12</b></div>
+        <div class='gives'>Gives you <b data-need='12'>12</b></div>
       </div>
     </div>
 
@@ -477,7 +612,7 @@
         <p>An encrypted column never reaches a table at all. On the record's own page it arrives as
         one asterisk per character, with a <code>Show</code> beside it — so a screenshot discloses
         nothing nobody asked to see.</p>
-        <div class='gives'>Gives you <b>13</b></div>
+        <div class='gives'>Gives you <b data-need='13'>13</b></div>
       </div>
     </div>
   </div>
@@ -485,7 +620,7 @@
 
 <div class='checker'></div>
 
-<section>
+<section id='cost'>
   <div class='wrap'>
     <span class='label'>The cost</span>
     <h2>Two things</h2>
@@ -622,6 +757,56 @@
     should already be built.</p>
   </div>
 </footer>
+
+<script>
+  (function () {
+    var gantry = document.getElementById('gantry')
+    var lamps = [].slice.call(document.querySelectorAll('.lamp'))
+    var slots = {}
+    ;[].forEach.call(document.querySelectorAll('.slot'), function (slot) {
+      slots[slot.dataset.slot] = slot
+    })
+    var marks = [].slice.call(document.querySelectorAll('.gives b[data-need]'))
+    var needs = document.getElementById('needs')
+    var recipe = document.getElementById('recipe')
+    var cost = document.getElementById('cost')
+    var footer = document.querySelector('footer')
+
+    // Everything reacts to one line across the viewport: a thing is "reached"
+    // once it has risen above it.
+    function reached (element, ratio) {
+      return element.getBoundingClientRect().top < window.innerHeight * (ratio || 0.72)
+    }
+
+    function update () {
+      gantry.classList.toggle('live', reached(needs))
+
+      marks.forEach(function (mark) {
+        slots[mark.dataset.need].classList.toggle('lit', reached(mark))
+      })
+
+      // the five lamps fill over the length of the recipe, one per fifth of it
+      var box = recipe.getBoundingClientRect()
+      var run = (window.innerHeight * 0.72 - box.top) / Math.max(box.height, 1)
+      var on = Math.max(0, Math.min(5, Math.ceil(run * 5)))
+      lamps.forEach(function (lamp, index) { lamp.classList.toggle('on', index < on) })
+
+      gantry.classList.toggle('go', reached(cost))
+      gantry.classList.toggle('finish', reached(footer, 0.92))
+    }
+
+    var waiting = false
+    function schedule () {
+      if (waiting) return
+      waiting = true
+      requestAnimationFrame(function () { waiting = false; update() })
+    }
+
+    addEventListener('scroll', schedule, { passive: true })
+    addEventListener('resize', schedule)
+    update()
+  })()
+</script>
 
 </body>
 </html>
