@@ -1,22 +1,19 @@
+require_relative 'gates'
+
 module Recourse
   module Generators
     # What a seed file is written from, read off a model whose table is migrated —
     # what `recourse:seed` runs against. `rails generate recourse` has no table yet
     # and answers the same questions from its attributes, in `AttributeFacts`.
     class ModelFacts
+      include Gates
+
       # What an app's own type is a kind of: a Price is a Decimal however it answers.
       KINDS = {
         ActiveModel::Type::Integer => :integer, ActiveModel::Type::Float => :float,
         ActiveModel::Type::Decimal => :decimal, ActiveModel::Type::Boolean => :boolean,
         ActiveModel::Type::Date => :date, ActiveModel::Type::DateTime => :datetime,
       }.freeze
-
-      # Validators that reject nil, so a row cannot save without the attribute:
-      # `inclusion: { in: [true, false] }` is how a required boolean is asked for.
-      REQUIRING = [
-        ActiveModel::Validations::PresenceValidator,
-        ActiveModel::Validations::InclusionValidator,
-      ].freeze
 
       # What the file is called after, and the class the rows in it are made of.
       attr_reader :plural, :class_name
@@ -28,18 +25,18 @@ module Recourse
         @class_name = model.name
       end
 
-      # Columns a row may fill: the ones a form would offer.
-      def columns = Recourse.editable_columns(@model)
+      # Columns a row may fill: the ones a form would offer, and any the model keeps
+      # off its screens that a row still cannot save without — a seed's whole job is
+      # a row that saves, and a hidden column the database insists on stands between
+      # it and that. In the table's own order, so a file reads the way a schema does.
+      def columns
+        offered = Recourse.editable_columns(@model) + insisted_on_columns
+
+        @model.column_names & offered
+      end
 
       # The words an enum admits, for a column that is one.
       def enum(column) = @model.defined_enums[column]
-
-      # What the bare row cannot leave out: a column the model validates against nil,
-      # or one the database refuses NULL in with no default. Both gates stand between
-      # a row and saving, so both are asked.
-      def required?(column)
-        validated?(column) || constrained?(column)
-      end
 
       # The kind a value is drawn for. An attribute reporting a name of its own —
       # `:price` — is asked what it is a kind of; anything else answers for itself.
@@ -71,18 +68,6 @@ module Recourse
       end
 
     private
-
-      def validated?(column)
-        Recourse.validated_names(column).any? do |attribute|
-          @model.validators_on(attribute).any? { |one| REQUIRING.any? { |kind| one.is_a? kind } }
-        end
-      end
-
-      def constrained?(column)
-        one = @model.columns_hash[column]
-
-        !one.null && one.default.nil? && one.default_function.nil?
-      end
 
       def length(column)
         @model.validators_on(column).find do |one|

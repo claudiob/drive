@@ -13,8 +13,7 @@ module Recourse
       # would arrive with nothing on it explaining why. That is also what keeps a
       # `recourse_hidden` column out: hidden from every screen means hidden here.
       def recourse_searchable_columns
-        recourse_indexed_strings - recourse_encrypted_names - readonly_attributes.to_a -
-          Recourse.hidden_columns(self)
+        recourse_indexed_strings - recourse_encrypted_names - Recourse.hidden_columns(self)
       end
 
       # The attributes Active Record Encryption holds, as column names.
@@ -49,7 +48,7 @@ module Recourse
         deterministic = Array(deterministic_encrypted_attributes).map(&:to_s)
 
         (recourse_indexed_strings & deterministic) -
-          readonly_attributes.to_a - Recourse.hidden_columns(self)
+          Recourse.hidden_columns(self)
       end
 
       # Every indexed column whose value is a word, whether or not it is encrypted.

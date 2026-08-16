@@ -764,9 +764,13 @@ before writing or editing any layout, view or partial.
 - The primary key is omitted too. An id is how a row is addressed, not something
   to read about it, and a column of them is a column of noise next to the name
   the row is actually known by.
-- So is anything a model declares `attr_readonly`. A value written once and never
-  again is a fact about the row's identity rather than about the row, and
-  `attr_readonly :fips` takes the FIPS column off `/counties` entirely.
+- `attr_readonly` is not consulted, and deliberately: it says what Rails may write,
+  which is not the same question as what a page should draw. A column written once
+  is often exactly what a reader wants — a FIPS code, a slug, an external id — and
+  a model that would rather no screen drew one says `recourse_hidden :fips`, which
+  takes it off the table, the form and the show page together. That the two so
+  often coincide is why the gem read the wrong one for a while: a form offering a
+  column Rails refuses to write raised on every save.
 - It comes out of the search box with the column. A search that matched a column
   no page draws would answer with rows carrying nothing that explains why they are
   there, and the mark that usually explains it has nowhere to go. A host that

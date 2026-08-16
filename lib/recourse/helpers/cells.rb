@@ -26,12 +26,11 @@ module Recourse
         counters + (columns - counters - TIMESTAMPS) + (TIMESTAMPS & columns & asked)
       end
 
-      # What no table shows: ciphertext nobody can read, a value written once that
-      # belongs to the row's identity, the id that addresses it, the parent a
-      # nested route already names — and whatever the model itself asked to hide.
+      # What no table shows: ciphertext nobody can read, the id that addresses the
+      # row, the parent a nested route already names — and whatever the model itself
+      # asked to hide, which is the one of these a host decides.
       def hidden_columns
-        resource_model.recourse_encrypted_names +
-          resource_model.readonly_attributes.to_a + [resource_model.primary_key] +
+        resource_model.recourse_encrypted_names + [resource_model.primary_key] +
           Array(resource_parent_association&.foreign_key) +
           Recourse.hidden_columns(resource_model)
       end

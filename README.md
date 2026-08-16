@@ -466,8 +466,10 @@ Two column lists decide what a screen shows, and they are deliberately not the
 same one:
 
 - A table shows every column except the encrypted ones, so a column holding PII
-  never reaches an index page, and except the primary key and anything the model
-  declares `attr_readonly`. `created_at` and `updated_at` are shown only where a
+  never reaches an index page, and except the primary key. `attr_readonly` means
+  nothing here: a column written once is still a column, and a model that would
+  rather no screen drew it says `recourse_hidden`, which is the one hook a host
+  decides. `created_at` and `updated_at` are shown only where a
   model asks for them by name — `def recourse_timestamps = %i[created_at]` — and
   come last when it does, after whatever the record is actually about.
 - A form offers, and `create` permits, `Recourse.editable_columns` — every
