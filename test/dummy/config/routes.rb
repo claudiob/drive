@@ -13,6 +13,9 @@ Rails.application.routes.draw do
       # no id of its own. Routed `destroy` alone, so it is an action rather than a
       # page, and its button sits on the place.
       recourse :memo, only: :destroy
+      # No `Photo` in this app: the name is what the place has attached, and the
+      # table is of Active Storage's blobs.
+      recourses :photos, only: :index
     end
 
     # Everything but making one: a person arrives from somewhere else.

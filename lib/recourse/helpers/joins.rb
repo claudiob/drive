@@ -21,6 +21,13 @@ module Recourse
         end
       end
 
+      # What the table's cache key carries for a join, and nil where there is none.
+      # The rows are the far side's and never change when a join does, so without
+      # this a fragment drawn before the last Add outlives it.
+      def join_digest
+        joined_ids.to_a.sort if resource_join
+      end
+
       # Add where the two are not joined and Remove where they are — one button
       # either way, since the path names both records and neither needs submitting.
       def join_button(record)

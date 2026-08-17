@@ -5,6 +5,7 @@ gemspec
 
 gem 'actioncable' # carries the dummy app's live index refreshes to the browser
 gem 'activejob' # turbo-rails enqueues refresh broadcasts through it
+gem 'activestorage' # the dummy attaches a file, so a table of attachments has one to draw
 gem 'irb' # REPL that bin/console starts
 gem 'minitest' # test framework
 gem 'puma' # serves the dummy app when you run it in a browser

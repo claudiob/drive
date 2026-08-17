@@ -4,6 +4,13 @@ require 'integration_case'
 # What a table lists and which of its columns it draws: two defaults the gem picks
 # and a host overrules — one on the model, one in a controller of its own.
 class TestRecoursesScoping < IntegrationCase
+  # This suite runs against a database that keeps whatever a test wrote, so what
+  # these tests write they also take back — the counts below are of seeded rows.
+  def teardown
+    Memo.where(body: 'Noted').destroy_all
+    Membership.find_or_create_by! person: Person.order(:id).first, team: Team.order(:id).first
+  end
+
   # The gem files a polymorphic type column with the machinery and keeps it off every
   # table, the way it does ciphertext and the id; and a route the parent has no
   # association for lists the whole model. Each is a default, and the host is what

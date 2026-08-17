@@ -10,11 +10,15 @@ module Recourse
 
   private
 
+    # An attachment's parent is the other one the routes can name and no key points
+    # at: a blob holds nothing pointing back, the way the far side of a join does not.
     def find_parent
       @recourse_parent_association = parent_association
-      return unless @recourse_parent_association
-
-      @recourse_parent = @recourse_parent_association.klass.find parent_id
+      @recourse_parent = if @recourse_parent_association
+                           @recourse_parent_association.klass.find parent_id
+                         else
+                           attachment_parent
+                         end
     end
 
     # What the route settled and every action honours: the index lists rows carrying
@@ -22,7 +26,7 @@ module Recourse
     # edits a join is the exception, and lists every row of the far side: the parent
     # is what the buttons write, not what the rows have in common.
     def parent_columns
-      return {} if resource_join || !@recourse_parent
+      return {} if resource_join || attachment_reflection || @recourse_parent_association.nil?
 
       { @recourse_parent_association.foreign_key => @recourse_parent.id }
     end

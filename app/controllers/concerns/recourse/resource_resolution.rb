@@ -18,7 +18,11 @@ module Recourse
       instance_variable_set "@#{controller_name.singularize}", record
     end
 
+    # The model the route is named after — or Active Storage's, where the name is
+    # something the parent has attached rather than a model of this app's own.
     def resource_class
+      return ActiveStorage::Blob if attachment_reflection
+
       Recourse.model controller_name
     end
 

@@ -23,6 +23,9 @@ class Place < ApplicationRecord
   # The parent a nested route answers, and optional, so a place can stand alone.
   # Counted, which is what earns the person's card a tab reading `3 places`.
   belongs_to :person, optional: true, counter_cache: true
+  # Files rather than records: a page of them lists Active Storage's own blobs, and
+  # the gem needs no model of this app's to draw one.
+  has_many_attached :photos
 
   # Money and a share of it, told apart by their types and not by their names.
   attribute :hourly_rate, :price

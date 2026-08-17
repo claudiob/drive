@@ -1,11 +1,12 @@
 <%# locals: (recourses:, pagy:) %>
 <%# A sorted or filtered table is drawn live: two requests can ask for one relation
     and want different headings, since only one of them clicked a heading to get it. -%>
-<%# The key carries two riders. The row partial's digest: a host's `_row` is
+<%# The key carries three riders. The row partial's digest: a host's `_row` is
     resolved at render, which the fragment's own template digest never follows.
     And the column list: which columns a table shows is decided in Ruby —
-    `recourse_hidden`, timestamps, counters — that no digest covers either. -%>
-<% cache_if params[:q].blank?, [recourses, row_digest, resource_columns] do %>
+    `recourse_hidden`, timestamps, counters — that no digest covers either. And the
+    join, where the buttons are of rows this relation knows nothing about. -%>
+<% cache_if params[:q].blank?, [recourses, row_digest, resource_columns, join_digest] do %>
   <% actions = resource_actions %>
   <div class='table-responsive'>
     <table class='table caption-top table-hover align-middle sm:table-stacked'>

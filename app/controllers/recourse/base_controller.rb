@@ -3,7 +3,8 @@ module Recourse
   # its own behavior above it — `class RecoursesController < Recourse::BaseController`
   # with a `before_action :authenticate!` guards every screen the gem serves.
   class BaseController < ApplicationController
-    include Pagy::Method, ParentResolution, ReferenceResolution, ResourceResolution
+    include Pagy::Method, AttachmentResolution, ParentResolution, ReferenceResolution,
+            ResourceResolution
 
     helper Helpers
 
@@ -14,6 +15,10 @@ module Recourse
     # action — before `create` commits, so its own change is broadcast — and again
     # after a dev reload hands the model a fresh class.
     before_action { resource_class.recourse_broadcast }
+
+    # The model behind the page, assigned rather than worked out twice: a view asking
+    # the name for itself would not know an attachment from a model of the app's own.
+    before_action { @recourse_model = resource_class }
 
     # Lists one page of the model the route is named after. `@q` is Ransack's own
     # name for a search, which is what its form and sort link helpers look for.
@@ -75,6 +80,10 @@ module Recourse
     # scope of its own behind a screen the gem otherwise draws whole:
     # `def recourse_relation = County.with_boosts_for(@recourse_parent)`. Private, so
     # that overriding it adds a query and never an action.
-    def recourse_relation = resource_class.all
+    def recourse_relation
+      return attachment_relation if attachment_reflection
+
+      resource_class.all
+    end
   end
 end

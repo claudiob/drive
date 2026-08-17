@@ -8,7 +8,14 @@ module Recourse
 
   # The same, answering nil where Unicon has never heard the concept: a crumb or a
   # tab then draws no picture at all, since the fallback circle pictures nothing.
-  def self.known_icon(name) = known_model_icon model(name)
+  # Nil for a name that resolves to no model -- a page of what a record has
+  # attached is drawn under a word this app has no class for, and an icon is not
+  # worth raising over either way.
+  def self.known_icon(name)
+    model = name.to_s.split('/').last.classify.safe_constantize
+
+    known_model_icon model if model
+  end
 
   # And for a model in hand. A counter heading still takes the circle — an
   # icon-only heading has to show something — so `model_icon` keeps answering.
