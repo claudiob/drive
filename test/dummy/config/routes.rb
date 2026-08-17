@@ -8,7 +8,12 @@ Rails.application.routes.draw do
   # `/admin/places`.
   scope module: :admin do
     # All seven, and the model that has a column of every kind.
-    recourses :places
+    recourses :places do
+      # `recourse` rather than `recourses`: one memo about this place, reached with
+      # no id of its own. Routed `destroy` alone, so it is an action rather than a
+      # page, and its button sits on the place.
+      recourse :memo, only: :destroy
+    end
 
     # Everything but making one: a person arrives from somewhere else.
     recourses :people, except: %i[new create] do

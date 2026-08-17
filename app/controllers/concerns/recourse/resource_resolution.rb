@@ -4,7 +4,12 @@ module Recourse
   module ResourceResolution
   private
 
+    # A singular resource is reached with no id — `/places/5/memo` names the record
+    # by the path it hangs off rather than by a key of its own — so there is nothing
+    # to look up, and what the action works on is the host's to find.
     def find_resource
+      return unless params.key? :id
+
       assign resource_class.find(params.expect(:id))
     end
 

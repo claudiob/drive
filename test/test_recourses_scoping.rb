@@ -47,4 +47,19 @@ class TestRecoursesScoping < IntegrationCase
     assert_equal 303, @session.response.status
     assert_equal 'Noted', person.memos.order(:id).last.body
   end
+
+  # And the same for one drawn `recourse` rather than `recourses`: a single record
+  # reached with no id, whose destroy is an action on the record it hangs off.
+  def test_a_singular_nested_action_gets_a_button_too
+    place = Place.order(:id).first
+    Memo.create! body: 'About this place', about: place
+    visit "/places/#{place.id}"
+
+    assert_includes body, %(action="/places/#{place.id}/memo")
+    assert_includes body, 'Delete memo'
+    @session.delete "/places/#{place.id}/memo"
+
+    assert_equal 303, @session.response.status
+    assert_empty Memo.where(about: place)
+  end
 end
