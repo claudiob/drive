@@ -699,9 +699,15 @@
           <tr><td>recourse_label</td><td>the column a record is named by, in a breadcrumb and
             anywhere else it is referred to</td></tr>
           <tr><td>recourse_hidden</td><td>a column, or a list of them, no screen shows</td></tr>
+          <tr><td>recourse_displayed</td><td>and a column a table draws anyway — ciphertext, an
+            id, a polymorphic type — where a row is recognised by nothing else</td></tr>
           <tr><td>recourse_timestamps</td><td>which of <code>created_at</code> and
             <code>updated_at</code> a table ends with</td></tr>
           <tr><td>recourse_order</td><td>a default order other than by id</td></tr>
+          <tr><td>recourse_icon</td><td>the concept a resource is drawn with, in the sidebar, the
+            breadcrumb and the browser tab</td></tr>
+          <tr><td>recourse_broadcasts?</td><td>whether saving a row refreshes every open table
+            listing it</td></tr>
         </tbody>
       </table>
     </div>
@@ -710,6 +716,7 @@
       <pre><code><span class='c-sig'>class</span> Post &lt; ApplicationRecord
   <span class='c-sig'>def</span> self.recourse_label = <span class='c-sym'>:title</span>
   <span class='c-sig'>def</span> self.recourse_hidden = <span class='c-sym'>:body</span>
+  <span class='c-sig'>def</span> self.recourse_displayed = <span class='c-sym'>:author_email</span>
   <span class='c-sig'>def</span> self.recourse_order = <span class='c-str'>'published_on desc'</span>
   <span class='c-sig'>def</span> self.recourse_timestamps = <span class='c-sym'>%i[updated_at]</span>
 <span class='c-sig'>end</span></code></pre>
@@ -738,6 +745,103 @@
 
 &lt;%= <span class='c-sig'>column</span> header: <span class='c-str'>'Words'</span> <span class='c-sig'>do</span> %&gt;
   &lt;%= post.body.split.size %&gt;
+&lt;% <span class='c-sig'>end</span> %&gt;</code></pre>
+    </div>
+
+    <h3 style='margin-top:2.4rem'>In the routes</h3>
+    <p>A route is a sentence about a screen, so four screens the gem cannot guess at are asked for
+    in the routes rather than configured anywhere.</p>
+    <div class='table-scroll'>
+      <table class='knobs'>
+        <thead><tr><th>What you draw</th><th>What you get</th></tr></thead>
+        <tbody>
+          <tr><td>recourses :teams, through: :memberships</td><td>a page of every team with Add or
+            Remove beside each one, and the two routes that write the join</td></tr>
+          <tr><td>recourse :pause</td><td>one record reached with no id of its own, and — where it
+            routes only a <code>create</code> or a <code>destroy</code> — a button for it on the
+            record it hangs off, beside the breadcrumbs</td></tr>
+          <tr><td>recourses :photos, only: :index</td><td>a table of what the record has attached,
+            each row a filename and a link to open it. No model of yours involved:
+            <code>has_many_attached :photos</code> is the whole declaration</td></tr>
+          <tr><td>recourses :memos, only: %i[index create]</td><td>a <code>create</code> with no
+            <code>new</code> is you saying a bare record can stand, so the index offers a Create
+            button where the Add link would be</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class='screen'>
+      <div class='screen-bar'><span>config/routes.rb</span></div>
+      <pre><code><span class='c-sig'>recourses</span> <span class='c-sym'>:people</span> <span class='c-sig'>do</span>
+  <span class='c-sig'>recourses</span> <span class='c-sym'>:teams</span>, only: <span class='c-sym'>:index</span>, through: <span class='c-sym'>:memberships</span>
+  <span class='c-sig'>recourses</span> <span class='c-sym'>:photos</span>, only: <span class='c-sym'>:index</span>
+  <span class='c-sig'>recourse</span> <span class='c-sym'>:pause</span>, only: <span class='c-sym'>%i[create destroy]</span>
+<span class='c-sig'>end</span></code></pre>
+    </div>
+
+    <h3 style='margin-top:2.4rem'>In a controller</h3>
+    <p>Two seams, for the two halves of a screen: what it lists, and what it accepts. Both are
+    private, so overriding one adds a query or a strong-params call and never an action.</p>
+    <div class='table-scroll'>
+      <table class='knobs'>
+        <thead><tr><th>Method</th><th>What it decides</th></tr></thead>
+        <tbody>
+          <tr><td>recourse_relation</td><td>the rows the index lists, before the search, the sort
+            and the page reach them. Say what to list and you are not second-guessed</td></tr>
+          <tr><td>resource_params</td><td>what a form may submit — for when the form is yours and
+            asks for a hidden column, or for something that is no column at all</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class='screen'>
+      <div class='screen-bar'><span>app/controllers/providers/counties_controller.rb</span></div>
+      <pre><code><span class='c-sig'>class</span> Providers::CountiesController &lt; RecoursesController
+<span class='c-sig'>private</span>
+
+  <span class='c-sig'>def</span> recourse_relation = County.with_boosts_for(<span class='c-sym'>@recourse_parent</span>)
+<span class='c-sig'>end</span></code></pre>
+    </div>
+
+    <h3 style='margin-top:2.4rem'>In a helper of your own</h3>
+    <p>Three things no route can say: a page filed under another resource, a page a record only
+    sometimes has, and an action whose wording counts something. Answer whichever you need, in any
+    helper module, and skip the rest.</p>
+    <div class='table-scroll'>
+      <table class='knobs'>
+        <thead><tr><th>Method</th><th>What it adds</th></tr></thead>
+        <tbody>
+          <tr><td>recourse_extra_tabs(record)</td><td><code>[label, path]</code> pairs, appended to
+            the tabs on that record's card. Which one is current is still the gem's to say</td></tr>
+          <tr><td>recourse_extra_links</td><td><code>[label, path, method]</code> triples at the
+            foot of the sidebar — the way out of it, which no resource declares</td></tr>
+          <tr><td>recourse_extra_actions(record)</td><td>the same three, as a button beside the
+            breadcrumbs. Return none where the record is not one this action is for</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class='screen'>
+      <div class='screen-bar'><span>app/helpers/recourse_helper.rb</span></div>
+      <pre><code><span class='c-sig'>module</span> RecourseHelper
+  <span class='c-sig'>def</span> recourse_extra_links
+    [[<span class='c-str'>'Log out'</span>, session_path, <span class='c-sym'>:delete</span>]]
+  <span class='c-sig'>end</span>
+
+  <span class='c-sig'>def</span> recourse_extra_tabs(record)
+    <span class='c-sig'>return</span> [] <span class='c-sig'>unless</span> record.is_a?(Nomination) &amp;&amp; record.lead
+
+    [[<span class='c-str'>'Lead'</span>, nomination_lead_path(record)]]
+  <span class='c-sig'>end</span>
+<span class='c-sig'>end</span></code></pre>
+    </div>
+
+    <h3 style='margin-top:2.4rem'>In a page of your own</h3>
+    <p>A screen the gem cannot draw at all — an aggregate, a chat, a fetch from someone else's
+    API — is a template of yours under the controller's own path, and it wins over the gem's.
+    Render it inside the record's card and it keeps the tabs, the breadcrumbs and the buttons of
+    every page beside it.</p>
+    <div class='screen'>
+      <div class='screen-bar'><span>app/views/bookings/messages/index.html.erb</span></div>
+      <pre><code>&lt;%= render layout: <span class='c-str'>'recourses/card'</span>, locals: { record: <span class='c-sym'>@booking</span> } <span class='c-sig'>do</span> %&gt;
+  &lt;%= render <span class='c-str'>'messages'</span>, messages: <span class='c-sym'>@messages</span> %&gt;
 &lt;% <span class='c-sig'>end</span> %&gt;</code></pre>
     </div>
 
