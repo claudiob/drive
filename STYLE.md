@@ -761,6 +761,11 @@ before writing or editing any layout, view or partial.
 - A table of records shows every attribute that is not encrypted, one column
   each. Encrypted attributes are omitted entirely: showing ciphertext helps
   nobody, and decrypting it into a list leaks it.
+- That is a default, not a law. A model may name one back with
+  `def recourse_displayed = :phone`, and it is the host that answers for its own
+  screens — a contact recognised by nothing but its number is the case this was
+  built for. Read it twice before writing it: the reason for the default is what a
+  screenshot of a page of twenty carries.
 - The primary key is omitted too. An id is how a row is addressed, not something
   to read about it, and a column of them is a column of noise next to the name
   the row is actually known by.

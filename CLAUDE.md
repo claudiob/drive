@@ -200,7 +200,9 @@ two is filed under the one a reader would look in first.
   stored is ciphertext, so only `null: false` and a unique index still mean
   anything; the format belongs to the model.
 - Encrypted columns never appear in a generic *table*, so encrypting a column
-  removes it from the index page. That is intended — see `STYLE.md`.
+  removes it from the index page. That is intended — see `STYLE.md`. A model may
+  name one back with `def recourse_displayed = :phone`, which is the host taking
+  the screenshot risk on purpose rather than the gem deciding for it.
 - A *show* page is the other way round: it draws every encrypted column, because
   this is an admin tool for agents and reading a record's PII is part of the job.
   Encryption settles what the database keeps, not what a page may say.
