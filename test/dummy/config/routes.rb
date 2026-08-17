@@ -41,6 +41,9 @@ Rails.application.routes.draw do
     end
 
     recourses :teams, except: :show do
+      # A plain `resource`, so the gem records nothing and offers no button: the
+      # wording counts what a sweep would clear, which is the host's to say.
+      resource :sweep, only: :create
       # A `namespace` between a block and what it nests: the routes and the
       # controller come out under it, and no tab is drawn for a child filed there.
       namespace(:visited) { recourses :places, only: :index }
