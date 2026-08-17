@@ -26,7 +26,7 @@ module Recourse
     def index
       search = Search.new recourse_relation, params[:q]
       @q = search.query
-      @pagy, @resources = pagy search.scope.where(parent_columns)
+      @pagy, @resources = pagy search.scope
     end
 
     # Builds a blank record under the name Rails would use: @contact for contacts.
@@ -83,12 +83,14 @@ module Recourse
     # The rows the index lists, before the search, the sort and the page reach them.
     # Every row of the model by default, and the one thing a host overrides to put a
     # scope of its own behind a screen the gem otherwise draws whole:
-    # `def recourse_relation = County.with_boosts_for(@recourse_parent)`. Private, so
-    # that overriding it adds a query and never an action.
+    # `def recourse_relation = County.with_boosts_for(@recourse_parent)`. A host that
+    # says what to list is not second-guessed: the parent a nested route names is what
+    # narrows the default, and nothing narrows an answer of its own. Private,
+    # so that overriding it adds a query and never an action.
     def recourse_relation
       return attachment_relation if attachment_reflection
 
-      resource_class.all
+      resource_class.where parent_columns
     end
   end
 end
