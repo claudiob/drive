@@ -16,7 +16,9 @@ module Recourse
       # there is nothing to ask and nothing to list, only something to do.
       def bare_action_buttons(record)
         Recourse.nested_under(card_path).filter_map do |nested|
-          next if routed? nested, 'index'
+          # An index is a page to reach the action from, and a `new` is a form to
+          # fill in on the way: either one means there is more to this than a button.
+          next if routed?(nested, 'index') || routed?(nested, 'new')
 
           bare_action_button record, nested
         end

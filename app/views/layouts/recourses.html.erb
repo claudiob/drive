@@ -201,7 +201,7 @@
           form wrapped or not, and on the line it shares with the breadcrumb it drops
           the field a few pixels below it. A row gap only exists between lines. -%>
       <div class='container-fluid px-3 justify-content-start row-gap-2'>
-        <%= render 'breadcrumb' %>
+        <%= render 'recourses/breadcrumb' %>
         <%= yield :actions %>
         <%= yield :search %>
       </div>
@@ -215,7 +215,7 @@
           height is what draws the sidebar's rule the whole way down. -%>
       <div class='row flex-grow-1 align-content-start md:align-content-stretch'>
         <aside class='recourse-sidebar col-12 md:col-auto py-3 px-3 mx-0'>
-          <%= render 'sidebar' %>
+          <%= render 'recourses/sidebar' %>
         </aside>
 
         <main class='col-12 md:col py-4 px-3'>
@@ -224,8 +224,8 @@
       </div>
     </div>
 
-    <%= render 'flash' %>
-    <%= render 'confirm' %>
+    <%= render 'recourses/flash' %>
+    <%= render 'recourses/confirm' %>
 
     <%# turbo-rails' own bundle, in the version that gem signs its streams for: the
         Turbo behind every frame and morph here, plus the cable element and Action
