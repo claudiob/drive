@@ -13,8 +13,9 @@ module Recourse
 
     # The model served here broadcasts refreshes for its index. On the way into every
     # action — before `create` commits, so its own change is broadcast — and again
-    # after a dev reload hands the model a fresh class.
-    before_action { resource_class.recourse_broadcast }
+    # after a dev reload hands the model a fresh class. Where there is a model at all:
+    # a host may serve a page over an aggregate of its own, which keeps no rows.
+    before_action :broadcast_resource_changes
 
     # The model behind the page, assigned rather than worked out twice: a view asking
     # the name for itself would not know an attachment from a model of the app's own.
@@ -74,6 +75,10 @@ module Recourse
     end
 
   private
+
+    def broadcast_resource_changes
+      resource_class.recourse_broadcast if resource_class.respond_to? :recourse_broadcast
+    end
 
     # The rows the index lists, before the search, the sort and the page reach them.
     # Every row of the model by default, and the one thing a host overrides to put a

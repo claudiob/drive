@@ -36,9 +36,16 @@ module Recourse
     # join's own keys count too: the far side of a many-to-many holds none pointing
     # at the parent, which is what the join row is for.
     def parent_association
-      associations = resource_class.recourse_references + join_references
+      associations = own_references + join_references
 
       associations.find { |association| request.path_parameters.key? :"#{association.name}_id" }
+    end
+
+    # A host may serve a page over something that is no Active Record model at all --
+    # an aggregate it assembles itself -- and such a class answers no questions about
+    # keys. The routes still named a parent, and the host still finds it.
+    def own_references
+      resource_class.respond_to?(:recourse_references) ? resource_class.recourse_references : []
     end
 
     def join_references
