@@ -21,6 +21,11 @@ module Recourse
       resource_class.model_name.human
     end
 
+    # What a form may submit: every column a user may set, less the ones the model
+    # keeps off its screens. The other thing a host overrides, and for the same
+    # reason as `recourse_relation` — a form of its own asks for what it asks for,
+    # which may be a hidden column or an attribute that is no column at all:
+    # `def resource_params = params.expect(provider: %i[name cid])`.
     def resource_params
       permitted = Recourse.editable_columns resource_class
       key = controller_name.singularize.to_sym
