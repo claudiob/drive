@@ -26,6 +26,16 @@ module Recourse
       model_title model(name)
     end
 
+    # The same for a name that may resolve to no model at all: an action drawn under
+    # a record still needs a word for its button, and `pause` is a verb this app never
+    # made a class for.
+    def known_title(name)
+      segment = name.to_s.split('/').last
+      model = segment.classify.safe_constantize
+
+      model ? model_title(model) : segment.humanize
+    end
+
     # And the same for a model already in hand — the far side of an association, the
     # model a filter lists. `count:` picks the singular where one is meant, and
     # `lower:` is for a title that follows a word rather than opening the line.

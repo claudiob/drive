@@ -40,6 +40,16 @@ class TestRecoursesActions < IntegrationCase
     assert_empty Memo.where(about: place)
   end
 
+  # And a name this app has no class for at all. An action is a verb, so most of
+  # them are: the button takes the word the route used.
+  def test_a_bare_action_needs_no_model_behind_it
+    place = Place.order(:id).first
+    visit "/places/#{place.id}"
+
+    assert_includes body, %(action="/places/#{place.id}/sweep")
+    assert_includes body, 'Add sweep'
+  end
+
   # The sidebar lists what the routes declared. An app's own way out of it is not
   # one of those, so the host says it the same way it says a tab.
   def test_a_host_may_add_a_link_the_sidebar_cannot_declare

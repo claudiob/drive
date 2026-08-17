@@ -34,7 +34,7 @@ module Recourse
       # The resource's own word, which a host renames in a locale like any other
       # model: `Add Jobber retrieval` rather than `Add booking exchange`.
       def bare_action_label(nested, action)
-        model = Recourse.downcase Recourse.title(nested).singularize
+        model = Recourse.downcase Recourse.known_title(nested).singularize
 
         t "recourse.#{action == :create ? 'add' : 'delete'}", model:
       end
