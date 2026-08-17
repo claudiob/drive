@@ -8,4 +8,16 @@
                   data: { key: (title[key].downcase if key) } %>
     </li>
   <% end %>
+
+  <%# An app's own way out of the sidebar, and whatever else the routes cannot
+      name. A button where one is asked for, since a log out is never a GET. -%>
+  <% sidebar_extras.each do |label, path, method| %>
+    <li class='nav-item'>
+      <% if method %>
+        <%= button_to label, path, method:, class: 'nav-link border-0 bg-transparent' %>
+      <% else %>
+        <%= link_to label, path, class: 'nav-link' %>
+      <% end %>
+    </li>
+  <% end %>
 </ul>
