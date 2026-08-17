@@ -1,6 +1,6 @@
 <% content_for :title, resource_record_label %>
 
-<%= render layout: 'card', locals: { record: resource_record, tabs: resource_tabs(resource_record) } do %>
+<%= render layout: 'card', locals: { record: resource_record } do %>
   <div class='row recourse-values'>
     <%= render 'values', resource_key => resource_record %>
   </div>

@@ -1,4 +1,6 @@
-<%# locals: (record:, tabs:) -%>
+<%# locals: (record:) -%>
+<%# The record's own pages, worked out here rather than passed in, so a host's index
+    template of its own can put its page in this card by naming only the record. -%>
 <%# Every bare action the routes drew under this record: a nested resource with no
     index of its own is reached from nowhere, so its button sits beside the
     breadcrumbs wherever the record is shown, on whichever of its pages that is.
@@ -14,7 +16,7 @@
 <div class='card'>
   <div class='card-header'>
     <ul class='nav nav-tabs card-header-tabs'>
-      <% tabs.each do |label, path, current| %>
+      <% resource_tabs(record).each do |label, path, current| %>
         <li class='nav-item'>
           <%= link_to label, path, class: class_names('nav-link', active: current),
                                    aria: { current: ('page' if current) } %>
