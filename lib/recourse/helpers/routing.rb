@@ -23,6 +23,17 @@ module Recourse
 
         @recourse_routed.include? "#{controller_path}##{action}"
       end
+
+      # True where the route needs no id of its own — a collection action, or a
+      # singular resource's. What a button on the parent can reach, in other words:
+      # a member action wants a row, and a row is what a table is for.
+      def idless_route?(controller_path, action)
+        route = Rails.application.routes.routes.find do |one|
+          one.defaults[:controller] == controller_path && one.defaults[:action] == action.to_s
+        end
+
+        route&.required_parts&.exclude? :id
+      end
     end
   end
 end

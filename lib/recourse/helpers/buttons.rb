@@ -22,10 +22,11 @@ module Recourse
         end
       end
 
-      # The first of the two the routes drew, since a resource offering both is
-      # asking for a page rather than a button.
+      # The first of the two the routes drew that needs no id: a `create` on the
+      # collection, or a singular resource's `destroy`. A member action wants the row
+      # it acts on, and a row is what a table is for.
       def bare_action_button(record, nested)
-        action, method = BARE_ACTIONS.find { |one, _| routed? nested, one.to_s }
+        action, method = BARE_ACTIONS.find { |one, _| idless_route? nested, one }
         return unless action
 
         [bare_action_label(nested, action), bare_action_url(record, nested, action), method]
