@@ -26,10 +26,17 @@ module Recourse
         counters + (columns - counters - TIMESTAMPS) + (TIMESTAMPS & columns & asked)
       end
 
-      # What no table shows: ciphertext nobody can read, the id that addresses the
-      # row, the parent a nested route already names — and whatever the model itself
-      # asked to hide, which is the one of these a host decides.
+      # What no table shows, less whatever the model asked to draw anyway. Each of
+      # the four below is a default the gem picks, and a host is what answers for
+      # its own screens — so naming one overrules it.
       def hidden_columns
+        columns_hidden_by_default - Array(resource_model.recourse_displayed).map(&:to_s)
+      end
+
+      # Ciphertext nobody can read, the id that addresses the row, the parent a
+      # nested route already names, and whatever the model itself asked to hide,
+      # which is the one of these a host decides without the override above.
+      def columns_hidden_by_default
         resource_model.recourse_encrypted_names + [resource_model.primary_key] +
           Array(resource_parent_association&.foreign_key) +
           Recourse.hidden_columns(resource_model)

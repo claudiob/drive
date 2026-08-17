@@ -17,6 +17,14 @@ module Recourse
     # `def recourse_hidden = :name` reads as well as `%i[name title]`.
     def recourse_hidden = []
 
+    # And the columns a table draws whatever would otherwise keep them off it —
+    # ciphertext, the id, a polymorphic type, the inheritance column. Every one of
+    # those is a default the gem picks, and a host is what answers for its own
+    # screens: `def recourse_displayed = :phone` puts a number back on a table that
+    # recognises its rows by nothing else. Read the encrypted case twice, since
+    # what a screenshot of a page of them carries is the reason for the default.
+    def recourse_displayed = []
+
     # Which of `created_at` and `updated_at` a table ends with, in that order.
     # Neither by default: a timestamp is a fact about the row's storage rather than
     # about the thing it stores, and reference data written once by a migration
