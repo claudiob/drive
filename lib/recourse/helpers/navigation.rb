@@ -12,7 +12,14 @@ module Recourse
         here = controller.controller_path
         return crumbs << [here, resources_name, nil] unless leaf
 
-        crumbs << [here, resources_name, url_for(action: :index)] << [nil, leaf, nil]
+        crumbs << [here, resources_name, index_url] << [nil, leaf, nil]
+      end
+
+      # Where this resource's index is, or nil where it has none: a singular resource
+      # is one record reached with no id, so there is no list of it to go back to and
+      # the crumb naming it is read out rather than linked.
+      def index_url
+        url_for action: :index if routed_action? 'index'
       end
 
       # A link out of a table. Every cell is inside the results frame, and the page a
