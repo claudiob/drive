@@ -23,9 +23,13 @@ module Recourse
 
       # What the table's cache key carries for a join, and nil where there is none.
       # The rows are the far side's and never change when a join does, so without
-      # this a fragment drawn before the last Add outlives it.
+      # this a fragment drawn before the last Add outlives it. The join's own name
+      # leads, because an expanded key renders `nil` and `[]` as the same empty
+      # string: without it a listing of every provider with nothing joined yet and
+      # the plain index of the same providers share one fragment, and whichever drew
+      # first decides whether the other has any buttons.
       def join_digest
-        joined_ids.to_a.sort if resource_join
+        [resource_join.name, *joined_ids.to_a.sort] if resource_join
       end
 
       # Add where the two are not joined and Remove where they are — one button
