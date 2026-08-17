@@ -32,7 +32,7 @@ module Recourse
       model = Recourse.model parent
       id = request.path_parameters[:"#{model.model_name.singular}_id"]
 
-      model.find id if id
+      model.find_by id: id if id
     end
 
     # The blobs themselves, through the association `has_many_attached` generated —
