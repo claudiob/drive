@@ -18,7 +18,7 @@ module Recourse
     # Lists one page of the model the route is named after. `@q` is Ransack's own
     # name for a search, which is what its form and sort link helpers look for.
     def index
-      search = Search.new resource_class, params[:q]
+      search = Search.new recourse_relation, params[:q]
       @q = search.query
       @pagy, @resources = pagy search.scope.where(parent_columns)
     end
@@ -67,5 +67,14 @@ module Recourse
       flash.notice = t 'recourse.deleted', model: human_name
       redirect_to url_for(action: :index), status: :see_other
     end
+
+  private
+
+    # The rows the index lists, before the search, the sort and the page reach them.
+    # Every row of the model by default, and the one thing a host overrides to put a
+    # scope of its own behind a screen the gem otherwise draws whole:
+    # `def recourse_relation = County.with_boosts_for(@recourse_parent)`. Private, so
+    # that overriding it adds a query and never an action.
+    def recourse_relation = resource_class.all
   end
 end

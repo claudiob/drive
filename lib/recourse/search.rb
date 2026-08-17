@@ -9,10 +9,13 @@ module Recourse
     # The Ransack object the form and the sort links read.
     attr_reader :query
 
-    # A search of `model` for the `q` parameters the request carried.
-    def initialize(model, params)
-      @model = model
-      @query = model.ransack conditions(params)
+    # A search of `relation` for the `q` parameters the request carried. A relation
+    # rather than a model, so a host that narrowed the index is searched inside what
+    # it narrowed to rather than around it — the model is still what answers for the
+    # order, the eager loads and the allowlist, and a relation knows its own.
+    def initialize(relation, params)
+      @model = relation.klass
+      @query = relation.ransack conditions(params)
     end
 
     # The relation the index lists. Ransack has already ordered it where a heading

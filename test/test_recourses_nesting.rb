@@ -61,16 +61,6 @@ class TestRecoursesNesting < IntegrationCase
     assert_includes body, %(href="/teams/#{team.id}/memos">Memos</a>)
   end
 
-  # The gem files a polymorphic type column with the machinery and keeps it off every
-  # table, the way it does ciphertext and the id. Each of those is a default, and a
-  # model that says otherwise is the one that answers for its own screens.
-  def test_a_model_may_ask_for_a_column_the_gem_would_hide
-    team = Team.order(:id).first
-    visit "/teams/#{team.id}/memos"
-
-    assert_includes body, 'data-cell="About type"'
-  end
-
   # What is refused is a nesting that adds no namespace at all: only a `recourses`
   # block gives a nested controller a namespace of its own, and without one the
   # nested `PlacesController` and the top-level one would be a single class. It

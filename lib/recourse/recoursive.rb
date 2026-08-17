@@ -1,8 +1,8 @@
 require 'active_support'
 
 module Recourse
-  # Extends every Active Record model, so each one says how it is labelled, what
-  # its index eager-loads and how that index is sorted.
+  # Extends every Active Record model, so each one says how it is labelled, which
+  # of its columns a screen draws, what its index eager-loads and how it is sorted.
   module Recoursive
     # Column a combobox shows for a record, and selects alongside its id.
     def recourse_label = :name
@@ -78,28 +78,6 @@ module Recourse
     # How the index sorts its rows, in any shape `order` accepts. By id by default,
     # which is the one column every table has and the order rows were created in.
     def recourse_order = :id
-
-    # Whether saving a record refreshes every open index listing it. On for every
-    # recoursed model; a host quiets one with `def recourse_broadcasts? = false`.
-    def recourse_broadcasts? = true
-
-    # True once the refresh broadcasts are attached, which is also what the index
-    # checks before subscribing: a stream nobody broadcasts on is not worth a socket.
-    def recourse_broadcasting? = @recourse_broadcasting || false
-
-    # Attaches the broadcasts, once per class: every committed change goes to the
-    # model's plural stream, the one its index subscribes to — plain
-    # `broadcasts_refreshes` would send updates and destroys to per-record streams
-    # the index never hears. The ivar dies with the class on a dev reload, so the
-    # next request attaches to the fresh class again. Quiet without turbo-rails and
-    # Active Job, which is when the model has no `broadcasts_refreshes_to`.
-    def recourse_broadcast
-      return if recourse_broadcasting? || !recourse_broadcasts?
-      return unless respond_to? :broadcasts_refreshes_to
-
-      @recourse_broadcasting = true
-      broadcasts_refreshes_to ->(record) { record.model_name.plural }
-    end
   end
 end
 
