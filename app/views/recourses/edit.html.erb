@@ -4,6 +4,6 @@
   <%= destroy_resource_button resource_record %>
 <% end %>
 
-<%= render layout: 'card', locals: { tabs: resource_tabs(resource_record) } do %>
+<%= render layout: 'card', locals: { record: resource_record, tabs: resource_tabs(resource_record) } do %>
   <%= render 'form', resource_key => resource_record %>
 <% end %>

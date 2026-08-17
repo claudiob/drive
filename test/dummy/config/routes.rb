@@ -18,6 +18,11 @@ Rails.application.routes.draw do
       # one-click Create button in the Add link's place, on our word that a bare
       # memo can stand.
       recourses :memos, only: %i[index create]
+      # An action rather than a page: `create` with no index to reach it from, so
+      # its button sits on the person instead, beside the breadcrumbs. The gem draws
+      # the button; where a bare action goes afterwards is the host's to say, which
+      # is why this one has a controller of its own.
+      namespace(:quick) { recourses :memos, only: :create }
     end
 
     recourses :teams, except: :show do

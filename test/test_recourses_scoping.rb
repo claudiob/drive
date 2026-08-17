@@ -33,4 +33,18 @@ class TestRecoursesScoping < IntegrationCase
 
     refute_includes body, 'Neighbours'
   end
+
+  # A nested resource routed `create` with no index is reached from nowhere, so the
+  # gem puts its button on the record it hangs off, wherever that record is shown.
+  def test_a_nested_action_with_no_page_gets_a_button_on_its_parent
+    person = Person.order(:id).first
+    visit "/people/#{person.id}/places"
+
+    assert_includes body, %(action="/people/#{person.id}/quick/memos")
+    assert_includes body, 'Add memo'
+    @session.post "/people/#{person.id}/quick/memos"
+
+    assert_equal 303, @session.response.status
+    assert_equal 'Noted', person.memos.order(:id).last.body
+  end
 end

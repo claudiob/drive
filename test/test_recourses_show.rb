@@ -39,7 +39,9 @@ class TestRecoursesShow < IntegrationCase
     assert_includes body, "#{person.places_count} places"
     assert_includes body, %(href="/people/#{person.id}/memos">)
     assert_includes body, '</i> Memos</a>'
-    # The tab order is the routes file's: places was nested first.
-    assert_operator body.index('/places"'), :<, body.index('/memos"')
+    # The tab order is the routes file's: places was nested first. By href, since a
+    # bare action's button carries a path of its own before the tabs are drawn.
+    assert_operator body.index(%(href="/people/#{person.id}/places")), :<,
+                    body.index(%(href="/people/#{person.id}/memos"))
   end
 end
