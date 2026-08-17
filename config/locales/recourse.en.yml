@@ -9,6 +9,7 @@ en:
   recourse:
     add: Add %{model}
     all: All %{models}
+    attach: Add
     all_values: All
     blank: "—"
     cancel: Cancel
@@ -32,6 +33,7 @@ en:
     no_results: No results found
     none: "No %{models}."
     optional: Optional
+    remove: Remove
     reference: "%{model} %{attribute}"
     reveal: Show
     search: Search…

@@ -12,7 +12,7 @@ module Recourse
 
     # Initializers all run before routes are drawn, so `recourses` exists in time.
     initializer 'recourse.routes' do
-      ActionDispatch::Routing::Mapper.include Routes
+      ActionDispatch::Routing::Mapper.include Scopes, Routes
     end
 
     # Serves what a page needs, since a host may run no asset pipeline at all. The

@@ -10,6 +10,8 @@ require_relative 'recourse/controllers'
 require_relative 'recourse/helpers'
 require_relative 'recourse/broadcasting'
 require_relative 'recourse/recoursive'
+require_relative 'recourse/registry'
+require_relative 'recourse/scopes'
 require_relative 'recourse/search'
 require_relative 'recourse/titles'
 require_relative 'recourse/searchable'
@@ -29,32 +31,7 @@ module Recourse
   @declared = []
   @nested = {}
   @parents = {}
-
-  # Records a resource as declared, keeping order and ignoring a repeated draw.
-  def self.declare(name)
-    @declared << name.to_s unless @declared.include? name.to_s
-  end
-
-  # Records a resource nested under a parent, in routes.rb order like the sidebar's
-  # — which is what the parent record's tabs follow. Both sides are whole controller
-  # paths, so a `namespace` drawn between the two is carried rather than guessed at.
-  def self.nest(parent, child)
-    children = @nested[parent.to_s] ||= []
-    children << child.to_s unless children.include? child.to_s
-    @parents[child.to_s] = parent.to_s
-  end
-
-  # The resources nested under one parent path, in the order they were drawn.
-  def self.nested_under(parent)
-    @nested.fetch parent.to_s, []
-  end
-
-  # The path a nested resource hangs off, or nil where it hangs off nothing. Read
-  # back rather than chopped off the controller's own path: how many segments a
-  # nesting added is something the routes knew and a path no longer says.
-  def self.parent_of(child)
-    @parents[child.to_s]
-  end
+  @joins = {}
 
   # Columns a user may set: the form offers these, the show page reads these out, and
   # `create` permits these. A counter cache is none of a user's business — Rails keeps

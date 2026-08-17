@@ -23,6 +23,10 @@ Rails.application.routes.draw do
       # one-click Create button in the Add link's place, on our word that a bare
       # memo can stand.
       recourses :memos, only: %i[index create]
+      # Every team, with the membership to add or drop beside each one — a listing
+      # of the far side of a many-to-many rather than of the rows already joined,
+      # which is what `through:` says and what the buttons in it write.
+      recourses :teams, only: :index, through: :memberships
       # An action rather than a page: `create` with no index to reach it from, so
       # its button sits on the person instead, beside the breadcrumbs. The gem draws
       # the button; where a bare action goes afterwards is the host's to say, which

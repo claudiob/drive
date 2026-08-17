@@ -13,6 +13,7 @@ require_relative 'helpers/fields'
 require_relative 'helpers/filters'
 require_relative 'helpers/formats'
 require_relative 'helpers/inputs'
+require_relative 'helpers/joins'
 require_relative 'helpers/kinds'
 require_relative 'helpers/navigation'
 require_relative 'helpers/parents'
@@ -32,7 +33,7 @@ module Recourse
   # View helpers for the pages the gem renders, and what the parts share.
   module Helpers
     include Actions, Buttons, Cards, Cells, Choices, Colors, Comboboxes, Constraints, Counters,
-            Deletions, Examples, Fields, Filters, Formats, Inputs, Kinds, Navigation,
+            Deletions, Examples, Fields, Filters, Formats, Inputs, Joins, Kinds, Navigation,
             Parents, Pictures, References, Refreshes, Routing, Rows, Searches,
             Shortcuts, Sidebars, Sorts, Tabs, Values
 

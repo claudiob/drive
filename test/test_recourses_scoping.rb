@@ -62,4 +62,27 @@ class TestRecoursesScoping < IntegrationCase
     assert_equal 303, @session.response.status
     assert_empty Memo.where(about: place)
   end
+
+  # A listing of the far side of a many-to-many: every team rather than the ones this
+  # person is on, with the membership to add or drop beside each. The path names both
+  # records, so the button submits nothing and the join earns no page of its own.
+  def test_a_listing_may_edit_the_join_beside_each_row
+    person = Person.order(:id).first
+    joined = person.teams.order(:id).first
+    visit "/people/#{person.id}/teams"
+
+    assert_equal Team.count, body.scan('data-cell="Name"').size
+    assert_equal person.teams.count, body.scan('>Remove<').size
+    assert_includes body, %(action="/people/#{person.id}/teams/#{joined.id}/membership")
+
+    @session.delete "/people/#{person.id}/teams/#{joined.id}/membership"
+
+    assert_equal 303, @session.response.status
+    refute_includes person.reload.teams, joined
+
+    @session.post "/people/#{person.id}/teams/#{joined.id}/membership"
+
+    assert_equal 303, @session.response.status
+    assert_includes person.reload.teams, joined
+  end
 end

@@ -12,6 +12,9 @@
       <thead>
         <tr>
           <% @recourse_headers = true %>
+          <%# A listing of a many-to-many opens with the button writing the join,
+              which is the column the page exists for. -%>
+          <%= column header: t('recourse.attach'), class: 'recourse-actions' if resource_join %>
           <% actions.each do |action| -%>
             <%= column header: action_header(action), class: 'recourse-actions' %>
           <% end -%>
@@ -22,6 +25,9 @@
         <% @recourse_headers = false %>
         <% recourses.each do |recourse| %>
           <tr>
+            <% if resource_join -%>
+              <%= column header: t('recourse.attach'), class: 'recourse-actions' do %><%= join_button recourse %><% end %>
+            <% end -%>
             <% actions.each do |action| -%>
               <%= column header: action_header(action), class: 'recourse-actions' do %><%= resource_action_link action, recourse %><% end %>
             <% end -%>

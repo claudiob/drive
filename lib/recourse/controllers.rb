@@ -4,13 +4,13 @@ module Recourse
     # Creates a controller for the named resource unless the host app has one. The
     # name arrives with whatever namespace it was drawn in — `admin/contacts` — so
     # the constant lands where Rails will look for it.
-    def self.define_missing(path)
+    def self.define_missing(path, base = nil)
       class_name = "#{path.camelize}Controller"
       # const_defined? is true for a Zeitwerk autoload, so files on disk count too.
       return if Object.const_defined? class_name
 
       namespace(class_name.deconstantize).const_set class_name.demodulize,
-                                                    Class.new(RecoursesController)
+                                                    Class.new(base || RecoursesController)
     end
 
     # The module a namespaced controller belongs in, made where the host has none of

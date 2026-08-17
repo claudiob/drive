@@ -13,19 +13,17 @@ module Recourse
     # host's word, which wins.
     def recourses(*names, **options, &block)
       refuse_unscoped_nesting names
+      through = options.delete :through
 
-      names.each do |name|
-        # The module is the namespace being drawn in, so a resource is declared
-        # and its controller defined under the path Rails will route to.
-        path = [current_module, name].compact.join '/'
-        record_declaration path
-        Controllers.define_missing path
-      end
+      names.each { |name| declare_resource name, through }
 
-      return resources(*names, **default_nested_actions(options)) unless block
+      return resources(*names, **default_nested_actions(options)) unless block || through
 
       resources(*names, **default_nested_actions(options)) do
-        scope module: parent_resource.name, &block
+        scope module: parent_resource.name do
+          draw_join through if through
+          instance_exec(&block) if block
+        end
       end
     end
 
@@ -48,38 +46,28 @@ module Recourse
 
   private
 
-    # The Mapper keeps its scope in an internal frame with no reader, so the two
-    # facts this DSL needs — the module being drawn in, and the resource a block
-    # nests under — are read in these two methods and nowhere else: a Rails
-    # upgrade that moves the frame edits one file, twice.
-    def current_module
-      @scope[:module]
+    # The module is the namespace being drawn in, so a resource is declared and its
+    # controller defined under the path Rails will route to.
+    def declare_resource(name, through)
+      path = [current_module, name].compact.join '/'
+      record_declaration path
+      Recourse.join path, through if through
+      Controllers.define_missing path
     end
 
-    def parent_resource
-      @scope[:scope_level_resource]
+    # The row a listing's Add and Remove write: one record joining the parent to the
+    # row the button sat on, reached at `/people/1/teams/2/membership` and answered
+    # by a controller of the gem's own rather than by the generic one.
+    def draw_join(through)
+      path = [current_module, through].compact.join '/'
+      # Recorded under the listing it belongs to, which is how it finds its way back
+      # there for a request that arrived without a referer. No tab and no button
+      # come of it: both ask for an index, and a join has none.
+      Recourse.nest current_module, path
+      Controllers.define_missing path, JoinsController
+      resource through.to_s.singularize.to_sym, only: %i[create destroy]
     end
 
-    def record_declaration(path)
-      # A nested resource is reached through its parent rather than the sidebar,
-      # so it is recorded under the parent's path — that order is its tabs' order.
-      return Recourse.declare path unless parent_resource
-
-      Recourse.nest parent_path, path
-    end
-
-    # The parent's own controller path: the module being drawn in, cut off after the
-    # parent resource's own segment, so a `namespace` between the two is left out
-    # rather than mistaken for the parent itself.
-    def parent_path
-      parts = current_module.to_s.split '/'
-
-      parts[0..parts.rindex(parent_resource.name)].join '/'
-    end
-
-    # Reached through a parent, a nested resource answers its collection actions —
-    # list the parent's rows, add one — unless the host names its own. The member
-    # actions belong to a resource's own top-level routes.
     def default_nested_actions(options)
       return options if !parent_resource || options.key?(:only) || options.key?(:except)
 
