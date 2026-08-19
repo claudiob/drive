@@ -13,9 +13,9 @@ en:
     all_values: All
     blank: "—"
     bookmark: Bookmark
-    bookmark_added: Added
+    bookmark_added: Bookmark added
     bookmark_error: Bookmark could not be saved.
-    bookmark_removed: Removed
+    bookmark_removed: Bookmark removed
     cancel: Cancel
     clear: Clear search
     create: Create

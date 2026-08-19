@@ -33,8 +33,8 @@ class TestRecoursesBookmarks < IntegrationCase
     assert_includes body, 'aria-pressed="true"'
     # The three words the browser cannot look up, in one attribute rather than three.
     assert_includes body, 'data-bookmark-messages-value'
-    assert_includes body, '&quot;added&quot;:&quot;Added&quot;'
-    assert_includes body, '&quot;removed&quot;:&quot;Removed&quot;'
+    assert_includes body, '&quot;added&quot;:&quot;Bookmark added&quot;'
+    assert_includes body, '&quot;removed&quot;:&quot;Bookmark removed&quot;'
     # No tooltip on a square that repeats down every row, unlike every other icon
     # here — so the only one left saying `Bookmark` is the heading above them, which
     # is icon-only and keeps one like every other icon heading.

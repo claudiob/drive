@@ -737,8 +737,8 @@ before writing or editing any layout, view or partial.
   not redrawn and the row keeps its place until the next real page load — which is
   where the kept-first order belongs, rather than yanking a row to the top of the
   table under the cursor that just clicked it.
-- The response is what is reported, in a toast the controller builds itself: `Added`
-  or `Removed` in the success theme once the row is written, and the failure message
+- The response is what is reported, in a toast the controller builds itself: `Bookmark
+  added` or `Bookmark removed` in the success theme once the row is written, and the failure message
   in the danger one when it was not, with the square put back. The icon flipping is
   not the report — it flips on the click, and would flip the same under a request
   that never landed. That toast is the same markup `_flash` ships, from

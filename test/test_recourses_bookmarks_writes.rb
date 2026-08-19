@@ -19,7 +19,7 @@ class TestRecoursesBookmarksWrites < IntegrationCase
     bookmark = Bookmark.find_by! topic: Place.find(1)
 
     assert_equal Person.order(:id).first, bookmark.person
-    follow_and_assert_flash 'Added'
+    follow_and_assert_flash 'Bookmark added'
   end
 
   def test_destroy_drops_it_and_warns
@@ -27,7 +27,7 @@ class TestRecoursesBookmarksWrites < IntegrationCase
 
     assert_equal 303, @session.response.status
     assert_empty Bookmark.where(topic: Place.find(KEPT))
-    follow_and_assert_flash 'Removed'
+    follow_and_assert_flash 'Bookmark removed'
   end
 
   # The background request the square actually makes: nothing to render, and — the
