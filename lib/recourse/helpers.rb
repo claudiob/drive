@@ -30,6 +30,7 @@ require_relative 'helpers/shortcuts'
 require_relative 'helpers/sidebars'
 require_relative 'helpers/sorts'
 require_relative 'helpers/tabs'
+require_relative 'helpers/themes'
 require_relative 'helpers/values'
 
 module Recourse
@@ -39,7 +40,7 @@ module Recourse
             Comboboxes, Constraints, Counters, Deletions, Examples, Fields, Filters,
             Formats, Inputs, Joins, Kinds, Navigation, Parents, Pictures, References,
             Refreshes, Routing, Resources, Rows, Searches, Shortcuts, Sidebars, Sorts,
-            Tabs, Values
+            Tabs, Themes, Values
 
     # The grid a record's own two pages lay an attribute out in: two columns on a large
     # viewport, and the same padding on both, so a value and the field that edits it sit

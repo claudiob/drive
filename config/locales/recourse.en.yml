@@ -48,6 +48,8 @@ en:
     unbookmark: Remove bookmark
     unknown_color: "`Recourse.color` is one of %{colors}, or nil for Bootstrap's own
       blue. It cannot be %{color}."
+    unknown_theme: "`Recourse.theme` is one of %{themes}, or nil for Bootstrap's own
+      palette. It cannot be %{theme}."
     updated: "%{model} was updated."
     updated_error: "%{model} could not be updated."
     unset: None

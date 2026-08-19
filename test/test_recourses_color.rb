@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'integration_case'
 
-# The one line a host says about how every page looks.
+# The two lines a host says about how every page looks.
 class TestRecoursesColor < IntegrationCase
   # The dummy app asks for pink, and the page says so in the tokens every button,
   # link, sorted heading and focus ring reads. A typo would otherwise write
@@ -12,6 +12,10 @@ class TestRecoursesColor < IntegrationCase
     visit '/places'
 
     assert_includes body, '--bs-primary-base: var(--bs-pink-500);'
+    # The ink a solid fill's label is drawn in. Asserted rather than left to coverage:
+    # the line runs whichever token it returns, so a page stays green while a button
+    # goes illegible — white on Solarized's pink at 4.21:1, its darkest neutral at 2.83.
+    assert_includes body, '--bs-primary-contrast: var(--bs-white);'
     error = assert_raises(Recourse::Error) { Recourse.color = :purpel }
 
     assert_includes error.message, 'purpel'
@@ -36,5 +40,25 @@ class TestRecoursesColor < IntegrationCase
       refute_includes rules, '*/', 'a comment is closed and never opened'
       assert_equal rules.count('{'), rules.count('}')
     end
+  end
+
+  # The dummy app asks for Solarized, so the page links its palette and the engine
+  # serves it. The palette is a file rather than a block in the page, so what proves it
+  # arrived is fetching it and finding Solarized's own paper. A name nobody ships would
+  # otherwise ask the browser for a stylesheet that is not there and go unnoticed until
+  # somebody looked at a page, so it is refused where it is set.
+  def test_a_host_picks_a_palette_and_a_name_nobody_ships_is_refused
+    visit '/places'
+
+    assert_includes body, '<link rel="stylesheet" href="/recourse/themes/solarized.css">'
+    visit '/recourse/themes/solarized.css'
+
+    assert_includes body, '--bs-white: #fdf6e3;'
+    error = assert_raises(Recourse::Error) { Recourse.theme = :solarised }
+
+    assert_includes error.message, 'solarised'
+    assert_includes error.message, 'solarized'
+  ensure
+    Recourse.theme = :solarized
   end
 end

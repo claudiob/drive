@@ -15,7 +15,13 @@
     <%# Preloaded from the head instead of discovered at the end of the body, so the
         module the toast controller and the dismiss X import is already in flight. -%>
     <link rel='modulepreload' href='/recourse/bootstrap.bundle.min.js'>
-    <%# After the stylesheet, which is what makes it win: both selectors are `:root`. -%>
+    <%# Both after the stylesheet, which is what makes them win: every selector is
+        `:root`. The palette repaints the ramps and the colour says which repainted ramp
+        is primary, so the palette comes first and the head reads outside in. Between
+        the two it is only a reading order: a custom property is substituted where it is
+        used, so a ramp written later still reaches a primary written earlier. What
+        matters is that neither comes before the link. -%>
+    <%= theme_stylesheet_link %>
     <%= primary_color_style %>
 
     <%# `data:,` is an empty document, which is what stops the browser asking a host

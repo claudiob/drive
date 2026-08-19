@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 For more information about changelogs, check [Keep a Changelog](http://keepachangelog.com) and
 [Vandamme](http://tech-angels.github.io/vandamme).
 
+## Unreleased
+
+* `Recourse.theme` draws every page in a code-editor colour scheme
+
+  Eight of them — `dawn`, `dracula`, `gruvbox`, `monokai`, `nord`, `one_dark`,
+  `solarized` and `tokyo_night` — set from an initializer with one line. Bootstrap
+  derives every surface, border and text colour from one neutral ramp and names each
+  of its meanings after a family, so repainting the ramps carries a scheme to the page
+  itself rather than only to its accents. Each is a stylesheet the engine serves at
+  `/recourse/themes/<name>.css`, and each fills both arms of every ramp, so a page
+  still follows the reader's system setting. `Recourse.color` composes with it: the
+  scheme repaints the ramps, the colour says which repainted ramp is primary.
+
+* `--bs-primary-contrast` follows the family instead of always being white
+
+  The label on a solid button is now `var(--bs-white)` or `var(--bs-gray-975)`,
+  whichever reads better on the step the button is filled with — upstream's own shape,
+  since Bootstrap gives `warning` and `info` a dark label for the same reason. This
+  fixes `Recourse.color = :orange`, where white on `orange-500` was 2.90:1, under the
+  3:1 WCAG asks of a UI component. `blue`, `brown` and `gray` gain a dark label too.
+  `_color.html.erb` takes the ink as a second local, so a host overriding that partial
+  should expect it.
+
 ## 4.0.0 - 2026-08-15
 
 Version 4 is a rewrite, developed under the working name `drive` and released here

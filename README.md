@@ -1062,7 +1062,7 @@ overrides the way it overrides `RecoursesController`.
 Recourse.color = :orange
 ```
 
-Bootstrap's primary colour is blue, and one line makes it one of five others:
+Bootstrap's primary colour is blue, and one line makes it one of the other five:
 
 ```ruby
 Recourse::COLORS # => [:blue, :gray, :orange, :purple, :pink, :brown]
@@ -1071,16 +1071,78 @@ Recourse::COLORS # => [:blue, :gray, :orange, :purple, :pink, :brown]
 Every button, link, sorted heading, focus ring and favicon follows, because `.theme-primary`
 and everything else Bootstrap draws in that colour read the nine `--bs-primary-*`
 custom properties that the gem's layout redefines under `:root` when a colour is
-set. Nothing is emitted when it is nil, which is the default.
+set. Nothing is emitted when neither a colour nor a palette is set, which is the
+default.
 
-Five of the sixteen families Bootstrap ships, and the other eleven are left out
-rather than forgotten: `--bs-primary-contrast` is white, and these five are the
-ones dark enough at their 500 step to carry white text. Anything else raises a
-`Recourse::Error` naming the five, rather than writing `var(--bs-purpel-500)` into
-every page and going unnoticed until somebody looked at a button.
+Six of the sixteen families Bootstrap ships, and the other ten are left out
+rather than forgotten. Anything else raises a `Recourse::Error` naming the six,
+rather than writing `var(--bs-purpel-500)` into every page and going unnoticed
+until somebody looked at a button.
 
-A host that wants the eleven, or a palette of its own, overrides
-`app/views/recourses/_color.html.erb`, which takes the family as its one local.
+The last of the nine is the label a solid fill carries, and it follows the family
+rather than always being white: `var(--bs-white)`, or `var(--bs-gray-975)` — the
+darkest neutral — where white would read worse on the step a solid button is
+filled with. That is upstream's own shape, since Bootstrap gives `warning` and
+`info` a dark label for the same reason. White on `orange-500` is 2.90:1, under
+the 3:1 a button's label owes.
+
+3:1 is the floor here, not 4.5:1, and it is a floor rather than a target on
+purpose: a solid button is filled from the 500 step, where 4.5:1 is out of reach
+for a mid-lightness hue — Bootstrap's own blue is 3.56:1 against white. A host
+that needs AA for a 14px label fills from the 700 step in its own copy of the
+partial.
+
+A host that wants the ten, or a palette of its own, overrides
+`app/views/recourses/_color.html.erb`, which takes the family and its ink as its
+two locals.
+
+## Repainting it
+
+```ruby
+# config/initializers/recourse.rb
+Recourse.theme = :solarized
+```
+
+Eight colour schemes from code editors, and one line draws every page in one:
+
+```ruby
+Recourse::THEMES.keys
+# => [:dawn, :dracula, :gruvbox, :monokai, :nord, :one_dark, :solarized, :tokyo_night]
+```
+
+This reaches further than `Recourse.color` does. Bootstrap derives every surface,
+border and text colour it ships from one neutral ramp, and names each of its
+meanings after a family — `danger` is red, `success` green, `warning` yellow,
+`info` cyan — so repainting the ramps carries a scheme to the page itself, its
+rules, its headings, its muted text and every accent on it. `Recourse.color` still
+only says which repainted ramp is primary. The two compose, and neither needs to
+know about the other.
+
+Every scheme fills both arms of every ramp, so a page still follows the reader's
+system setting: Solarized Light on a light desktop and Solarized Dark on a dark
+one, from one file. Seven of the eight publish both halves themselves — Nord's
+Snow Storm and Polar Night, Rosé Pine's Dawn and its own base, Dracula's
+foreground and background — and Monokai, which ships no light variant, has its
+light arm derived from its own foreground.
+
+A scheme is a stylesheet rather than a block in the page, served from the engine
+at `/recourse/themes/<name>.css`, so a browser is asked for it once instead of on
+every request. It restates all thirteen steps of each family it repaints, because
+Bootstrap inlines a family's base colour into every step rather than holding it in
+a variable, and it repaints `--bs-white` and `--bs-black` too — those are the two
+colours every step is mixed with, and the light page reads `--bs-white` directly.
+
+Each scheme also says which family its own accents lead with, so `Recourse.theme`
+on its own is enough: Dracula publishes no blue, so it leads with purple, and
+Monokai leads with its pink. And each says which of its families take a dark label
+rather than a white one, since a scheme built for a dark editor has accents far
+lighter than Bootstrap's — every accent of all eight clears 3:1 with the label it
+is given, the worst pair being 3.41:1.
+
+A name nobody ships raises a `Recourse::Error` naming the eight, rather than
+asking the browser for a stylesheet that is not there. A host wanting a scheme of
+its own writes `app/stylesheets/recourse/themes/` into its own asset path, or
+overrides the layout — and the shipped files are the worked example to copy.
 
 ## Helpers
 
@@ -1240,6 +1302,9 @@ Written in an initializer:
 - `Recourse.color` / `Recourse.color=` — the Bootstrap colour family the pages
   call primary, one of `Recourse::COLORS`, or nil for Bootstrap's own blue
 - `Recourse::COLORS` — `%i[blue gray orange purple pink brown]`
+- `Recourse.theme` / `Recourse.theme=` — the code-editor colour scheme the pages
+  are drawn in, one of `Recourse::THEMES`, or nil for Bootstrap's own palette
+- `Recourse::THEMES` — the eight schemes, each keyed by name
 
 Declared on a model, each overriding a default:
 

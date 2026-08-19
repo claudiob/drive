@@ -47,9 +47,8 @@ before writing or editing any layout, view or partial.
 
 - Bootstrap's primary is blue, and `Recourse.color` is what changes it — nil by
   default, and one of `blue`, `gray`, `orange`, `purple`, `pink` or `brown`.
-- Six of the sixteen families, because `--bs-primary-contrast` is white and these
-  are the six dark enough at their 500 step to carry it. The other ten are
-  declined rather than forgotten, and anything else raises.
+- Six of the sixteen families. The other ten are declined rather than forgotten,
+  and anything else raises.
 - Never restyle a component to recolour it. `.theme-primary` maps all nine
   `--bs-primary-*` properties onto `--bs-theme-*`, so redefining those nine is what
   carries a colour to every button, link, sorted heading and focus ring at once.
@@ -60,8 +59,61 @@ before writing or editing any layout, view or partial.
 - The block goes *after* the stylesheet link in the head. Both selectors are
   `:root`, so it wins on being later and nothing else; put it before and it does
   nothing at all.
-- A host wanting the eleven, or a palette of its own, overrides that partial. It
-  takes the family as its one local, so a host's version can ignore it entirely.
+- `--bs-primary-contrast` is the one of the nine that names a *colour* rather than
+  a family, which is exactly why it is the one a palette can break. It is
+  `var(--bs-white)` or `var(--bs-gray-975)`, decided per family by `Recourse.ink`
+  and handed to the partial as its second local. Both are shapes upstream ships:
+  Bootstrap gives `warning` and `info` a dark label for the same reason.
+- The floor is 3:1, WCAG's for a UI component, and it is not 4.5:1. A solid button
+  is filled from the 500 step, where 4.5:1 is unreachable for a mid-lightness hue —
+  Bootstrap's own blue is 3.56:1 against white — so no page here claims AA for a
+  button label. Say 3:1 and mean it; a host needing AA fills from the 700 step.
+- Never assume white. White on `orange-500` is 2.90:1, and `orange` is one of the
+  six: the ink is computed, and the computation is what keeps it honest.
+- A host wanting the ten, or a palette of its own, overrides that partial. It
+  takes the family and its ink as its two locals, so a host's version can ignore
+  both entirely.
+
+## The colour scheme
+
+- `Recourse.theme` is the second thing a host says about how every page looks, and
+  it reaches much further than `Recourse.color`. A scheme repaints Bootstrap's
+  ramps; the colour still only says which repainted ramp is primary. They compose,
+  and neither knows about the other.
+- That composition is free, and this is why: every other line of
+  `_color.html.erb` is a `var()` into a family the palette has already repainted,
+  so a ramp declared later still reaches a primary declared earlier. A custom
+  property is substituted where it is *used*, not where it is written.
+- Which makes order between the palette and the colour a reading order and nothing
+  more. What matters absolutely is that neither comes *before* the Bootstrap link,
+  every selector involved being `:root`.
+- A palette is a stylesheet under `app/stylesheets/recourse/themes/`, served at
+  `/recourse/themes/<name>.css`, never a block in the page. It is the same bytes
+  on every request, so a browser is asked for it once — and a scheme is ~139
+  declarations, which is not something to inline into every page.
+- It restates all thirteen steps of every family it repaints. Bootstrap inlines a
+  family's base into each step rather than holding it in a variable, so redefining
+  the 500 alone changes nothing else. Upstream's order and upstream's shapes, with
+  only the base swapped, so a later Bootstrap diffs against the file.
+- It repaints `--bs-white` and `--bs-black` as well, and those two do the most
+  work: they are what every step is mixed with, and `--bs-bg-body` reads
+  `--bs-white` directly in light mode. Repainting the grays alone would leave a
+  light page white. The gem's own markup uses no `.bg-white` or `.fg-black`, which
+  is what makes this safe.
+- Text is stated rather than left to the ramp. Bootstrap's ramp is monotone and its
+  pairings cross — the step that is a light surface is the same step as dark-mode
+  body text — which a palette built for its own contrast does not agree with. So a
+  palette sets `--bs-fg-1`, `--bs-fg-body` and `--bs-fg-2` outright.
+- Every scheme fills both arms of every ramp, so a page still follows the system
+  setting and the layout needs no `data-bs-theme` and no per-scheme branching. A
+  scheme with no published light half has that half derived from its foreground.
+- A scheme names the family its own accents lead with, so setting only
+  `Recourse.theme` is enough — Dracula publishes no blue and leads with purple.
+  And it names the families that take a dark label, since a scheme built for a
+  dark editor has accents far lighter than Bootstrap's.
+- Check the numbers when adding one. Every accent of all eight clears 3:1 against
+  the label it is given, and every text tone clears 4:1 in both modes. Nothing in
+  the suite can see this: the same lines run whichever colour is written.
 
 ## The navbar
 
