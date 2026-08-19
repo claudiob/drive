@@ -106,20 +106,29 @@
          colour blooms out of the icon and fades. `currentColor` is what makes it the
          link's: `.btn-link` is already wearing it, so the ring follows a host's
          primary without naming a colour here. It is a `box-shadow` rather than a
-         border so it costs no layout and cannot nudge the row it sits in. */
+         border so it costs no layout and cannot nudge the row it sits in.
+
+         It starts already drawn rather than growing out of nothing: a shadow with
+         no spread shows nothing, so a keyframe from zero is invisible at the start,
+         invisible at the end, and only faintly there in between — which reads as
+         nothing having happened at all. It begins at its most opaque and widens as it
+         goes, which is the shape of something released rather than something arriving.
+         `srgb` rather than the `oklch` this file mixes in elsewhere: those mix two real
+         colours, while this one ramps a single colour's alpha against `transparent`,
+         and sRGB does that without interpolating a hue towards black on the way. */
       @keyframes recourse-kept {
-        from { box-shadow: 0 0 0 0 color-mix(in oklch, currentColor 55%, transparent); }
-        to { box-shadow: 0 0 0 0.55rem transparent; }
+        from { box-shadow: 0 0 0 0.15rem color-mix(in srgb, currentColor 70%, transparent); }
+        to { box-shadow: 0 0 0 0.85rem transparent; }
       }
       .recourse-kept {
         animation: recourse-kept 450ms ease-out;
       }
-      /* Reduced motion keeps the report and drops the travel: the ring appears at its
-         full width and fades from there, so the click is still answered. */
+      /* Reduced motion keeps the report and drops the travel: the ring holds its width
+         and only fades, so the click is still answered. */
       @media (prefers-reduced-motion: reduce) {
         @keyframes recourse-kept {
-          from { box-shadow: 0 0 0 0.35rem color-mix(in oklch, currentColor 40%, transparent); }
-          to { box-shadow: 0 0 0 0.35rem transparent; }
+          from { box-shadow: 0 0 0 0.4rem color-mix(in srgb, currentColor 45%, transparent); }
+          to { box-shadow: 0 0 0 0.4rem transparent; }
         }
       }
 
