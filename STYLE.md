@@ -717,8 +717,17 @@ before writing or editing any layout, view or partial.
   square would read as a toolbar. Both states are one path with the verb reversed,
   so the square toggles by flipping the `_method` Rails already wrote into the form.
 - It carries `aria-pressed`, which is what says it is a toggle rather than a button
-  that does something once, and its `aria-label` and tooltip read `Bookmark` or
-  `Remove bookmark` to match the state it is in.
+  that does something once, and an `aria-label` reading `Bookmark` or `Remove
+  bookmark` to match the state it is in.
+- It is the one icon here with **no** tooltip. Every other one is a heading, drawn
+  once; this one is in every row, and a label chasing the cursor down a column of
+  squares is noise. The heading above them keeps its tooltip like any other.
+- Its form's CSRF token comes from the `<meta>` tag in the head, not from the token
+  `button_to` wrote. Rails scopes a form's own token to the method it was drawn
+  with, and this square flips that method; the form is inside a cached fragment
+  besides, which makes its token whichever session drew the table. The one in the
+  head is global to the session and rendered fresh per request, and Rails accepts
+  whichever of the two is valid.
 - **No `data-turbo-confirm`, and this is the one exception to the rule above.** A
   delete stays off a table because it cannot be undone; a bookmark is undone by
   clicking the same square again, so a dialog would cost more than the mistake — and

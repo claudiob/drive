@@ -59,11 +59,14 @@ module Recourse
       # What the Stimulus controller flips, and the wording it cannot look up itself:
       # a `.js` file has no `t`, so the message it may have to show travels with it.
       def bookmark_data(kept, label)
-        # Two controllers on one element, so the square wears the same tooltip every
-        # other icon does rather than a second kind of tooltip beside it.
-        data = tooltip_on_top(label).merge controller: 'bookmark tooltip',
-                                           bookmark_kept_value: kept,
-                                           bookmark_error_value: t('recourse.bookmark_error')
+        # No tooltip, unlike every other icon here. This one is in every row rather
+        # than in a heading, and a label that follows the cursor down a column of
+        # squares is noise — the `aria-label` still names it for a reader who cannot
+        # see which way the square is filled.
+        data = {
+          controller: 'bookmark', bookmark_kept_value: kept,
+          bookmark_error_value: t('recourse.bookmark_error'),
+        }
 
         { aria: { label:, pressed: kept }, data: }
       end

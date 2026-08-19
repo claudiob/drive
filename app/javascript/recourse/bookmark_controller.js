@@ -26,8 +26,12 @@ export default class extends Controller {
   submit = (event) => {
     event.preventDefault()
     const kept = !this.keptValue
+    // Read the form before flipping it. The verb it is still wearing is the one this
+    // click means — `post` to keep the row, `delete` to drop it — while `render`
+    // dresses it for the click after this one, which is the opposite.
+    const body = new FormData(this.form)
     this.render(kept)
-    this.send(kept)
+    this.send(body, kept)
   }
 
   // What the eye reads, what a screen reader reads, and what the next click will do:
@@ -37,6 +41,16 @@ export default class extends Controller {
     this.icon.className = kept ? 'bi bi-bookmark-fill' : 'bi bi-bookmark'
     this.element.setAttribute('aria-pressed', kept)
     this.method.value = kept ? 'delete' : 'post'
+  }
+
+  // The token in the head rather than the one in the form. Rails scopes a form's
+  // own token to the method that form was drawn with, and this square flips that
+  // method — so after one click the form's token is for the verb it no longer uses.
+  // The form's token is inside a cached fragment besides, which makes it whichever
+  // session drew the table. The one in the head is neither: global to the session,
+  // and rendered fresh on every request. Rails takes whichever of the two is valid.
+  get token() {
+    return document.querySelector('meta[name="csrf-token"]')?.content
   }
 
   // Rails' own override field, which `button_to` writes only for a delete — so a
@@ -55,12 +69,12 @@ export default class extends Controller {
   // The response is never rendered, but it is read: a 500, a dropped connection or
   // an expired session would otherwise leave a filled square that was never saved.
   // `Accept` is what tells the server this one wants no flash and no redirect.
-  async send(kept) {
+  async send(body, kept) {
     try {
       const response = await fetch(this.form.action, {
         method: 'post',
-        body: new FormData(this.form),
-        headers: { Accept: 'application/json' },
+        body,
+        headers: { Accept: 'application/json', 'X-CSRF-Token': this.token },
       })
       if (!response.ok) this.revert(kept)
     } catch {

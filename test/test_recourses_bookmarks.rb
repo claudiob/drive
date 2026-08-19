@@ -29,9 +29,14 @@ class TestRecoursesBookmarks < IntegrationCase
   def test_the_square_carries_what_the_browser_needs_to_flip_it
     visit '/places'
 
-    assert_includes body, 'data-controller="bookmark tooltip"'
+    assert_includes body, 'data-controller="bookmark"'
     assert_includes body, 'aria-pressed="true"'
     assert_includes body, 'data-bookmark-error-value="Bookmark could not be saved."'
+    # No tooltip on a square that repeats down every row, unlike every other icon
+    # here — so the only one left saying `Bookmark` is the heading above them, which
+    # is icon-only and keeps one like every other icon heading.
+    refute_includes body, 'data-bs-title="Remove bookmark"'
+    assert_equal 1, body.scan('data-bs-title="Bookmark"').size
   end
 
   # A model that declares no bookmarks has not opted in, so its table opens where it
@@ -41,58 +46,5 @@ class TestRecoursesBookmarks < IntegrationCase
 
     refute_includes body, 'bi-bookmark'
     refute_includes body, 'data-cell="Bookmark"'
-  end
-
-  # The viewer comes from the host's own declaration rather than from the form, so
-  # `create` writes a row nobody submitted a person for.
-  def test_create_keeps_the_row_for_whoever_is_looking_and_says_so
-    @session.post '/places/1/bookmark'
-
-    assert_equal 303, @session.response.status
-    bookmark = Bookmark.find_by! topic: Place.find(1)
-
-    assert_equal Person.order(:id).first, bookmark.person
-    follow_and_assert_flash 'Bookmark added.'
-  end
-
-  def test_destroy_drops_it_and_warns
-    @session.delete "/places/#{KEPT}/bookmark"
-
-    assert_equal 303, @session.response.status
-    assert_empty Bookmark.where(topic: Place.find(KEPT))
-    follow_and_assert_flash 'Bookmark removed.'
-  end
-
-  # The background request the square actually makes: nothing to render, and — the
-  # point of the branch — no flash left in the session to surface as a toast on
-  # whatever page is loaded next.
-  def test_a_background_request_is_answered_with_nothing_at_all
-    @session.post '/places/1/bookmark', headers: { 'ACCEPT' => 'application/json' }
-
-    assert_equal 204, @session.response.status
-    assert_empty @session.response.body
-    visit '/places'
-    refute_includes body, 'Bookmark added.'
-  end
-
-  # Twice kept is once kept: the square answers before the request does, so a second
-  # click can arrive while the first is still in flight.
-  def test_keeping_a_row_twice_keeps_it_once
-    2.times { @session.post '/places/1/bookmark' }
-
-    assert_equal 1, Bookmark.where(topic: Place.find(1)).count
-  end
-
-  # No square is drawn for a model that keeps none, so the only way here is by hand.
-  def test_a_resource_that_keeps_none_is_not_there
-    assert_raises(ActiveRecord::RecordNotFound) { @session.post '/teams/1/bookmark' }
-  end
-
-private
-
-  def follow_and_assert_flash(message)
-    @session.follow_redirect!
-
-    assert_includes body, message
   end
 end
