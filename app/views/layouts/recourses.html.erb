@@ -101,6 +101,28 @@
         }
       }
 
+      /* The square a row is kept by answers the click itself, the request having gone
+         off in the background with nothing to render — so a ring of the link's own
+         colour blooms out of the icon and fades. `currentColor` is what makes it the
+         link's: `.btn-link` is already wearing it, so the ring follows a host's
+         primary without naming a colour here. It is a `box-shadow` rather than a
+         border so it costs no layout and cannot nudge the row it sits in. */
+      @keyframes recourse-kept {
+        from { box-shadow: 0 0 0 0 color-mix(in oklch, currentColor 55%, transparent); }
+        to { box-shadow: 0 0 0 0.55rem transparent; }
+      }
+      .recourse-kept {
+        animation: recourse-kept 450ms ease-out;
+      }
+      /* Reduced motion keeps the report and drops the travel: the ring appears at its
+         full width and fades from there, so the click is still answered. */
+      @media (prefers-reduced-motion: reduce) {
+        @keyframes recourse-kept {
+          from { box-shadow: 0 0 0 0.35rem color-mix(in oklch, currentColor 40%, transparent); }
+          to { box-shadow: 0 0 0 0.35rem transparent; }
+        }
+      }
+
       /* One rule per row of the show page, so a value and its heading read as one thing
          and the next pair as another. On the cells rather than between them: a column's
          gutter is padding inside it, so two side by side draw one unbroken line.

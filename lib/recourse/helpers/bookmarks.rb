@@ -48,7 +48,7 @@ module Recourse
 
         button_to bookmark_icon(kept, label), bookmark_url(record),
                   method: kept ? :delete : :post, form_class: 'd-inline-block',
-                  class: 'btn btn-sm btn-link p-0 border-0 lh-1',
+                  class: 'btn btn-sm btn-link p-0 border-0 lh-1 rounded-circle',
                   **bookmark_data(kept, label)
       end
 

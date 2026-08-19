@@ -31,7 +31,17 @@ export default class extends Controller {
     // dresses it for the click after this one, which is the opposite.
     const body = new FormData(this.form)
     this.render(kept)
+    this.pulse()
     this.send(body, kept)
+  }
+
+  // Removed and re-added rather than just added, with a read of `offsetWidth`
+  // between the two to force the reflow that restarts it: without that, a second
+  // click before the first ring has faded gets no ring at all.
+  pulse() {
+    this.element.classList.remove('recourse-kept')
+    void this.element.offsetWidth
+    this.element.classList.add('recourse-kept')
   }
 
   // What the eye reads, what a screen reader reads, and what the next click will do:
@@ -43,12 +53,11 @@ export default class extends Controller {
     this.method.value = kept ? 'delete' : 'post'
   }
 
-  // The token in the head rather than the one in the form. Rails scopes a form's
-  // own token to the method that form was drawn with, and this square flips that
-  // method — so after one click the form's token is for the verb it no longer uses.
-  // The form's token is inside a cached fragment besides, which makes it whichever
-  // session drew the table. The one in the head is neither: global to the session,
-  // and rendered fresh on every request. Rails takes whichever of the two is valid.
+  // The token in the head, not the one in the form. Rails scopes a form's own token
+  // to the method it was drawn with and this square flips that method; the form's is
+  // inside a cached fragment besides, so it belongs to whichever session drew the
+  // table. The head's is global to the session and fresh per request, and Rails takes
+  // whichever of the two is valid.
   get token() {
     return document.querySelector('meta[name="csrf-token"]')?.content
   }

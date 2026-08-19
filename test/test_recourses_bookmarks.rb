@@ -32,6 +32,8 @@ class TestRecoursesBookmarks < IntegrationCase
     assert_includes body, 'data-controller="bookmark"'
     assert_includes body, 'aria-pressed="true"'
     assert_includes body, 'data-bookmark-error-value="Bookmark could not be saved."'
+    # Round, because the ring a click blooms is a box-shadow and follows the radius.
+    assert_includes body, 'lh-1 rounded-circle"'
     # No tooltip on a square that repeats down every row, unlike every other icon
     # here — so the only one left saying `Bookmark` is the heading above them, which
     # is icon-only and keeps one like every other icon heading.
