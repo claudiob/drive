@@ -24,6 +24,17 @@ class TestRecoursesPerformance < IntegrationCase
     refute_match(/COUNT/, queries.last)
   end
 
+  # The column costs one query for the whole page rather than one a row, and the
+  # order it imposes costs nothing at all: the kept ids are read once for the
+  # squares, and the ordering rides inside the select the table was issuing anyway.
+  def test_a_bookmark_column_costs_one_query_and_the_order_it_imposes_costs_none
+    queries = queries_on('bookmarks') { visit '/places' }
+
+    assert_equal 2, queries.size
+    assert_match(/\ASELECT "places"/, queries.first)
+    assert_match(/\ASELECT "bookmarks"."topic_id"/, queries.last)
+  end
+
   # The menu behind a combobox is cached on the relation, so a second request reads
   # the rows again only if a row changed — and asks that in one count rather than by
   # fetching them. The count is the price of never serving a stale menu.

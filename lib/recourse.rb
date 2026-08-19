@@ -4,6 +4,7 @@ require 'ransack'
 require 'unicon'
 
 require_relative 'recourse/version'
+require_relative 'recourse/bookmarks'
 require_relative 'recourse/colors'
 require_relative 'recourse/icons'
 require_relative 'recourse/controllers'
@@ -33,6 +34,7 @@ module Recourse
   @nested = {}
   @parents = {}
   @joins = {}
+  @declared_bookmarks = nil
 
   # Columns a user may set: the form offers these, the show page reads these out, and
   # `create` permits these. A counter cache is none of a user's business — Rails keeps

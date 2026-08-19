@@ -133,6 +133,9 @@ before writing or editing any layout, view or partial.
   `content_for :actions` so it sits beside the breadcrumb. Not in the table: a
   row of pencils with a bin beside each is a mis-click waiting to happen, and the
   warning below is only worth writing if it cannot be bypassed.
+- The bookmark square is in a table and asks nothing, which is not a breach of that
+  but the reason for it: what keeps a delete off a row is that a mis-click cannot be
+  taken back, and a mis-clicked bookmark is taken back by clicking again.
 - It is a `button_to` rather than a link, since a delete is not a GET, wearing
   `btn btn-sm btn-solid theme-danger ms-3` — solid, because it is a real button
   and `.btn-outline` is the navbar's dress for links; danger, because this one
@@ -702,6 +705,30 @@ before writing or editing any layout, view or partial.
 - Those names cost one query per association rather than one per row, because the
   index eager-loads every `belongs_to` the table can name. Twenty locations still
   cost five queries.
+- Ahead of those, a table whose model keeps bookmarks opens with the square that
+  keeps one: `bi-bookmark` where whoever is looking has not kept the row and
+  `bi-bookmark-fill` where they have — Unicon's `:bookmark` and `:bookmarked`, two
+  concepts rather than one icon in two dresses, since the hollow one is the deed and
+  the filled one the state. Whether this row is one of mine comes before what to do
+  with it, which is why it leads.
+- It is a `button_to` and not a link, since neither writing nor dropping the row is
+  a GET, wearing `btn btn-sm btn-link p-0 border-0 lh-1` — chromeless, because the
+  icon is the whole control and a bordered button in every row of a `.recourse-actions`
+  square would read as a toolbar. Both states are one path with the verb reversed,
+  so the square toggles by flipping the `_method` Rails already wrote into the form.
+- It carries `aria-pressed`, which is what says it is a toggle rather than a button
+  that does something once, and its `aria-label` and tooltip read `Bookmark` or
+  `Remove bookmark` to match the state it is in.
+- **No `data-turbo-confirm`, and this is the one exception to the rule above.** A
+  delete stays off a table because it cannot be undone; a bookmark is undone by
+  clicking the same square again, so a dialog would cost more than the mistake — and
+  costs a whole page load more, since this square answers without one.
+- The click does not wait for the server. The `bookmark` Stimulus controller flips
+  the icon, posts in the background and never renders the response, so the table is
+  not redrawn and the row keeps its place until the next real page load — which is
+  where the kept-first order belongs, rather than yanking a row to the top of the
+  table under the cursor that just clicked it. It reads the response all the same:
+  a failure puts the square back and raises the one toast this column ever shows.
 - A table that has actions opens with one column per action, and `_table` adds
   them rather than `_row`. That is the whole point of putting them there: a host
   that writes its own row still gets the columns, prepended before whatever

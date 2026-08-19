@@ -27,6 +27,11 @@ class Place < ApplicationRecord
   # the gem needs no model of this app's to draw one.
   has_many_attached :photos
 
+  # The other half of a bookmark, which is also what opts this table into the column:
+  # a model that cannot hold one has not declared one. Teams declare none, so their
+  # table opens at its first attribute.
+  has_many :bookmarks, as: :topic, dependent: :destroy
+
   # Money and a share of it, told apart by their types and not by their names.
   attribute :hourly_rate, :price
   attribute :commission_rate, :percentage

@@ -112,13 +112,24 @@ two is filed under the one a reader would look in first.
   string. Rails builds the key from a digest of the SQL — so a different page of
   the same table is a different key — and pairs it with a version from the row
   count and the newest `updated_at`, so nothing has to remember to expire it.
-- The table's key carries two riders: `[recourses, row_digest, resource_columns]`.
+- The table's key carries four riders:
+  `[recourses, row_digest, resource_columns, join_digest, bookmark_digest]`.
   `row_digest` is the digest of whichever `_row` the lookup resolved — `render
   'row'` resolves host-first at render, which the fragment's own template digest
   never follows. `resource_columns` is the column list, decided in Ruby the
   digest cannot see either: a host adding `recourse_hidden`, timestamps or a
   counter expires the table by itself. What still needs the hand-clear is markup
   shape the list does not carry — how a heading reads, what sorts.
+- The last two are there for the same reason as each other: both draw buttons whose
+  state lives in a table the relation knows nothing about, so the relation's own
+  version — its count and newest `updated_at` — does not move when one is clicked.
+  `join_digest` is the joined ids, `bookmark_digest` the kept ones. The bookmarks
+  are also the *viewer's*, which makes that rider do double duty: it is what expires
+  the fragment on a click and what keeps one person's kept rows off another
+  person's page. Each leads with its own name, because an expanded key renders
+  `nil` and `[]` as the same empty string — without it a table with nothing kept
+  and a table that keeps nothing would share one fragment, and whichever drew first
+  would decide whether the other had any squares.
 - That version check is itself a `SELECT COUNT(*), MAX(updated_at)`, and it is the
   price of never serving a stale menu. Keying on `recourses.cache_key` instead
   skips it and queries nothing at all, at the cost of a list that never notices a

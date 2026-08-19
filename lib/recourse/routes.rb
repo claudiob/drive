@@ -1,6 +1,10 @@
+require_relative 'routes/nested'
+
 module Recourse
   # Extends the config/routes.rb DSL, so `recourses` works anywhere `resources` does.
   module Routes
+    include Nested
+
     # Draws what `resources` draws, after supplying any controller the host lacks. A
     # block nests what it declares under each resource — ZIPs at
     # `/counties/:county_id/zips` — with the nested controller namespaced after the
@@ -14,17 +18,18 @@ module Recourse
     def recourses(*names, **options, &block)
       refuse_unscoped_nesting names
       through = options.delete :through
+      # Asked before the block, where every resource is its own parent. Top level
+      # only: a resource nested under another is reached through its parent, and its
+      # rows are kept at the resource's own route rather than at a second one drawn
+      # under every parent that happens to list them.
+      keepable = Recourse.bookmarks? && parent_resource.nil?
 
       names.each { |name| declare_resource name, through }
+      options = default_nested_actions options
 
-      return resources(*names, **default_nested_actions(options)) unless block || through
+      return resources(*names, **options) unless block || through || keepable
 
-      resources(*names, **default_nested_actions(options)) do
-        scope module: parent_resource.name do
-          draw_join through if through
-          instance_exec(&block) if block
-        end
-      end
+      resources(*names, **options) { draw_within keepable, through, block }
     end
 
     # What `resource` draws, recorded the same way: one record reached without an id,
@@ -53,19 +58,6 @@ module Recourse
       record_declaration path
       Recourse.join path, through if through
       Controllers.define_missing path
-    end
-
-    # The row a listing's Add and Remove write: one record joining the parent to the
-    # row the button sat on, reached at `/people/1/teams/2/membership` and answered
-    # by a controller of the gem's own rather than by the generic one.
-    def draw_join(through)
-      path = [current_module, through].compact.join '/'
-      # Recorded under the listing it belongs to, which is how it finds its way back
-      # there for a request that arrived without a referer. No tab and no button
-      # come of it: both ask for an index, and a join has none.
-      Recourse.nest current_module, path
-      Controllers.define_missing path, JoinsController
-      resource through.to_s.singularize.to_sym, only: %i[create destroy]
     end
 
     def default_nested_actions(options)

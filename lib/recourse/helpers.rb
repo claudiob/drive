@@ -1,5 +1,6 @@
 require_relative 'helpers/actions'
 require_relative 'helpers/attachments'
+require_relative 'helpers/bookmarks'
 require_relative 'helpers/buttons'
 require_relative 'helpers/cards'
 require_relative 'helpers/cells'
@@ -34,10 +35,11 @@ require_relative 'helpers/values'
 module Recourse
   # View helpers for the pages the gem renders, and what the parts share.
   module Helpers
-    include Actions, Attachments, Buttons, Cards, Cells, Choices, Colors, Comboboxes,
-            Constraints, Counters, Deletions, Examples, Fields, Filters, Formats, Inputs,
-            Joins, Kinds, Navigation, Parents, Pictures, References, Refreshes, Routing,
-            Resources, Rows, Searches, Shortcuts, Sidebars, Sorts, Tabs, Values
+    include Actions, Attachments, Bookmarks, Buttons, Cards, Cells, Choices, Colors,
+            Comboboxes, Constraints, Counters, Deletions, Examples, Fields, Filters,
+            Formats, Inputs, Joins, Kinds, Navigation, Parents, Pictures, References,
+            Refreshes, Routing, Resources, Rows, Searches, Shortcuts, Sidebars, Sorts,
+            Tabs, Values
 
     # The grid a record's own two pages lay an attribute out in: two columns on a large
     # viewport, and the same padding on both, so a value and the field that edits it sit
@@ -46,7 +48,9 @@ module Recourse
     ROW = 'recourse-row pb-2 mb-3 lg:col-6'
 
     # Bootstrap theme for each flash key, so a notice and an alert read apart.
-    FLASH_THEMES = { 'notice' => 'theme-success', 'alert' => 'theme-danger' }
+    FLASH_THEMES = {
+      'notice' => 'theme-success', 'alert' => 'theme-danger', 'warning' => 'theme-warning',
+    }
 
     # Theme for one flash entry, falling back to a neutral one for a host's key.
     def flash_theme(key)

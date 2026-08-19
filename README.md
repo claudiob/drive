@@ -1012,6 +1012,49 @@ every language a key might be translated into. `Select…` says as much as `Sele
 a State…` under a label that already reads `State`. If your models all take the
 same article, the keys above are where you say so.
 
+## Bookmarking a row
+
+```ruby
+# config/initializers/recourse.rb
+Recourse.bookmarks = -> { Reminder.where agent: Current.agent }
+```
+
+One line says how a bookmark is stored, and every table whose model can hold one
+opens with a square: hollow where whoever is looking has not kept that row,
+filled where they have, and the kept rows sorted to the top.
+
+The other half is a `has_many` the model owes Rails anyway:
+
+```ruby
+# app/models/provider.rb
+has_many :reminders, as: :topic, dependent: :destroy
+```
+
+That association *is* the opt-in. A model that declares none cannot hold a
+bookmark, so its table opens where it always did — no routes option and nothing
+to say twice.
+
+Nothing is assumed about the shape of the bookmark. The gem reads the model's own
+association rather than introspecting the class behind it, so Rails' reflection
+answers everything: `foreign_key` names the column, `type` names the type column
+where the association is polymorphic and is nil where it is not, and
+`polymorphic_name` is the value — resolved through `base_class`, so a subclass
+stays filed with the table it shares. A bookmark table holding a plain
+`provider_id` and no type column works the same way.
+
+A Proc is the shape to declare it in. A relation written here would hold whoever
+was signed in when the process booted, which is nobody; the Proc is resolved once
+per request instead. A relation or a model class is accepted for the case where
+nobody in particular is looking.
+
+Clicking a square writes the row and answers before the server does: the icon
+flips, the request goes in the background, and the table is never redrawn — so
+the row stays where the eye left it until the next real page load, which is where
+the kept-first order takes effect. Without JavaScript the same button submits,
+redirects and says `Bookmark added.`, which is the floor every button here
+degrades to. Either way the row is written by `BookmarksController`, which a host
+overrides the way it overrides `RecoursesController`.
+
 ## Recolouring it
 
 ```ruby
@@ -1192,6 +1235,8 @@ Drawn in `config/routes.rb`:
 
 Written in an initializer:
 
+- `Recourse.bookmarks` / `Recourse.bookmarks=` — how a viewer's bookmarks are
+  stored, as a Proc answering their rows; nil for no bookmarks anywhere
 - `Recourse.color` / `Recourse.color=` — the Bootstrap colour family the pages
   call primary, one of `Recourse::COLORS`, or nil for Bootstrap's own blue
 - `Recourse::COLORS` — `%i[blue gray orange purple pink brown]`
@@ -1205,6 +1250,7 @@ Declared on a model, each overriding a default:
 
 Subclassed or reopened in `app/controllers`:
 
+- `BookmarksController` — what writes and drops the row behind a bookmark square
 - `RecoursesController` — what every generated controller inherits, and what to
   reopen to add a `before_action` of your own
 - `Recourse::BaseController` — what that inherits, holding all seven actions

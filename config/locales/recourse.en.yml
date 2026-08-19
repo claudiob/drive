@@ -12,6 +12,10 @@ en:
     attach: Add
     all_values: All
     blank: "—"
+    bookmark: Bookmark
+    bookmark_added: Bookmark added.
+    bookmark_error: Bookmark could not be saved.
+    bookmark_removed: Bookmark removed.
     cancel: Cancel
     clear: Clear search
     create: Create
@@ -41,6 +45,7 @@ en:
     searched_eq: Filter by exact %{list}
     select: Select…
     show: Show
+    unbookmark: Remove bookmark
     unknown_color: "`Recourse.color` is one of %{colors}, or nil for Bootstrap's own
       blue. It cannot be %{color}."
     updated: "%{model} was updated."

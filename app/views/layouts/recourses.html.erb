@@ -24,6 +24,7 @@
 
     <script type='module'>
       import { Application } from '/recourse/stimulus.js'
+      import BookmarkController from '/recourse/bookmark_controller.js'
       import ClearController from '/recourse/clear_controller.js'
       import ComboboxController from '/recourse/combobox_controller.js'
       import DeselectController from '/recourse/deselect_controller.js'
@@ -39,6 +40,7 @@
       // second application would connect every controller twice.
       if (!window.Stimulus) {
         window.Stimulus = Application.start()
+        window.Stimulus.register('bookmark', BookmarkController)
         window.Stimulus.register('clear', ClearController)
         window.Stimulus.register('combobox', ComboboxController)
         window.Stimulus.register('deselect', DeselectController)

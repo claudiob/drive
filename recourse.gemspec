@@ -37,5 +37,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'railties', '>= 8.1' # Rails::Engine and the generators
   spec.add_dependency 'ransack', '>= 4.4' # sorts, searches and filters the index pages
   spec.add_dependency 'turbo-rails' # without it a delete asks nothing before deleting
-  spec.add_dependency 'unicon', '>= 3.0' # names every icon drawn, in Bootstrap Icons
+  spec.add_dependency 'unicon', '>= 3.1' # names every icon drawn, in Bootstrap Icons
 end

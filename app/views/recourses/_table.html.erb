@@ -5,14 +5,21 @@
     resolved at render, which the fragment's own template digest never follows.
     And the column list: which columns a table shows is decided in Ruby —
     `recourse_hidden`, timestamps, counters — that no digest covers either. And the
-    join, where the buttons are of rows this relation knows nothing about. -%>
-<% cache_if params[:q].blank?, [recourses, row_digest, resource_columns, join_digest] do %>
+    join, where the buttons are of rows this relation knows nothing about. And the
+    bookmarks, which are the viewer's rather than the relation's — so this is what
+    keeps one person's kept rows off another person's page as well as what expires
+    the fragment when a square is clicked. -%>
+<% key = [recourses, row_digest, resource_columns, join_digest, bookmark_digest] -%>
+<% cache_if params[:q].blank?, key do %>
   <% actions = resource_actions %>
   <div class='table-responsive'>
     <table class='table caption-top table-hover align-middle sm:table-stacked'>
       <thead>
         <tr>
           <% @recourse_headers = true %>
+          <%# The square a row is kept by opens the table, ahead of the pages it
+              leads to: whether this row is one of mine, before what to do with it. -%>
+          <%= column header: bookmark_header, class: 'recourse-actions' if resource_bookmarks %>
           <%# A listing of a many-to-many opens with the button writing the join,
               which is the column the page exists for. -%>
           <%= column header: t('recourse.attach'), class: 'recourse-actions' if resource_join %>
@@ -26,6 +33,9 @@
         <% @recourse_headers = false %>
         <% recourses.each do |recourse| %>
           <tr>
+            <% if resource_bookmarks -%>
+              <%= column header: bookmark_header, class: 'recourse-actions' do %><%= bookmark_button recourse %><% end %>
+            <% end -%>
             <% if resource_join -%>
               <%= column header: t('recourse.attach'), class: 'recourse-actions' do %><%= join_button recourse %><% end %>
             <% end -%>

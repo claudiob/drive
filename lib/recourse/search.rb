@@ -22,7 +22,7 @@ module Recourse
     # asked, so the model's own order only applies when nothing did.
     def scope
       scope = @query.result
-      scope = scope.order @model.recourse_order if @query.sorts.empty?
+      scope = scope.order(*kept_first, @model.recourse_order) if @query.sorts.empty?
       includes = @model.recourse_includes
       return scope if includes.blank?
 
@@ -30,6 +30,20 @@ module Recourse
     end
 
   private
+
+    # The rows this viewer has kept, ahead of whatever the model orders by — but only
+    # where nobody clicked a heading, which is the same word `recourse_order` answers
+    # to. A semi-join rather than an outer one: it cannot multiply a row, and it
+    # leaves the count pagy runs over this relation well-formed.
+    def kept_first
+      reflection = Recourse.bookmarks_for @model
+      return [] unless reflection
+
+      kept = Recourse.bookmarks_of(reflection).select reflection.foreign_key
+      # `true` before `false` in PostgreSQL and `1` before `0` in the other two, so
+      # descending puts the kept rows first wherever this runs.
+      [@model.arel_table[@model.primary_key].in(kept.arel).desc]
+    end
 
     # Ransack reads nothing it has not been shown — `ransackable_attributes` is the
     # allowlist — so what arrives here needs no permitting, only untangling: a list
