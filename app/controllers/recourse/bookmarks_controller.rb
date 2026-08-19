@@ -12,7 +12,7 @@ module Recourse
     # the first is still in flight, and twice kept is once kept.
     def create
       viewer_bookmarks.find_or_create_by! bookmark_key
-      answer 'bookmark_added', :notice
+      answer 'bookmark_added'
     end
 
     # And drops it. `destroy_all` rather than `destroy!` for the reason the join
@@ -20,7 +20,7 @@ module Recourse
     # fail for having none.
     def destroy
       viewer_bookmarks.where(bookmark_key).destroy_all
-      answer 'bookmark_removed', :warning
+      answer 'bookmark_removed'
     end
 
   private
@@ -52,10 +52,10 @@ module Recourse
     # Where the two paths part. A background request is answered with nothing at all:
     # a flash it never renders would not be spent, and would surface as a toast on
     # the next page announcing a bookmark from several pages ago.
-    def answer(message, level)
+    def answer(message)
       return head :no_content unless request.format.html?
 
-      flash[level] = t "recourse.#{message}"
+      flash.notice = t "recourse.#{message}"
       redirect_back fallback_location: listing_url, status: :see_other
     end
 

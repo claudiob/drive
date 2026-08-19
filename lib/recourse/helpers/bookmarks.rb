@@ -48,7 +48,7 @@ module Recourse
 
         button_to bookmark_icon(kept, label), bookmark_url(record),
                   method: kept ? :delete : :post, form_class: 'd-inline-block',
-                  class: 'btn btn-sm btn-link p-0 border-0 lh-1 rounded-circle',
+                  class: 'btn btn-sm btn-link p-0 border-0 lh-1',
                   **bookmark_data(kept, label)
       end
 
@@ -65,10 +65,20 @@ module Recourse
         # see which way the square is filled.
         data = {
           controller: 'bookmark', bookmark_kept_value: kept,
-          bookmark_error_value: t('recourse.bookmark_error'),
+          bookmark_messages_value: bookmark_messages,
         }
 
         { aria: { label:, pressed: kept }, data: }
+      end
+
+      # What the square says once the row is written, and what it says when it could
+      # not be. A `.js` file has no `t`, so the three travel with it — as one
+      # attribute rather than three, since every row of the table carries them.
+      def bookmark_messages
+        {
+          added: t('recourse.bookmark_added'), removed: t('recourse.bookmark_removed'),
+          error: t('recourse.bookmark_error'),
+        }
       end
 
       def bookmark_url(record)

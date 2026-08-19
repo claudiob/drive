@@ -48,9 +48,7 @@ module Recourse
     ROW = 'recourse-row pb-2 mb-3 lg:col-6'
 
     # Bootstrap theme for each flash key, so a notice and an alert read apart.
-    FLASH_THEMES = {
-      'notice' => 'theme-success', 'alert' => 'theme-danger', 'warning' => 'theme-warning',
-    }
+    FLASH_THEMES = { 'notice' => 'theme-success', 'alert' => 'theme-danger' }
 
     # Theme for one flash entry, falling back to a neutral one for a host's key.
     def flash_theme(key)

@@ -9,7 +9,7 @@ import { flash } from '/recourse/flash.js'
 // The form is still a real one. Without this controller it submits, redirects and
 // reloads, which is the same floor every other button here degrades to.
 export default class extends Controller {
-  static values = { kept: Boolean, error: String }
+  static values = { kept: Boolean, messages: Object }
 
   connect() {
     this.form = this.element.closest('form')
@@ -31,17 +31,7 @@ export default class extends Controller {
     // dresses it for the click after this one, which is the opposite.
     const body = new FormData(this.form)
     this.render(kept)
-    this.pulse()
     this.send(body, kept)
-  }
-
-  // Removed and re-added rather than just added, with a read of `offsetWidth`
-  // between the two to force the reflow that restarts it: without that, a second
-  // click before the first ring has faded gets no ring at all.
-  pulse() {
-    this.element.classList.remove('recourse-kept')
-    void this.element.offsetWidth
-    this.element.classList.add('recourse-kept')
   }
 
   // What the eye reads, what a screen reader reads, and what the next click will do:
@@ -85,7 +75,12 @@ export default class extends Controller {
         body,
         headers: { Accept: 'application/json', 'X-CSRF-Token': this.token },
       })
-      if (!response.ok) this.revert(kept)
+      if (!response.ok) return this.revert(kept)
+
+      // Said only once the row is actually written. The icon flipped on the click
+      // and would have flipped under a request that never landed, so this is the
+      // half of the report the server is the only one who can give.
+      flash(kept ? this.messagesValue.added : this.messagesValue.removed, 'theme-success')
     } catch {
       this.revert(kept)
     }
@@ -95,6 +90,6 @@ export default class extends Controller {
   // icon flipping is the only report a click that worked ever needs.
   revert(kept) {
     this.render(!kept)
-    flash(this.errorValue)
+    flash(this.messagesValue.error)
   }
 }

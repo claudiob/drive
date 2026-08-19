@@ -736,8 +736,17 @@ before writing or editing any layout, view or partial.
   the icon, posts in the background and never renders the response, so the table is
   not redrawn and the row keeps its place until the next real page load — which is
   where the kept-first order belongs, rather than yanking a row to the top of the
-  table under the cursor that just clicked it. It reads the response all the same:
-  a failure puts the square back and raises the one toast this column ever shows.
+  table under the cursor that just clicked it.
+- The response is what is reported, in a toast the controller builds itself: `Added`
+  or `Removed` in the success theme once the row is written, and the failure message
+  in the danger one when it was not, with the square put back. The icon flipping is
+  not the report — it flips on the click, and would flip the same under a request
+  that never landed. That toast is the same markup `_flash` ships, from
+  `/recourse/flash.js`, carrying `data-controller='toast'` so the timer and the X
+  are the ones every other toast uses.
+- The three words it may say travel on the button in one `data-bookmark-messages-value`,
+  as JSON: a `.js` file has no `t`, and every row of the table carries them, so one
+  attribute rather than three.
 - A table that has actions opens with one column per action, and `_table` adds
   them rather than `_row`. That is the whole point of putting them there: a host
   that writes its own row still gets the columns, prepended before whatever
