@@ -172,4 +172,19 @@
   --bs-success-contrast: var(--bs-gray-975);
   --bs-warning-contrast: var(--bs-gray-975);
   --bs-info-contrast: var(--bs-gray-975);
+
+  /* The accent this palette leads with, as the primary colour: the same nine
+     `_color.html.erb` writes, from pink and the label that reads on it. Here
+     rather than only in the page because a reader may swap this file for
+     another one, and the primary has to travel with it. A host naming its
+     own colour still wins, its block coming after this file. */
+  --bs-primary-base: var(--bs-pink-500);
+  --bs-primary-fg: light-dark(var(--bs-pink-600), var(--bs-pink-400));
+  --bs-primary-fg-emphasis: light-dark(var(--bs-pink-800), var(--bs-pink-200));
+  --bs-primary-bg: var(--bs-pink-500);
+  --bs-primary-bg-subtle: light-dark(var(--bs-pink-100), var(--bs-pink-900));
+  --bs-primary-bg-muted: light-dark(var(--bs-pink-200), var(--bs-pink-800));
+  --bs-primary-border: light-dark(var(--bs-pink-300), var(--bs-pink-600));
+  --bs-primary-focus-ring: light-dark(color-mix(in oklch, var(--bs-pink-500) 50%, var(--bs-bg-body)), color-mix(in oklch, var(--bs-pink-500) 75%, var(--bs-bg-body)));
+  --bs-primary-contrast: var(--bs-white);
 }

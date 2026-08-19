@@ -39,6 +39,14 @@ module Recourse
     },
   }.freeze
 
+  # Where the palettes are served from, named once: the layout links one, the layout's
+  # own script puts back the one a reader chose, and the sidebar's controller swaps it.
+  THEMES_PATH = '/recourse/themes'
+
+  # Where a reader's chosen palette and mode are kept in their browser. Named once for
+  # the same reason: the sidebar's controller writes it and the layout reads it back.
+  SCHEME_STORAGE = 'recourse-scheme'
+
   class << self
     # Which editor scheme the pages are drawn in, or nil for Bootstrap's own palette.
     attr_reader :theme

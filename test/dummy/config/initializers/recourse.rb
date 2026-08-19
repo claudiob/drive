@@ -1,12 +1,12 @@
-# A host app's one line about how every page looks. Pink rather than the default,
-# so what a colour reaches — buttons, links, sorted headings, focus rings — is
-# visible in a browser rather than only in a test.
-# Recourse.color = :blue
-
-# And its one line about what the pages are drawn from. Solarized rather than
-# Bootstrap's own palette, so what a scheme reaches — the page, its rules, its text and
-# every accent on it — is visible in a browser rather than only in a test.
+# A host app's one line about what the pages are drawn from. A palette rather than
+# Bootstrap's own, so what a scheme reaches — the page, its rules, its text and every
+# accent on it — is visible in a browser rather than only in a test.
 Recourse.theme = :dracula
+
+# And deliberately no colour, so each palette leads with the accent of its own that it
+# names, which is what a reader rotating through them from the sidebar sees. A host that
+# wants one says `Recourse.color = :blue`; the test about the colour is what exercises
+# that, since nothing here would.
 
 # And its one line about how a viewer keeps a row. A Proc rather than the relation
 # itself: a relation built here would hold whoever was looking when the process

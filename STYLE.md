@@ -111,9 +111,52 @@ before writing or editing any layout, view or partial.
   `Recourse.theme` is enough — Dracula publishes no blue and leads with purple.
   And it names the families that take a dark label, since a scheme built for a
   dark editor has accents far lighter than Bootstrap's.
+- A palette declares the nine `--bs-primary-*` too, from the family it leads with.
+  Not only so `Recourse.theme` alone looks right, but because a reader can swap the
+  file for another one — the primary has to travel with it, and a block written into
+  the page would stay behind. A host's own colour still wins, coming after the file.
 - Check the numbers when adding one. Every accent of all eight clears 3:1 against
   the label it is given, and every text tone clears 4:1 in both modes. Nothing in
   the suite can see this: the same lines run whichever colour is written.
+
+## The scheme toggle
+
+- The sidebar ends with one control over how the page looks: a moon while the page is
+  light and a sun while it is dark. It is the last `.nav-item`, so while the sidebar is
+  a row it is simply the last thing in it, and the layout's own rules take it to the
+  foot and centre it across the sidebar while the sidebar is a column.
+- Those rules are written out rather than reached for as utilities, and both halves are
+  load-bearing. `.nav-item` ships `flex: auto`, so in a nav given a height every item
+  takes an equal share of it and an auto margin is left nothing to push against: the
+  items are pinned to `flex: 0 0 auto` and only the toggle's margin takes the rest.
+  Same reason the sidebar's own borders are written out — see the note there.
+- Being at the foot of a full-height sidebar means being at the foot of the *page*, so
+  on a long index it is below the fold. That is what the position asks for; a toggle
+  that must always be in view wants `position: sticky` and is a different decision.
+- The icon names where a click *goes*, not where the page is. A click moves to another
+  palette and into the other mode, which is what makes one control enough for both.
+- Which palette is next is random among those not showing. Excluding the current one
+  is not a detail: it is what stops a click looking as though it did nothing.
+- Both icons are drawn and CSS shows one, because nothing in Ruby knows which mode the
+  page is in — until a reader clicks, there is no attribute and the mode is the
+  system's. Three states, so the rules read: no attribute plus a `prefers-color-scheme`
+  query, then `[data-bs-theme='light']`, then `[data-bs-theme='dark']`.
+- The mode is forced with Bootstrap's own `data-bs-theme` on `<html>`, which sets
+  `color-scheme` and so decides every `light-dark()` on the page — and brings
+  `--bs-shadow-strength` with it, which a hand-rolled attribute would not.
+- Forcing dark also brings Bootstrap's `[data-bs-theme=dark]` navbar tokens, which are
+  v5's `.navbar-dark`. So a page dark by the toggle and a page dark by the system are
+  not quite identical in the navbar. Upstream's behaviour, and both read correctly.
+- The reader's choice is kept in their browser, never on the server: it is theirs, and
+  a palette is not something a page needs to be told twice.
+- It is put back by an inline classic script in the `<head>`, not by the controller. A
+  module is deferred and a controller connects after the first paint, either of which
+  would show the server's palette for an instant and then swap it.
+- And the controller says it again on `connect`, because Turbo merges the `<head>` on
+  a visit and would otherwise put the server's palette back over the reader's. The
+  sidebar is redrawn every visit, so connecting is the moment that catches it.
+- A name read back out of storage is checked before it reaches a URL, in both halves.
+  The storage is the reader's own, which is not the same as trusted.
 
 ## The navbar
 

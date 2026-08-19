@@ -21,6 +21,7 @@ en:
     create: Create
     created: "%{model} was created."
     created_error: "%{model} could not be created."
+    darken: A darker palette
     delete: Delete %{model}
     deleted: "%{model} was deleted."
     displaying:
@@ -29,6 +30,7 @@ en:
     displaying_slice: Displaying items %{from}-%{to} of %{total} in total
     edit: Edit
     format: Please match the format %{example}
+    lighten: A lighter palette
     missing_model: You declared `recourses :%{name}` in your routes file, but this app
       has no %{model} model.
     nested: You nested `recourses %{names}` inside `resources :%{parent}`, which does

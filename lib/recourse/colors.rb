@@ -27,11 +27,6 @@ module Recourse
     @color = name
   end
 
-  # The family the pages draw primary from: whatever a host named, and otherwise the
-  # palette's own lead accent. Nil where neither is set, since Bootstrap's own blue is
-  # already primary and already carries the right ink.
-  def self.primary_color = color || THEMES.dig(theme, :primary)
-
   # Which text a family's 500 step carries, named as the token upstream spells it with.
   # A palette repaints the step, so it may move a family across the line and answers
   # first where it does.

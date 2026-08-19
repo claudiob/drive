@@ -1071,8 +1071,8 @@ Recourse::COLORS # => [:blue, :gray, :orange, :purple, :pink, :brown]
 Every button, link, sorted heading, focus ring and favicon follows, because `.theme-primary`
 and everything else Bootstrap draws in that colour read the nine `--bs-primary-*`
 custom properties that the gem's layout redefines under `:root` when a colour is
-set. Nothing is emitted when neither a colour nor a palette is set, which is the
-default.
+set. Nothing is emitted when no colour is named, which is the default — a palette
+names its own lead accent in its own file instead.
 
 Six of the sixteen families Bootstrap ships, and the other ten are left out
 rather than forgotten. Anything else raises a `Recourse::Error` naming the six,
@@ -1132,17 +1132,42 @@ Bootstrap inlines a family's base colour into every step rather than holding it 
 a variable, and it repaints `--bs-white` and `--bs-black` too — those are the two
 colours every step is mixed with, and the light page reads `--bs-white` directly.
 
-Each scheme also says which family its own accents lead with, so `Recourse.theme`
-on its own is enough: Dracula publishes no blue, so it leads with purple, and
-Monokai leads with its pink. And each says which of its families take a dark label
-rather than a white one, since a scheme built for a dark editor has accents far
-lighter than Bootstrap's — every accent of all eight clears 3:1 with the label it
-is given, the worst pair being 3.41:1.
+Each scheme also declares the primary colour itself, from the family its own accents
+lead with, so `Recourse.theme` on its own is enough: Dracula publishes no blue, so it
+leads with purple, and Monokai leads with its pink. `Recourse.color` still wins where
+a host names one, its block coming after the palette's file. And each scheme says
+which of its families take a dark label rather than a white one, since a scheme built
+for a dark editor has accents far lighter than Bootstrap's — every accent of all eight
+clears 3:1 with the label it is given, the worst pair being 3.41:1.
 
 A name nobody ships raises a `Recourse::Error` naming the eight, rather than
 asking the browser for a stylesheet that is not there. A host wanting a scheme of
 its own writes `app/stylesheets/recourse/themes/` into its own asset path, or
 overrides the layout — and the shipped files are the worked example to copy.
+
+### Letting the reader choose
+
+The sidebar ends with one control: a moon while the page is light and a sun while it
+is dark, at the foot of the sidebar wherever it is a column. The icon names where a
+click goes rather than where the page is, and a click moves it to another palette
+*and* into the other mode — so the eight schemes are reachable from the page itself
+rather than only from an initializer.
+
+Which palette comes next is picked at random from the ones not showing. The eight
+have no order that means anything, and excluding the current one is what stops a
+click looking as though it did nothing.
+
+The choice belongs to the reader, so it is kept in their browser under
+`localStorage['recourse-scheme']` and put back on the next visit. It is put back by
+an inline script in the `<head>` rather than by the Stimulus controller, because a
+controller connects after the first paint and the palette the server chose would
+show for an instant first. The controller says it again on `connect`, since Turbo
+merges the `<head>` on a visit and would otherwise restore the server's palette.
+
+The mode is forced with `data-bs-theme` on the `<html>` element — Bootstrap's own
+attribute, which sets `color-scheme` and so decides every `light-dark()` on the page.
+Until a reader clicks, no attribute is set at all and the page follows their system,
+which is why the icon is chosen in CSS across three states rather than in Ruby.
 
 ## Helpers
 

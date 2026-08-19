@@ -22,6 +22,7 @@
         used, so a ramp written later still reaches a primary written earlier. What
         matters is that neither comes before the link. -%>
     <%= theme_stylesheet_link %>
+    <%= scheme_restore_script %>
     <%= primary_color_style %>
 
     <%# `data:,` is an empty document, which is what stops the browser asking a host
@@ -37,6 +38,7 @@
       import FaviconController from '/recourse/favicon_controller.js'
       import PhoneController from '/recourse/phone_controller.js'
       import RevealController from '/recourse/reveal_controller.js'
+      import SchemeController from '/recourse/scheme_controller.js'
       import SearchController from '/recourse/search_controller.js'
       import ShortcutsController from '/recourse/shortcuts_controller.js'
       import ToastController from '/recourse/toast_controller.js'
@@ -53,6 +55,7 @@
         window.Stimulus.register('favicon', FaviconController)
         window.Stimulus.register('phone', PhoneController)
         window.Stimulus.register('reveal', RevealController)
+        window.Stimulus.register('scheme', SchemeController)
         window.Stimulus.register('search', SearchController)
         window.Stimulus.register('shortcuts', ShortcutsController)
         window.Stimulus.register('toast', ToastController)
@@ -194,6 +197,38 @@
         line-height: 1;
       }
       .combobox-search-clear:hover { background-color: var(--bs-bg-1); color: var(--bs-fg-body); }
+
+      /* The scheme toggle sits at the foot of the sidebar and centered across it while
+         the sidebar is a column, and is simply the last item of the row while it is not
+         — the query matches the `md:` the sidebar's own classes use. Both lines are
+         needed: `.nav-item` ships `flex: auto`, so every item would take an equal share
+         of a full-height nav and the auto margin would never have anything left to
+         push against. Pin the items to their own height and the toggle takes the rest. */
+      @media (width >= 768px) {
+        .recourse-sidebar .nav { height: 100%; }
+        .recourse-sidebar .nav-item { flex: 0 0 auto; }
+        .recourse-sidebar .recourse-scheme {
+          margin-block-start: auto;
+          align-self: center;
+        }
+      }
+
+      /* The toggle draws both icons and shows the one that names where a click
+         would go: a moon on a light page, a sun on a dark one. Three states rather than
+         two, because a page nobody has chosen for carries no attribute at all, and the
+         media query is then the only thing that knows which mode it is in. Both are
+         declared at every step rather than one left to its default, so that no state
+         can end up hiding the pair and leaving a button with nothing in it. */
+      .recourse-scheme-light { display: inline; }
+      .recourse-scheme-dark { display: none; }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-bs-theme='light']) .recourse-scheme-light { display: none; }
+        :root:not([data-bs-theme='light']) .recourse-scheme-dark { display: inline; }
+      }
+      :root[data-bs-theme='light'] .recourse-scheme-light { display: inline; }
+      :root[data-bs-theme='light'] .recourse-scheme-dark { display: none; }
+      :root[data-bs-theme='dark'] .recourse-scheme-light { display: none; }
+      :root[data-bs-theme='dark'] .recourse-scheme-dark { display: inline; }
 
       /* The icon font drops every glyph an eighth of an em to sit on a text
          baseline, which inside an icon link reads as the arrow resting on the

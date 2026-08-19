@@ -18,6 +18,22 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
   still follows the reader's system setting. `Recourse.color` composes with it: the
   scheme repaints the ramps, the colour says which repainted ramp is primary.
 
+* The sidebar ends with a moon or a sun, and a reader picks their own palette
+
+  A click moves the page to another of the eight and into the other mode — a moon
+  while it is light, a sun while it is dark — so the schemes are reachable from the
+  page rather than only from an initializer. The next palette is random among those
+  not showing. The choice is kept in the reader's browser under
+  `localStorage['recourse-scheme']` and put back before the first paint by an inline
+  script in the head, and again by the controller on `connect`, since Turbo merges the
+  head on a visit. The mode is forced with Bootstrap's own `data-bs-theme`, so until a
+  reader clicks the page still follows their system setting.
+
+  Each palette now declares the nine `--bs-primary-*` itself, from the family it leads
+  with, so the primary travels when the stylesheet is swapped. `Recourse.color` still
+  wins where a host names one. `Recourse.primary_color`, added earlier in this release,
+  is gone with it — the palette answers that now.
+
 * `--bs-primary-contrast` follows the family instead of always being white
 
   The label on a solid button is now `var(--bs-white)` or `var(--bs-gray-975)`,

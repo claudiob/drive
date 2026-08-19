@@ -9,19 +9,22 @@ class TestRecoursesColor < IntegrationCase
   # so a name the gem does not know is refused at the point it is set — and says
   # which names there are, rather than only that this one is wrong.
   def test_a_host_picks_a_primary_colour_and_a_name_nobody_has_is_refused
+    Recourse.color = :pink
     visit '/places'
 
     assert_includes body, '--bs-primary-base: var(--bs-pink-500);'
-    # The ink a solid fill's label is drawn in. Asserted rather than left to coverage:
-    # the line runs whichever token it returns, so a page stays green while a button
-    # goes illegible — white on Solarized's pink at 4.21:1, its darkest neutral at 2.83.
-    assert_includes body, '--bs-primary-contrast: var(--bs-white);'
+    # The ink a solid fill's label is drawn in, which the palette has a say in: white
+    # on Dracula's pink reads 2.24:1 and its darkest neutral 5.32, so the label is dark
+    # here and light under a palette whose pink is darker. Asserted rather than left to
+    # coverage, since the line runs whichever of the two it returns — a page would stay
+    # green while a button went illegible.
+    assert_includes body, '--bs-primary-contrast: var(--bs-gray-975);'
     error = assert_raises(Recourse::Error) { Recourse.color = :purpel }
 
     assert_includes error.message, 'purpel'
     assert_includes error.message, 'purple'
   ensure
-    Recourse.color = :pink
+    Recourse.color = nil
   end
 
   # Every rule the layout carries, in one bracket count. A stylesheet is inert text
@@ -42,23 +45,31 @@ class TestRecoursesColor < IntegrationCase
     end
   end
 
-  # The dummy app asks for Solarized, so the page links its palette and the engine
+  # The dummy app asks for Dracula, so the page links its palette and the engine
   # serves it. The palette is a file rather than a block in the page, so what proves it
-  # arrived is fetching it and finding Solarized's own paper. A name nobody ships would
+  # arrived is fetching it and finding Dracula's own paper. A name nobody ships would
   # otherwise ask the browser for a stylesheet that is not there and go unnoticed until
   # somebody looked at a page, so it is refused where it is set.
   def test_a_host_picks_a_palette_and_a_name_nobody_ships_is_refused
     visit '/places'
 
-    assert_includes body, '<link rel="stylesheet" href="/recourse/themes/solarized.css">'
-    visit '/recourse/themes/solarized.css'
+    assert_includes body,
+                    '<link rel="stylesheet" href="/recourse/themes/dracula.css" ' \
+                    'data-recourse-theme="">'
+    # The sidebar's toggle, and the attribute the palette link is found by: the two
+    # halves of swapping a palette in the browser, and a rename either side of that
+    # would leave a button that silently does nothing.
+    assert_includes body, 'data-scheme-path-value="/recourse/themes"'
+    assert_includes body, "<i class='bi bi-moon-fill'></i>"
+    assert_includes body, "<i class='bi bi-sun-fill'></i>"
+    visit '/recourse/themes/dracula.css'
 
-    assert_includes body, '--bs-white: #fdf6e3;'
-    error = assert_raises(Recourse::Error) { Recourse.theme = :solarised }
+    assert_includes body, '--bs-white: #f8f8f2;'
+    error = assert_raises(Recourse::Error) { Recourse.theme = :draculla }
 
-    assert_includes error.message, 'solarised'
-    assert_includes error.message, 'solarized'
+    assert_includes error.message, 'draculla'
+    assert_includes error.message, 'dracula'
   ensure
-    Recourse.theme = :solarized
+    Recourse.theme = :dracula
   end
 end
