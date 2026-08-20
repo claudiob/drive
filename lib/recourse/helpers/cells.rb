@@ -13,18 +13,12 @@ module Recourse
 
     private
 
-      # Columns the table shows: every counter first, since a count is a link into
-      # the record's children and belongs beside the action columns that open it;
-      # then every attribute that is not encrypted and not read-only, less the
-      # primary key — an id is how a row is addressed, not something to read about
-      # it — and last the timestamps, where the model named them. Both terms below
-      # earn their place: one lifts the pair out of the order the schema gave it, the
-      # other appends it in the constant's.
+      # Columns the table shows: every attribute that is not encrypted and not
+      # read-only, less the primary key — an id is how a row is addressed, not
+      # something to read about it — in the order `Recourse.ordered` reads a row,
+      # which is what puts the counts first and the timestamps last.
       def resource_columns
-        columns = resource_model.column_names - hidden_columns
-        counters = counter_columns & columns
-
-        counters + (columns - counters - TIMESTAMPS) + (TIMESTAMPS & columns)
+        Recourse.ordered resource_model, resource_model.column_names - hidden_columns
       end
 
       # What no table shows, less whatever the model asked to draw anyway. Each of

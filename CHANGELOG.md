@@ -7,6 +7,28 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* [BREAKING CHANGE] A row reads in the order its columns' kinds earn
+
+  Which column came first was whichever came first in the table, which is a fact about
+  the migration that created it and about nothing else — and PostgreSQL cannot move a
+  column, so an app wanting its tables to read well rebuilt them. Fountain carries 25
+  migrations that do exactly that, and a column added afterwards still lands at the end
+  of the row where no rebuild can reach it.
+
+  A column's kind now decides which part of the row it reads in: the counts, then what
+  kind of row it is and what state it is in, its flags, whose it is, what it says, the
+  long values, when it happened, and last the two timestamps. Inside one of those the
+  order is the table's own, so an order already in the schema stands, and a column added
+  later joins its own kind instead of the end of the row.
+
+  The show page and the form read the same order as the table for the first time, which
+  is what they have always claimed to do.
+
+  Breaking because every table, show page and form reorders. A host that had arranged
+  its columns by migration will find most of that arrangement kept and some of it
+  overruled, with no way to say which — a table that needs an order of its own still
+  writes a `_row` partial.
+
 * A button that performs no longer wears a link's dress
 
   `.btn-outline` is reserved for the navbar's `Add <resource>` link, and STYLE.md says

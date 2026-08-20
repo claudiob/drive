@@ -22,13 +22,20 @@ class TestRecoursesIndex < IntegrationCase
     %w[Id Secret Notes Webhook Details].each do |column|
       refute_includes body, %(data-cell="#{column}")
     end
-    # Asked for by the model, so this table ends with both where most end with none —
-    # and *ends* with them, in that order, however the schema or the model names them.
-    # Nothing said so while a hook of their own carried it, and what carries it now is
-    # two terms in `resource_columns` that read as though one of them were redundant.
+    # The whole row, in the bands a column's kind puts it in: the squares and the links
+    # that open the record, then what state it is in, its flags, whose it is, what it
+    # says, the long ones, when it happened, and the two Rails keeps. Inside a band the
+    # order is the table's own, which is what leaves `capacity rating area` reading as
+    # the schema wrote it. Asserted whole, so a band moving is a failure rather than a
+    # surprise noticed on a page.
     headings = body.scan(/data-cell="([^"]+)"/).flatten.uniq
 
-    assert_equal ['Created at', 'Updated at'], headings.last(2)
+    assert_equal [
+      'Bookmark', 'Show', 'Edit', 'Status', 'Active', 'Verified', 'ZIP code', 'Team',
+      'Person', 'Name', 'Slug', 'Capacity', 'Rating', 'Area', 'Hourly rate',
+      'Commission rate', 'Phone', 'Website', 'About', 'Opens on', 'Audited at',
+      'Created at', 'Updated at',
+    ], headings
   end
 
   # A counter is headed with the icon of what it counts, named for a reader who

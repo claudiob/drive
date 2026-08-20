@@ -424,7 +424,13 @@ lands before the comment, not inside it.
 | `destroy` | the index again, without the record |
 
 `index` reads the model's `recourse_includes` and `recourse_order`, so a table
-cell naming a referenced record costs no query of its own. The table hides
+cell naming a referenced record costs no query of its own. Its columns read in the
+order their kinds earn rather than the order the schema happens to keep them in: the
+counts, then what kind of row it is and what state it is in, its flags, whose it is,
+what it says, the long values, when it happened, and last the two timestamps. Inside
+one of those a column keeps the place the table gave it, so an order already in the
+schema stands — and a column added later joins its own kind rather than the end of the
+row, which is the one thing no migration can arrange. The table hides
 every encrypted column — and `type`, the column Rails reserves for single table
 inheritance, stays off every screen: a class name is machinery, not an
 attribute. A model with no rows renders `No contacts.` instead. A heading sorts the table by its own column where the model allows

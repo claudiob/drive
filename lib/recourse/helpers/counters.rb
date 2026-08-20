@@ -47,10 +47,6 @@ module Recourse
       def counter_title(association)
         icon_heading association.klass.recourse_icon, Recourse.model_title(association.klass)
       end
-
-      def counter_columns
-        resource_model.recourse_counters.keys
-      end
     end
   end
 end
