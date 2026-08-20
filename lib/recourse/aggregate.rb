@@ -24,6 +24,28 @@ module Recourse
       # host's own template, and there is nothing here for the gem to lay out.
       def column_names = []
 
+      # And so none of the kinds a column comes in.
+      def defined_enums = {}
+
+      # And no key, a key being what names a row.
+      def primary_key = nil
+
+      # Nothing encrypted, so nothing to mask and nothing to keep off a table.
+      def recourse_encrypted_names = []
+
+      # Nothing to sort by, so no heading of one is a link.
+      def ransortable_attributes(_auth_object = nil) = []
+
+      # Nothing to look through, so no box above it.
+      def recourse_searchable_columns = []
+
+      # Nor through an association, there being none to reach along.
+      def recourse_searchable_associations = []
+
+      # Nothing commits, so nothing broadcasts, so no index of one opens a socket to
+      # listen for a change that cannot arrive.
+      def recourse_broadcasting? = false
+
       # Nothing to keep off a screen that draws none of it.
       def recourse_hidden = []
 
