@@ -8,7 +8,7 @@
 <% content_for :actions do %>
   <% (bare_action_buttons(record) + host_actions(record)).each do |label, path, method| %>
     <%= button_to label, path, method:, form_class: 'ms-3',
-                               class: 'btn theme-primary btn-sm btn-outline' %>
+                               class: 'btn theme-primary btn-sm btn-solid' %>
   <% end %>
 <% end %>
 <%# `card-header-tabs` is what pulls the row up into the header's padding, so the

@@ -7,6 +7,16 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A button that performs no longer wears a link's dress
+
+  `.btn-outline` is reserved for the navbar's `Add <resource>` link, and STYLE.md says
+  so three times over — a button dressed as a link promises a navigation where there is
+  an action. Two `button_to`s wore it anyway: every bare action beside the breadcrumb,
+  `recourse_extra_actions` among them, and the Add/Remove writing a join beside each row
+  of a listing. Both are `.btn-solid` now, the first keeping `theme-primary` and reading
+  as the filled button the index's bare `Create` already was, the second staying neutral
+  so a column of them does not shout over the rows it is about.
+
 * [BREAKING CHANGE] A bare action's button stands on one page, not on every page
 
   The button for an action the routes drew under a record sat beside the breadcrumbs on

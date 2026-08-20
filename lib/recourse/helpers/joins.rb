@@ -38,7 +38,7 @@ module Recourse
         joined = joined_ids.include? record.id
 
         button_to t("recourse.#{joined ? 'remove' : 'attach'}"), join_url(record, joined),
-                  method: joined ? :delete : :post, class: 'btn btn-sm btn-outline'
+                  method: joined ? :delete : :post, class: 'btn btn-sm btn-solid'
       end
 
       def join_url(record, joined)

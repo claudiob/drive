@@ -424,7 +424,9 @@ before writing or editing any layout, view or partial.
   reads its rows, and a `show` the router needs no id for, which is what a singular
   `recourse` draws and whose tab reads the one record. An index wins where a host drew
   both. A nesting with neither is an action rather than a page, and its button stands
-  beside the breadcrumb instead.
+  beside the breadcrumb instead — wearing `btn theme-primary btn-sm btn-solid`, the
+  same dress as the index's bare `Create` it is the sibling of, and solid for the same
+  reason: it performs rather than navigates.
 - An index tab wears the counted model's icon where a `has_many` of that name answers —
   or none where Unicon has never heard its concept, the same judgement the breadcrumb
   makes; only a counter *heading* keeps the fallback circle, being nothing but its
@@ -872,8 +874,15 @@ before writing or editing any layout, view or partial.
 - It carries `aria-pressed`, which is what says it is a toggle rather than a button
   that does something once, and an `aria-label` reading `Bookmark` or `Remove
   bookmark` to match the state it is in.
-- It carries **no** tooltip, and the line is drawn on whether the thing labels
-  itself rather than on how often it is drawn — a counter's cells carry one per row.
+- A listing of a many-to-many carries the button writing the join beside each row,
+  which is the column the page exists for: `Add` where the two are not joined and
+  `Remove` where they are, one `button_to` either way, since the path names both
+  records and neither needs submitting. `btn btn-sm btn-solid`, and no `theme-*` —
+  solid because it performs, and neutral because a column of coloured buttons would
+  shout over the rows it is about. Not the delete's danger either, a join being taken
+  back by clicking again, which is the bookmark square's argument above.
+- The bookmark square carries **no** tooltip, and the line is drawn on whether the
+  thing labels itself rather than on how often it is drawn — a counter's cells carry one per row.
   A bookmark square looks like what it means, filled or hollow, so a label chasing
   the cursor down a column of them is noise; a bare figure looks like nothing at all
   once its heading has scrolled away. The heading above the squares keeps its
