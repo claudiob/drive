@@ -1,13 +1,14 @@
 require 'active_support'
 
 require_relative 'searchable/columns'
+require_relative 'searchable/filters'
 require_relative 'searchable/terms'
 
 module Recourse
   # Extends every Active Record model with what Ransack asks of it, so an index
   # sorts, searches and filters before a model has said anything at all.
   module Searchable
-    include Columns, Terms
+    include Columns, Filters, Terms
 
     # How many rows a menu may hold before it stops being a menu. Fifty states are a
     # list to pick from; three thousand counties are a page of HTML nobody reads.
@@ -41,16 +42,6 @@ module Recourse
       (readable & indexed) - keys - Recourse.hidden_columns(self)
     end
 
-    # Filters offered beside the search box, as a Ransack predicate to the options
-    # that draw it — `label:` for its heading, `scope:` for the records it offers.
-    # One per enum, one per boolean, then one per belongs_to, less the ones the
-    # search box reaches through instead: a typed label says the other model is too
-    # big to list. The model's own columns come first, before the menus that name
-    # other tables.
-    def filter_fields
-      enum_filter_fields.merge(boolean_filter_fields).merge reference_filter_fields
-    end
-
     # True where a foreign key pointing here is typed rather than picked, which a
     # form and the controller reading its parameters back have to agree on: the label
     # is bounded, or the table is too long to list.
@@ -63,31 +54,6 @@ module Recourse
       return @recourse_listable unless @recourse_listable.nil?
 
       @recourse_listable = limit(MENU_LIMIT + 1).count <= MENU_LIMIT
-    end
-
-  private
-
-    # One per enum: a dozen words a column admits are a menu whatever else is on the
-    # page, and `_in` is what lets a request tick more than one of them.
-    def enum_filter_fields
-      defined_enums.keys.index_with({}).transform_keys { |name| "#{name}_in" }
-    end
-
-    # One per boolean: a column admitting two values is a menu for the same reason a
-    # dozen words are, and the two are the type's own rather than anything declared.
-    def boolean_filter_fields
-      booleans = column_names - Recourse.hidden_columns(self)
-
-      booleans.select { |one| type_for_attribute(one).type == :boolean }
-              .index_with({}).transform_keys { |name| "#{name}_in" }
-    end
-
-    # One per belongs_to the search box does not reach through instead.
-    def reference_filter_fields
-      searched = recourse_searchable_associations
-      recourse_references.filter_map do |association|
-        ["#{association.foreign_key}_in", {}] unless searched.include? association
-      end.to_h
     end
   end
 end
