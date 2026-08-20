@@ -59,5 +59,14 @@ module Recourse
     def parent_id
       request.path_parameters[:"#{@recourse_parent_association.name}_id"]
     end
+
+    # Whether this page is the level a position is counted at, which turns on the
+    # parent above and so is answered here rather than in the controller. A model of
+    # a host's own that answers no questions about keys is not one either.
+    def arranged?
+      return false unless resource_class.respond_to? :recourse_order
+
+      Recourse.arranges? resource_class, @recourse_parent
+    end
   end
 end

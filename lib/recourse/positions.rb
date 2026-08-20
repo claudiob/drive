@@ -20,6 +20,19 @@ module Recourse
       column
     end
 
+    # Whether *this* page is one the arranging means something on, which is the same
+    # question as whether the rows it lists are the rows a position is counted
+    # within. A nested route names the parent, and the page is that parent's rows.
+    # A model nothing points away from — a flat list — is its whole table, so its
+    # own index is the level too. What is neither is a page listing every row across
+    # every parent, where the positions run 1, 2, 3, 1, 2, 3 and mean nothing side by
+    # side: that page sorts and searches like any other, and offers no handle.
+    def arranges?(model, parent)
+      return false unless position_column model
+
+      parent.present? || model.recourse_references.empty?
+    end
+
     # `recourse_order` as `order` will take it: the word above means ascending to
     # everybody downstream, and Active Record rejects a direction it has never heard
     # of. Read here and nowhere else, so the hash a host wrote stays the hash it wrote.

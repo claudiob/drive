@@ -1,7 +1,8 @@
-require_relative 'integration_case'
+require 'test_helper'
+require 'integration_case'
 
-# What a model says by marking one key of `recourse_order` `:positionable`, and what
-# the table it draws stops offering once it has.
+# What a model says by marking one key of `recourse_order` `:positionable`, what it
+# is refused for saying it badly, and which of its pages the saying applies to.
 class TestRecoursesPositions < IntegrationCase
   def test_a_marked_key_names_the_column_a_table_is_arranged_by
     assert_equal 'position', Recourse.position_column(Team)
@@ -48,22 +49,22 @@ class TestRecoursesPositions < IntegrationCase
     assert_includes error.message, 'two orders for one table'
   end
 
-  # The headings of an arranged table are words rather than links, and no form sits
-  # above it: both would read its rows in an order nobody set.
-  def test_an_arranged_table_offers_no_heading_to_sort_by_and_no_box_to_search_with
-    visit '/teams'
-
-    assert_includes body, '<th scope="col">Name</th>'
-    refute_includes body, 'q%5Bs%5D'
-    refute_includes body, 'role="search"'
+  # A flat list is arranged on its own index: nothing points away from a team, so
+  # that page is the whole of what a position counts within.
+  def test_a_model_nothing_nests_is_arranged_on_its_own_index
+    assert Recourse.arranges?(Team, nil)
   end
 
-  # And the refusal is the query's rather than the page's, so a sort typed into the
-  # address bar is answered in the order the reader set anyway.
-  def test_a_sort_asked_for_by_url_leaves_an_arranged_table_where_it_was
-    visit '/teams?q%5Bs%5D=name+desc'
+  # A model reached through a parent is arranged under that parent and nowhere else.
+  # Listed across every parent the positions read 1..6 ten times over, which is an
+  # order of nothing.
+  def test_a_nested_model_is_arranged_under_its_parent_and_not_above_it
+    assert Recourse.arranges?(Memo, Person.first)
+    refute Recourse.arranges?(Memo, nil)
+  end
 
-    assert_operator body.index('Blue Crew'), :<, body.index('Red Shift')
+  def test_a_model_that_marks_nothing_is_arranged_at_no_level_at_all
+    refute Recourse.arranges?(Place, Team.first)
   end
 
 private

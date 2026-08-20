@@ -24,7 +24,7 @@ module Recourse
     # Lists one page of the model the route is named after. `@q` is Ransack's own
     # name for a search, which is what its form and sort link helpers look for.
     def index
-      search = Search.new recourse_relation, params[:q]
+      search = Search.new recourse_relation, params[:q], arranged: arranged?
       @q = search.query
       @pagy, @resources = pagy search.scope
     end

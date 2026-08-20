@@ -13,9 +13,13 @@ module Recourse
     # rather than a model, so a host that narrowed the index is searched inside what
     # it narrowed to rather than around it — the model is still what answers for the
     # order, the eager loads and the allowlist, and a relation knows its own.
-    def initialize(relation, params)
+    #
+    # `arranged` is the controller's word rather than a question asked here: whether
+    # a position means anything depends on the level the page was reached at, which
+    # the route knows and a relation does not.
+    def initialize(relation, params, arranged: false)
       @model = relation.klass
-      @arranged = Recourse.position_column(@model).present?
+      @arranged = arranged
       @query = relation.ransack conditions(params)
     end
 

@@ -39,7 +39,7 @@ module Recourse
       # draws its headings through `sort_header` like every other — needs no edit the
       # day its model becomes arranged.
       def sortable_column?(column)
-        return false if Recourse.position_column resource_model
+        return false if arranged?
 
         resource_model.ransortable_attributes.include? column.to_s
       end

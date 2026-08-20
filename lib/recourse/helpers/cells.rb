@@ -34,12 +34,20 @@ module Recourse
       end
 
       # Ciphertext nobody can read, the id that addresses the row, the parent a
-      # nested route already names, and whatever the model itself asked to hide,
-      # which is the one of these a host decides without the override above.
+      # nested route already names, the column a table arranged by hand is arranged
+      # by — the handles beside each row say the rows are ordered, and the figure
+      # under a heading says it a second time — and whatever the model itself asked
+      # to hide, which is the one of these a host decides without the override above.
       def columns_hidden_by_default
         resource_model.recourse_encrypted_names + [resource_model.primary_key] +
-          Array(resource_parent_association&.foreign_key) +
+          Array(resource_parent_association&.foreign_key) + arranged_columns +
           Recourse.hidden_columns(resource_model)
+      end
+
+      # Only where the arranging is what this page does: read at a level the position
+      # is not counted at, the column is a number like any other and reads as one.
+      def arranged_columns
+        arranged? ? Array(Recourse.position_column(resource_model)) : []
       end
 
       # Columns a form offers — less the parent a nested route has already
