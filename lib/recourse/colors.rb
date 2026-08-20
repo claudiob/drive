@@ -31,7 +31,7 @@ module Recourse
   # A palette repaints the step, so it may move a family across the line and answers
   # first where it does.
   def self.ink(family)
-    inks = THEMES.dig(theme, :dark_inks) || DARK_INKS
+    inks = THEMES[theme] || DARK_INKS
 
     inks.include?(family) ? 'gray-975' : 'white'
   end

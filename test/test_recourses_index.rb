@@ -18,8 +18,13 @@ class TestRecoursesIndex < IntegrationCase
     # Its own status, as the word the column holds rather than a number.
     assert_includes body, '<td data-cell="Status"><span class="badge">draft</span></td>'
     %w[Id Secret Notes Webhook].each { |column| refute_includes body, %(data-cell="#{column}") }
-    # Asked for by the model, so this table ends with both where most end with none.
-    assert_includes body, 'data-cell="Created at"'
+    # Asked for by the model, so this table ends with both where most end with none —
+    # and *ends* with them, in that order, however the schema or the model names them.
+    # Nothing said so while a hook of their own carried it, and what carries it now is
+    # two terms in `resource_columns` that read as though one of them were redundant.
+    headings = body.scan(/data-cell="([^"]+)"/).flatten.uniq
+
+    assert_equal ['Created at', 'Updated at'], headings.last(2)
   end
 
   # A counter is headed with the icon of what it counts, named for a reader who

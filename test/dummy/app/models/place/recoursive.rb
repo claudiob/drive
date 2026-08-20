@@ -13,9 +13,10 @@ class Place
       # makes it the honest test of a column a model simply does not want read out.
       def recourse_hidden = :webhook_url
 
-      # Both, in this order: a place is a thing whose age is worth knowing, where a
-      # row written once by a migration is not.
-      def recourse_timestamps = %i[created_at updated_at]
+      # Both: a place is a thing whose age is worth knowing, where a row written
+      # once by a migration is not. Where they go is the table's business — last,
+      # and created before updated — so the order named here says nothing.
+      def recourse_displayed = %i[created_at updated_at]
     end
   end
 end

@@ -7,6 +7,61 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* The scheme toggle holds the foot of the viewport
+
+  At the foot of a sidebar as tall as the table it sat below the fold on any long
+  index, which is where it is least use. It is now `position: sticky`, so it holds the
+  bottom of the window while the content beside it scrolls and comes to rest in its
+  real place at the end — sticky rather than fixed, so it keeps the sidebar's column
+  and can never land over the table.
+
+* `:bootstrap` joins `Recourse::THEMES`, so the toggle can rotate back to it
+
+  Bootstrap's own palette was reachable only by not setting one, which meant a reader
+  who clicked the sidebar's toggle could never get the pages' original look back. It is
+  now a palette like the other eight, whose stylesheet declares nothing: the eight work
+  by overriding upstream's `:root`, so dropping their block is all it takes. The default
+  is still nil, so a host that names no palette still links no stylesheet at all.
+
+  `THEMES` is now a name mapped straight to its dark-label families rather than to a
+  hash. The `primary:` key it used to carry had no reader left after each palette began
+  declaring its own `--bs-primary-*`, and dead data that can drift from the stylesheet
+  is worse than none.
+
+* A kept row is tinted, and the tint is what reports the click
+
+  A table whose model keeps bookmarks now paints the whole `<tr>` of a row the viewer
+  has kept — a twelfth of the primary mixed into the page, so it follows every palette
+  and both colour modes. Twenty rows are scanned by it long before anybody reads a
+  column of icons. It is a background rather than Bootstrap's `.table-active`, which
+  sets the same variable `.table-hover` does and would leave a kept row looking like
+  the row under the cursor.
+
+  The square's success toast is gone with it. The icon still flips on the click, but
+  the row takes colour only when the write comes back, so the confirmation lands where
+  the click happened instead of in a corner of the page — and a column built to be
+  clicked twenty times no longer answers with twenty toasts. Only a failure speaks
+  now. The no-JavaScript path still flashes `Bookmark added` and `Bookmark removed`,
+  since it reloads the page and would otherwise say nothing.
+
+  `data-bookmark-messages-value` is now `data-bookmark-error-value`, a string rather
+  than JSON, which matters to a host that had overridden the square.
+
+* [BREAKING CHANGE] `recourse_timestamps` is gone; `recourse_displayed` asks
+
+  A model that showed `created_at` or `updated_at` on its table said
+  `def recourse_timestamps = %i[created_at updated_at]`. It now says
+  `def recourse_displayed = %i[created_at updated_at]`, which is the hook that
+  already named back every other column a table leaves off — the encrypted ones, the
+  primary key, a polymorphic `*_type`, the inheritance column. Two hooks meaning
+  "draw this anyway" were one too many, and unlike the old one this accepts a single
+  symbol as readily as a list.
+
+  The timestamps still come last, and still `created_at` before `updated_at` whatever
+  order they are named in. Nothing else moves: the show page reads both out for every
+  model as before, forms still never offer them, and every heading a table shows can
+  still be sorted by.
+
 * `Recourse.theme` draws every page in a code-editor colour scheme
 
   Eight of them — `dawn`, `dracula`, `gruvbox`, `monokai`, `nord`, `one_dark`,

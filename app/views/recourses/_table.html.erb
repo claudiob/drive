@@ -36,7 +36,8 @@
       <tbody <%= tag.attributes data: arrangement_data(pagy) if arranged %>>
         <% @recourse_headers = false %>
         <% recourses.each do |recourse| %>
-          <tr <%= tag.attributes data: { sortable_update_url: arrangement_url(recourse) } if arranged %>>
+          <tr <%= tag.attributes class: bookmark_row_class(recourse),
+                                 data: ({ sortable_update_url: arrangement_url(recourse) } if arranged) %>>
             <% if arranged -%>
               <%= column header: arrangement_header, class: 'recourse-actions recourse-handle' do %><%= arrangement_handle %><% end %>
             <% end -%>

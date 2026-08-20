@@ -9,10 +9,11 @@ import { flash } from '/recourse/flash.js'
 // The form is still a real one. Without this controller it submits, redirects and
 // reloads, which is the same floor every other button here degrades to.
 export default class extends Controller {
-  static values = { kept: Boolean, messages: Object }
+  static values = { kept: Boolean, error: String }
 
   connect() {
     this.form = this.element.closest('form')
+    this.row = this.element.closest('tr')
     this.icon = this.element.querySelector('i')
     this.form.addEventListener('submit', this.submit)
   }
@@ -77,19 +78,21 @@ export default class extends Controller {
       })
       if (!response.ok) return this.revert(kept)
 
-      // Said only once the row is actually written. The icon flipped on the click
-      // and would have flipped under a request that never landed, so this is the
-      // half of the report the server is the only one who can give.
-      flash(kept ? this.messagesValue.added : this.messagesValue.removed, 'theme-success')
+      // The whole report, and the reason there is no toast: the row takes colour once
+      // it is actually written. The icon flipped on the click and would have flipped
+      // under a request that never landed, so the tint is the half only the server can
+      // give — said where the click happened rather than in a corner of the page.
+      this.row?.classList.toggle('recourse-kept', kept)
     } catch {
       this.revert(kept)
     }
   }
 
-  // Put the square back, and say why — the one time this column speaks, since the
-  // icon flipping is the only report a click that worked ever needs.
+  // Put the square back, and say why — the one time this column speaks, since a click
+  // that worked is reported by the row taking colour. Nothing to put back but the
+  // square: the tint is never laid on until the row is written.
   revert(kept) {
     this.render(!kept)
-    flash(this.messagesValue.error)
+    flash(this.errorValue)
   }
 }

@@ -115,6 +115,16 @@ before writing or editing any layout, view or partial.
   Not only so `Recourse.theme` alone looks right, but because a reader can swap the
   file for another one — the primary has to travel with it, and a block written into
   the page would stay behind. A host's own colour still wins, coming after the file.
+- `:bootstrap` is in the list and declares nothing. The eight work by overriding
+  upstream's `:root`, so dropping their block is the whole of what brings upstream's
+  palette back — and swapping this link in is how the toggle drops it. nil and
+  `:bootstrap` are one look by two routes, and it is named so the rotation can reach
+  it: a reader who cannot get back to the palette the pages started in has been shown
+  a door with no handle on the inside.
+- `THEMES` maps a name to one thing only: the families whose 500 step that palette
+  puts a dark label on. Every other fact about it — every ramp, and the accent it
+  leads with — lives in its stylesheet, which is the only place it can be true. A
+  `primary:` key here outlived its reader once already and went quietly stale.
 - Check the numbers when adding one. Every accent of all eight clears 3:1 against
   the label it is given, and every text tone clears 4:1 in both modes. Nothing in
   the suite can see this: the same lines run whichever colour is written.
@@ -131,8 +141,17 @@ before writing or editing any layout, view or partial.
   items are pinned to `flex: 0 0 auto` and only the toggle's margin takes the rest.
   Same reason the sidebar's own borders are written out — see the note there.
 - Being at the foot of a full-height sidebar means being at the foot of the *page*, so
-  on a long index it is below the fold. That is what the position asks for; a toggle
-  that must always be in view wants `position: sticky` and is a different decision.
+  on a long index it would sit a long way below the fold. It is `position: sticky` with
+  an `inset-block-end` for that reason: it holds the foot of the viewport while the
+  table beside it scrolls, and comes to rest in its real place at the end.
+- Sticky and not fixed. Fixed would leave the flow and be positioned against the
+  window, which puts it over the table and asks the layout to guess a left edge; sticky
+  keeps the sidebar's column and its centring, and needs no `z-index` because the two
+  columns never overlap. The offset is `--bs-spacer-3`, the padding the sidebar already
+  carries, so it does not sit flush against the edge of the window.
+- It carries the page's own background colour, which is invisible at rest and is there
+  for the short viewport: where the links themselves reach the foot, the toggle sticks
+  over one, and a transparent icon on top of a link reads as neither.
 - The icon names where a click *goes*, not where the page is. A click moves to another
   palette and into the other mode, which is what makes one control enough for both.
 - Which palette is next is random among those not showing. Excluding the current one
@@ -449,8 +468,9 @@ before writing or editing any layout, view or partial.
   never disagree about which attributes a record has. Encrypted columns included.
 - Then `created_at` and `updated_at`, always, at the end and in that order. A
   record's own page is where "when" belongs — however firmly its index keeps the
-  two off the table unless `recourse_timestamps` asks — and the form never offers
-  them, since Rails keeps them. The shared rows still line up with the edit page;
+  two off the table unless `recourse_displayed` asks — and the form never offers
+  them, since Rails keeps them. `recourse_displayed` governs the table and this
+  page not at all: a show page reads them out for every model, named or not. The shared rows still line up with the edit page;
   the show page is simply two rows longer.
 - Each value reads as what it is *of*, not as what it is stored as. A foreign key is
   the label of what it points at, a date is `Aug 12, 2026`, an integer carries its
@@ -827,21 +847,48 @@ before writing or editing any layout, view or partial.
   delete stays off a table because it cannot be undone; a bookmark is undone by
   clicking the same square again, so a dialog would cost more than the mistake — and
   costs a whole page load more, since this square answers without one.
+- The row is tinted as well as squared: a kept `<tr>` wears `recourse-kept`, which
+  paints its cells a twelfth of `--bs-primary-fg` mixed into `--bs-bg-body`, so the
+  tint follows every palette and both modes without naming a colour. Twenty rows are
+  scanned by it long before anybody reads a column of icons, and the square is still
+  what says the same thing to a reader who cannot see a tint.
+- Mixed into the *page*, not taken from the ramp. `--bs-primary-bg-subtle` is a fixed
+  step, which on a low-contrast palette lands far enough from the page to cost the
+  text a point of contrast it has not got — Solarized's dark mode is the one that
+  proves it. Mixing into the page holds the tint the same distance from it whatever
+  the palette is.
+- A `background-color`, deliberately, and not `.table-active`. That class sets the
+  very variable `.table-hover` sets — 10% of the row's own text colour against
+  hover's 7.5%, the same grey twice — so a kept row would read as the row under the
+  cursor and would lose its tint the moment it became one. A background sits under
+  the hover shadow instead, so a kept row hovers like any other.
+- Not `theme-primary` on the `<tr>` either, tempting as it looks: that sets
+  `--bs-theme-*` for everything inside the row, and `.btn-link` and `.badge` both
+  read those before their own defaults. The tint would have recoloured every button
+  and badge in the row with it.
 - The click does not wait for the server. The `bookmark` Stimulus controller flips
   the icon, posts in the background and never renders the response, so the table is
   not redrawn and the row keeps its place until the next real page load — which is
   where the kept-first order belongs, rather than yanking a row to the top of the
   table under the cursor that just clicked it.
-- The response is what is reported, in a toast the controller builds itself: `Bookmark
-  added` or `Bookmark removed` in the success theme once the row is written, and the failure message
-  in the danger one when it was not, with the square put back. The icon flipping is
-  not the report — it flips on the click, and would flip the same under a request
-  that never landed. That toast is the same markup `_flash` ships, from
-  `/recourse/flash.js`, carrying `data-controller='toast'` so the timer and the X
-  are the ones every other toast uses.
-- The three words it may say travel on the button in one `data-bookmark-messages-value`,
-  as JSON: a `.js` file has no `t`, and every row of the table carries them, so one
-  attribute rather than three.
+- **The tint is the report, and it waits for the server.** The icon flips on the
+  click; the row takes colour only once the write comes back. So the confirmation
+  lands where the click happened rather than in a corner of the page, and a click
+  that never reached the server never colours anything. Dropping a kept row reads the
+  same way round: the tint stays until the delete is actually written.
+- Which is why a click that *worked* says nothing at all. There is no success toast —
+  the row is the message, and a toast per click on a column built for clicking twenty
+  times would be twenty toasts. Only a failure speaks: the square goes back and the
+  error goes in the danger theme, the same markup `_flash` ships from
+  `/recourse/flash.js`, carrying `data-controller='toast'` so the timer and the X are
+  the ones every other toast uses.
+- The no-JavaScript path still speaks, and must: it is a real form submit, so it
+  redirects, and a page that reloaded with no word on it would leave a reader guessing.
+  `BookmarksController#answer` sets `Bookmark added` or `Bookmark removed` for that
+  path and `head :no_content` for the background one.
+- The one word it may say travels on the button as `data-bookmark-error-value`: a
+  `.js` file has no `t`, so the wording goes with it. One word and one attribute,
+  since the other two the square used to carry were the success toast's.
 - A table that has actions opens with one column per action, and `_table` adds
   them rather than `_row`. That is the whole point of putting them there: a host
   that writes its own row still gets the columns, prepended before whatever
@@ -901,11 +948,14 @@ before writing or editing any layout, view or partial.
 - A table of records shows every attribute that is not encrypted, one column
   each. Encrypted attributes are omitted entirely: showing ciphertext helps
   nobody, and decrypting it into a list leaks it.
-- That is a default, not a law. A model may name one back with
-  `def recourse_displayed = :phone`, and it is the host that answers for its own
-  screens — a contact recognised by nothing but its number is the case this was
-  built for. Read it twice before writing it: the reason for the default is what a
-  screenshot of a page of twenty carries.
+- That is a default, not a law, and `recourse_displayed` is the one hook that
+  overrules any of them: `def recourse_displayed = :phone`, and it is the host that
+  answers for its own screens — a contact recognised by nothing but its number is
+  the case this was built for. Read *that* one twice before writing it: the reason
+  for the default is what a screenshot of a page of twenty carries. The same hook
+  names back the primary key, a polymorphic `*_type`, the inheritance column and
+  the two timestamps, none of which carry that risk — so keep the warning attached
+  to the columns it is about rather than to the hook.
 - The primary key is omitted too. An id is how a row is addressed, not something
   to read about it, and a column of them is a column of noise next to the name
   the row is actually known by.
@@ -921,10 +971,16 @@ before writing or editing any layout, view or partial.
   there, and the mark that usually explains it has nowhere to go. A host that
   wants one searched anyway names the predicate itself, in `search_field`.
 - `created_at` and `updated_at` are shown only where a model names them in
-  `recourse_timestamps`, and come last when it does, in that order however the
-  schema declares them. Neither by default: a timestamp is a fact about the row's
-  storage rather than about the thing it stores, and on reference data written by
-  a migration it repeats one instant three thousand times.
+  `recourse_displayed`, and come last when it does, in that order however the
+  schema declares them or the model names them. Neither by default: a timestamp is
+  a fact about the row's storage rather than about the thing it stores, and on
+  reference data written by a migration it repeats one instant three thousand times.
+- They are the one family with a position of their own. Everything else
+  `recourse_displayed` names back keeps the place the schema gave it; these two are
+  lifted out of it and appended. That is two terms in `resource_columns`, and one of
+  them reads as redundant until a migration adds a column after the timestamps —
+  which is why the index test asserts the last two headings rather than their
+  presence.
 - A model asks for the one that means something. A booking and a contact show
   `created_at`, since when the work came in and when someone first reached the app
   are part of what those rows say; a setting and an app show `updated_at`, since

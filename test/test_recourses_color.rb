@@ -62,9 +62,17 @@ class TestRecoursesColor < IntegrationCase
     assert_includes body, 'data-scheme-path-value="/recourse/themes"'
     assert_includes body, "<i class='bi bi-moon-fill'></i>"
     assert_includes body, "<i class='bi bi-sun-fill'></i>"
+    # Upstream's own palette is in the rotation too: a reader who cannot reach the one
+    # the pages started in cannot undo a click.
+    assert_includes body, '&quot;bootstrap&quot;'
     visit '/recourse/themes/dracula.css'
 
     assert_includes body, '--bs-white: #f8f8f2;'
+    # And it declares nothing, because the eight work by overriding `:root` — so
+    # dropping their block is the whole of what brings upstream's palette back.
+    visit '/recourse/themes/bootstrap.css'
+
+    refute_includes body, '--bs-'
     error = assert_raises(Recourse::Error) { Recourse.theme = :draculla }
 
     assert_includes error.message, 'draculla'

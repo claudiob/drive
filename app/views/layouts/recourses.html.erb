@@ -200,6 +200,19 @@
       }
       .combobox-search-clear:hover { background-color: var(--bs-bg-1); color: var(--bs-fg-body); }
 
+      /* A row the viewer has kept, and the only report a click ever gets, so it has to
+         be seen. A twelfth of the primary mixed into the page rather than
+         `--bs-primary-bg-subtle`: that token is a fixed step of the ramp, far enough
+         from the page on a low-contrast palette to cost the text a point of contrast
+         it has not got — mixing into the page keeps the tint the same distance from it
+         whatever the palette. A background rather than `.table-active`, which sets the
+         very variable `.table-hover` sets and would read as the row under the cursor,
+         and lose its tint the moment it became one; a background lets the hover shadow
+         lay over it. */
+      .table > tbody > .recourse-kept > * {
+        background-color: color-mix(in srgb, var(--bs-primary-fg) 12%, var(--bs-bg-body));
+      }
+
       /* The scheme toggle sits at the foot of the sidebar and centered across it while
          the sidebar is a column, and is simply the last item of the row while it is not
          — the query matches the `md:` the sidebar's own classes use. Both lines are
@@ -209,9 +222,21 @@
       @media (width >= 768px) {
         .recourse-sidebar .nav { height: 100%; }
         .recourse-sidebar .nav-item { flex: 0 0 auto; }
+        /* And it stays in view while the content beside it scrolls. Its own place is
+           the foot of a sidebar as tall as the table, which on a long index is a long
+           way below the fold, so it sticks to the foot of the viewport until the page
+           catches up with it. Sticky rather than fixed: it keeps the sidebar's column,
+           so it can never land over the table, and it comes to rest in its real place
+           at the end of the scroll. Offset by the padding the sidebar already carries,
+           so it does not sit flush against the edge of the window. The background is
+           for the short viewport, where the links reach the foot themselves — the
+           page's own colour, so it is seen only where it masks a link it sits over. */
         .recourse-sidebar .recourse-scheme {
+          position: sticky;
+          inset-block-end: var(--bs-spacer-3);
           margin-block-start: auto;
           align-self: center;
+          background-color: var(--bs-bg-body);
         }
       }
 

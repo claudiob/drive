@@ -30,6 +30,14 @@ module Recourse
         [:bookmarked, *bookmarked_ids.to_a.sort] if resource_bookmarks
       end
 
+      # The class that tints a kept row, and nothing at all where the viewer has not
+      # kept it — or where this model keeps none, since `bookmarked_ids` has no column
+      # to read then. The square already says which rows are theirs, and says it to a
+      # reader who cannot see a tint; this is what a page of twenty is scanned by.
+      def bookmark_row_class(record)
+        'recourse-kept' if resource_bookmarks && bookmarked_ids.include?(record.id)
+      end
+
       # The column's heading: the hollow square on the header row — the column is as
       # narrow as the icon in it — and the word on every other, which is what each
       # `data-cell` labels itself with, the way an action column's does.
@@ -65,20 +73,10 @@ module Recourse
         # see which way the square is filled.
         data = {
           controller: 'bookmark', bookmark_kept_value: kept,
-          bookmark_messages_value: bookmark_messages,
+          bookmark_error_value: t('recourse.bookmark_error'),
         }
 
         { aria: { label:, pressed: kept }, data: }
-      end
-
-      # What the square says once the row is written, and what it says when it could
-      # not be. A `.js` file has no `t`, so the three travel with it — as one
-      # attribute rather than three, since every row of the table carries them.
-      def bookmark_messages
-        {
-          added: t('recourse.bookmark_added'), removed: t('recourse.bookmark_removed'),
-          error: t('recourse.bookmark_error'),
-        }
       end
 
       def bookmark_url(record)

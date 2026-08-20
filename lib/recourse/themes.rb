@@ -1,42 +1,25 @@
 # Reopened for the other thing a host says about how every page looks.
 module Recourse
-  # Colour schemes from code editors a host may draw its pages in. Each names the family
-  # its own accents lead with, since a scheme that repaints Bootstrap's blue may not have
-  # one, and the families whose 500 step its palette puts dark text on rather than white.
-  # Every scheme fills both arms of every ramp, so a page still follows the OS.
+  # Palettes a host may draw its pages in: eight colour schemes from code editors, and
+  # Bootstrap's own — which is what a page wears when none is named at all, so nil and
+  # `:bootstrap` are two spellings of one look. It is named all the same, because the
+  # sidebar's toggle rotates through this list and a reader who never finds upstream's
+  # palette in it can never get back to it.
+  #
+  # Each is mapped to the families whose 500 step its palette puts dark text on rather
+  # than white. That is the one thing about a palette the gem reads; everything else
+  # about it — every ramp, and the accent it leads with — is in its stylesheet, which
+  # is the only place it could be true.
   THEMES = {
-    dawn: {
-      primary: :blue,
-      dark_inks: %i[brown cyan gray orange pink purple yellow],
-    },
-    dracula: {
-      primary: :purple,
-      dark_inks: %i[blue brown cyan green orange pink purple red yellow],
-    },
-    gruvbox: {
-      primary: :blue,
-      dark_inks: %i[cyan gray green yellow],
-    },
-    monokai: {
-      primary: :pink,
-      dark_inks: %i[blue brown cyan green orange purple yellow],
-    },
-    nord: {
-      primary: :blue,
-      dark_inks: %i[brown cyan green orange pink purple yellow],
-    },
-    one_dark: {
-      primary: :blue,
-      dark_inks: %i[blue brown cyan gray green orange pink purple red yellow],
-    },
-    solarized: {
-      primary: :blue,
-      dark_inks: %i[blue brown cyan gray green yellow],
-    },
-    tokyo_night: {
-      primary: :blue,
-      dark_inks: %i[blue brown cyan gray green orange pink purple red yellow],
-    },
+    bootstrap: DARK_INKS,
+    dawn: %i[brown cyan gray orange pink purple yellow],
+    dracula: %i[blue brown cyan green orange pink purple red yellow],
+    gruvbox: %i[cyan gray green yellow],
+    monokai: %i[blue brown cyan green orange purple yellow],
+    nord: %i[brown cyan green orange pink purple yellow],
+    one_dark: %i[blue brown cyan gray green orange pink purple red yellow],
+    solarized: %i[blue brown cyan gray green yellow],
+    tokyo_night: %i[blue brown cyan gray green orange pink purple red yellow],
   }.freeze
 
   # Where the palettes are served from, named once: the layout links one, the layout's

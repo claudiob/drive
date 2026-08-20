@@ -18,18 +18,15 @@ module Recourse
     def recourse_hidden = []
 
     # And the columns a table draws whatever would otherwise keep them off it —
-    # ciphertext, the id, a polymorphic type, the inheritance column. Every one of
-    # those is a default the gem picks, and a host is what answers for its own
-    # screens: `def recourse_displayed = :phone` puts a number back on a table that
-    # recognises its rows by nothing else. Read the encrypted case twice, since
-    # what a screenshot of a page of them carries is the reason for the default.
+    # ciphertext, the id, a polymorphic type, the inheritance column, and the two
+    # timestamps. Every one of those is a default the gem picks, and a host is what
+    # answers for its own screens: `def recourse_displayed = :phone` puts a number
+    # back on a table that recognises its rows by nothing else, and
+    # `%i[created_at updated_at]` asks for the two Rails keeps rather than the two
+    # a record is about. Read the encrypted case twice, since what a screenshot of a
+    # page of them carries is the reason for that one. A timestamp named here still
+    # lands last, and in that order, whichever way round it was written.
     def recourse_displayed = []
-
-    # Which of `created_at` and `updated_at` a table ends with, in that order.
-    # Neither by default: a timestamp is a fact about the row's storage rather than
-    # about the thing it stores, and reference data written once by a migration
-    # carries the same instant on every row of it.
-    def recourse_timestamps = []
 
     # Columns holding a counter cache, each mapped to the association it counts. Read
     # from the `belongs_to` on the other side, which is where `counter_cache` is

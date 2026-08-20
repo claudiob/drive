@@ -468,10 +468,13 @@ same one:
 - A table shows every column except the encrypted ones, so a column holding PII
   never reaches an index page, and except the primary key. `attr_readonly` means
   nothing here: a column written once is still a column, and a model that would
-  rather no screen drew it says `recourse_hidden`, which is the one hook a host
-  decides. `created_at` and `updated_at` are shown only where a
-  model asks for them by name — `def recourse_timestamps = %i[created_at]` — and
-  come last when it does, after whatever the record is actually about.
+  rather no screen drew it says `recourse_hidden`. A model that wants one of those
+  defaults overruled says `recourse_displayed`, which is the other hook a host
+  decides: `def recourse_displayed = :phone` puts a number back on a table that
+  recognises its rows by nothing else. `created_at` and `updated_at` are hidden the
+  same way, and shown by the same hook —
+  `def recourse_displayed = %i[created_at updated_at]` — coming last when it does,
+  after whatever the record is actually about, in that order however they were named.
 - A form offers, and `create` permits, `Recourse.editable_columns` — every
   column except `id`, `created_at`, `updated_at` and any counter cache. Encrypted
   columns are offered too, carrying the record's own value in the field its kind
@@ -505,7 +508,7 @@ defaults are there without a model mentioning them.
 | `recourse_typed_label?` | true when that column has a length validator | whether a foreign key to this model is typed into a text field or picked from a list |
 | `recourse_includes` | every `belongs_to` the table names | what the index eager-loads, in any shape `includes` accepts |
 | `recourse_order` | `:id` | how the index sorts, in any shape `order` accepts |
-| `recourse_timestamps` | `[]` | which of `created_at` and `updated_at` the table ends with |
+| `recourse_displayed` | `[]` | columns a table draws that it would otherwise leave off — the encrypted ones, the primary key, a polymorphic `*_type`, the inheritance column, and `created_at` / `updated_at`, which come last whatever order they are named in. One name or a list |
 | `recourse_hidden` | `[]` | columns kept off every screen — the table, the show page, the form (which also stops permitting them) and the search box. One name or a list: `def recourse_hidden = :name` and `%i[name title]` both read |
 | `recourse_broadcasts?` | `true` | whether saving a record refreshes every open index listing it — see [Live index refreshes](#live-index-refreshes) |
 
@@ -1062,7 +1065,9 @@ overrides the way it overrides `RecoursesController`.
 Recourse.color = :orange
 ```
 
-Bootstrap's primary colour is blue, and one line makes it one of the other five:
+Bootstrap's primary colour is blue, which is what the pages are drawn in when nothing
+says otherwise — `Recourse.color` is nil by default, and nil means exactly that. One
+line makes it one of the other five:
 
 ```ruby
 Recourse::COLORS # => [:blue, :gray, :orange, :purple, :pink, :brown]
@@ -1103,12 +1108,19 @@ two locals.
 Recourse.theme = :solarized
 ```
 
-Eight colour schemes from code editors, and one line draws every page in one:
+Eight colour schemes from code editors, and Bootstrap's own beside them, so one line
+draws every page in any of nine:
 
 ```ruby
 Recourse::THEMES.keys
-# => [:dawn, :dracula, :gruvbox, :monokai, :nord, :one_dark, :solarized, :tokyo_night]
+# => [:bootstrap, :dawn, :dracula, :gruvbox, :monokai, :nord, :one_dark, :solarized,
+#     :tokyo_night]
 ```
+
+`:bootstrap` is what a page wears when nothing is set, so it and nil are the same look
+by two routes: nil links no stylesheet at all, `:bootstrap` links one that declares
+nothing. It is named all the same, because the toggle below rotates through this list
+and a reader who cannot find the palette the pages started in cannot undo a click.
 
 This reaches further than `Recourse.color` does. Bootstrap derives every surface,
 border and text colour it ships from one neutral ramp, and names each of its
@@ -1140,7 +1152,7 @@ which of its families take a dark label rather than a white one, since a scheme 
 for a dark editor has accents far lighter than Bootstrap's — every accent of all eight
 clears 3:1 with the label it is given, the worst pair being 3.41:1.
 
-A name nobody ships raises a `Recourse::Error` naming the eight, rather than
+A name nobody ships raises a `Recourse::Error` naming the nine, rather than
 asking the browser for a stylesheet that is not there. A host wanting a scheme of
 its own writes `app/stylesheets/recourse/themes/` into its own asset path, or
 overrides the layout — and the shipped files are the worked example to copy.
@@ -1150,10 +1162,10 @@ overrides the layout — and the shipped files are the worked example to copy.
 The sidebar ends with one control: a moon while the page is light and a sun while it
 is dark, at the foot of the sidebar wherever it is a column. The icon names where a
 click goes rather than where the page is, and a click moves it to another palette
-*and* into the other mode — so the eight schemes are reachable from the page itself
-rather than only from an initializer.
+*and* into the other mode — so every scheme is reachable from the page itself rather
+than only from an initializer, upstream's own among them.
 
-Which palette comes next is picked at random from the ones not showing. The eight
+Which palette comes next is picked at random from the ones not showing. The nine
 have no order that means anything, and excluding the current one is what stops a
 click looking as though it did nothing.
 
@@ -1329,14 +1341,16 @@ Written in an initializer:
 - `Recourse::COLORS` — `%i[blue gray orange purple pink brown]`
 - `Recourse.theme` / `Recourse.theme=` — the code-editor colour scheme the pages
   are drawn in, one of `Recourse::THEMES`, or nil for Bootstrap's own palette
-- `Recourse::THEMES` — the eight schemes, each keyed by name
+- `Recourse::THEMES` — the nine palettes, each mapped to the families whose 500 step
+  it puts a dark label on rather than a white one
 
 Declared on a model, each overriding a default:
 
 - `recourse_label` — the column a record is named by
 - `recourse_hidden` — a column, or a list of them, no screen shows
+- `recourse_displayed` — a column, or a list of them, a table draws anyway; how
+  `created_at` and `updated_at` are asked for
 - `recourse_order` — how an index sorts before anyone clicks a heading
-- `recourse_timestamps` — which of `created_at` and `updated_at` a table ends with
 
 Subclassed or reopened in `app/controllers`:
 

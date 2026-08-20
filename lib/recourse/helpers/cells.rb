@@ -17,13 +17,14 @@ module Recourse
       # the record's children and belongs beside the action columns that open it;
       # then every attribute that is not encrypted and not read-only, less the
       # primary key — an id is how a row is addressed, not something to read about
-      # it — and with the timestamps moved to the end.
+      # it — and last the timestamps, where the model named them. Both terms below
+      # earn their place: one lifts the pair out of the order the schema gave it, the
+      # other appends it in the constant's.
       def resource_columns
         columns = resource_model.column_names - hidden_columns
-        asked = resource_model.recourse_timestamps.map(&:to_s)
         counters = counter_columns & columns
 
-        counters + (columns - counters - TIMESTAMPS) + (TIMESTAMPS & columns & asked)
+        counters + (columns - counters - TIMESTAMPS) + (TIMESTAMPS & columns)
       end
 
       # What no table shows, less whatever the model asked to draw anyway. Each of
@@ -36,12 +37,13 @@ module Recourse
       # Ciphertext nobody can read, the id that addresses the row, the parent a
       # nested route already names, the column a table arranged by hand is arranged
       # by — the handles beside each row say the rows are ordered, and the figure
-      # under a heading says it a second time — and whatever the model itself asked
+      # under a heading says it a second time — the two timestamps, which Rails keeps
+      # rather than the record being about them, and whatever the model itself asked
       # to hide, which is the one of these a host decides without the override above.
       def columns_hidden_by_default
         resource_model.recourse_encrypted_names + [resource_model.primary_key] +
           Array(resource_parent_association&.foreign_key) + arranged_columns +
-          Recourse.hidden_columns(resource_model)
+          Recourse.hidden_columns(resource_model) + TIMESTAMPS
       end
 
       # Only where the arranging is what this page does: read at a level the position
