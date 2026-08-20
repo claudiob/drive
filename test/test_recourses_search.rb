@@ -69,6 +69,10 @@ class TestRecoursesSearch < IntegrationCase
     refute_includes body, 'bi bi-caret-up-fill'
     # And a search keeps the order a heading asked for, carried as a hidden field.
     assert_includes body, '<input type="hidden" name="q[s]" id="q_s" value="name desc"'
+    # Indexed, so it is a column a heading could sort by; hidden by the model, so none
+    # may. No page can show this -- a hidden column has no heading to look at -- which
+    # is why it is asserted on the list rather than on the markup.
+    refute_includes Place.ransortable_attributes, 'webhook_url'
   end
 
 private

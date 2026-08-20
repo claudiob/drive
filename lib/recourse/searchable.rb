@@ -30,13 +30,15 @@ module Recourse
     # every counter cache — a count is a number a reader ranks by, and the one column
     # whose heading says what it counts. Never a foreign key: its cell shows a label
     # from the other table, and the id under it is not the order that label reads in.
+    # And never one the model hides, for the reason `recourse_searchable_columns` gives
+    # for leaving those out too: hidden from every screen means hidden here.
     def ransortable_attributes(_auth_object = nil)
       readable = ransackable_attributes - recourse_encrypted_names
       indexed = recourse_indexed_columns + recourse_counters.keys + Recourse::TIMESTAMPS
 
       keys = recourse_references.map { |one| one.foreign_key.to_s }
 
-      (readable & indexed) - keys
+      (readable & indexed) - keys - Recourse.hidden_columns(self)
     end
 
     # Filters offered beside the search box, as a Ransack predicate to the options
