@@ -910,6 +910,43 @@ Anything your app defines wins, because your app's view paths come first and
 | `app/views/recourses/_card.html.erb` | the tabbed card the show and edit pages sit in |
 | `app/views/recourses/_sidebar.html.erb` | a shared partial, for every resource at once |
 
+Two private methods on a controller of yours are the seams for a screen the gem
+otherwise draws whole. `recourse_relation` says which rows an index lists, and
+nothing narrows an answer of its own. `recourse_model` says which model the screen
+is about, where the route's name is not one: a page of `neighbors` lists what a
+measurement answers rather than what a table holds, so it is named for the answer
+and there is no `Neighbor` class to find.
+
+```ruby
+class NeighborsController < Admin::Locations::RecoursesController
+private
+
+  def recourse_model = Location
+  def recourse_relation = Location.near @recourse_parent
+end
+```
+
+The local a row partial receives is still named after the route — `neighbor:` — so
+what a page is called and what it lists stay two separate things.
+
+A resource need not keep rows at all. `include Recourse::Aggregate` in a plain class
+answers everything a table answers from its columns and its keys as the nothing an
+aggregate has, and names the class the way a model is named, so a page assembled out
+of other models' records is a resource like any other:
+
+```ruby
+class Message
+  include Recourse::Aggregate
+
+  class << self
+    def recourse_label = :content
+    def recourse_icon = :message
+  end
+end
+```
+
+Write its `index.html.erb` and the gem draws the chrome around it.
+
 No cache stands in the way. The index table renders inside a fragment, and its
 key carries the digest of whichever `_row` the lookup resolved — so a row
 partial added, edited or deleted expires the table by itself, with nothing to

@@ -23,6 +23,17 @@ module Recourse
     def resource_class
       return ActiveStorage::Blob if attachment_reflection
 
+      recourse_model
+    end
+
+    # The model this screen is about, and the second thing a host overrides to put a
+    # page of its own behind a screen the gem otherwise draws whole:
+    # `def recourse_model = Location`. The route's own name answers by default, which
+    # asks the app for a class of that name — so a page listing what a measurement
+    # answers rather than what a table holds is named for the answer and has no class
+    # to match it. Private, the way `recourse_relation` beside it is: naming a model
+    # adds no action.
+    def recourse_model
       Recourse.model controller_name
     end
 

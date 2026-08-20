@@ -7,6 +7,23 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* [Feature] A resource may name its own model, and may keep no rows at all
+
+  Two things a host had to fake before. A screen whose route is not named after a
+  model — `neighbors`, listing what a measurement answers rather than what a table
+  holds — needed a class of that name to exist, so a host wrote an empty subclass for
+  the gem to find. `def recourse_model = Location`, private beside `recourse_relation`,
+  says it instead: what a page is called and what it lists are two separate things, and
+  the local a row partial receives is still named after the route.
+
+  And a resource that keeps no rows at all — a page assembled out of other models'
+  records — had to answer eight questions a table answers from its columns and its
+  associations, one method at a time, because the defaults reach for
+  `reflect_on_all_associations` and a class with no table has none.
+  `include Recourse::Aggregate` answers them all as the nothing an aggregate has, and
+  brings the naming a title reads a word from, so such a class says only what it is
+  called and drawn with.
+
 * A search box no longer names a label Ransack will refuse
 
   A foreign key whose model is too long to list is searched through rather than
