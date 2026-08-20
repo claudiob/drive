@@ -7,6 +7,93 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A search box no longer names a label Ransack will refuse
+
+  A foreign key whose model is too long to list is searched through rather than
+  filtered by, under the far model's label — `location_street` for the ZIP a booking
+  is at. Whether that label could be searched at all was asked of its type, and
+  encryption leaves a type alone: an encrypted `street` reads as a word here, so the
+  box asked for `specialty_name_or_location_street_or_provider_name_cont` and Ransack
+  answered with a `NoMethodError`. Every index reaching that model through a key
+  raised — five of them, in the app this was found in — and only in an environment
+  with enough rows to stop the key being a menu, so a test suite drew a filter where
+  a browser drew a term and never saw it.
+
+  The label has to be a column Ransack will answer to as well, which is the allowlist
+  rather than the type. A model whose label the search cannot match is no longer
+  reached through: its key stays a filter where it can be one, and the box looks
+  through what is left.
+
+  A host relying on the old behaviour was relying on a 500. One whose label is
+  encrypted loses the ability to search through that key — name a plaintext column as
+  the label to get it back.
+
+* A singular nested `recourse` routed `show` earns a tab, not nothing
+
+  `recourse :property` under a location is one record reached with no id of its own,
+  and Rails' `resource` draws no index for it — so a nesting the gem only drew a tab
+  for where an index was routed could never earn one. `recourse :lead, only: :show`
+  was routed, served, and linked from nowhere at all; `only: %i[new create show]` was
+  the same, the `new` route being enough to suppress the button a bare action would
+  otherwise have earned.
+
+  A nesting with no index and a `show` the router needs no id for now earns a tab on
+  the record it hangs off — beside Show and Edit, in the order routes.rb nested it,
+  pointing at `/locations/5/property`. It reads in the singular, since there is only
+  ever one: `Property`, or `HouseCanary` where a locale renamed the model. That word
+  comes from the same split and the same `Recourse.known_singular` the bare action's
+  button takes it from, so a tab and a button under one record cannot come to
+  disagree. No count, since a `has_one` has nothing to count, and no icon, since an
+  icon on a tab comes from an association the gem counted and from nowhere else. An
+  index still wins where a host drew both.
+
+  A page nested under a record now sits in that record's card whichever page it is.
+  `show` and `edit` were handing the card their own record while the tabs above it
+  were built from the parent's path, so a nested `/posts/1/ratings/2` drew a Show tab
+  pointing at `/posts/2`. Nothing linked to such a page before, which is why nobody
+  saw it; a singular resource's tab is the first thing that does.
+
+  Any host with a singular nested `recourse` routing `show` will see a new tab on
+  every one of that parent's records — the ones whose `has_one` is nil included. A
+  singular resource has no id to look up, so what the page reads out was always the
+  host's to find, and now something links to the page it finds nothing for. The chrome
+  holds: a record the host did not assign leaves the crumb above it unnamed rather
+  than raising, where `resource_record_label` used to read `attributes` off the nil.
+  What the body says about the absence is the host's to write — or the host redirects,
+  the way one asking a service for an answer it has not fetched yet already does.
+
+* A JSON column stays off an index table
+
+  A `json` or `jsonb` column used to reach a table, where the gem has no arm for one —
+  so the Hash was stringified into a cell and one payload made the row wider than the
+  page. It now joins what a table leaves off by default, beside ciphertext, the
+  primary key and the timestamps: a payload is a service's answer kept whole, not
+  something the row is about. `def recourse_displayed = :property_details` puts it
+  back for a host that wants it, and the record's own page reads it out either way.
+
+  Search and sorting are unaffected — `json` was never a searchable type.
+
+* A bare action's button is named for the route it is, namespace and all
+
+  A nested resource routed `create` with no `index` gets a button on its parent's
+  card, and that button took its word from the last segment of the path — so
+  `namespace(:quick) { recourses :memos, only: :create }` under a person read
+  `Add memo`, exactly like the `memos` index beside it, and the two posted different
+  records to different controllers. It now reads `Add quick memo`. The namespace is
+  the only thing telling two routes to the same model apart, and the tab for a
+  nested index already read that way; both now come from one split.
+
+  Any host with a namespaced bare action will see its button's wording change.
+
+* A counter's cells say what they count, without drawing anything
+
+  A counter cache's heading names the counted model and its cells hold the bare
+  figure, which stops helping the moment the heading scrolls off the top — and a
+  link whose whole text is `38,405` announces as `38,405` and nothing else. Each
+  cell now carries a tooltip reading the model's plural and an `aria-label` reading
+  `38,405 ZIPs`. An unlinked count is a `<span>` carrying the same pair, so it is
+  named like a linked one.
+
 * The scheme toggle holds the foot of the viewport
 
   At the foot of a sidebar as tall as the table it sat below the fold on any long

@@ -17,7 +17,11 @@ class TestRecoursesIndex < IntegrationCase
     assert_includes body, '<td data-cell="Team">Blue Crew</td>'
     # Its own status, as the word the column holds rather than a number.
     assert_includes body, '<td data-cell="Status"><span class="badge">draft</span></td>'
-    %w[Id Secret Notes Webhook].each { |column| refute_includes body, %(data-cell="#{column}") }
+    # `Details` among them: a JSON payload is one value as wide as the page, so no
+    # table draws one until a model names it back with `recourse_displayed`.
+    %w[Id Secret Notes Webhook Details].each do |column|
+      refute_includes body, %(data-cell="#{column}")
+    end
     # Asked for by the model, so this table ends with both where most end with none —
     # and *ends* with them, in that order, however the schema or the model names them.
     # Nothing said so while a hook of their own carried it, and what carries it now is
@@ -28,8 +32,10 @@ class TestRecoursesIndex < IntegrationCase
   end
 
   # A counter is headed with the icon of what it counts, named for a reader who
-  # cannot see it, and sorts; its cells carry the bare figure, linking out of the
-  # frame to the index nested under that row.
+  # cannot see it, and sorts; its cells carry the figure, linking out of the frame to
+  # the index nested under that row — and each says what it counts twice over, in a
+  # tooltip for the row where the heading has scrolled away and in a label for the
+  # reader who would otherwise hear only `3`.
   def test_a_counter_column_is_an_icon_over_a_figure_that_links
     person = Person.order(:id).first
     visit '/people'
@@ -37,7 +43,9 @@ class TestRecoursesIndex < IntegrationCase
            'data-controller="tooltip" data-bs-placement="top" data-bs-title="Places"></i>'
 
     assert_includes body, %(q%5Bs%5D=places_count+asc">#{icon}</a></th>)
-    assert_includes body, %(<a data-turbo-frame="_top" href="/people/#{person.id}/places">)
+    assert_includes body, %(<a aria-label="3 Places" data-turbo-frame="_top" ) +
+                          %(data-controller="tooltip" data-bs-placement="top" ) +
+                          %(data-bs-title="Places" href="/people/#{person.id}/places">3</a>)
   end
 
   # A sidebar link answers to a letter of its own title, and the first one free:

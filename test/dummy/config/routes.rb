@@ -16,6 +16,9 @@ Rails.application.routes.draw do
       # A name this app has no class for at all: an action is a verb, and the button
       # still needs a word.
       recourse :sweep, only: :create
+      # And one routed `show`: a page rather than an action, which Rails draws no
+      # index for -- so the tab on the place is the only thing that reaches it.
+      recourse :zip, only: :show
       # No `Photo` in this app: the name is what the place has attached, and the
       # table is of Active Storage's blobs.
       recourses :photos, only: :index

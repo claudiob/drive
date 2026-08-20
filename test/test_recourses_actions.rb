@@ -18,7 +18,10 @@ class TestRecoursesActions < IntegrationCase
     visit "/people/#{person.id}/places"
 
     assert_includes body, %(action="/people/#{person.id}/quick/memos")
-    assert_includes body, 'Add memo'
+    # Led by the namespace the routes put between the person and the action. Without
+    # it this button and the `memos` index's own read the same words, and the two post
+    # different memos to different controllers.
+    assert_includes body, 'Add quick memo'
     @session.post "/people/#{person.id}/quick/memos"
 
     assert_equal 303, @session.response.status

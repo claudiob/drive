@@ -31,10 +31,17 @@ module Recourse
         end
       end
 
-      # True where the label is a column a `cont` can match. Reaching through a
-      # foreign key to compare an id or a date against typed text says nothing.
+      # True where the label is a column a `cont` can match. Reaching through a foreign
+      # key to compare an id or a date against typed text says nothing -- and neither
+      # does naming a column Ransack will not answer to. Encryption leaves a column's
+      # type alone, so a label the search could never match reads as a word here and is
+      # caught by the allowlist instead: a term built from one raises on the reader the
+      # box asks for, taking down every index that reaches this model through a key.
       def recourse_searchable_label?
-        SEARCHABLE_TYPES.include? type_for_attribute(recourse_label.to_s).type
+        label = recourse_label.to_s
+
+        SEARCHABLE_TYPES.include?(type_for_attribute(label).type) &&
+          ransackable_attributes.include?(label)
       end
 
     private

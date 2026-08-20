@@ -34,16 +34,16 @@ module Recourse
         columns_hidden_by_default - Array(resource_model.recourse_displayed).map(&:to_s)
       end
 
-      # Ciphertext nobody can read, the id that addresses the row, the parent a
-      # nested route already names, the column a table arranged by hand is arranged
-      # by — the handles beside each row say the rows are ordered, and the figure
-      # under a heading says it a second time — the two timestamps, which Rails keeps
-      # rather than the record being about them, and whatever the model itself asked
-      # to hide, which is the one of these a host decides without the override above.
+      # Ciphertext, the id that addresses the row, the parent a nested route already
+      # names, the column an arranged table is ordered by, the timestamps and every JSON
+      # payload — what a machine keeps rather than what a row is about — and whatever the
+      # model asked to hide, the one of these a host decides without the override above.
       def columns_hidden_by_default
-        resource_model.recourse_encrypted_names + [resource_model.primary_key] +
-          Array(resource_parent_association&.foreign_key) + arranged_columns +
-          Recourse.hidden_columns(resource_model) + TIMESTAMPS
+        [
+          resource_model.recourse_encrypted_names, resource_model.primary_key, TIMESTAMPS,
+          resource_parent_association&.foreign_key, arranged_columns, json_columns,
+          Recourse.hidden_columns(resource_model),
+        ].flatten.compact
       end
 
       # Only where the arranging is what this page does: read at a level the position

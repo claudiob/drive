@@ -25,6 +25,9 @@ class TestRecoursesShow < IntegrationCase
     assert_includes body, '90001'
     assert_includes body, 'Blue Crew'
     assert_includes body, '<a href="https://place-1.example.com"'
+    # And the payload the index leaves out: a record's own page is where a value too
+    # wide for a column of them still belongs.
+    assert_includes body, 'step_free_access'
   end
 
   # The card a record's own page sits in: its Show tab first, then one tab per index

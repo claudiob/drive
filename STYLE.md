@@ -418,19 +418,32 @@ before writing or editing any layout, view or partial.
 - A look before a change, the order the seven actions are drawn and the order the row
   links follow. Each tab wears that link's icon — the eye and the pencil — from one
   `ICONS` map, so a row and a card cannot come to disagree about which is which.
-- After them, one tab per has_many whose rows have an index nested under the
-  record — in the order routes.rb nested them, the same order the sidebar keeps,
-  never the has_many declarations' — wearing that model's icon — or none where Unicon has never heard its
-  concept, the same judgement the breadcrumb makes; only a counter *heading*
-  keeps the fallback circle, being nothing but its icon. The nested route is the
-  whole requirement; a
-  counter cache only decides how the tab reads: `8 ZIPs` where the record keeps
-  one — the number read off the record itself, like the column, so the tab costs
-  no query — and the bare `ZIPs` where it does not. The count is what earns the
-  downcase; a word that leads keeps its capital, like the Show and Edit beside it.
-- A nested index is one of those pages, so it sits in the same card — the *parent*
+- After them, one tab per resource nested under the record — in the order routes.rb
+  nested them, the same order the sidebar keeps, never the associations' — and the
+  nested route is the whole requirement. Two routes earn a tab: an index, whose tab
+  reads its rows, and a `show` the router needs no id for, which is what a singular
+  `recourse` draws and whose tab reads the one record. An index wins where a host drew
+  both. A nesting with neither is an action rather than a page, and its button stands
+  beside the breadcrumb instead.
+- An index tab wears the counted model's icon where a `has_many` of that name answers —
+  or none where Unicon has never heard its concept, the same judgement the breadcrumb
+  makes; only a counter *heading* keeps the fallback circle, being nothing but its
+  icon. A counter cache decides how such a tab reads and never whether it is there:
+  `8 ZIPs` where the record keeps one — the number read off the record itself, like
+  the column, so the tab costs no query — and the bare `ZIPs` where it does not. The
+  count is what earns the downcase; a word that leads keeps its capital, like the Show
+  and Edit beside it.
+- A singular resource's tab reads its model's own word in the singular, `ZIP` — the
+  word the bare action's button takes, from the same split, so the two under one record
+  cannot disagree. No count, since a `has_one` has nothing to count, and no icon: an
+  icon here comes from an association the gem counted and from nowhere else, and one
+  guessed off a path segment would ice two routes to one model differently.
+- A nested *page* is one of those pages, so it sits in the same card — the *parent*
   record's — with its own tab as the current one and the parent's own Show and
-  Edit tabs beside it, each drawn only where its route is.
+  Edit tabs beside it, each drawn only where its route is, and neither of them marked:
+  the nested tab is the page being read. That holds for a nested index, for a singular
+  resource's one record, and for a member page a host nested on purpose — the card
+  names the record above, so every template hands it `resource_parent` before its own.
 - One tab where a resource has only one of the two pages, rather than no card: the
   card is what says which page of a record is being read, and that is worth saying
   even when there is only one.
@@ -650,6 +663,20 @@ before writing or editing any layout, view or partial.
         <div class='combobox-no-results d-none'>No results found</div>
       </div>
 
+- Every combobox logs `Bootstrap doesn't allow more than one instance per
+  element. Bound instance: bs.combobox.` to the console, in red, once per render
+  and again on every `turbo:morph`. It is upstream's, not ours, and nothing here
+  can stop it: `Combobox`'s constructor sets `this._toggle = this._element` and
+  then builds a `Menu` on that same element, so Bootstrap's own registry refuses
+  the second key and logs. Creating the menu first only moves the complaint to
+  the other key; dropping `data-bs-toggle='combobox'` would break the click that
+  opens it and not silence anything, since the constructor is what trips it.
+- Nothing is broken by it, which is why we live with it: `Menu.clearMenus` reads
+  a `static` set of open instances rather than the registry, so an outside click
+  and Escape still close the menu, and `Combobox` holds its own reference and
+  disposes it. The one casualty is `Menu.getInstance(toggle)`, which nothing
+  asks for. Unfixed as of 6.0.0-alpha1 — `js/src/combobox.ts:104` and `:207` on
+  `v6-dev` — so a later drop is what fixes it.
 - `data-bs-name` is what makes it a form control: the plugin inserts a hidden
   input of that name before the toggle and writes the chosen `data-bs-value`
   into it. Never put `name=` on the toggle itself.
@@ -834,9 +861,12 @@ before writing or editing any layout, view or partial.
 - It carries `aria-pressed`, which is what says it is a toggle rather than a button
   that does something once, and an `aria-label` reading `Bookmark` or `Remove
   bookmark` to match the state it is in.
-- It is the one icon here with **no** tooltip. Every other one is a heading, drawn
-  once; this one is in every row, and a label chasing the cursor down a column of
-  squares is noise. The heading above them keeps its tooltip like any other.
+- It carries **no** tooltip, and the line is drawn on whether the thing labels
+  itself rather than on how often it is drawn — a counter's cells carry one per row.
+  A bookmark square looks like what it means, filled or hollow, so a label chasing
+  the cursor down a column of them is noise; a bare figure looks like nothing at all
+  once its heading has scrolled away. The heading above the squares keeps its
+  tooltip like any other.
 - Its form's CSRF token comes from the `<meta>` tag in the head, not from the token
   `button_to` wrote. Rails scopes a form's own token to the method it was drawn
   with, and this square flips that method; the form is inside a cached fragment
@@ -948,6 +978,13 @@ before writing or editing any layout, view or partial.
 - A table of records shows every attribute that is not encrypted, one column
   each. Encrypted attributes are omitted entirely: showing ciphertext helps
   nobody, and decrypting it into a list leaks it.
+- A `json` or `jsonb` column is omitted for a different reason and just as firmly. A
+  payload is a service's answer kept whole — machinery, not something the row is
+  about — and it has no width a column can hold: one of them fills a page, and a
+  column of twenty is a table nobody can read. It is the type that decides, asked
+  through `type_for_attribute` like every other kind, so `json` and `jsonb` both go
+  and an `attribute` override counts. The record's own page still reads it out, the
+  way it reads out ciphertext.
 - That is a default, not a law, and `recourse_displayed` is the one hook that
   overrules any of them: `def recourse_displayed = :phone`, and it is the host that
   answers for its own screens — a contact recognised by nothing but its number is
@@ -997,8 +1034,14 @@ before writing or editing any layout, view or partial.
   anyone naming it three times. The icon carries `role='img'` and an `aria-label`
   of the counted model's plural — `ZIPs`, not `ZIPs count` — which is also what
   every `data-cell` under it says. The cells hold the figure alone — `38,405`,
-  no icon, delimited like the filter-menu counts beside the table — since the
-  heading already names what the figures count.
+  no icon, delimited like the filter-menu counts beside the table.
+- But each cell says what it counts twice over all the same, without drawing
+  anything: a tooltip reading the counted model's plural, for the row where the
+  heading has scrolled off the top, and an `aria-label` reading `38,405 ZIPs`,
+  because a link whose whole text is a number announces as `38,405` and no more.
+  The tooltip takes the word alone, the label takes both, and that is the order
+  somebody hearing it needs them in. An unlinked count is a `<span>` carrying the
+  same pair, so a counter with no index behind it is named like one that has.
 - Every other numeric cell reads the way the show page reads it, through the one
   `formatted_number` ladder Formats keeps: integers delimited, prices as
   currency, percentages and decimals at their column's own precision. Only text

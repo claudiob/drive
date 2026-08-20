@@ -1,6 +1,9 @@
 <% content_for :title, resource_record_label %>
 
-<%= render layout: 'card', locals: { record: resource_record } do %>
+<%# A page nested under a record is that record's page, the way a nested index is:
+    the card is the parent's, so the tabs on it are about the record the path names
+    above this one rather than about this one. -%>
+<%= render layout: 'card', locals: { record: resource_parent || resource_record } do %>
   <div class='row recourse-values'>
     <%= render 'values', resource_key => resource_record %>
   </div>

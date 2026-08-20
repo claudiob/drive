@@ -46,11 +46,18 @@ module Recourse
       end
 
       # The resource's own word, which a host renames in a locale like any other
-      # model: `Add Jobber retrieval` rather than `Add booking exchange`.
+      # model: `Add Jobber retrieval` rather than `Add booking exchange`. Led by
+      # whatever namespace the routes put between the record and the action, because
+      # that is the only thing telling two routes to the same model apart — without it
+      # a `quick/memos` action and the `memos` beside it both read `Add memo`. The tab
+      # for a nested index is named from the same split, so the two agree.
       def bare_action_label(nested, action)
-        model = Recourse.downcase Recourse.known_title(nested).singularize
+        name, namespace = nested_segments nested, card_path
+        model = Recourse.downcase Recourse.known_singular(name)
+        lead = namespace_words namespace
 
-        t "recourse.#{action == :create ? 'add' : 'delete'}", model:
+        t "recourse.#{action == :create ? 'add' : 'delete'}",
+          model: [lead.presence, model].compact.join(' ')
       end
 
       def bare_action_url(record, nested, action)

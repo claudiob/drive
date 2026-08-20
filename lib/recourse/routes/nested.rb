@@ -46,7 +46,8 @@ module Recourse
         path = [current_module, through].compact.join '/'
         # Recorded under the listing it belongs to, which is how it finds its way back
         # there for a request that arrived without a referer. No tab and no button
-        # come of it: both ask for an index, and a join has none.
+        # come of it: a tab asks for a page and a button for an id-less write, and a
+        # join draws neither.
         Recourse.nest current_module, path
         Controllers.define_missing path, JoinsController
         resource through.to_s.singularize.to_sym, only: %i[create destroy]

@@ -1,6 +1,12 @@
 require 'test_helper'
 require 'integration_case'
 
+# A model labelled by an encrypted column, which none of the dummy's own are: `places`
+# has no inheritance column, so this is that table read under another name.
+class SecretivePlace < Place
+  def self.recourse_label = :notes
+end
+
 # Where an encrypted column reaches a page and where it does not. Exempt from "as few
 # tests as coverage needs": the same lines run whether a value is masked or printed,
 # so a covered line cannot stand in for any of these three.
@@ -36,6 +42,16 @@ class TestRecoursesPii < IntegrationCase
     assert_includes body, '<span data-reveal-target="mask">********</span>'
     assert_includes body, 'data-reveal-plain-value="SEC-0000"'
     refute_includes body, '>SEC-0000<'
+  end
+
+  # And a label the search could never match is not one to build a term from. The type
+  # says nothing here — encryption leaves a column's type alone — so it is the
+  # allowlist that answers: a `cont` against ciphertext matches nothing, and Ransack
+  # refuses the reader the box asks for rather than running it, which is a 500 on every
+  # index that reaches this model through a foreign key.
+  def test_an_encrypted_label_is_not_a_searchable_one
+    assert Place.recourse_searchable_label?
+    refute SecretivePlace.recourse_searchable_label?
   end
 
   # The form is the other way round again: an encrypted value arrives in the clear,

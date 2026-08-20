@@ -31,6 +31,15 @@ module Recourse
         resource_model.type_for_attribute(column).type
       end
 
+      # Columns holding JSON, which `json` and `jsonb` both report as the one type. A
+      # payload is a service's answer kept whole — machinery rather than anything a row
+      # is about — and one of them is as wide as a page, so no table draws one until a
+      # model names it back. Asked through `type_for_attribute` like every other kind,
+      # so an `attribute` override counts here too.
+      def json_columns
+        resource_model.column_names.select { |column| attribute_type(column) == :json }
+      end
+
       # How many decimals the attribute keeps, and how many digits in all. Read from
       # the type rather than the column, and nil for anything that never said.
       def attribute_scale(column)

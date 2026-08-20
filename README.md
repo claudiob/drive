@@ -108,6 +108,19 @@ end
 A resource with no `index` route gets no sidebar entry, which is what
 `only: []` is for.
 
+`recourse` draws what Rails' `resource` draws, and the gem records it the same way:
+one record reached with no id of its own, at `/locations/5/property`. Rails routes a
+singular resource to a plural controller, so `Locations::PropertiesController` is what
+answers, and a `has_one` needs no id in the path. What such a nesting earns on the
+location's card depends on what it routes, and only on that. Routed `show`, it earns a
+tab reading the model's own word in the singular — `Property`, or `HouseCanary` where a
+locale renamed the model — pointing at that one page. Routed `create` or `destroy` and
+neither `index` nor `new`, it earns a button beside the breadcrumb instead: `Add
+property`, `Delete property`. Routed both, it earns both, which is a page to read and a
+verb to press. A singular resource has no id to look up, so `find_resource` is yours to
+answer — `def find_resource = assign @recourse_parent.property` — and answering it for a
+record whose `has_one` is nil is yours too.
+
 A resource names a model, and a name that resolves to none is an error rather
 than a mystery: `recourses :pizzas` with no `Pizza` in the app answers
 
@@ -438,9 +451,11 @@ icon set's business rather than a Bootstrap class written into the gem.
 
 Both pages wrap their content in a Bootstrap card whose header is a row of tabs,
 one per page the record has — `Show` behind the eye, then `Edit` behind the
-pencil, with the page being read marked `active` and `aria-current='page'`. They
-are links rather than a JavaScript tab set, since each is a page of its own; a
-resource with only one of the two gets a card with one tab.
+pencil, then one per resource nested under the record that routes a page of its own:
+an index, or the single record a `recourse` draws. The page being read is marked
+`active` and `aria-current='page'`. They are links rather than a JavaScript tab set,
+since each is a page of its own; a resource with only one of the two gets a card with
+one tab.
 
 `new`, `show` and `edit` assign the record twice: to `@recourse`, and to the name
 Rails would use, so `@contact` is what a view of yours can read.
@@ -475,6 +490,9 @@ same one:
   same way, and shown by the same hook —
   `def recourse_displayed = %i[created_at updated_at]` — coming last when it does,
   after whatever the record is actually about, in that order however they were named.
+  A `json` or `jsonb` column is hidden the same way and for the same reason: a payload
+  is a service's answer kept whole, one value as wide as the page, and a column of them
+  is a table nobody can read. The record's own page still reads it out.
 - A form offers, and `create` permits, `Recourse.editable_columns` — every
   column except `id`, `created_at`, `updated_at` and any counter cache. Encrypted
   columns are offered too, carrying the record's own value in the field its kind
@@ -508,7 +526,7 @@ defaults are there without a model mentioning them.
 | `recourse_typed_label?` | true when that column has a length validator | whether a foreign key to this model is typed into a text field or picked from a list |
 | `recourse_includes` | every `belongs_to` the table names | what the index eager-loads, in any shape `includes` accepts |
 | `recourse_order` | `:id` | how the index sorts, in any shape `order` accepts |
-| `recourse_displayed` | `[]` | columns a table draws that it would otherwise leave off — the encrypted ones, the primary key, a polymorphic `*_type`, the inheritance column, and `created_at` / `updated_at`, which come last whatever order they are named in. One name or a list |
+| `recourse_displayed` | `[]` | columns a table draws that it would otherwise leave off — the encrypted ones, the primary key, a polymorphic `*_type`, the inheritance column, every `json` / `jsonb` payload, and `created_at` / `updated_at`, which come last whatever order they are named in. One name or a list |
 | `recourse_hidden` | `[]` | columns kept off every screen — the table, the show page, the form (which also stops permitting them) and the search box. One name or a list: `def recourse_hidden = :name` and `%i[name title]` both read |
 | `recourse_broadcasts?` | `true` | whether saving a record refreshes every open index listing it — see [Live index refreshes](#live-index-refreshes) |
 

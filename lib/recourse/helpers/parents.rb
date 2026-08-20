@@ -16,12 +16,14 @@ module Recourse
         controller_assign 'recourse_parent_association'
       end
 
-      # The index of a record's children, nested under the record itself:
-      # `/counties/1/zips`. The key is named after the path the children are nested
-      # under rather than after the page being served, since a page nested one level
-      # up is served by another controller entirely.
-      def nested_index_url(record, path, nested)
-        url_for controller: "/#{nested}", action: :index,
+      # The page a nested resource keeps under one record: the index of its children at
+      # `/counties/1/zips`, or -- where the routes drew a singular resource -- the one
+      # record itself at `/places/5/zip`, reached with no id of its own. The key is
+      # named after the path the children are nested under rather than after the page
+      # being served, since a page nested one level up is served by another controller
+      # entirely.
+      def nested_url(record, path, nested, action)
+        url_for controller: "/#{nested}", action:,
                 "#{path.split('/').last.singularize}_id": record.id
       end
 
