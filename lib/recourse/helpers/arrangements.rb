@@ -15,7 +15,7 @@ module Recourse
       # go through `Recourse.arranges?`, so the level rule is written once.
       def arranged?
         resource_model.respond_to?(:recourse_order) &&
-          Recourse.arranges?(resource_model, resource_parent)
+          Recourse.arranges?(resource_model, resource_parent_association)
       end
 
       # The grip's heading: the icon on the header row, since the column is as narrow

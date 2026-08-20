@@ -15,6 +15,16 @@ class TestRecoursesArrangements < IntegrationCase
     assert_includes body, 'role="search"'
   end
 
+  # A page a host drew over an aggregate names a parent no key links to its rows — a
+  # team's memos are the memos of the people whose places it keeps, gathered from
+  # several — so they are no more in one order than the whole table is.
+  def test_a_page_drawn_over_an_aggregate_arranges_nothing
+    visit '/teams/3/memos'
+
+    refute_includes body, 'data-controller="sortable"'
+    assert_includes body, 'role="search"'
+  end
+
   # The headings are words rather than links, no form sits above them, and the
   # column the rows are arranged by is not drawn at all — the handles beside each
   # row already say the table is ordered.

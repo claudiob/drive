@@ -59,15 +59,21 @@ class TestRecoursesPositions < IntegrationCase
   # Listed across every parent the positions read 1..6 ten times over, which is an
   # order of nothing.
   def test_a_nested_model_is_arranged_under_its_parent_and_not_above_it
-    assert Recourse.arranges?(Memo, Person.first)
+    assert Recourse.arranges?(Memo, person_key)
     refute Recourse.arranges?(Memo, nil)
   end
 
   def test_a_model_that_marks_nothing_is_arranged_at_no_level_at_all
-    refute Recourse.arranges?(Place, Team.first)
+    refute Recourse.arranges?(Place, person_key)
   end
 
 private
+
+  # The `belongs_to` a nested memo route names, which is what makes every row on such
+  # a page share one parent — and what a page drawn over an aggregate has none of.
+  def person_key
+    Memo.recourse_references.find { |one| one.name == :person }
+  end
 
   # Marks the named keys `:positionable` on Team for the length of the block, so a
   # declaration the dummy would never ship can still be asked about.

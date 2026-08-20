@@ -66,7 +66,7 @@ module Recourse
     def arranged?
       return false unless resource_class.respond_to? :recourse_order
 
-      Recourse.arranges? resource_class, @recourse_parent
+      Recourse.arranges? resource_class, @recourse_parent_association
     end
   end
 end
