@@ -42,7 +42,7 @@ module Recourse
         case kind
         when :enum then value && enum_badge(marked(value, &))
         when :date, :datetime, :time then value && localized(value)
-        when :json then value.presence && json_block(value)
+        when *Kinds::JSON_KINDS then value.presence && json_block(value)
         else linked_or_marked(value, &)
         end
       end

@@ -6,6 +6,11 @@ module Recourse
       # Numbers, which differ by what they are of rather than by how they are stored.
       NUMERIC_KINDS = %i[integer decimal float phone price percentage].freeze
 
+      # A payload, under both names an adapter has for one: SQLite and MySQL report a
+      # JSON column as `json`, and PostgreSQL's own type reports `jsonb`. Two names for
+      # the thing a page does the same with, so the gem asks for either.
+      JSON_KINDS = %i[json jsonb].freeze
+
     private
 
       # Whether a kind is one of those, which is what both pages branch on first.
@@ -31,13 +36,13 @@ module Recourse
         resource_model.type_for_attribute(column).type
       end
 
-      # Columns holding JSON, which `json` and `jsonb` both report as the one type. A
-      # payload is a service's answer kept whole — machinery rather than anything a row
-      # is about — and one of them is as wide as a page, so no table draws one until a
-      # model names it back. Asked through `type_for_attribute` like every other kind,
-      # so an `attribute` override counts here too.
+      # Columns holding JSON, under whichever name this adapter reports. A payload is a
+      # service's answer kept whole — machinery rather than anything a row is about —
+      # and one of them is as wide as a page, so no table draws one until a model names
+      # it back. Asked through `type_for_attribute` like every other kind, so an
+      # `attribute` override counts here too.
       def json_columns
-        resource_model.column_names.select { |column| attribute_type(column) == :json }
+        resource_model.column_names.select { |column| JSON_KINDS.include? attribute_type(column) }
       end
 
       # How many decimals the attribute keeps, and how many digits in all. Read from
