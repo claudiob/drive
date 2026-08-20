@@ -61,22 +61,38 @@ export default class extends Controller {
   // Which palette is showing, read off the link rather than remembered, so a reader who
   // cleared their storage still moves on from the one in front of them.
   #theme() {
-    const link = document.querySelector('link[data-recourse-theme]')
+    const link = this.#current()
 
     return link ? link.href.split('/').pop().replace('.css', '') : null
   }
 
-  // The one link a palette is served through, made where a host named no palette at all
-  // and there is none in the head to find.
-  #link() {
-    let link = document.querySelector('link[data-recourse-theme]')
+  // The palette the page is drawn in, which is the *last* of these links rather than the
+  // first. Turbo's head merge appends a stylesheet the new head has and the old one does
+  // not — it never replaces one — and the server names the same palette on every page,
+  // so a visit made after the reader chose leaves two links and the browser obeys the
+  // one at the end. Writing to the other would change nothing anybody can see.
+  #current() {
+    const links = document.querySelectorAll('link[data-recourse-theme]')
 
-    if (!link) {
-      link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.dataset.recourseTheme = ''
-      document.head.appendChild(link)
-    }
+    return links[links.length - 1]
+  }
+
+  // The one link a palette is served through: whichever is in force, with any the merge
+  // left behind it taken away, and a new one where a host named no palette at all and
+  // there is none in the head to find.
+  #link() {
+    const links = [...document.querySelectorAll('link[data-recourse-theme]')]
+    const link = links.pop() || this.#appended()
+    links.forEach((stale) => stale.remove())
+
+    return link
+  }
+
+  #appended() {
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.dataset.recourseTheme = ''
+    document.head.appendChild(link)
 
     return link
   }
