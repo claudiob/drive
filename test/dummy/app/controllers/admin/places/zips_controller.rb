@@ -1,7 +1,8 @@
 module Admin
   module Places
-    # The other half of a singular resource: the gem drew the tab, and which one record
-    # the path names is the host's to find -- there is no id in it to look up.
+    # A singular resource the gem would resolve by itself, answered here anyway: an
+    # override still wins, which is what leaves a host free to find a record the
+    # parent names no association for.
     class ZipsController < RecoursesController
     private
 

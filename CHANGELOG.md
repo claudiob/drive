@@ -7,6 +7,21 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* [Feature] The gem finds a singular resource's record
+
+  A singular `recourse` is reached with no id, and finding the one record it stands for
+  was the host's job — every app wrote the same `def find_resource = assign
+  @recourse_parent.property`. The gem reads it off the parent now, under the name the
+  route already gives it, whether the parent keeps it with a `has_one` or points at it
+  with a `belongs_to`. Where the parent has no association of that name the record is
+  still the host's to find, which is what leaves a page reached through something else
+  — a chat a nomination gets through its booking — to a controller of its own.
+
+  Where the association holds nothing, a resource routed `new` redirects to the form
+  that makes one; one without still says `No property.` on the page. And a write on a
+  singular resource lands on the record's own page rather than raising for an index the
+  routes never drew.
+
 * A JSON value reads as JSON
 
   A `json` or `jsonb` column on a record's page was printed as the Hash Ruby prints,

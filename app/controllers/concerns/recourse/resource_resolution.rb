@@ -4,13 +4,33 @@ module Recourse
   module ResourceResolution
   private
 
-    # A singular resource is reached with no id — `/places/5/memo` names the record
-    # by the path it hangs off rather than by a key of its own — so there is nothing
-    # to look up, and what the action works on is the host's to find.
+    # A singular resource is reached with no id — `/places/5/memo` names the record by
+    # the path it hangs off rather than by a key of its own — so it is read off the
+    # parent instead, under the name the route already gives it. Where the parent has
+    # no association of that name the record is still the host's to find, which is what
+    # leaves a `recourse :memo` hanging off a polymorphic key to its own controller.
     def find_resource
-      return unless params.key? :id
+      return assign resource_class.find(params.expect(:id)) if params.key? :id
+      return unless singular_reflection
 
-      assign resource_class.find(params.expect(:id))
+      record = @recourse_parent.association(singular_reflection.name).reader
+
+      record ? assign(record) : missing_record
+    end
+
+    # The parent's association of this resource's own name, whichever kind it is: a
+    # `has_one` where the parent keeps the record, a `belongs_to` where it points at
+    # one. `reflect_on_association` rather than a rescue, so a name the parent has
+    # never heard of reads as nothing to resolve rather than as an error.
+    def singular_reflection
+      @recourse_parent&.class&.reflect_on_association controller_name.singularize
+    end
+
+    # Nothing found, which for a resource routed `new` means the page that makes one:
+    # a `has_one` nobody has written yet is a form to fill in, not an absence to read.
+    # Where no `new` is drawn, nothing is assigned and the page says so instead.
+    def missing_record
+      redirect_to url_for(action: :new) if Recourse.routed? controller_path, 'new'
     end
 
     def assign(record)

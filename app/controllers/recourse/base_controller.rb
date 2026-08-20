@@ -11,10 +11,9 @@ module Recourse
     # `find` raises RecordNotFound, so an id that names nothing answers 404.
     before_action :find_resource, only: %i[show edit update destroy]
 
-    # The model served here broadcasts refreshes for its index. On the way into every
-    # action — before `create` commits, so its own change is broadcast — and again
-    # after a dev reload hands the model a fresh class. Where there is a model at all:
-    # a host may serve a page over an aggregate of its own, which keeps no rows.
+    # The model served here broadcasts refreshes for its index — on the way into every
+    # action, before `create` commits so its own change is broadcast, and again after a
+    # dev reload hands it a fresh class. Where there is a model: an aggregate keeps none.
     before_action :broadcast_resource_changes
 
     # The model behind the page, assigned rather than worked out twice: a view asking
@@ -41,7 +40,7 @@ module Recourse
 
       if record.save
         flash.notice = t 'recourse.created', model: model
-        redirect_to url_for(action: :index), status: :see_other
+        redirect_to written_url, status: :see_other
       else
         flash.now.alert = t 'recourse.created_error', model: model
         render :new, status: :unprocessable_entity
@@ -58,7 +57,7 @@ module Recourse
     def update
       if @recourse.update resource_params
         flash.notice = t 'recourse.updated', model: human_name
-        redirect_to url_for(action: :index), status: :see_other
+        redirect_to written_url, status: :see_other
       else
         flash.now.alert = t 'recourse.updated_error', model: human_name
         render :edit, status: :unprocessable_entity
@@ -71,22 +70,27 @@ module Recourse
     def destroy
       @recourse.destroy!
       flash.notice = t 'recourse.deleted', model: human_name
-      redirect_to url_for(action: :index), status: :see_other
+      redirect_to written_url, status: :see_other
     end
 
   private
+
+    # Where a write goes once it has landed: the index, or the record's own page where
+    # the routes drew none — a singular resource is the collection of one.
+    def written_url
+      url_for action: Recourse.routed?(controller_path, 'index') ? :index : :show
+    end
 
     def broadcast_resource_changes
       resource_class.recourse_broadcast if resource_class.respond_to? :recourse_broadcast
     end
 
-    # The rows the index lists, before the search, the sort and the page reach them.
-    # Every row of the model by default, and the one thing a host overrides to put a
-    # scope of its own behind a screen the gem otherwise draws whole:
-    # `def recourse_relation = County.with_boosts_for(@recourse_parent)`. A host that
-    # says what to list is not second-guessed: the parent a nested route names is what
-    # narrows the default, and nothing narrows an answer of its own. Private,
-    # so that overriding it adds a query and never an action.
+    # The rows the index lists, before the search, the sort and the page reach them:
+    # every row of the model, narrowed by the parent a nested route names. The one thing
+    # a host overrides to put a scope of its own behind a screen the gem draws whole —
+    # `def recourse_relation = County.with_boosts_for(@recourse_parent)` — and a host
+    # that says what to list is not second-guessed. Private, so overriding it adds a
+    # query and never an action.
     def recourse_relation
       return attachment_relation if attachment_reflection
 

@@ -19,6 +19,10 @@ Rails.application.routes.draw do
       # And one routed `show`: a page rather than an action, which Rails draws no
       # index for -- so the tab on the place is the only thing that reaches it.
       recourse :zip, only: :show
+      # The same, and this one the gem serves whole: a `has_one` it reads off the
+      # place, with `new` routed so an absent one is a form to fill in rather than a
+      # page saying there is none.
+      recourse :audit, only: %i[new create show]
       # The same, over a record a place may not have: what the host finds is what the
       # page reads, and a page that finds nothing says so.
       recourse :person, only: :show

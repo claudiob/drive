@@ -117,9 +117,21 @@ tab reading the model's own word in the singular — `Property`, or `HouseCanary
 locale renamed the model — pointing at that one page. Routed `create` or `destroy` and
 neither `index` nor `new`, it earns a button beside the breadcrumb instead: `Add
 property`, `Delete property`. Routed both, it earns both, which is a page to read and a
-verb to press. A singular resource has no id to look up, so `find_resource` is yours to
-answer — `def find_resource = assign @recourse_parent.property` — and answering it for a
-record whose `has_one` is nil is yours too.
+verb to press.
+
+A singular resource has no id to look up, so the gem reads the record off the parent
+under the name the route already gives it — `location.property`, whether the parent
+keeps it with a `has_one` or points at it with a `belongs_to`. Where the association
+holds nothing, a resource routed `new` sends you to the form that makes one, and a
+resource without one says `No property.` on the page. And a write has no index to
+return to, so it lands on the record's own page instead: a singular resource is the
+collection of one.
+
+Where the parent has no association of that name, the record is still yours to find —
+`def find_resource = assign @recourse_parent.chat` in a controller of your own — which
+is what a page reached through something else needs, a chat a nomination gets through
+its booking. The gem assigns nothing in that case, so an override is all there is to
+write, and anything else the page needs goes beside it.
 
 A resource names a model, and a name that resolves to none is an error rather
 than a mystery: `recourses :pizzas` with no `Pizza` in the app answers
