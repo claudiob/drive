@@ -117,7 +117,12 @@ tab reading the model's own word in the singular — `Property`, or `HouseCanary
 locale renamed the model — pointing at that one page. Routed `create` or `destroy` and
 neither `index` nor `new`, it earns a button beside the breadcrumb instead: `Add
 property`, `Delete property`. Routed both, it earns both, which is a page to read and a
-verb to press.
+verb to press — and the button then stands on that page rather than on every page the
+record has, since a page of its own is somewhere for it to be. Which verb it offers is
+the record's to say: `Add property` while the `has_one` holds nothing, `Delete property`
+once it does, and never both. An action with no page anywhere — `recourse :sweep, only:
+:create` — has nowhere of its own, so its button stands on the record's own show page,
+every other page of the record being about something else.
 
 A singular resource has no id to look up, so the gem reads the record off the parent
 under the name the route already gives it — `location.property`, whether the parent

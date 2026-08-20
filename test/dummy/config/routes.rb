@@ -23,6 +23,10 @@ Rails.application.routes.draw do
       # place, with `new` routed so an absent one is a form to fill in rather than a
       # page saying there is none.
       recourse :audit, only: %i[new create show]
+      # And one routed `show create destroy`, which is a page and two verbs and no
+      # form: nothing to fill in, so the button that makes the record and the one that
+      # removes it both stand on the page that reads it, one at a time.
+      recourse :seal, only: %i[show create destroy]
       # The same, over a record a place may not have: what the host finds is what the
       # page reads, and a page that finds nothing says so.
       recourse :person, only: :show

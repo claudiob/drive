@@ -10,18 +10,34 @@ module Recourse
     private
 
       # A nested resource routed without an `index` is reached from nowhere, so its
-      # button lives on the record it hangs off — beside the breadcrumbs, on
-      # whichever of that record's pages is open. The routes are the whole check, the
-      # way they are for a bare create on an index: declaring one is the host saying
-      # there is nothing to ask and nothing to list, only something to do.
+      # button lives on the record it hangs off — beside the breadcrumbs. Which of
+      # that record's pages is the host's business as much as the button is: the
+      # routes say where it goes as well as whether it exists.
       def bare_action_buttons(record)
         Recourse.nested_under(card_path).filter_map do |nested|
-          # An index is a page to reach the action from, and a `new` is a form to
-          # fill in on the way: either one means there is more to this than a button.
-          next if routed?(nested, 'index') || routed?(nested, 'new')
+          next unless bare_action_page? nested
 
           bare_action_button record, nested
         end
+      end
+
+      # Whether this is that page. An index is a page to reach the action from and a
+      # `new` is a form to fill in on the way: either one means there is more to this
+      # than a button. A page of its own is where the button belongs and the only place
+      # it belongs, so a location's card does not offer to fetch one service's answer
+      # while another service's is open. And a nesting with no page anywhere stands on
+      # the record's own page, since every other page of the record is about something
+      # else — a place's ZIP is not where a sweep of the place is offered.
+      def bare_action_page?(nested)
+        return false if routed?(nested, 'index') || routed?(nested, 'new')
+        return nested == controller.controller_path if idless_route? nested, 'show'
+
+        record_page?
+      end
+
+      # The one page every record has, and the only one a pageless action stands on.
+      def record_page?
+        !resource_parent && controller.action_name == 'show'
       end
 
       # Buttons no route can name: an action a record only sometimes offers, or one
@@ -35,14 +51,28 @@ module Recourse
         recourse_extra_actions record
       end
 
-      # The first of the two the routes drew that needs no id: a `create` on the
-      # collection, or a singular resource's `destroy`. A member action wants the row
-      # it acts on, and a row is what a table is for.
+      # The first of the two the routes drew that needs no id and the record leaves
+      # open: a `create` on the collection, or a singular resource's `destroy`. Both,
+      # where a singular routed each of them has the record to tell them apart. A
+      # member action wants the row it acts on, and a row is what a table is for.
       def bare_action_button(record, nested)
-        action, method = BARE_ACTIONS.find { |one, _| idless_route? nested, one }
+        action, method = BARE_ACTIONS.find do |one, _|
+          idless_route?(nested, one) && bare_action_open?(one)
+        end
         return unless action
 
         [bare_action_label(nested, action), bare_action_url(record, nested, action), method]
+      end
+
+      # Whether the record leaves it to be done. On a singular resource's own page the
+      # record is what decides, and a `has_one` answers only one of the two: nothing to
+      # create where there is already one, nothing to delete where there is none.
+      # Elsewhere nothing here knows what the action would touch, so the routes stay
+      # the whole check.
+      def bare_action_open?(action)
+        return true unless idless_route? controller.controller_path, 'show'
+
+        action == :create ? resource_record.nil? : resource_record.present?
       end
 
       # The resource's own word, which a host renames in a locale like any other

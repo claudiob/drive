@@ -7,6 +7,24 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* [BREAKING CHANGE] A bare action's button stands on one page, not on every page
+
+  The button for an action the routes drew under a record sat beside the breadcrumbs on
+  whichever of that record's pages was open, which put `Add HouseCanary` and `Add
+  Realtor` side by side on a location's own page and on each other's. The rule the gem
+  already stated for tabs now governs buttons too: a nesting with a page of its own
+  draws its button there and nowhere else, and one with no page anywhere — `recourse
+  :sweep, only: :create` — draws it on the record's own show page, since every other
+  page of the record is about something else.
+
+  A singular resource routed both `create` and `destroy` also stops offering the wrong
+  one. The record decides: `Add seal` while the `has_one` holds nothing, `Delete seal`
+  once it does. Before, whichever of the two came first in the routes won, so a
+  singular routed both always read `Add`.
+
+  Breaking for a host whose tests look for a button on a page that no longer carries
+  it, and for one relying on an action being reachable from a record's every page.
+
 * [Feature] The gem finds a singular resource's record
 
   A singular `recourse` is reached with no id, and finding the one record it stands for
