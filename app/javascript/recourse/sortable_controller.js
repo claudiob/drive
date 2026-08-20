@@ -1,5 +1,6 @@
 import { Controller } from '/recourse/stimulus.js'
 import Sortable from '/recourse/sortable.js'
+import { flash } from '/recourse/flash.js'
 
 // Drags a row of an arranged table to another place in it. Only the row that moved
 // is reported, as the place it landed in: the server shifts whatever it displaced,
@@ -9,7 +10,7 @@ import Sortable from '/recourse/sortable.js'
 // whatever the pages before it hold — `offset` is what makes up the difference, and
 // a drag therefore moves a row within the page it is on.
 export default class extends Controller {
-  static values = { offset: Number }
+  static values = { offset: Number, message: String }
 
   connect() {
     this.sortable = Sortable.create(this.element, {
@@ -58,10 +59,21 @@ export default class extends Controller {
         body,
         headers: { Accept: 'application/json', 'X-CSRF-Token': this.token },
       })
-      if (!response.ok) this.element.closest('turbo-frame')?.reload()
+      if (!response.ok) return this.revert()
+
+      // Said only once the row is actually written. The drop moved it on the screen
+      // and would have moved it under a request that never landed, so this is the
+      // half of the report only the server can give.
+      flash(this.messageValue, 'theme-success')
     } catch {
-      this.element.closest('turbo-frame')?.reload()
+      this.revert()
     }
+  }
+
+  // Put the table back the way the database has it, since the row is sitting
+  // somewhere the server never agreed to.
+  revert() {
+    this.element.closest('turbo-frame')?.reload()
   }
 
   // The token in the head rather than one in a form: there is no form here, and the

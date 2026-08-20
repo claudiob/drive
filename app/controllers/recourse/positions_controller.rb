@@ -41,6 +41,7 @@ module Recourse
     def answer
       return head :no_content unless request.format.html?
 
+      flash.notice = t 'recourse.position_updated'
       redirect_back fallback_location: listing_url, status: :see_other
     end
 

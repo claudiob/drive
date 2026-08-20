@@ -51,6 +51,23 @@ class TestRecoursesArrangementsWrites < IntegrationCase
     assert_equal 2, writes.size
   end
 
+  # A move made without JavaScript says so on the page it lands back on.
+  def test_a_move_a_page_made_reports_itself_in_a_flash
+    move '/teams/3/position', 1
+
+    assert_equal 'Position updated', @session.flash[:notice]
+  end
+
+  # And a drag is told the same words to say for itself, since the answer it gets
+  # carries nothing to render.
+  def test_a_drag_is_handed_the_words_to_report_with
+    @session.patch '/teams/3/position', params: { position: 1 },
+                                        headers: { 'Accept' => 'application/json' }
+
+    assert_equal 204, @session.response.status
+    assert_includes visit('/teams'), 'data-sortable-message-value="Position updated"'
+  end
+
   # A table nobody arranges at this level has no place to write, so the route that
   # exists for every resource answers nothing for it.
   def test_a_page_above_the_level_has_no_position_to_write

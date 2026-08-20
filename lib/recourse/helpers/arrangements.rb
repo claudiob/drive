@@ -38,7 +38,10 @@ module Recourse
       # page rather than the table, so the index a drag reports is short by whatever
       # the pages before it hold.
       def arrangement_data(pagy)
-        { controller: 'sortable', sortable_offset_value: pagy&.offset.to_i }
+        {
+          controller: 'sortable', sortable_offset_value: pagy&.offset.to_i,
+          sortable_message_value: t('recourse.position_updated'),
+        }
       end
 
       # And what each row carries: where to write the place it ends up. One URL per
