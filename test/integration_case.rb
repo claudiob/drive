@@ -23,10 +23,22 @@ class IntegrationCase < Minitest::Test
 
   # The SQL one block issued against one table, so a test can count what a page
   # costs — which no covered line can stand in for.
-  def queries_on(table)
+  def queries_on(table, &)
+    sql_matching %(FROM "#{table}"), &
+  end
+
+  # And the same for what a block wrote, which names its table without a `FROM`:
+  # a shift written a row at a time costs a statement each, and only a count says so.
+  def writes_on(table, &)
+    sql_matching %(UPDATE "#{table}"), &
+  end
+
+private
+
+  def sql_matching(fragment)
     queries = []
     subscription = ActiveSupport::Notifications.subscribe 'sql.active_record' do |*, payload|
-      queries << payload[:sql] if payload[:sql].include? %(FROM "#{table}")
+      queries << payload[:sql] if payload[:sql].include? fragment
     end
     yield
     queries

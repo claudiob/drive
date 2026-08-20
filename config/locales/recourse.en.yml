@@ -9,6 +9,7 @@ en:
   recourse:
     add: Add %{model}
     all: All %{models}
+    arrange: Reorder
     attach: Add
     all_values: All
     blank: "—"

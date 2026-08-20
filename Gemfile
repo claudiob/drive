@@ -14,3 +14,6 @@ gem 'rubocop' # lints against the conventions in CLAUDE.md
 gem 'simplecov' # fails the suite when coverage drops below 100%
 gem 'sqlite3' # SQLite driver for the dummy app's database
 gem 'turbo-rails' # live index refreshes: broadcasts_refreshes_to and turbo_stream_from
+# Until 3.2 is released: `drag` is the grip an arranged row is taken hold of by, and a
+# published unicon has no name for it yet. Drop this line and raise the gemspec then.
+gem 'unicon', path: '../unicon'

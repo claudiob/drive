@@ -8,12 +8,24 @@ module Recourse
       # What a resource holds: the square that keeps one of its rows, the join a listing
       # writes, and whatever the host's own block declared — each under the resource's
       # own module, which is what every nested page relies on.
-      def draw_within(keepable, through, block)
+      def draw_within(keepable, arrangeable, through, block)
         scope module: parent_resource.name do
           draw_bookmark if keepable
+          draw_position if arrangeable
           draw_join through if through
           instance_exec(&block) if block
         end
+      end
+
+      # The place a row of an arranged table holds, at `/teams/5/position`. Recorded
+      # nowhere, for the reason the bookmark gives: a tab and a bare-action button
+      # both look under a resource, and this is neither. Drawn wherever an index is —
+      # whether the model arranges anything is the model's word, and asking for it
+      # here would reach for a database before the routes are even finished.
+      def draw_position
+        path = [current_module, 'positions'].compact.join '/'
+        Controllers.define_missing path, ::PositionsController
+        resource :position, only: :update
       end
 
       # The row a table's bookmark square writes: one record kept by whoever is looking,
