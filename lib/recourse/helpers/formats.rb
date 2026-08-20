@@ -42,8 +42,15 @@ module Recourse
         case kind
         when :enum then value && enum_badge(marked(value, &))
         when :date, :datetime, :time then value && localized(value)
-        else web_url?(value) ? url_link(value) : marked(value, &)
+        when :json then value.presence && json_block(value)
+        else linked_or_marked(value, &)
         end
+      end
+
+      # One whole web address is a value to follow rather than to read, and anything
+      # else is words — which the caller may have marking of its own for.
+      def linked_or_marked(value, &)
+        web_url?(value) ? url_link(value) : marked(value, &)
       end
 
       # The caller's own marking, where it has one: a table marks what a search
@@ -57,6 +64,14 @@ module Recourse
       # ask which it has — and a `DateTime`, which is both, still keeps its time.
       def localized(value)
         time_tag value, l(value, format: :recourse)
+      end
+
+      # A payload read as the JSON it is rather than as the Hash Ruby prints. In a block
+      # of its own that scrolls rather than grows: one of these is as tall as a page, and
+      # nothing else on a record's page should have to move aside for it. `presence`, so
+      # an empty payload reads as the dash every other empty value does.
+      def json_block(value)
+        tag.pre JSON.pretty_generate(value), class: 'recourse-payload'
       end
 
       def enum_badge(value)

@@ -200,6 +200,16 @@
       }
       .combobox-search-clear:hover { background-color: var(--bs-bg-1); color: var(--bs-fg-body); }
 
+      /* A payload in a block of its own, bounded so it scrolls rather than grows. `pre`
+         keeps the indentation that makes JSON readable, and keeps its long lines intact
+         — so the box scrolls in both directions rather than letting one unbroken token
+         decide how wide a column is. */
+      .recourse-payload {
+        max-height: 12rem;
+        margin-block-end: 0;
+        overflow: auto;
+      }
+
       /* A row the viewer has kept, and the only report a click ever gets, so it has to
          be seen. A twelfth of the primary mixed into the page rather than
          `--bs-primary-bg-subtle`: that token is a fixed step of the ramp, far enough

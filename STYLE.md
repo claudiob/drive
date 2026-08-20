@@ -474,6 +474,13 @@ before writing or editing any layout, view or partial.
   first is the class the form's `<label>` wears and the second is Bootstrap's own
   read-only control, whose padding and line height are a control's, so a value sits
   exactly where the input holding it would have.
+- A JSON payload is the one value that gets a block of its own: a `<pre>` of
+  `JSON.pretty_generate` under `.recourse-payload`, bounded to `12rem` and scrolling in
+  both directions. Indented, because that is what makes JSON readable; `pre`, because
+  keeping its long lines intact is what stops one unbroken token deciding how wide the
+  column is; and bounded, because one payload is as tall as a page and nothing else on
+  the record's page should move aside for it. An empty one reads as the dash every
+  other empty value reads as, rather than as `{}`.
 - `.form-control-plaintext` and not a disabled `.form-control`: a box a person
   cannot type in invites them to try. This page has no form on it at all, which is
   the whole difference from the edit page.
