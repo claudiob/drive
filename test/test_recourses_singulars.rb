@@ -28,6 +28,10 @@ class TestRecoursesSingulars < IntegrationCase
     assert_includes body, %(active" aria-current="page" href="/places/#{place.id}/zip")
     assert_includes body, %(href="/places/#{place.id}/edit")
     assert_includes body, place.zip.code
+    # And the crumb naming it reads as the one record it is. The path is plural, since
+    # that is the controller Rails routes a singular resource to, and the word is not.
+    assert_includes body, '>ZIP</span>'
+    refute_includes body, 'ZIPs</span>'
   end
 
   # Routed anything but a page, it is an action: the button says so and no tab claims

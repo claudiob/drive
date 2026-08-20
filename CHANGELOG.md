@@ -47,6 +47,11 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
   icon on a tab comes from an association the gem counted and from nowhere else. An
   index still wins where a host drew both.
 
+  The crumb naming such a page reads the same way, and used to read the plural. Rails
+  routes a singular resource to a plural controller, so the path says `properties` for
+  the one property a location keeps, and the trail over it said `HouseCanaries` for a
+  page there is only ever one of.
+
   A page nested under a record now sits in that record's card whichever page it is.
   `show` and `edit` were handing the card their own record while the tabs above it
   were built from the parent's path, so a nested `/posts/1/ratings/2` drew a Show tab
