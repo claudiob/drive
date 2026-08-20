@@ -43,9 +43,10 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 * A JSON value reads as JSON
 
   A `json` or `jsonb` column on a record's page was printed as the Hash Ruby prints,
-  one line as wide as the payload. It is `JSON.pretty_generate` in a bounded, scrolling
-  block now, so a service's answer is readable and nothing else on the page moves aside
-  for it. An empty payload reads as the dash, not as `{}`.
+  one line as wide as the payload. It is `JSON.pretty_generate` in a block of its own
+  now — indented, wrapped, and bounded to a height it scrolls within — so a service's
+  answer is readable and nothing else on the page moves aside for it. An empty payload
+  reads as the dash, not as `{}`.
 
 * [Feature] A resource may name its own model, and may keep no rows at all
 

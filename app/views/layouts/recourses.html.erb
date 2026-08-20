@@ -201,14 +201,28 @@
       .combobox-search-clear:hover { background-color: var(--bs-bg-1); color: var(--bs-fg-body); }
 
       /* A payload in a block of its own, bounded so it scrolls rather than grows. `pre`
-         keeps the indentation that makes JSON readable, and keeps its long lines intact
-         — so the box scrolls in both directions rather than letting one unbroken token
-         decide how wide a column is. */
+         for the indentation that makes JSON readable, but wrapping rather than running
+         off to the side: a flex item's automatic minimum size is the min-content width
+         of whatever is inside it, and `overflow` on this box does not lower it — so one
+         unbroken 4,000-character token became the width of the value's column, then of
+         `main`, which then wrapped below the sidebar it belongs beside. `pre-wrap` keeps
+         the indentation and takes the wrapping, and `anywhere` is what lowers
+         min-content, which `break-word` in its place would not. */
       .recourse-payload {
         max-height: 12rem;
         margin-block-end: 0;
         overflow: auto;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
       }
+
+      /* And the columns holding it may be narrower than it is. A flex item's automatic
+         minimum size is the min-content width of what is inside it, and `overflow` on
+         the box inside does not lower it — so without these the 32,000px one unbroken
+         token wants becomes the width of the value's column, then of `main`, then of
+         the page, and `main` wraps below the sidebar it should be sitting beside. These
+         two are every flex item in this layout that holds a page's own content, which
+         is what makes `overflow` on the box inside mean what it says. */
 
       /* A row the viewer has kept, and the only report a click ever gets, so it has to
          be seen. A twelfth of the primary mixed into the page rather than

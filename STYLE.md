@@ -475,12 +475,16 @@ before writing or editing any layout, view or partial.
   read-only control, whose padding and line height are a control's, so a value sits
   exactly where the input holding it would have.
 - A JSON payload is the one value that gets a block of its own: a `<pre>` of
-  `JSON.pretty_generate` under `.recourse-payload`, bounded to `12rem` and scrolling in
-  both directions. Indented, because that is what makes JSON readable; `pre`, because
-  keeping its long lines intact is what stops one unbroken token deciding how wide the
-  column is; and bounded, because one payload is as tall as a page and nothing else on
-  the record's page should move aside for it. An empty one reads as the dash every
-  other empty value reads as, rather than as `{}`.
+  `JSON.pretty_generate` under `.recourse-payload`, bounded to `12rem` and scrolling
+  down. Indented, because that is what makes JSON readable; bounded, because one payload
+  is as tall as a page and nothing else on the record's page should move aside for it;
+  and wrapping, because a line that runs off to the side takes the layout with it. A
+  flex item's automatic minimum size is the min-content width of what is inside it, and
+  `overflow` on the box does not lower it — so an unbroken token sets the width of the
+  column, then of `main`, and `main` wraps below the sidebar. `white-space: pre-wrap`
+  keeps the indentation while allowing the wrap, and `overflow-wrap: anywhere` is what
+  lowers min-content; `break-word` looks the same and does not. An empty payload reads
+  as the dash every other empty value reads as, rather than as `{}`.
 - `.form-control-plaintext` and not a disabled `.form-control`: a box a person
   cannot type in invites them to try. This page has no form on it at all, which is
   the whole difference from the edit page.
