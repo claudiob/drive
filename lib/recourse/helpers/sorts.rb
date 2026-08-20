@@ -33,7 +33,14 @@ module Recourse
         reference_title column.to_s, belongs_to_association(column.to_s)
       end
 
+      # An arranged table offers no heading a reader can sort by: the order is one
+      # somebody set, and a second way to read the same rows would contradict it.
+      # Asked here rather than in `_table`, so a row partial of a host's own — which
+      # draws its headings through `sort_header` like every other — needs no edit the
+      # day its model becomes arranged.
       def sortable_column?(column)
+        return false if Recourse.position_column resource_model
+
         resource_model.ransortable_attributes.include? column.to_s
       end
 

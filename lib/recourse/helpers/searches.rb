@@ -22,7 +22,10 @@ module Recourse
       def search_form
         field = resource_search_field
         filters = resource_filter_fields
-        return if field.blank? && filters.empty?
+        # An arranged table takes neither: both would read its rows in an order
+        # nobody set. The query refuses them anyway, so a form drawn here would be a
+        # box that does nothing.
+        return if Recourse.position_column(resource_model) || (field.blank? && filters.empty?)
 
         render 'recourses/search', query: resource_search, url: url_for(action: :index),
                                    field: field, prompt: resource_search_prompt,

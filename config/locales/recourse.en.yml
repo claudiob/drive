@@ -33,6 +33,8 @@ en:
     lighten: A lighter palette
     missing_model: You declared `recourses :%{name}` in your routes file, but this app
       has no %{model} model.
+    missing_position: "`%{model}.recourse_order` arranges by `%{column}`, but that table
+      has no such column."
     nested: You nested `recourses %{names}` inside `resources :%{parent}`, which does
       not namespace what it holds. Nest it under `recourses :%{parent}` instead.
     new: New %{model}
@@ -47,11 +49,15 @@ en:
     searched_eq: Filter by exact %{list}
     select: Select…
     show: Show
+    two_positions: "`recourse_order` marks %{keys} as `:positionable`, which is two
+      orders for one table. Mark the one a reader arranges."
     unbookmark: Remove bookmark
     unknown_color: "`Recourse.color` is one of %{colors}, or nil for Bootstrap's own
       blue. It cannot be %{color}."
     unknown_theme: "`Recourse.theme` is one of %{themes}, or nil for Bootstrap's own
       palette. It cannot be %{theme}."
+    unsorted_position: "`%{model}.recourse_order` arranges by `%{column}`, but no
+      database index covers it, so no table can be read in that order. Add one."
     updated: "%{model} was updated."
     updated_error: "%{model} could not be updated."
     unset: None
