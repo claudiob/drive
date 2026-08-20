@@ -34,6 +34,19 @@ class TestRecoursesSingulars < IntegrationCase
     refute_includes body, 'ZIPs</span>'
   end
 
+  # A singular resource is one the host finds, and what it finds is sometimes nothing:
+  # a `belongs_to` that is optional, a `has_one` nobody has written yet. The page says
+  # so in the singular, rather than reading attributes off nothing.
+  def test_a_singular_nested_show_says_when_there_is_no_record
+    with_person, without = Place.order(:id).partition(&:person)
+
+    visit "/places/#{with_person.first.id}/person"
+    assert_includes body, with_person.first.person.name
+
+    visit "/places/#{without.first.id}/person"
+    assert_includes body, 'No person.'
+  end
+
   # Routed anything but a page, it is an action: the button says so and no tab claims
   # a page that is not there.
   def test_a_singular_nested_action_earns_no_tab

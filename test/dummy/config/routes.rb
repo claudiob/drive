@@ -19,6 +19,9 @@ Rails.application.routes.draw do
       # And one routed `show`: a page rather than an action, which Rails draws no
       # index for -- so the tab on the place is the only thing that reaches it.
       recourse :zip, only: :show
+      # The same, over a record a place may not have: what the host finds is what the
+      # page reads, and a page that finds nothing says so.
+      recourse :person, only: :show
       # No `Photo` in this app: the name is what the place has attached, and the
       # table is of Active Storage's blobs.
       recourses :photos, only: :index

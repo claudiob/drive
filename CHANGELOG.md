@@ -52,6 +52,11 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
   the one property a location keeps, and the trail over it said `HouseCanaries` for a
   page there is only ever one of.
 
+  And the page says so where the host found nothing. A singular resource is reached
+  with no id, so the one record it stands for is one a parent may not have yet — an
+  optional key, a `has_one` nobody has written. Such a page reads `No property.`, the
+  singular of what an empty index says, rather than reading attributes off nothing.
+
   A page nested under a record now sits in that record's card whichever page it is.
   `show` and `edit` were handing the card their own record while the tabs above it
   were built from the parent's path, so a nested `/posts/1/ratings/2` drew a Show tab
