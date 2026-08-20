@@ -40,6 +40,18 @@ module Recourse
       # And no polymorphic key either, for the same reason.
       def recourse_reference_types = []
 
+      # Nothing to look through, which is what leaves such a page without a search box:
+      # `Searchable` is extended onto Active Record, and an aggregate is not one, so the
+      # question reaches here instead of going unanswered.
+      def search_field(**) = nil
+
+      # And so nothing for a box there is none of to say while it is empty.
+      def search_prompt(**) = nil
+
+      # And no filters beside it: those are drawn from enums, booleans and foreign
+      # keys, which are three kinds of column an aggregate has none of.
+      def filter_fields = {}
+
       # What names one of its rows, defaulted the way a model's is so that including
       # this is enough on its own.
       def recourse_label = :name
