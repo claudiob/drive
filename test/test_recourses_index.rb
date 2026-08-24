@@ -23,8 +23,8 @@ class TestRecoursesIndex < IntegrationCase
       refute_includes body, %(data-cell="#{column}")
     end
     # The whole row, in the bands a column's kind puts it in: the squares and the links
-    # that open the record, then what state it is in, its flags, whose it is, what it
-    # says, the long ones, when it happened, and the two Rails keeps. A place counts
+    # that open the record, then what state it is in, whose it is, what it says, its
+    # flags, the long ones, when it happened, and the two Rails keeps. A place counts
     # nothing, so the band past those is empty here — `/people` is where it is read.
     # Inside a band the order is the table's own, which is what leaves `capacity rating
     # area` reading as the schema wrote it. Asserted whole, so a band moving is a
@@ -32,10 +32,9 @@ class TestRecoursesIndex < IntegrationCase
     headings = body.scan(/data-cell="([^"]+)"/).flatten.uniq
 
     assert_equal [
-      'Bookmark', 'Show', 'Edit', 'Status', 'Active', 'Verified', 'ZIP code', 'Team',
-      'Person', 'Name', 'Slug', 'Capacity', 'Rating', 'Area', 'Hourly rate',
-      'Commission rate', 'Phone', 'Website', 'About', 'Opens on', 'Audited at',
-      'Created at', 'Updated at',
+      'Bookmark', 'Show', 'Edit', 'Status', 'ZIP code', 'Team', 'Person', 'Name', 'Slug',
+      'Capacity', 'Rating', 'Area', 'Hourly rate', 'Commission rate', 'Phone', 'Website',
+      'Active', 'Verified', 'About', 'Opens on', 'Audited at', 'Created at', 'Updated at',
     ], headings
   end
 
