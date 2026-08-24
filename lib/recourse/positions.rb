@@ -20,6 +20,16 @@ module Recourse
       column
     end
 
+    # The same as a list, for a caller subtracting it from a set of column names: none
+    # to subtract where a model arranges by nothing, and none either where the question
+    # reaches an aggregate, which has no rows to put in an order and so answers no
+    # `recourse_order` at all.
+    def position_columns(model)
+      return [] unless model.respond_to? :recourse_order
+
+      Array position_column(model)
+    end
+
     # Whether *this* page is one the arranging means something on, which is the same
     # question as whether the rows it lists are the rows a position is counted within.
     #

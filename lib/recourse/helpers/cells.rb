@@ -43,7 +43,7 @@ module Recourse
       # Only where the arranging is what this page does: read at a level the position
       # is not counted at, the column is a number like any other and reads as one.
       def arranged_columns
-        arranged? ? Array(Recourse.position_column(resource_model)) : []
+        arranged? ? Recourse.position_columns(resource_model) : []
       end
 
       # Columns a form offers — less the parent a nested route has already

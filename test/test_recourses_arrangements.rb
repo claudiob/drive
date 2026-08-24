@@ -37,6 +37,20 @@ class TestRecoursesArrangements < IntegrationCase
     refute_includes body, '>Position<'
   end
 
+  # Nor does any form ask for one: the table is what a position is set on, by
+  # dragging, so a box asking for the number would be a second way to say what the
+  # row's own place already says. What keeps it off is the model's own declaration
+  # rather than the page's level — a team's table is arranged and the memos table
+  # above the level is not, and neither form offers the field.
+  def test_no_form_asks_for_a_position
+    %w[/teams/1/edit /memos/1/edit /memos/new].each do |path|
+      visit path
+
+      refute_includes body, '[position]'
+      refute_includes body, '>Position<'
+    end
+  end
+
   # And the refusal is the query's rather than the page's, so a sort typed into the
   # address bar is answered in the order the reader set anyway.
   def test_a_sort_asked_for_by_url_leaves_an_arranged_table_where_it_was
