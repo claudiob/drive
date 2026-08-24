@@ -20,16 +20,20 @@ module Recourse
         tag.div class: ROW do
           safe_join [
             @recourse_form.label(name, label, class: 'form-label'),
-            @recourse_form.file_field(name, class: 'form-control', **attachment_options(name)),
+            @recourse_form.file_field(name, **attachment_options(name)),
             attached_note(name),
           ].compact
         end
       end
 
+      # A file input carries none of a column's constraints, so its options are the
+      # class, the note under it, and whether it takes several files at once.
       def attachment_options(name)
-        return {} unless Recourse.attachment_many? resource_model, name
+        described = field_note_id name if resource_record&.persisted?
+        options = { class: 'form-control', aria: { describedby: described } }
+        return options unless Recourse.attachment_many? resource_model, name
 
-        { multiple: true, include_hidden: false }
+        options.merge multiple: true, include_hidden: false
       end
 
       # What the record is holding, under the field that adds to it: choosing a file
@@ -39,7 +43,7 @@ module Recourse
       def attached_note(name)
         return unless resource_record&.persisted?
 
-        field_note attached_reading(name)
+        field_note attached_reading(name), field_note_id(name)
       end
 
       def attached_reading(name)

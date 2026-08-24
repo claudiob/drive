@@ -41,6 +41,13 @@ class TestRecoursesWrites < IntegrationCase
     # A code matching nothing was never assigned, so only the request still knows
     # what was typed — and that is what the field has to keep showing.
     assert_includes body, 'value="00000"'
+    # An error outranks a hint. The ZIP has both a comment and a message, and it points
+    # at the message alone — the note is still drawn, and nothing describes it. Which
+    # is also what keeps `field_error_proc` — a host's, and untouched by any of this —
+    # from writing a second `aria-describedby` beside one of ours.
+    assert_includes body, 'aria-describedby="place_zip_id_error"'
+    refute_includes body, 'aria-describedby="place_zip_id_help"'
+    assert_includes body, 'id="place_zip_id_help"'
   end
 
   def test_update_saves_and_says_so

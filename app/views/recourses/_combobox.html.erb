@@ -1,8 +1,8 @@
-<%# locals: (name:, id:, placeholder:, invalid: false, feedback: nil, required: false, label: nil, counter: nil, recourses: nil, values: [], multiple: false, selected: [], aria_label: nil, small: false, all: nil, none: nil) -%>
+<%# locals: (name:, id:, placeholder:, invalid: false, feedback: nil, described: nil, required: false, label: nil, counter: nil, recourses: nil, values: [], multiple: false, selected: [], aria_label: nil, small: false, all: nil, none: nil) -%>
 <button class='form-control<%= ' form-control-sm' if small %><%= ' is-invalid' if invalid %> combobox-toggle' type='button' id='<%= id %>'
         data-bs-toggle='combobox' data-bs-name='<%= name %>' data-controller='combobox'
         data-bs-placeholder='<%= placeholder %>' data-bs-search='true'
-        aria-required='<%= required %>' <%= tag.attributes 'data-bs-multiple': ('true' if multiple), 'aria-label': aria_label, 'aria-describedby': feedback && "#{id}_error" %>>
+        aria-required='<%= required %>' <%= tag.attributes 'data-bs-multiple': ('true' if multiple), 'aria-label': aria_label, 'aria-describedby': described %>>
   <span class='combobox-value'><%= placeholder %></span>
   <i class='bi bi-chevron-down combobox-caret'></i>
 </button>

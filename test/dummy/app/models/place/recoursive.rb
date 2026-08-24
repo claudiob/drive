@@ -4,6 +4,17 @@ class Place
   module Recoursive
     extend ActiveSupport::Concern
 
+    # SQLite keeps no column comments, so the dummy says by hand what a Postgres host's
+    # schema would have said for it. One per kind of control, since what a note is tied
+    # to is a different job under each: a box, a checkbox, a menu, and a key typed
+    # rather than picked.
+    COMMENTS = {
+      'active' => 'Whether it takes bookings today',
+      'capacity' => 'How many people fit at once',
+      'status' => 'Where it stands right now',
+      'zip_id' => 'The five digits, not the town',
+    }.freeze
+
     class_methods do
       # `place` is a word Unicon has never heard of, and a circle is a poor thing to
       # head a column with. ZIP says nothing here on purpose, so the page it draws is
@@ -19,12 +30,9 @@ class Place
       # and created before updated — so the order named here says nothing.
       def recourse_displayed = %i[created_at updated_at]
 
-      # SQLite keeps no column comments, so the dummy says by hand what a Postgres
-      # host's schema would have said for it. Everything else falls through to the
-      # schema, which on this adapter answers nothing at all.
-      def recourse_comment(column)
-        column == 'capacity' ? 'How many people fit at once' : super
-      end
+      # Everything else falls through to the schema, which on this adapter answers
+      # nothing at all.
+      def recourse_comment(column) = COMMENTS[column] || super
     end
   end
 end

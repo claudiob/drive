@@ -24,13 +24,22 @@ module Recourse
         {
           name: form.field_name(column), id: form.field_id(column), invalid: messages.any?,
           feedback: messages.to_sentence.upcase_first.presence,
-          placeholder: combobox_placeholder(column),
-          required: required,
+          described: combobox_described(form, column, messages),
+          placeholder: combobox_placeholder(column), required: required,
           # A menu of records can say which one; only this can say none of them, and
           # a key that may be nothing has to be settable back to it.
           none: (t 'recourse.unset' unless required),
           selected: combobox_selected(form, column),
         }
+      end
+
+      # What the toggle points at: its own error where it has one, and otherwise the
+      # note under it. The same order of precedence every other control follows.
+      def combobox_described(form, column, messages)
+        id = form.field_id column
+        return "#{id}_error" if messages.any?
+
+        field_described column
       end
 
       # What the record already holds, as the menu spells its values: an id for a

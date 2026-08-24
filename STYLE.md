@@ -576,13 +576,18 @@ before writing or editing any layout, view or partial.
   `fg-secondary` for a line answering a question nobody asked: quieter than the value
   above it, and quieter than `.form-text`'s own `--bs-fg-2`, which a colour utility
   later in the cascade is what overrides.
-- Neither carries `aria-describedby`, so neither is announced when a field takes focus
-  — only when the form is read straight through. Doing it properly means every control
-  the gem draws, and two of them take no HTML options at all today: a checkbox is
-  `form.check_box(column, class: 'check')` with the options dropped, and a combobox is
-  a rendered partial. `typed_reference` already spends the attribute on its error
-  message, so a field with both would have to list two ids. One job, once, for the
-  comment and the note together — not half of it here.
+- The note carries an id off the field's own — `place_capacity_help` — and the control
+  points at it with `aria-describedby`, so it is announced when the field takes focus
+  and not only when the form is read straight through.
+- Every control the gem draws is told, but each is told a different way, because each
+  reaches the browser differently. A text box, a number, a date, a textarea and a file
+  input take it among the other options `resource_field` builds. A **checkbox** is
+  handed it on its own — `kind_field` drops that hash for a boolean on purpose, the
+  rest of it being `maxlength`, `pattern`, `placeholder`, `inputmode` and `required`,
+  none of which a box that is either ticked or not has any use for. A **combobox**
+  carries it as a local, the partial having rendered the attribute for its error
+  message all along. A **typed reference** builds the attribute itself, so it says both
+  in one place.
 - What a model keeps as files rather than as columns gets a field of its own, after
   every column the form draws: a file input is the widest control on the page, and it
   is also the one thing on the form that is not an attribute. `has_many_attached` earns
@@ -921,6 +926,13 @@ before writing or editing any layout, view or partial.
 - A `belongs_to` reports its error on the association, so a field for `state_id`
   asks the record about both `state_id` and `state` — otherwise a missing state
   reddens nothing.
+- An error outranks a hint. A field with both a message and a note under it describes
+  the message alone: the note is still drawn, and nothing points at it. Said in the gem
+  rather than left to chance — `field_error_proc` is the host's and writes an
+  `aria-describedby` of its own for every invalid field, so a second one from here
+  would be a duplicate attribute that a browser silently throws one half of. The gem
+  withholds its id instead, which makes the rule true for the combobox and the typed
+  reference too, neither of which that proc ever sees.
 
 ## Tables
 

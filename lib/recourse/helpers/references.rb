@@ -49,7 +49,7 @@ module Recourse
         html = typed_html(column, association).merge(
           class: messages.any? ? 'form-control is-invalid' : 'form-control',
           value: typed_reference_value(form, column, association),
-          'aria-describedby': ("#{id}_error" if messages.any?)
+          'aria-describedby': (messages.any? ? "#{id}_error" : field_described(column))
         )
 
         safe_join [form.text_field(column, **html), invalid_feedback(messages, id)]

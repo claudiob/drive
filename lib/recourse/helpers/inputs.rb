@@ -5,20 +5,23 @@ module Recourse
     private
 
       # A field for a column whose kind is what decides it, the fallback being a text
-      # box for anything that never said what it holds.
-      def kind_field(form, column, **)
+      # box for anything that never said what it holds. The checkbox is handed one
+      # option by name rather than the whole hash: the rest is `maxlength`, `pattern`,
+      # `placeholder`, `inputmode` and `required`, none of which a box that is either
+      # ticked or not has any use for.
+      def kind_field(form, column, **options)
         kind = attribute_kind column
-        return numeric_field(form, column, kind, **) if numeric_kind? kind
+        return numeric_field(form, column, kind, **options) if numeric_kind? kind
 
         case kind
-        when :boolean then tag.div form.check_box(column, class: 'check')
+        when :boolean then tag.div form.check_box(column, class: 'check', aria: options[:aria])
         when :enum then enum_combobox form, column
-        when :date then form.date_field(column, **)
-        when :datetime then form.datetime_local_field(column, **)
+        when :date then form.date_field(column, **options)
+        when :datetime then form.datetime_local_field(column, **options)
         # One row, like the text box beside it: a text column says the value may
         # grow long, not that it starts big — the resize handle is for when it does.
-        when :text then form.text_area(column, **, rows: 1)
-        else form.text_field(column, **)
+        when :text then form.text_area(column, **options, rows: 1)
+        else form.text_field(column, **options)
         end
       end
 

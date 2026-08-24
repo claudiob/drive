@@ -33,9 +33,16 @@ class TestRecoursesForm < IntegrationCase
     assert_includes body, %(value="#{Place.order(:id).first.zip.code}")
     # What the column is for, under the field that sets it — said by the model here,
     # since SQLite keeps no column comments for the schema to have said it.
-    assert_includes body, 'id="place_capacity" /><div class="form-text mt-1 ' \
-                          'fg-secondary">How many people fit at once</div>'
+    assert_includes body, '<div class="form-text mt-1 fg-secondary" ' \
+                          'id="place_capacity_help">How many people fit at once</div>'
     assert_equal 1, body.scan('How many people fit at once').size
+    # And every control points at its own note, which each kind is told a different
+    # way: a box takes it among its other options, a checkbox is handed it on its own
+    # because the rest of that hash is no use to one, a menu carries it as a local, and
+    # a typed key builds the attribute itself.
+    %w[capacity active status zip_id].each do |column|
+      assert_includes body, %(aria-describedby="place_#{column}_help")
+    end
   end
 
   # What a model keeps as files rather than as columns gets a field of its own, after
@@ -50,6 +57,9 @@ class TestRecoursesForm < IntegrationCase
     assert_includes body, '<label class="form-label" for="place_photos">Photos</label>' \
                           '<input class="form-control" multiple="multiple" type="file" ' \
                           'name="place[photos][]" id="place_photos" />'
+    # And nothing points at a note on a form making a record, there being none: a file
+    # input says what is attached only where something could be.
+    refute_includes body, 'aria-describedby="place_photos_help"'
     assert_includes body, '<label class="form-label" for="place_floor_plan">Floor plan' \
                           '</label><input class="form-control" type="file" ' \
                           'name="place[floor_plan]" id="place_floor_plan" />'
