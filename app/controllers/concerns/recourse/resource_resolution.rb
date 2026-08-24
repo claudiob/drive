@@ -67,14 +67,22 @@ module Recourse
     # which may be a hidden column or an attribute that is no column at all:
     # `def resource_params = params.expect(provider: %i[name cid])`.
     def resource_params
-      permitted = Recourse.editable_columns resource_class
-      key = controller_name.singularize.to_sym
-      # A bare `Create` submits no attributes at all, so the key may be absent: the
-      # parent a nested route names is everything such a record starts from.
-      attributes = params.key?(key) ? resolve_references(params.expect(key => permitted)) : {}
+      # The parent is merged after resolving, so the one the route names is never
+      # mistaken for a label; the files go no further than the permit that let them
+      # through, being attached rather than assigned.
+      submitted_attributes.except(*Recourse.attachment_names(resource_class))
+                          .merge parent_columns
+    end
 
-      # After resolving, so the parent the route names is never mistaken for a label.
-      attributes.merge parent_columns
+    # What the form sent, with a typed reference read back as the id it names. A bare
+    # `Create` submits no attributes at all, so the key may be absent: the parent a
+    # nested route names is everything such a record starts from.
+    def submitted_attributes
+      permitted = Recourse.editable_columns(resource_class) + attachment_filters
+      key = controller_name.singularize.to_sym
+      return {} unless params.key? key
+
+      resolve_references params.expect(key => permitted)
     end
   end
 end

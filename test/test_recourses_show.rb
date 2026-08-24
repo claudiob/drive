@@ -28,6 +28,12 @@ class TestRecoursesShow < IntegrationCase
     # And the payload the index leaves out: a record's own page is where a value too
     # wide for a column of them still belongs.
     assert_includes body, 'step_free_access'
+    # A single file is a value here rather than a table of one row, and nothing
+    # attached reads as the dash every other empty value reads as. A shelf of them is
+    # not: `photos` has a page of its own, where a column of filenames says more.
+    assert_includes body, '<div class="form-label">Floor plan</div>' \
+                          '<div class="form-control-plaintext">—</div>'
+    refute_includes body, '<div class="form-label">Photos</div>'
   end
 
   # The card a record's own page sits in: its Show tab first, then one tab per index

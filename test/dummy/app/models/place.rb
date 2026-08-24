@@ -32,6 +32,9 @@ class Place < ApplicationRecord
   # Files rather than records: a page of them lists Active Storage's own blobs, and
   # the gem needs no model of this app's to draw one.
   has_many_attached :photos
+  # And one file rather than a shelf of them, which is a value on the record's own
+  # page and a field on its form rather than a table of a single row.
+  has_one_attached :floor_plan
 
   # The other half of a bookmark, which is also what opts this table into the column:
   # a model that cannot hold one has not declared one. Teams declare none, so their

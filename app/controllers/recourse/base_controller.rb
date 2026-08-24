@@ -3,8 +3,8 @@ module Recourse
   # its own behavior above it — `class RecoursesController < Recourse::BaseController`
   # with a `before_action :authenticate!` guards every screen the gem serves.
   class BaseController < ApplicationController
-    include Pagy::Method, AttachmentResolution, ParentResolution, ReferenceResolution,
-            ResourceResolution
+    include Pagy::Method, AttachmentResolution, AttachmentWriting, ParentResolution,
+            ReferenceResolution, ResourceResolution
 
     helper Helpers
 
@@ -38,7 +38,7 @@ module Recourse
       record = assign resource_class.new(resource_params)
       model = human_name
 
-      if record.save
+      if create_resource record
         flash.notice = t 'recourse.created', model: model
         redirect_to written_url, status: :see_other
       else
@@ -55,7 +55,7 @@ module Recourse
 
     # Saves changes to a record, then shows the index again or redraws the form.
     def update
-      if @recourse.update resource_params
+      if update_resource @recourse
         flash.notice = t 'recourse.updated', model: human_name
         redirect_to written_url, status: :see_other
       else

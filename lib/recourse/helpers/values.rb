@@ -16,6 +16,34 @@ module Recourse
         end
       end
 
+      # The attachments a record's own page reads out, which are the ones it keeps a
+      # single file under. A `has_many_attached` is a table of its own — a page a host
+      # nests under the record — and a column of filenames says more there than a list
+      # squeezed into a value's row would.
+      def shown_attachments
+        attachment_names.reject { |name| Recourse.attachment_many? resource_model, name }
+      end
+
+      # One labelled file, in the grid a column's value sits in: the name it was
+      # uploaded under, linking to the file the way a table of blobs links to one.
+      def attachment_value(name)
+        label = resource_model.human_attribute_name name
+
+        tag.div class: ROW do
+          safe_join [tag.div(label, class: 'form-label'), attachment_control(name)]
+        end
+      end
+
+      # Read through the association `has_one_attached` generated rather than through
+      # the reader it named, which is the trade `AttachmentResolution` already makes.
+      # Nothing attached reads as the dash every other empty value reads as.
+      def attachment_control(name)
+        blob = resource_record.association(:"#{name}_blob").reader
+        read = blob ? blob_link(blob, blob.filename.to_s) : t('recourse.blank')
+
+        tag.div read, class: 'form-control-plaintext'
+      end
+
       # What the record says for one column, or a dash where it says nothing. A
       # boolean says something either way, and an icon says it, so only a value that
       # formats to nothing at all reads as nothing.

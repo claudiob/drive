@@ -508,6 +508,10 @@ before writing or editing any layout, view or partial.
   about the page. Each carries an `aria-label`, since an icon says nothing aloud.
 - An enum is a `.badge`, in the word the column holds rather than a humanized one —
   the same word the form's menu offers, so the two never read differently.
+- A single attached file is a value here — the name it was uploaded under, linking to
+  the file the way a table of blobs links to one, and the dash where nothing is
+  attached. A `has_many_attached` is not: it has a page of its own, where a column of
+  filenames says more than a list squeezed into one value's row.
 - A counter cache is not on the page at all. Rails keeps it, so there is nothing to
   read and nothing to set; the index table is where a count belongs.
 - Nor is the column an arranged model is ordered by, for the same reason read the
@@ -540,6 +544,21 @@ before writing or editing any layout, view or partial.
 - After a rejected update the title shows what was typed, not what is stored,
   because the record already carries the submitted values. Blanking the label
   blanks the title.
+- What a model keeps as files rather than as columns gets a field of its own, after
+  every column the form draws: a file input is the widest control on the page, and it
+  is also the one thing on the form that is not an attribute. `has_many_attached` earns
+  a `multiple` input and `has_one_attached` a single one, both `.form-control` in the
+  same `.recourse-row` grid a column's field sits in, labelled from
+  `human_attribute_name` like every other. `recourse_hidden :photos` keeps a file off a
+  form exactly as it keeps a column off one.
+- Neither input carries a hidden blank beside it — `include_hidden: false` — because
+  nothing here is assigned. Rails' own writer replaces every attachment rather than
+  adding to them and reads a blank field as an instruction to delete the lot, so a
+  submitted file is *attached* after the record saves, never passed to `update`. An
+  edit that touched only a name would otherwise purge what the record had.
+- The form says `multipart/form-data` without being told: `file_field` sets the
+  builder's `multipart`, and `form_with` reads it off the builder after capturing the
+  block. So `_form.html.erb` says nothing about encoding.
 - No field asks for the column a model arranges by. A position is set by dragging a
   row, so a box asking for the number would be a second way to say what the row's own
   place already says — and the two would disagree the moment either was used.
