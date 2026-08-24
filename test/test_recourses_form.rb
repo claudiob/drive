@@ -31,6 +31,11 @@ class TestRecoursesForm < IntegrationCase
     # And a typed reference opens on the record's own label, so an edit that
     # changes something else does not have to retype this one to save.
     assert_includes body, %(value="#{Place.order(:id).first.zip.code}")
+    # What the column is for, under the field that sets it — said by the model here,
+    # since SQLite keeps no column comments for the schema to have said it.
+    assert_includes body, 'id="place_capacity" /><div class="form-text">' \
+                          'How many people fit at once</div>'
+    assert_equal 1, body.scan('How many people fit at once').size
   end
 
   # What a model keeps as files rather than as columns gets a field of its own, after

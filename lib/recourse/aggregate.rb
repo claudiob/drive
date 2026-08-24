@@ -49,6 +49,9 @@ module Recourse
       # Nothing to keep off a screen that draws none of it.
       def recourse_hidden = []
 
+      # And nothing to say about a column there is none of.
+      def recourse_comment(_column) = nil
+
       # And nothing to put back on one.
       def recourse_displayed = []
 

@@ -551,6 +551,7 @@ defaults are there without a model mentioning them.
 | `recourse_order` | `:id` | how the index sorts, in any shape `order` accepts |
 | `recourse_displayed` | `[]` | columns a table draws that it would otherwise leave off — the encrypted ones, the primary key, a polymorphic `*_type`, the inheritance column, every `json` / `jsonb` payload, and `created_at` / `updated_at`, which come last whatever order they are named in. One name or a list |
 | `recourse_hidden` | `[]` | columns kept off every screen — the table, the show page, the form (which also stops permitting them) and the search box. One name or a list: `def recourse_hidden = :name` and `%i[name title]` both read |
+| `recourse_comment` | the column's own SQL comment | what a column is for, drawn under its field on a form. Nil on an adapter that keeps no comments — SQLite is one — so a host there answers it by hand |
 | `recourse_broadcasts?` | `true` | whether saving a record refreshes every open index listing it — see [Live index refreshes](#live-index-refreshes) |
 
 Overriding one means overriding a class method, which is what the `Recoursive`

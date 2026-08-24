@@ -561,6 +561,21 @@ before writing or editing any layout, view or partial.
 - After a rejected update the title shows what was typed, not what is stored,
   because the record already carries the submitted values. Blanking the label
   blanks the title.
+- Under a field, where the database has said what its column is for, a `.form-text`
+  saying so. A column comment is documentation somebody already wrote — `\d+` shows it,
+  and now so does the form — and it is the one question about a column no validator can
+  answer, so `recourse_comment` reads it off the schema where every other rule is read
+  off the model. A host on an adapter that keeps no comments answers it by hand
+  instead; SQLite keeps none, which is why the dummy does exactly that.
+- The same `.form-text` an attachment's note sits in. Both answer *what should I know
+  before I fill this in*, so both read the same way and sit in the same place.
+- Neither carries `aria-describedby`, so neither is announced when a field takes focus
+  — only when the form is read straight through. Doing it properly means every control
+  the gem draws, and two of them take no HTML options at all today: a checkbox is
+  `form.check_box(column, class: 'check')` with the options dropped, and a combobox is
+  a rendered partial. `typed_reference` already spends the attribute on its error
+  message, so a field with both would have to list two ids. One job, once, for the
+  comment and the note together — not half of it here.
 - What a model keeps as files rather than as columns gets a field of its own, after
   every column the form draws: a file input is the widest control on the page, and it
   is also the one thing on the form that is not an attribute. `has_many_attached` earns

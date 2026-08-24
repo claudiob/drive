@@ -75,6 +75,13 @@ module Recourse
     # How the index sorts its rows, in any shape `order` accepts. By id by default,
     # which is the one column every table has and the order rows were created in.
     def recourse_order = :id
+
+    # What a column is for, said where the table itself documents it — a form draws it
+    # under the field that sets it. Read from the schema, which is the one thing here no
+    # validator can answer: a comment has nothing to disagree with. Nil where the schema
+    # says nothing, and nil on every adapter that keeps no comments at all — SQLite is
+    # one — which is why a host may answer it instead.
+    def recourse_comment(column) = columns_hash[column]&.comment
   end
 end
 

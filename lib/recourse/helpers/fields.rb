@@ -14,8 +14,18 @@ module Recourse
           safe_join [
             @recourse_form.label(column, label, class: 'form-label'),
             resource_field(@recourse_form, column, type: options[:type]),
-          ]
+            field_comment(column),
+          ].compact
         end
+      end
+
+      # What the database says the column is for, under the field that sets it — the
+      # same `.form-text` an attachment's note sits in, being the same kind of answer
+      # to a different kind of field. Nothing where the schema said nothing.
+      def field_comment(column)
+        comment = resource_model.recourse_comment column
+
+        tag.div comment, class: 'form-text' if comment.present?
       end
 
       # A field typed by what the column holds, not merely a text box.

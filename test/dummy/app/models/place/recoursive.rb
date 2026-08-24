@@ -1,5 +1,6 @@
 class Place
-  # Extends Place with the two things it keeps back and the two it asks to show.
+  # Extends Place with the two things it keeps back, the two it asks to show, and the
+  # one it says what it is for.
   module Recoursive
     extend ActiveSupport::Concern
 
@@ -17,6 +18,13 @@ class Place
       # once by a migration is not. Where they go is the table's business — last,
       # and created before updated — so the order named here says nothing.
       def recourse_displayed = %i[created_at updated_at]
+
+      # SQLite keeps no column comments, so the dummy says by hand what a Postgres
+      # host's schema would have said for it. Everything else falls through to the
+      # schema, which on this adapter answers nothing at all.
+      def recourse_comment(column)
+        column == 'capacity' ? 'How many people fit at once' : super
+      end
     end
   end
 end
