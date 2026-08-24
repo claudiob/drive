@@ -6,11 +6,12 @@ module Recourse
   # band, and the order inside the band is the one the table already has. Extended onto
   # `Recourse`, so this is `Recourse.ordered` wherever it is called from.
   module Columns
-    # The bands, in the order a row reads. Counts open it, beside the action columns
-    # that follow them into the record; then what kind of row this is and what state it
-    # is in, its flags, whose it is, what it says, the long values a narrow column suits
-    # least, when it happened, and the two Rails keeps.
-    BANDS = %i[counter state boolean reference scalar long date timestamp].freeze
+    # The bands, in the order a row reads. What kind of row this is and what state it is
+    # in, its flags, whose it is, what it says, the long values a narrow column suits
+    # least, when it happened, the two Rails keeps — and last of all the counts, which
+    # say nothing about the row itself, only how much hangs off it. So they close the
+    # row at the far edge rather than opening it beside the buttons they resemble.
+    BANDS = %i[state boolean reference scalar long date timestamp counter].freeze
 
     # Values that are paragraphs rather than words, under every name an adapter has for
     # them: PostgreSQL reports `jsonb` where SQLite and MySQL report `json`.

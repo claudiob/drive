@@ -16,7 +16,7 @@ module Recourse
       # Columns the table shows: every attribute that is not encrypted and not
       # read-only, less the primary key — an id is how a row is addressed, not
       # something to read about it — in the order `Recourse.ordered` reads a row,
-      # which is what puts the counts first and the timestamps last.
+      # which is what leaves the counts last of all, past even the timestamps.
       def resource_columns
         Recourse.ordered resource_model, resource_model.column_names - hidden_columns
       end

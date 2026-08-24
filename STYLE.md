@@ -1028,16 +1028,17 @@ before writing or editing any layout, view or partial.
   there, and the mark that usually explains it has nowhere to go. A host that
   wants one searched anyway names the predicate itself, in `search_field`.
 - `created_at` and `updated_at` are shown only where a model names them in
-  `recourse_displayed`, and come last when it does, in that order however the
-  schema declares them or the model names them. Neither by default: a timestamp is
-  a fact about the row's storage rather than about the thing it stores, and on
-  reference data written by a migration it repeats one instant three thousand times.
-- They are the one family with a position of their own. Everything else
-  `recourse_displayed` names back keeps the place the schema gave it; these two are
-  lifted out of it and appended. That is two terms in `resource_columns`, and one of
-  them reads as redundant until a migration adds a column after the timestamps —
-  which is why the index test asserts the last two headings rather than their
-  presence.
+  `recourse_displayed`, and close what the row says when it does — only a counter
+  cache is read after them — in that order however the schema declares them or the
+  model names them. Neither by default: a timestamp is a fact about the row's
+  storage rather than about the thing it stores, and on reference data written by a
+  migration it repeats one instant three thousand times.
+- They are one of two families with a position of their own — counter caches are
+  the other, and are what sits past them. Everything else `recourse_displayed` names
+  back keeps the place the schema gave it; these two are lifted out of it and
+  appended. That is two terms in `resource_columns`, and one of them reads as
+  redundant until a migration adds a column after the timestamps — which is why the
+  index test asserts the headings whole rather than asserting their presence.
 - A model asks for the one that means something. A booking and a contact show
   `created_at`, since when the work came in and when someone first reached the app
   are part of what those rows say; a setting and an app show `updated_at`, since
@@ -1046,9 +1047,11 @@ before writing or editing any layout, view or partial.
   first.
 - Column headings come from `human_attribute_name`, so a host app can rename
   one by translating the attribute.
-- Counter caches lead the attribute columns, right after the action columns: a
-  count is a link into the record's children, so it sits with the other things a
-  row offers to click before what the row says.
+- Counter caches close the row, past even the timestamps: a count says nothing
+  about the row itself, only how much hangs off it, so it is read after everything
+  the row is. It is a link like the action columns and shaped like one, but it is
+  not one of them — a reader reaches the record's own columns first and only then
+  what the record gathered.
 - A counter cache is headed with the icon of what it counts — the same icon the
   sidebar and the breadcrumb draw for that resource, so the three agree without
   anyone naming it three times. The icon carries `role='img'` and an `aria-label`

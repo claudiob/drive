@@ -24,10 +24,11 @@ class TestRecoursesIndex < IntegrationCase
     end
     # The whole row, in the bands a column's kind puts it in: the squares and the links
     # that open the record, then what state it is in, its flags, whose it is, what it
-    # says, the long ones, when it happened, and the two Rails keeps. Inside a band the
-    # order is the table's own, which is what leaves `capacity rating area` reading as
-    # the schema wrote it. Asserted whole, so a band moving is a failure rather than a
-    # surprise noticed on a page.
+    # says, the long ones, when it happened, and the two Rails keeps. A place counts
+    # nothing, so the band past those is empty here — `/people` is where it is read.
+    # Inside a band the order is the table's own, which is what leaves `capacity rating
+    # area` reading as the schema wrote it. Asserted whole, so a band moving is a
+    # failure rather than a surprise noticed on a page.
     headings = body.scan(/data-cell="([^"]+)"/).flatten.uniq
 
     assert_equal [
@@ -42,7 +43,8 @@ class TestRecoursesIndex < IntegrationCase
   # cannot see it, and sorts; its cells carry the figure, linking out of the frame to
   # the index nested under that row — and each says what it counts twice over, in a
   # tooltip for the row where the heading has scrolled away and in a label for the
-  # reader who would otherwise hear only `3`.
+  # reader who would otherwise hear only `3`. It closes the row, which the whole
+  # heading list is what pins: a person's own name is read before what they gathered.
   def test_a_counter_column_is_an_icon_over_a_figure_that_links
     person = Person.order(:id).first
     visit '/people'
@@ -53,6 +55,7 @@ class TestRecoursesIndex < IntegrationCase
     assert_includes body, %(<a aria-label="3 Places" data-turbo-frame="_top" ) +
                           %(data-controller="tooltip" data-bs-placement="top" ) +
                           %(data-bs-title="Places" href="/people/#{person.id}/places">3</a>)
+    assert_equal %w[Show Edit Name Places], body.scan(/data-cell="([^"]+)"/).flatten.uniq
   end
 
   # A sidebar link answers to a letter of its own title, and the first one free:
