@@ -1,6 +1,7 @@
 module Recourse
   module Helpers
-    # A counter cache's column in a table: an icon heading over bare figures.
+    # A counter cache's column in a table: an icon heading over bare figures, or —
+    # where the table is wide enough to read them — the counted model's own words.
     module Counters
     private
 
@@ -19,12 +20,23 @@ module Recourse
         # Delimited like every other count on the page: the filter menu beside the
         # table already reads 38,405, and one figure in two spellings reads as two.
         count = number_with_delimiter value
+        counted = counter_counted count, value, association
         named = counter_naming count, association
         path = resource_controller_path
         nested = nested_path_of path, association
-        return tag.span(count, **named) unless nested && routed?(nested, 'index')
+        return tag.span(counted, **named) unless nested && routed?(nested, 'index')
 
-        turbo_link_to count, nested_url(resource, path, nested, :index), **named
+        turbo_link_to counted, nested_url(resource, path, nested, :index), **named
+      end
+
+      # The figure and the word it counts, which only a table with the room for it
+      # draws. The space belongs to the word rather than sitting between the two, so
+      # that hiding one hides the gap it left. `count:` is what makes it `1 place`
+      # rather than `1 places`, and `lower:` what leaves it reading as a phrase.
+      def counter_counted(count, value, association)
+        word = Recourse.model_title association.klass, count: value, lower: true
+
+        safe_join [count, tag.span(" #{word}", class: 'recourse-counter-word')]
       end
 
       # The tooltip reads the word alone — the figure is already on the page — and the
@@ -43,9 +55,15 @@ module Recourse
       end
 
       # The icon the sidebar and the breadcrumb already draw for the counted model,
-      # speaking the heading's word to a screen reader.
+      # speaking the heading's word to a screen reader — and that word itself, for the
+      # table with room to read it. Exactly one of the two is ever shown, and the icon's
+      # tooltip leaves with the icon: what cannot be hovered repeats nothing.
       def counter_title(association)
-        icon_heading association.klass.recourse_icon, Recourse.model_title(association.klass)
+        title = Recourse.model_title association.klass
+        icon = icon_heading association.klass.recourse_icon, title,
+                            class: 'recourse-counter-icon'
+
+        safe_join [icon, tag.span(title, class: 'recourse-counter-word')]
       end
     end
   end

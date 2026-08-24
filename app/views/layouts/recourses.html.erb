@@ -112,6 +112,20 @@
         }
       }
 
+      /* A counter says what it counts in one of two ways, and the table's own width is
+         what picks: the icon and a bare figure where the column is a square, the
+         counted model's words where there is room to read them. Bootstrap's `xl`, so
+         words arrive on a wide monitor and nowhere narrower — the width above is a
+         preference a table never crushes content into, so the column simply widens to
+         take them. Against `.table-responsive` like every query here, which is the
+         table's width rather than the window's: a sidebar takes a few hundred pixels
+         the window knows nothing about. */
+      .recourse-counter-word { display: none; }
+      @container (width >= 1280px) {
+        .recourse-counter-icon { display: none; }
+        .recourse-counter-word { display: inline; }
+      }
+
       /* One rule per row of the show page, so a value and its heading read as one thing
          and the next pair as another. On the cells rather than between them: a column's
          gutter is padding inside it, so two side by side draw one unbroken line.

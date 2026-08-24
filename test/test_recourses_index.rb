@@ -39,22 +39,26 @@ class TestRecoursesIndex < IntegrationCase
     ], headings
   end
 
-  # A counter is headed with the icon of what it counts, named for a reader who
-  # cannot see it, and sorts; its cells carry the figure, linking out of the frame to
-  # the index nested under that row — and each says what it counts twice over, in a
-  # tooltip for the row where the heading has scrolled away and in a label for the
-  # reader who would otherwise hear only `3`. It closes the row, which the whole
-  # heading list is what pins: a person's own name is read before what they gathered.
-  def test_a_counter_column_is_an_icon_over_a_figure_that_links
+  # A counter draws both ways it can be read, and the stylesheet is what picks: the
+  # icon of what it counts beside the word itself, over a figure the counted model's
+  # own plural follows. Named for a reader who cannot see the icon, and sorting; its
+  # cells link out of the frame to the index nested under that row — and each says
+  # what it counts twice over besides, in a tooltip for the row where the heading has
+  # scrolled away and in a label for the reader who would otherwise hear only `3`. It
+  # closes the row, which the whole heading list is what pins: a person's own name is
+  # read before what they gathered.
+  def test_a_counter_column_is_an_icon_and_a_word_over_a_figure_that_links
     person = Person.order(:id).first
     visit '/people'
-    icon = '<i class="bi bi-building" aria-label="Places" role="img" ' \
-           'data-controller="tooltip" data-bs-placement="top" data-bs-title="Places"></i>'
+    icon = '<i class="bi bi-building recourse-counter-icon" aria-label="Places" ' \
+           'role="img" data-controller="tooltip" data-bs-placement="top" ' \
+           'data-bs-title="Places"></i><span class="recourse-counter-word">Places</span>'
+    word = '<span class="recourse-counter-word"> places</span>'
 
     assert_includes body, %(q%5Bs%5D=places_count+asc">#{icon}</a></th>)
     assert_includes body, %(<a aria-label="3 Places" data-turbo-frame="_top" ) +
                           %(data-controller="tooltip" data-bs-placement="top" ) +
-                          %(data-bs-title="Places" href="/people/#{person.id}/places">3</a>)
+                          %(data-bs-title="Places" href="/people/#{person.id}/places">3#{word}</a>)
     assert_equal %w[Show Edit Name Places], body.scan(/data-cell="([^"]+)"/).flatten.uniq
   end
 

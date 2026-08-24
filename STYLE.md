@@ -971,8 +971,9 @@ before writing or editing any layout, view or partial.
   what these cells do not use to the columns carrying text.
 - `.recourse-counter` shares that rule, so a counter column starts at the same
   square — but a table treats the width as a preference, never crushing content
-  into it, so a figure like `38,405` widens its column to be read whole;
-  `white-space: nowrap` is what keeps it one line while it does. The class comes
+  into it, so a figure like `38,405` widens its column to be read whole, and so do
+  the words a wide table adds to it; `white-space: nowrap` is what keeps it one line
+  while it does. The class comes
   from `counter_class(name)`, which `_row` passes on every column and which
   answers only for a counter.
 - Neither rule applies while the table is stacked, where every cell is a block
@@ -1056,15 +1057,36 @@ before writing or editing any layout, view or partial.
   sidebar and the breadcrumb draw for that resource, so the three agree without
   anyone naming it three times. The icon carries `role='img'` and an `aria-label`
   of the counted model's plural — `ZIPs`, not `ZIPs count` — which is also what
-  every `data-cell` under it says. The cells hold the figure alone — `38,405`,
-  no icon, delimited like the filter-menu counts beside the table.
-- But each cell says what it counts twice over all the same, without drawing
-  anything: a tooltip reading the counted model's plural, for the row where the
-  heading has scrolled off the top, and an `aria-label` reading `38,405 ZIPs`,
-  because a link whose whole text is a number announces as `38,405` and no more.
-  The tooltip takes the word alone, the label takes both, and that is the order
-  somebody hearing it needs them in. An unlinked count is a `<span>` carrying the
-  same pair, so a counter with no index behind it is named like one that has.
+  every `data-cell` under it says. Under it the cells hold the figure alone —
+  `38,405`, no icon, delimited like the filter-menu counts beside the table.
+- That is the narrow reading of a counter, and a table wide enough reads it in
+  words instead: the heading says `ZIPs` where the icon was, and each cell says
+  `38,405 ZIPs` where the bare figure was. Both are always in the markup and the
+  stylesheet picks, since only CSS knows how wide the table came out.
+  `.recourse-counter-icon` and `.recourse-counter-word` are the two, the word
+  hidden by default and the pair swapping at `@container (width >= 1280px)` —
+  Bootstrap's `xl`, read against the `.table-responsive` the table sits in, which
+  is the table's width and not the window's: a sidebar takes a few hundred pixels
+  the window knows nothing about. The square width above is a preference a table
+  never crushes content into, so the column just widens to take the words.
+- The word is the counted model's own, through `Recourse.model_title` with both of
+  its options: `count:` for `1 place` against `3 places`, and `lower:` for a word
+  that follows a figure rather than opening a line — which is also what keeps
+  `8 ZIPs` from becoming `8 zips`. The space in front of it belongs to the word
+  rather than sitting between the two, so hiding one hides the gap it left.
+- Each cell says what it counts twice over besides, without drawing anything: a
+  tooltip reading the counted model's plural, for the row where the heading has
+  scrolled off the top, and an `aria-label` reading `38,405 ZIPs`, because a link
+  whose whole text is a number announces as `38,405` and no more. The tooltip takes
+  the word alone, the label takes both, and that is the order somebody hearing it
+  needs them in. An unlinked count is a `<span>` carrying the same pair, so a
+  counter with no index behind it is named like one that has.
+- The heading's tooltip needs no such rule to know when to keep quiet: it rides on
+  the icon, and an icon that is `display: none` is one nobody can hover. The cell's
+  rides on the link, which is on the page either way — so at `xl` a cell reading
+  `38,405 ZIPs` still offers `ZIPs` under the cursor. Left as it is: the redundancy
+  is a hover away and costs a reader nothing, where suppressing it would mean
+  teaching JavaScript a breakpoint the stylesheet already owns.
 - Every other numeric cell reads the way the show page reads it, through the one
   `formatted_number` ladder Formats keeps: integers delimited, prices as
   currency, percentages and decimals at their column's own precision. Only text
