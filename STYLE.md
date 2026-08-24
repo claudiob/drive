@@ -567,8 +567,15 @@ before writing or editing any layout, view or partial.
   answer, so `recourse_comment` reads it off the schema where every other rule is read
   off the model. A host on an adapter that keeps no comments answers it by hand
   instead; SQLite keeps none, which is why the dummy does exactly that.
-- The same `.form-text` an attachment's note sits in. Both answer *what should I know
-  before I fill this in*, so both read the same way and sit in the same place.
+- One line under a field, whatever it has to say. A column's comment and an
+  attachment's note both answer *what should I know before I fill this in*, so both go
+  through `field_note` and there is one place that decides how such a line reads.
+- `form-text mt-1 fg-secondary`. `mt-1` because Bootstrap's `.form-text` declares
+  `--bs-form-text-margin-top` and then never applies it — `.25rem` is what that variable
+  holds, so `mt-1` is the gap the class already meant and not a choice of ours.
+  `fg-secondary` for a line answering a question nobody asked: quieter than the value
+  above it, and quieter than `.form-text`'s own `--bs-fg-2`, which a colour utility
+  later in the cascade is what overrides.
 - Neither carries `aria-describedby`, so neither is announced when a field takes focus
   — only when the form is read straight through. Doing it properly means every control
   the gem draws, and two of them take no HTML options at all today: a checkbox is
@@ -583,7 +590,7 @@ before writing or editing any layout, view or partial.
   same `.recourse-row` grid a column's field sits in, labelled from
   `human_attribute_name` like every other. `recourse_hidden :photos` keeps a file off a
   form exactly as it keeps a column off one.
-- Under each input, on an *edit* form, a `.form-text` saying what the record is
+- Under each input, on an *edit* form, one of those lines saying what the record is
   holding now: `No file attached`, `No files attached`, `1 file attached (hairy.png)`,
   `2 files attached (a.png and b.png)`. A field that adds to something should say what
   choosing a file will join or replace, and for a `has_many` the answer is a list. The

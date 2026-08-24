@@ -19,13 +19,23 @@ module Recourse
         end
       end
 
-      # What the database says the column is for, under the field that sets it — the
-      # same `.form-text` an attachment's note sits in, being the same kind of answer
-      # to a different kind of field. Nothing where the schema said nothing.
+      # What the database says the column is for, under the field that sets it.
       def field_comment(column)
-        comment = resource_model.recourse_comment column
+        field_note resource_model.recourse_comment(column)
+      end
 
-        tag.div comment, class: 'form-text' if comment.present?
+      # The line under a field saying what somebody wants to know before filling it in:
+      # what the column is for, or what the record already has attached. Both come
+      # through here, so the two read as one kind of thing and how they read is settled
+      # in one place. Nothing at all where there is nothing to say.
+      #
+      # `mt-1` because Bootstrap's `.form-text` declares `--bs-form-text-margin-top` and
+      # never applies it; `.25rem` is what that variable holds, so this is the gap the
+      # class already meant. `fg-secondary` for a line that answers a question nobody
+      # asked — quieter than the value it sits under, and quieter than `.form-text`'s
+      # own `--bs-fg-2`, which a utility later in the cascade is what overrides.
+      def field_note(text)
+        tag.div text, class: 'form-text mt-1 fg-secondary' if text.present?
       end
 
       # A field typed by what the column holds, not merely a text box.

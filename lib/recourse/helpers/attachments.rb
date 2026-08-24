@@ -39,7 +39,7 @@ module Recourse
       def attached_note(name)
         return unless resource_record&.persisted?
 
-        tag.div attached_reading(name), class: 'form-text'
+        field_note attached_reading(name)
       end
 
       def attached_reading(name)

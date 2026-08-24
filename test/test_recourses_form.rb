@@ -33,8 +33,8 @@ class TestRecoursesForm < IntegrationCase
     assert_includes body, %(value="#{Place.order(:id).first.zip.code}")
     # What the column is for, under the field that sets it — said by the model here,
     # since SQLite keeps no column comments for the schema to have said it.
-    assert_includes body, 'id="place_capacity" /><div class="form-text">' \
-                          'How many people fit at once</div>'
+    assert_includes body, 'id="place_capacity" /><div class="form-text mt-1 ' \
+                          'fg-secondary">How many people fit at once</div>'
     assert_equal 1, body.scan('How many people fit at once').size
   end
 
