@@ -512,6 +512,23 @@ before writing or editing any layout, view or partial.
   the file the way a table of blobs links to one, and the dash where nothing is
   attached. A `has_many_attached` is not: it has a page of its own, where a column of
   filenames says more than a list squeezed into one value's row.
+- A file a browser can draw is offered rather than only named. The link becomes a
+  `<details>`: the filename in the `<summary>`, and the picture inside it at
+  `.img-fluid`, which is `max-width: 100%` — so it takes the column's width and a
+  photograph shrinks to fit instead of deciding the page's layout.
+- Closed to begin with, which is the point of a `<details>` rather than an `<img>`. A
+  record's page is a column of values a reader scans, and an image sitting open in one
+  pushes everything under it down every single time the page is opened.
+- The picture is inside the link the name would have been, so clicking what the preview
+  drew is the download — `disposition=attachment`, in a tab of its own, exactly as the
+  filename was. Only the `<img src>` asks for `disposition=inline`.
+- Which files those are is `ActiveStorage.web_image_content_types` and not a list of
+  ours: it is Rails' own answer to *what does a browser render natively*, so a host
+  adding `image/webp` to it adds it here too. It leaves out `image/svg+xml` on purpose
+  — Rails keeps that one in `content_types_to_serve_as_binary` and will not serve it
+  inline at all — which is the right answer here for the same reason it is there.
+- Everything else stays the plain link it was. A spreadsheet is a download and there is
+  nothing to open in place.
 - A counter cache is not on the page at all. Rails keeps it, so there is nothing to
   read and nothing to set; the index table is where a count belongs.
 - Nor is the column an arranged model is ordered by, for the same reason read the
@@ -551,6 +568,17 @@ before writing or editing any layout, view or partial.
   same `.recourse-row` grid a column's field sits in, labelled from
   `human_attribute_name` like every other. `recourse_hidden :photos` keeps a file off a
   form exactly as it keeps a column off one.
+- Under each input, on an *edit* form, a `.form-text` saying what the record is
+  holding now: `No file attached`, `No files attached`, `1 file attached (hairy.png)`,
+  `2 files attached (a.png and b.png)`. A field that adds to something should say what
+  choosing a file will join or replace, and for a `has_many` the answer is a list. The
+  empty message is singular or plural by which kind of attachment it is, since that is
+  what decides whether a choice adds or replaces.
+- Not on a *new* form. A record being made has nothing attached yet, so there is
+  nothing to report and the note says nothing rather than saying so.
+- The word is `file`, not the attachment's own name. `No photos attached` under a field
+  already labelled `Photos` says the word twice, and the gem does not know a `photos`
+  holds photographs.
 - Neither input carries a hidden blank beside it — `include_hidden: false` — because
   nothing here is assigned. Rails' own writer replaces every attachment rather than
   adding to them and reads a blank field as an instruction to delete the lot, so a

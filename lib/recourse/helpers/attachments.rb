@@ -1,8 +1,7 @@
 module Recourse
   module Helpers
-    # What a table of attachments draws that a table of records does not: the one
-    # column naming a file is the way to open it — and the field a form offers for
-    # putting one there.
+    # The field a form offers for putting a file on a record, and the note under it
+    # saying what the record is holding already.
     module Attachments
     private
 
@@ -22,7 +21,8 @@ module Recourse
           safe_join [
             @recourse_form.label(name, label, class: 'form-label'),
             @recourse_form.file_field(name, class: 'form-control', **attachment_options(name)),
-          ]
+            attached_note(name),
+          ].compact
         end
       end
 
@@ -32,22 +32,30 @@ module Recourse
         { multiple: true, include_hidden: false }
       end
 
-      # True for the filename of a blob, and for nothing else — a host model with a
-      # column of that name is drawing its own value, not Active Storage's.
-      def blob_filename?(column)
-        column == 'filename' && blob_resource?
+      # What the record is holding, under the field that adds to it: choosing a file
+      # joins what is there or replaces it, and which of the two it is depends on what
+      # is there. Only where there is a record to ask — a form making one has nothing
+      # attached yet, so it has nothing to report and says nothing.
+      def attached_note(name)
+        return unless resource_record&.persisted?
+
+        tag.div attached_reading(name), class: 'form-text'
       end
 
-      # By name, so an app with no Active Storage never mentions the constant.
-      def blob_resource?
-        resource_model.name == 'ActiveStorage::Blob'
+      def attached_reading(name)
+        files = attached_filenames name
+        return attached_nothing name if files.empty?
+        return t 'recourse.attached.one', files: files.first if files.one?
+
+        t 'recourse.attached.many', count: files.size, files: files.to_sentence
       end
 
-      # The file itself, in a tab of its own: an admin opening one is leaving the
-      # page they were reading, and a download that replaced it would lose their place.
-      def blob_link(blob, filename)
-        link_to filename, main_app.rails_blob_path(blob, disposition: :attachment),
-                target: '_blank', rel: 'noopener'
+      # A field for one file reads `No file attached` where a field for several reads
+      # `No files attached`, since which it is decides what choosing one will do.
+      def attached_nothing(name)
+        many = Recourse.attachment_many? resource_model, name
+
+        t "recourse.attached.#{many ? 'none_many' : 'none'}"
       end
     end
   end
