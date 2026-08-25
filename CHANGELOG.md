@@ -7,6 +7,23 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* The navbar and the sidebar hold still while a long page scrolls
+
+  A table of any length took the whole page down with it: the breadcrumb, the buttons,
+  the search box and every sidebar link left the screen at the twentieth row, and
+  getting back to any of them meant scrolling back to the top first. On the one page
+  a reader spends their time on, the two things they navigate by were the two things
+  hardest to reach.
+
+  Above the width the sidebar becomes a column at, the shell is now exactly the window
+  and `main` is the only thing in it that scrolls. The navbar and the sidebar stay
+  where they are. Below that width nothing changes: the sidebar is a band across the
+  top and the page scrolls as one, which is the only thing that reads on a phone.
+
+  The scheme toggle at the foot of the sidebar keeps its `sticky`, which now holds it
+  against the foot of a sidebar that scrolls itself rather than against the foot of
+  the page.
+
 * [BREAKING CHANGE] A link reads as its host rather than as the whole address
 
   A value that is one web address has always been a link to itself, and what it said

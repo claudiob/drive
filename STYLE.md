@@ -140,10 +140,10 @@ before writing or editing any layout, view or partial.
   takes an equal share of it and an auto margin is left nothing to push against: the
   items are pinned to `flex: 0 0 auto` and only the toggle's margin takes the rest.
   Same reason the sidebar's own borders are written out — see the note there.
-- Being at the foot of a full-height sidebar means being at the foot of the *page*, so
-  on a long index it would sit a long way below the fold. It is `position: sticky` with
-  an `inset-block-end` for that reason: it holds the foot of the viewport while the
-  table beside it scrolls, and comes to rest in its real place at the end.
+- Being at the foot of the sidebar means being at the foot of the *screen*, the sidebar
+  being its own scroll container above 768px. It is `position: sticky` with an
+  `inset-block-end` so that it holds there while a sidebar too long for the window
+  scrolls behind it, and comes to rest in its real place at the end.
 - Sticky and not fixed. Fixed would leave the flow and be positioned against the
   window, which puts it over the table and asks the layout to guess a left edge; sticky
   keeps the sidebar's column and its centring, and needs no `z-index` because the two
@@ -367,6 +367,21 @@ before writing or editing any layout, view or partial.
   `.container-fluid.flex-grow-1.d-flex`, then `.row.flex-grow-1`. The aside
   stretches because `.row` is a flex container and Bootstrap leaves
   `align-items` unset, so items default to `stretch`.
+- Above 768px that same chain is what pins the chrome. `.recourse-shell` is `height:
+  100dvh` rather than a minimum, so the shell is the window and nothing about the page
+  can make it taller; `main` and the aside take `overflow-y: auto`, so each scrolls
+  itself and the navbar and the sidebar stay put however long the table is. Every link
+  in the chain needs `min-height: 0` — a flex child is as tall as its content unless
+  told otherwise, and one of them left alone pushes the shell past the screen and hands
+  the scrolling back to the window. `min-height` is set on the shell too, since
+  `.min-vh-100` is the same specificity and only loses on order.
+- And the row stops wrapping above that width, which is the half that is easy to miss:
+  a wrapped flex line is as tall as the tallest item on it, and `align-items: stretch`
+  only ever grows an item to the line it is on — it never shrinks one to fit. So with
+  the row left wrapping, `main` kept its content height, the line grew to match, and
+  the page scrolled after all, however bounded everything above it was.
+- Below 768px none of it applies: the sidebar is a band across the top, and a phone
+  scrolls the page as one.
 - Only while they are one line, though: the row is
   `align-content-start md:align-content-stretch`. Stacked, the sidebar and the
   content are two lines of a wrapping flex row, and `align-content: stretch`

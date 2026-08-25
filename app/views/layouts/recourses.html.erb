@@ -152,6 +152,26 @@
         min-height: 0;
       }
 
+      /* A long page scrolls its content, not its chrome. Above the width the sidebar
+         becomes a column at, the shell is exactly the viewport and `main` is the only
+         thing inside it that scrolls, so the navbar and the sidebar stay where they
+         are however far down the table a reader is. Two things make it hold. Every step
+         between takes `min-height: 0`, a flex child being as tall as its content unless
+         told otherwise. And the row stops wrapping: a wrapped line is as tall as the
+         tallest thing on it, and stretching only ever grows an item to the line, never
+         shrinks it to one — so `main` kept its own height and took the page with it.
+         Below that width the sidebar is a band across the top, the row wraps to stack
+         the two, and the page scrolls as one, which is the only thing that reads on a
+         phone. */
+      @media (width >= 768px) {
+        .recourse-shell { min-height: 0; height: 100dvh; }
+        .recourse-shell > .container-fluid,
+        .recourse-shell .row { min-height: 0; }
+        .recourse-shell .row { flex-wrap: nowrap; }
+        .recourse-shell main,
+        .recourse-shell .recourse-sidebar { overflow-y: auto; }
+      }
+
       /* The sidebar rules off the content below it while it sits under the navbar,
          and off the content beside it once it is a column again. v6 generates no
          responsive border utilities, so the switch is written out. */
@@ -260,15 +280,11 @@
       @media (width >= 768px) {
         .recourse-sidebar .nav { height: 100%; }
         .recourse-sidebar .nav-item { flex: 0 0 auto; }
-        /* And it stays in view while the content beside it scrolls. Its own place is
-           the foot of a sidebar as tall as the table, which on a long index is a long
-           way below the fold, so it sticks to the foot of the viewport until the page
-           catches up with it. Sticky rather than fixed: it keeps the sidebar's column,
-           so it can never land over the table, and it comes to rest in its real place
-           at the end of the scroll. Offset by the padding the sidebar already carries,
-           so it does not sit flush against the edge of the window. The background is
-           for the short viewport, where the links reach the foot themselves — the
-           page's own colour, so it is seen only where it masks a link it sits over. */
+        /* And it sits at the foot of the sidebar, which is the foot of the screen: the
+           sidebar scrolls on its own now, so the toggle is sticky within it rather than
+           within the page. Offset by the padding the sidebar already carries, so it
+           does not sit flush against the edge of the window, and painted the page's own
+           colour, which is seen only where it masks a link it sits over. */
         .recourse-sidebar .recourse-scheme {
           position: sticky;
           inset-block-end: var(--bs-spacer-3);
@@ -310,7 +326,7 @@
     </style>
   </head>
 
-  <body class='d-flex flex-column min-vh-100'>
+  <body class='recourse-shell d-flex flex-column min-vh-100'>
     <nav class='navbar border-bottom'>
       <%# `row-gap` rather than a margin on the search: a margin is there whether the
           form wrapped or not, and on the line it shares with the breadcrumb it drops
