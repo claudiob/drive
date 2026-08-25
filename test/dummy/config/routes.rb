@@ -74,8 +74,8 @@ Rails.application.routes.draw do
       # actions by default: list the parent's rows, and add one.
       recourses :places
       # And the same over a key that names no one table. Nothing in the path says
-      # `about`, so what settles it is the ZIP's own `has_many :memos, as: :about`.
-      recourses :memos
+      # `about`, so what settles it is the ZIP's own `has_many :notes, as: :about`.
+      recourses :notes
     end
   end
 

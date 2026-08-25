@@ -10,8 +10,8 @@ module Recourse
     # Puts the row the path names where the request says, among the rows the route
     # named, and answers with as little as the caller can do with.
     def update
-      positioning = Positioning.new recourse_relation, moved_record, arranged_column
-      positioning.move_to params.expect(:position)
+      positioning = Positioning.new recourse_relation, arranged_column
+      positioning.move moved_record, params.expect(:position)
       answer
     end
 

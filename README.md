@@ -446,6 +446,40 @@ attribute. A model with no rows renders `No contacts.` instead. A heading sorts 
 it, and the form above the table narrows what it shows, by search or by
 filter.
 
+### A table somebody arranged
+
+A model may say that a column holds an order somebody put its rows in rather than
+one the database found, by writing `:positionable` where a direction would go:
+
+```ruby
+def recourse_order = { position: :positionable }
+```
+
+The index then draws a grip beside each row and no heading to sort by — a second
+way to read the rows would contradict the order they were put in — and a drop
+writes the row's new place. Only where the arranging means something: a table
+nothing points away from is one arrangement, and a nested index is another, but
+the resource's own index of every parent's rows at once is neither, and sorts and
+searches like any other.
+
+Two things go with that, and both come with the word: nothing to include and
+nothing to remember. A new row lands last among its own, since the form the gem
+draws never asks for a position. The gap closes behind one that goes, since what a
+drop reports is a row's place on the page — a position only while the table runs
+1, 2, 3 with no gaps in it. The rows either is counted among are worked out from
+the model: what it points at, or the whole table where it points nowhere. Where
+more than one key could be the parent, the model says which:
+
+```ruby
+# A picture belongs to a department and to the file it shows, and its place is
+# among the department's.
+def recourse_siblings = Picture.where(department_id:)
+```
+
+Moving a row is the gem's. Writing a new position on the record itself is not, so
+a host whose own pages do that keeps whatever closes up behind it — two things
+shifting the same neighbours leave two rows holding one number.
+
 `show` reads one record out where its form would have been: the same grid the
 edit page uses, `lg:col-6` so it is two columns on a large viewport, with the
 heading a form would give each column above and what the record says below, and a
@@ -557,7 +591,7 @@ defaults are there without a model mentioning them.
 | `recourse_label` | `:name` | the column that stands for a record — what a combobox lists, and what a table cell shows for a foreign key pointing here |
 | `recourse_typed_label?` | true when that column has a length validator | whether a foreign key to this model is typed into a text field or picked from a list |
 | `recourse_includes` | every `belongs_to` the table names | what the index eager-loads, in any shape `includes` accepts |
-| `recourse_order` | `:id` | how the index sorts, in any shape `order` accepts |
+| `recourse_order` | `:id` | how the index sorts, in any shape `order` accepts — one key may read `:positionable` instead of a direction, which arranges the table by hand |
 | `recourse_displayed` | `[]` | columns a table draws that it would otherwise leave off — the encrypted ones, the primary key, a polymorphic `*_type`, the inheritance column, every `json` / `jsonb` payload, and `created_at` / `updated_at`, which come last whatever order they are named in. One name or a list |
 | `recourse_hidden` | `[]` | columns kept off every screen — the table, the show page, the form (which also stops permitting them) and the search box. One name or a list: `def recourse_hidden = :name` and `%i[name title]` both read |
 | `recourse_comment` | the column's own SQL comment | what a column is for, drawn under its field on a form. Nil on an adapter that keeps no comments — SQLite is one — so a host there answers it by hand |

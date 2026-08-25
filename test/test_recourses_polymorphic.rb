@@ -2,32 +2,31 @@ require 'test_helper'
 require 'integration_case'
 
 # A resource reached through a key that names no one table. Nothing in the path says
-# which key it is — `/zips/1/memos`, never `/abouts/1/memos` — so what settles it is
+# which key it is — `/zips/1/notes`, never `/abouts/1/notes` — so what settles it is
 # the parent's own half of the association.
 class TestRecoursesPolymorphic < IntegrationCase
   def teardown
-    Memo.where(body: 'About a ZIP').destroy_all
-    Memo.order(:id).group_by(&:person_id).each_value do |memos|
-      memos.each_with_index { |memo, index| memo.update_column :position, index + 1 }
+    Note.where(body: 'About a ZIP').destroy_all
+    Note.order(:id).group_by(&:about_id).each_value do |notes|
+      notes.each_with_index { |note, index| note.update_column :position, index + 1 }
     end
   end
 
   # The rows a polymorphic key points at, and only those: the same page read under
-  # the other ZIP is a different set, and the resource's own index is every memo
-  # there is. The key itself stays off the table, the way an ordinary parent's does
+  # the other ZIP is a different set, and the table holds more than the two of them
+  # together. The key itself stays off the table, the way an ordinary parent's does
   # -- the address answered it, so a column would only repeat the address.
   def test_a_nested_index_over_a_polymorphic_key_is_the_parents_own_rows
     zip, other = ZIP.order(:id).first 2
-    visit "/zips/#{zip.id}/memos"
+    visit "/zips/#{zip.id}/notes"
 
-    assert_equal zip.memos.count, body.scan('data-cell="Body"').size
+    assert_equal zip.notes.count, body.scan('data-cell="Body"').size
     refute_includes body, 'data-cell="About"'
-    visit "/zips/#{other.id}/memos"
+    visit "/zips/#{other.id}/notes"
 
-    assert_equal other.memos.count, body.scan('data-cell="Body"').size
-    visit '/memos'
+    assert_equal other.notes.count, body.scan('data-cell="Body"').size
 
-    assert_operator Memo.count, :>, zip.memos.count + other.memos.count
+    assert_operator Note.count, :>, zip.notes.count + other.notes.count
   end
 
   # The form asks for what the path has not already answered, and the write puts the
@@ -35,14 +34,14 @@ class TestRecoursesPolymorphic < IntegrationCase
   # table at once.
   def test_a_nested_form_never_asks_which_parent_and_the_write_says_which
     zip = ZIP.order(:id).first
-    visit "/zips/#{zip.id}/memos/new"
+    visit "/zips/#{zip.id}/notes/new"
 
-    refute_includes body, 'name="memo[about_id]"'
-    assert_includes body, %(action="/zips/#{zip.id}/memos")
-    @session.post "/zips/#{zip.id}/memos", params: { memo: { body: 'About a ZIP' } }
+    refute_includes body, 'name="note[about_id]"'
+    assert_includes body, %(action="/zips/#{zip.id}/notes")
+    @session.post "/zips/#{zip.id}/notes", params: { note: { body: 'About a ZIP' } }
 
     assert_equal 303, @session.response.status
-    assert_equal zip, Memo.find_by!(body: 'About a ZIP').about
+    assert_equal zip, Note.find_by!(body: 'About a ZIP').about
   end
 
   # And a route the parent declares no half for is left exactly as it was: a page
@@ -65,13 +64,13 @@ class TestRecoursesPolymorphic < IntegrationCase
   # read could still renumber every other parent's rows on a drop.
   def test_a_move_under_a_polymorphic_key_leaves_the_other_parents_alone
     zip = ZIP.order(:id).first
-    elsewhere = Memo.where.not(about: zip).order(:id).pluck :id, :position
-    moved = zip.memos.order(:position).last
+    elsewhere = Note.where.not(about: zip).order(:id).pluck :id, :position
+    moved = zip.notes.order(:position).last
 
-    @session.patch "/zips/#{zip.id}/memos/#{moved.id}/position", params: { position: 1 }
+    @session.patch "/zips/#{zip.id}/notes/#{moved.id}/position", params: { position: 1 }
 
     assert_includes [204, 303], @session.response.status
     assert_equal 1, moved.reload.position
-    assert_equal elsewhere, Memo.where.not(about: zip).order(:id).pluck(:id, :position)
+    assert_equal elsewhere, Note.where.not(about: zip).order(:id).pluck(:id, :position)
   end
 end

@@ -7,6 +7,36 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* [Feature] A table that says it is arranged is kept numbered
+
+  A model whose `recourse_order` marks a column `:positionable` had two things left to
+  do that the gem never said out loud, and its own screens did not work without them.
+  The form it draws never asks for a position — a reader sets one by dragging a row —
+  so a column the schema insists on was filled by nothing, and the first Add answered
+  `NotNullViolation`. And the delete button it draws left a hole, after which every drop
+  landed beside where it was aimed: what a drag reports is a row's place on the page,
+  which means a position only while the table runs 1, 2, 3 with no gaps.
+
+  Both come with the word, and nothing is included to get them: the order a table is
+  read in and the order somebody put it in are one fact, so a model that says
+  `:positionable` has said this too. A new row lands last among its own, the gap closes
+  behind one that goes, and the rows either is counted among are worked out from the
+  model: what it points at, or the whole table where it points nowhere. Where more than
+  one key could be the parent — a picture belongs to a department and to the file it
+  shows — the model says which by answering `recourse_siblings`, and is told to rather
+  than guessed at.
+
+  The callbacks sit on every model and read `recourse_order` when they fire, doing
+  nothing where no key there says `:positionable` — the same reach `Recoursive` already
+  makes, and the reason a host writes nothing at all.
+
+  Moving a row was already the gem's, and stays there. Writing the new position on the
+  record itself is not: a host whose own pages do that keeps whatever closes up behind
+  it, since two things shifting the same neighbours leave two rows on one number.
+
+  `Recourse::Positioning` now takes the relation and the column, and answers `move` and
+  `close` rather than `move_to`. Internal, and named nowhere in this README.
+
 * [Feature] A nested route may name a parent through a polymorphic key
 
   The parent a nesting names was found by matching a `belongs_to`'s own name against
