@@ -1193,6 +1193,11 @@ before writing or editing any layout, view or partial.
   `icon-link` in its `icon-link-hover` style, ending in Unicon's `arrow_right`,
   so the arrow takes a step under the cursor and the value reads as somewhere to
   go. Words around an address, or two addresses, stay text.
+- What such a link *reads* is the host, never the address: no protocol, no leading
+  `www.`, no trailing slash where the address stops at the host, and `/…` where a
+  path follows. A column has room for a host and not for fifty characters of
+  identifier, and the href carries the whole of it either way — so the same two
+  captures of `WEB_URL` that decide whether a value is a link decide what it says.
 - The arrow rides clear of the baseline: bootstrap-icons drops every glyph
   `-.125em` to sit on a text line, so the layout lifts `.icon-link > .bi::before`
   to `.0625em` — clear of the line without floating, and on the `::before`,

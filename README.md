@@ -497,7 +497,9 @@ dash any unanswered column does, and `false` never does, since what earns a dash
 formatting to nothing rather than being falsy —
 an enum is a badge, an integer carries its delimiters, a decimal is rounded to its
 own scale, a `:monetary` wears the currency and a `:percentage` a `%`, and a phone is
-punctuated. A counter cache is not shown at all, being Rails' to keep rather than
+punctuated. One whole web address is a link to itself, and reads as its host: no
+protocol, no leading `www.`, and `/…` where a path follows — the href carries the rest,
+which is what a click needs and a column has no room for. A counter cache is not shown at all, being Rails' to keep rather than
 anyone's to read. The kinds and the helpers behind them are the table under
 ["What a field becomes"](#what-a-field-becomes), which the form reads too — one
 question, two answers.

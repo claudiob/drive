@@ -7,7 +7,7 @@ class TestRecoursesShow < IntegrationCase
   # column holds rather than as what the database keeps: money wears its currency
   # and a percentage its sign, both decimals underneath; a float keeps its own
   # precision; a date and a time are `time` tags a browser can localize; an enum is
-  # a badge and a boolean is the word, not an icon; a URL is a link.
+  # a badge and a boolean is the word, not an icon; a URL is a link to itself.
   def test_it_reads_out_a_value_of_every_kind_in_the_shape_its_column_earns
     visit "/places/#{Place.order(:id).first.id}"
 
@@ -24,7 +24,9 @@ class TestRecoursesShow < IntegrationCase
     assert_includes body, 'false'
     assert_includes body, '90001'
     assert_includes body, 'Blue Crew'
+    # A URL links to itself and reads as its host: no protocol, no trailing slash.
     assert_includes body, '<a href="https://place-1.example.com"'
+    assert_includes body, '>place-1.example.com <'
     # And the payload the index leaves out: a record's own page is where a value too
     # wide for a column of them still belongs.
     assert_includes body, 'step_free_access'

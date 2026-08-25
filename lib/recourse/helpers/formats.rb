@@ -3,8 +3,9 @@ module Recourse
     # How one attribute reads on a page that only reads it.
     module Formats
       # One absolute web address and nothing else: a value to follow, not to read.
-      # Anything around it — words, a second address — reads as text instead.
-      WEB_URL = %r{\Ahttps?://\S+\z}
+      # Anything around it — words, a second address — reads as text instead. What it
+      # captures is what a link says: the host, less any `www.`, and whatever follows.
+      WEB_URL = %r{\Ahttps?://(?:www\.)?([^/?#\s]+)(\S*)\z}
 
     private
 
@@ -82,10 +83,14 @@ module Recourse
         value.is_a?(String) && value.match?(WEB_URL)
       end
 
+      # Bootstrap's icon link, saying the value leads somewhere the way text cannot.
+      # What it reads is the host, and an ellipsis where the address goes further --
+      # a path is how a machine finds the page, and the href is already carrying it.
       def url_link(value)
-        # Bootstrap's icon link, in its hover style: the arrow walks a step under
-        # the cursor, saying the value leads somewhere the way plain text cannot.
-        tag.a safe_join([value, icon_tag(:point_right)], ' '),
+        host, rest = value.match(WEB_URL).captures
+        said = rest.delete_suffix('/').empty? ? host : "#{host}/…"
+
+        tag.a safe_join([said, icon_tag(:point_right)], ' '),
               href: value, class: 'icon-link icon-link-hover'
       end
     end

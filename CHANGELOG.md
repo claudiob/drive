@@ -7,6 +7,27 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* [BREAKING CHANGE] A link reads as its host rather than as the whole address
+
+  A value that is one web address has always been a link to itself, and what it said
+  was the address — every character of it. That is fine for `https://acme.com` and
+  useless for a log URL carrying a fifty-character identifier: the column widens to the
+  longest row in the table, and what a reader gains over the row above is nothing, the
+  part that differs being the part they cannot read anyway.
+
+  So a link now says the host and stops: no protocol, no leading `www.`, no trailing
+  slash where the address ends at the host, and `/…` where a path follows. The href is
+  untouched, which is what a click needs, and the whole address is a hover away.
+  `https://www.google.com` and `https://google.com/` both read `google.com`;
+  `https://platform.openai.com/logs/conv_698c…` reads `platform.openai.com/…`.
+
+  `WEB_URL` now captures the two parts it decides between, and requires a host to match
+  at all — `https:///path` is no longer a link, having none.
+
+  Breaking because every link on every page reads differently. A host that wanted the
+  address on the page still has it in the `href`, and a table that must print it is a
+  `_row` partial away.
+
 * [BREAKING CHANGE] The kind a currency is drawn by is `:monetary`, not `:price`
 
   A type reporting `:price` is no longer read as money — `NUMERIC_KINDS`, the value
