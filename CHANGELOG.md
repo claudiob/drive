@@ -7,6 +7,19 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A search box no longer reaches through a key no screen shows
+
+  What a box looks through is the indexed strings a table draws, and a column the model
+  hides is left out of that for a stated reason: a row matched on something no page
+  shows arrives with nothing on it explaining why. A foreign key was not asked the same
+  question. So a model hiding one still had its label joined into the box, and a table
+  with no column for that key answered a search by it -- rows appearing, none of them
+  saying what they had in common.
+
+  The key now has to be one a screen draws, which is the rule its own columns already
+  followed. A key that is merely filtered rather than searched is unaffected, and so is
+  every model that hides no key at all.
+
 * A filter asks the same question the field beside it asks
 
   Two things send a foreign key to a text field rather than to a menu: a label short

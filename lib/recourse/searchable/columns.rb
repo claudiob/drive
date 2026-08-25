@@ -22,12 +22,16 @@ module Recourse
       end
 
       # Foreign keys a search reaches through rather than filters by: the ones whose
-      # other model is too long to list, since a menu is only a control while every
-      # row fits in one. The label has to be a word for the search to match, too.
+      # other model is too long to list, since a menu is only a control while every row
+      # fits in one. The label has to be a word to match, and the key one a screen
+      # draws -- a row matched through a hidden key arrives saying nothing about why.
       def recourse_searchable_associations
+        hidden = Recourse.hidden_columns self
+
         recourse_references.select do |association|
-          klass = association.klass
-          !klass.recourse_listable? && klass.recourse_searchable_label?
+          next false if hidden.include? association.foreign_key.to_s
+
+          !association.klass.recourse_listable? && association.klass.recourse_searchable_label?
         end
       end
 
