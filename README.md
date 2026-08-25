@@ -96,6 +96,15 @@ ones the top-level table draws, pointing at `/comments/2` and
 `/comments/2/edit` — the member pages the nesting left to the resource itself —
 and a counter cell links to the resource's own nested index the same way. A
 nested table is the top-level one, minus the parent's column.
+The parent is found by the key pointing at it, which for a polymorphic
+`belongs_to` names no one table — `/posts/2/comments` says `post`, never
+`about`. What settles it there is the parent's own half: write
+`has_many :comments, as: :about` on the post and the nesting is that
+association, whichever of the model's keys it is. The page then reads like any
+other nested one, and the write puts the class name beside the id. A parent
+declaring no such `has_many` resolves no parent at all — a page gathered from
+several parents at once is nobody's one record, and `recourse_relation` is
+still what scopes it.
 An explicit `only:` or `except:` is your word and wins:
 
 ```ruby

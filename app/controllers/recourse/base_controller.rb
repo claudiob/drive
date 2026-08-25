@@ -4,7 +4,7 @@ module Recourse
   # with a `before_action :authenticate!` guards every screen the gem serves.
   class BaseController < ApplicationController
     include Pagy::Method, AttachmentResolution, AttachmentWriting, ParentResolution,
-            ReferenceResolution, ResourceResolution
+            PolymorphicParents, ReferenceResolution, ResourceResolution
 
     helper Helpers
 

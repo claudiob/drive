@@ -7,6 +7,31 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* [Feature] A nested route may name a parent through a polymorphic key
+
+  The parent a nesting names was found by matching a `belongs_to`'s own name against
+  the path, which a polymorphic key can never answer to: it names no one table, so the
+  segment above it is the concrete parent's own — `/posts/2/comments`, never
+  `/abouts/2/comments`. Such a nesting resolved no parent at all, which left its index
+  listing every row in the table, its form asking for a raw `*_id`, and `create`
+  writing a record that belonged to nothing.
+
+  What settles it now is the parent's own half of the association: `has_many :comments,
+  as: :about` on the post says both that this nesting is that association and which of
+  the model's keys it is, where it keeps more than one. The page then reads like any
+  other nested one — its rows are the parent's, the key stays off the table and off the
+  form, and the write puts the class name beside the id, since a key carrying one
+  without the other points into every table at once.
+
+  The rows a drag counts among are that parent's too. The route that arranges a listing
+  is drawn a segment below it, where no nesting is recorded, so the parent is looked up
+  from the listing's path rather than the controller's own — otherwise a page correct to
+  read would renumber every other parent's rows on a drop.
+
+  A parent declaring no such `has_many` resolves no parent, exactly as before: a page
+  gathered from several parents at once is nobody's one record, and `recourse_relation`
+  is still what scopes it.
+
 * [BREAKING CHANGE] A row reads in the order its columns' kinds earn
 
   Which column came first was whichever came first in the table, which is a fact about

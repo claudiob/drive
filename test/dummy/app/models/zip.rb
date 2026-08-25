@@ -5,6 +5,10 @@ class ZIP < ApplicationRecord
   include Recoursive
 
   has_many :places, dependent: :destroy
+  # The other half of a key that names no one table, and what tells the gem that
+  # `/zips/1/memos` is this association: a memo outlives what it was about, so the
+  # rows stay and the key is emptied.
+  has_many :memos, as: :about, dependent: :nullify
 
   # Written by the migration that made the table and never again, which is what
   # keeps it off every table the gem draws.
