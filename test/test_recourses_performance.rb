@@ -8,8 +8,8 @@ class TestRecoursesPerformance < IntegrationCase
   def setup
     Rails.cache.clear
     # Asked once per class per process, and this counts what a *request* costs.
-    # Left to chance it lands in whichever test reaches a Team menu first.
-    Team.recourse_listable?
+    # Left to chance it lands in whichever test reaches one of these menus first.
+    [Team, Grade, Reading].each(&:recourse_listable?)
     super
   end
 
@@ -22,6 +22,19 @@ class TestRecoursesPerformance < IntegrationCase
     assert_equal 2, queries.size
     assert_match(/COUNT/, queries.first)
     refute_match(/COUNT/, queries.last)
+  end
+
+  # What a filter costs, which no covered line says: a menu over a table past
+  # MENU_LIMIT selects every row of it and renders a button each, and the same lines
+  # run whether it holds four options or forty thousand. So a key pointing at such a
+  # table is offered no menu — the question a form field asks of the same key, asked
+  # here too — and a page that offers none reads its own rows and nothing further.
+  def test_a_filter_offers_no_menu_over_a_table_too_long_to_list
+    queries = queries_on('readings') { visit '/readings' }
+
+    assert_equal 2, queries.size
+    assert_match(/COUNT/, queries.first)
+    refute_includes body, "data-bs-name='q[previous_reading_id_in]'"
   end
 
   # The column costs one query for the whole page rather than one a row, and the

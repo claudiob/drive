@@ -31,12 +31,14 @@ module Recourse
         choice_filter(predicate, column, label) || reference_filter(predicate, column, label, scope)
       end
 
-      # A menu of the records a foreign key points at. Nothing where that key's label
-      # is typed rather than picked — the menu would be a table of its own. A `scope:`
-      # draws one anyway.
+      # A menu of the records a foreign key points at. Nothing where that key is typed
+      # rather than picked, which is the same question the field beside it asks: the
+      # label is bounded, or the table is too long to list. Either way the menu would
+      # be a table of its own. A `scope:` draws one anyway.
       def reference_filter(predicate, column, label, scope)
         association = belongs_to_association column
-        return if association.nil? || (scope.nil? && association.klass.recourse_typed_label?)
+        return if association.nil? ||
+                  (scope.nil? && association.klass.recourse_typed_reference?)
 
         filter_combobox predicate, label || reference_title(column, association),
                         (scope || association.klass).all

@@ -7,6 +7,33 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A filter asks the same question the field beside it asks
+
+  Two things send a foreign key to a text field rather than to a menu: a label short
+  enough to type, and a table too long to list. The form field asked both, and so did
+  the controller reading its parameters back. The filter beside them asked only the
+  first — so a key pointing at a table of any size drew a menu of every row of it,
+  provided nothing had put a length on the label.
+
+  Which is a page nobody reads. An index over 43,304 rows answered 8.8MB, and 8.7MB of
+  that was one combobox: a button per row, in the navbar, on every page of the
+  resource. The README has said in three places that such a key is offered no menu,
+  and `reference_filter` disagreed with itself as well — its guard asked whether the
+  label was bounded while the title on the next line asked whether the table was
+  listable, so a cell could be headed by the one answer above a menu built from the
+  other.
+
+  It now asks `recourse_typed_reference?`, which is what the field asks. Nothing else
+  moves: a table inside `MENU_LIMIT` keeps its menu, a key the search box already
+  reached through was never offered one, and `scope:` still draws a menu over whatever
+  relation it names. Where the label is not a word either — an id, a date — the key is
+  left with no filter and no search, which is what the README already described.
+
+  One cost worth naming: the guard now reaches `recourse_listable?`, so a page drawing
+  its first filter over a class asks that class for a bounded `LIMIT 101` count. Once
+  per class per process, and it was already the price of every form field over the same
+  key.
+
 * A menu no longer insists the table behind it keeps timestamps
 
   The rows behind a combobox are cached on the relation they were read from, and Rails

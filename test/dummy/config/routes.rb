@@ -84,4 +84,9 @@ Rails.application.routes.draw do
 
   # No index action, so no sidebar link and nothing for the gem to draw.
   recourses :placeholders, only: []
+
+  # Declared last, so the letter its sidebar link answers to is one nothing above it
+  # has taken. Its own key is what this table is here for: a menu of every reading is
+  # past what a menu is, and an id is not a word the box could look through instead.
+  recourses :readings, only: :index
 end
