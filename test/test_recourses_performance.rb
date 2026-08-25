@@ -46,6 +46,22 @@ class TestRecoursesPerformance < IntegrationCase
     assert_match(/COUNT/, warm.sole)
   end
 
+  # And a menu over a table Rails keeps no timestamps on is drawn every time instead of
+  # kept: there is nothing to version it by. `cache` builds a key from `MAX(updated_at)`
+  # without asking whether the column is there, so keeping this one would answer a 500
+  # rather than a list of four words.
+  def test_a_menu_with_no_timestamp_to_version_it_is_drawn_rather_than_kept
+    place = Place.where.missing(:audit).order(:id).first
+    cold = queries_on('grades') { visit "/places/#{place.id}/audit/new" }
+    warm = queries_on('grades') { visit "/places/#{place.id}/audit/new" }
+
+    assert_includes body, Grade.order(:name).first.name
+    # Fetched both times, and never counted: a warm menu that had been kept would ask
+    # for its version instead, which is what the test above measures.
+    assert_equal cold, warm
+    refute_match(/COUNT/, cold.sole)
+  end
+
   # A counter cache bumps the parent's column without touching its `updated_at`, so
   # a table keyed on the relation would serve the cached figure — `touch: true`
   # beside the counter is what expires it.

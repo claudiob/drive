@@ -33,9 +33,10 @@
     <div class='menu-divider'></div>
   <% end -%>
   <%# Records are cached on the relation, and a list of words is not worth caching:
-      an enum has a dozen of them and they are already in memory. -%>
+      an enum has a dozen of them and they are already in memory. Nor is a table with
+      no timestamp on it, which has no version for a key to carry. -%>
   <% if recourses -%>
-    <% cache [recourses, multiple, selected] do %>
+    <% cache_if keepable_menu?(recourses), [recourses, multiple, selected] do %>
       <% recourses.each do |recourse| %>
         <% chosen = selected.include? recourse.id.to_s -%>
         <%# In the menu but not on it: an option accounting for none of the rows being

@@ -7,6 +7,19 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A menu no longer insists the table behind it keeps timestamps
+
+  The rows behind a combobox are cached on the relation they were read from, and Rails
+  keys a relation on `MAX(updated_at)` without asking whether the column is there. A
+  form offering a menu over a table with no timestamps answered `PG::UndefinedColumn`
+  rather than a menu — and reference data is exactly where an app keeps none, a table
+  of states or of postal codes being written by a migration and read forever after.
+
+  Such a menu is drawn each time now instead of kept, there being nothing to version it
+  by. Everything else is unchanged: a table with timestamps caches as it did, and an
+  index was never affected — what it hands the view is a page of records rather than a
+  relation, so its key is built from the rows themselves.
+
 * [Feature] A table that says it is arranged is kept numbered
 
   A model whose `recourse_order` marks a column `:positionable` had two things left to

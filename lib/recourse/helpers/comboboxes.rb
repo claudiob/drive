@@ -15,6 +15,16 @@ module Recourse
                                      recourses: combobox_options(association.klass, label)
       end
 
+      # Whether a menu's rows can be kept, which turns on the one thing a relation is
+      # versioned by: `cache` reads `MAX(updated_at)` off the table without asking
+      # whether there is such a column, and a model Rails keeps no timestamps on has
+      # none to read. Reference data is exactly where that happens — a table of states
+      # or of postal codes is written by a migration and never again — so those menus
+      # are drawn each time rather than kept under a key nothing can version.
+      def keepable_menu?(recourses)
+        recourses.klass.column_names.include? 'updated_at'
+      end
+
       # What every combobox needs to know about the column it sets, whatever it offers
       # as choices: the enum one asks for these too, and gives `values:` instead.
       def combobox_locals(form, column)
