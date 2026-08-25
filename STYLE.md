@@ -500,7 +500,7 @@ before writing or editing any layout, view or partial.
   the show page is simply two rows longer.
 - Each value reads as what it is *of*, not as what it is stored as. A foreign key is
   the label of what it points at, a date is `Aug 12, 2026`, an integer carries its
-  delimiters, a decimal is rounded to its own scale, a price wears the currency and a
+  delimiters, a decimal is rounded to its own scale, money wears the currency and a
   percentage a `%`, and a phone is punctuated.
 - A boolean is a picture: `Unicon[:check]` for true, `Unicon[:close]` for false, and
   `Unicon[:square]` for the one a record never answered. Three states rather than two
@@ -636,11 +636,11 @@ before writing or editing any layout, view or partial.
   a float, and for a decimal the scale as the step and the precision as the cap —
   `scale: 2, precision: 4` gives `step="0.01" max="99.99"`. No `min`: how far below
   zero a column may go is the model's business, not the schema's.
-- A price and a percentage are attributes whose *type* says so — `Price` and
-  `Percentage`, registered by the app, reporting `:price` and `:percentage` from
+- Money and a percentage are attributes whose *type* says so — `Monetary` and
+  `Percentage`, registered by the app, reporting `:monetary` and `:percentage` from
   `type_for_attribute`. The gem asks the attribute and never guesses from a name:
   `hourly_rate` is money and `commission_rate` is a share of it.
-- A price and a percentage are adorned rather than labelled twice. The wrapper takes
+- Money and a percentage are adorned rather than labelled twice. The wrapper takes
   `.form-control form-adorn d-flex` and the border and padding with it, the unit is a
   `.form-adorn-text`, and the input inside is a `.form-ghost` with neither.
   `.form-adorn-end` reorders the pair, so `%` follows the number and the currency
@@ -1185,7 +1185,7 @@ before writing or editing any layout, view or partial.
   is a hover away and costs a reader nothing, where suppressing it would mean
   teaching JavaScript a breakpoint the stylesheet already owns.
 - Every other numeric cell reads the way the show page reads it, through the one
-  `formatted_number` ladder Formats keeps: integers delimited, prices as
+  `formatted_number` ladder Formats keeps: integers delimited, money as
   currency, percentages and decimals at their column's own precision. Only text
   cells are search-highlighted — a search never looked through a number.
 - A value that is one absolute web address and nothing else — `WEB_URL` says

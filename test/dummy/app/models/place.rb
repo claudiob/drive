@@ -42,7 +42,7 @@ class Place < ApplicationRecord
   has_many :bookmarks, as: :topic, dependent: :destroy
 
   # Money and a share of it, told apart by their types and not by their names.
-  attribute :hourly_rate, :price
+  attribute :hourly_rate, :monetary
   attribute :commission_rate, :percentage
 
   # Queried and unique, so its ciphertext has to be the same every write.

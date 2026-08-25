@@ -7,45 +7,18 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
-* A search box no longer reaches through a key no screen shows
+* [BREAKING CHANGE] The kind a currency is drawn by is `:monetary`, not `:price`
 
-  What a box looks through is the indexed strings a table draws, and a column the model
-  hides is left out of that for a stated reason: a row matched on something no page
-  shows arrives with nothing on it explaining why. A foreign key was not asked the same
-  question. So a model hiding one still had its label joined into the box, and a table
-  with no column for that key answered a search by it -- rows appearing, none of them
-  saying what they had in common.
+  A type reporting `:price` is no longer read as money — `NUMERIC_KINDS`, the value
+  formatter and the adorned field all say `:monetary` now. A host whose type answers
+  `def type = :price` loses its currency and its adornment, and reads as the decimal it
+  is stored as; changing that one line is the whole migration, and what the class is
+  called and registered under stays the host's own business.
 
-  The key now has to be one a screen draws, which is the rule its own columns already
-  followed. A key that is merely filtered rather than searched is unaffected, and so is
-  every model that hides no key at all.
-
-* A filter asks the same question the field beside it asks
-
-  Two things send a foreign key to a text field rather than to a menu: a label short
-  enough to type, and a table too long to list. The form field asked both, and so did
-  the controller reading its parameters back. The filter beside them asked only the
-  first — so a key pointing at a table of any size drew a menu of every row of it,
-  provided nothing had put a length on the label.
-
-  Which is a page nobody reads. An index over 43,304 rows answered 8.8MB, and 8.7MB of
-  that was one combobox: a button per row, in the navbar, on every page of the
-  resource. The README has said in three places that such a key is offered no menu,
-  and `reference_filter` disagreed with itself as well — its guard asked whether the
-  label was bounded while the title on the next line asked whether the table was
-  listable, so a cell could be headed by the one answer above a menu built from the
-  other.
-
-  It now asks `recourse_typed_reference?`, which is what the field asks. Nothing else
-  moves: a table inside `MENU_LIMIT` keeps its menu, a key the search box already
-  reached through was never offered one, and `scope:` still draws a menu over whatever
-  relation it names. Where the label is not a word either — an id, a date — the key is
-  left with no filter and no search, which is what the README already described.
-
-  One cost worth naming: the guard now reaches `recourse_listable?`, so a page drawing
-  its first filter over a class asks that class for a bounded `LIMIT 101` count. Once
-  per class per process, and it was already the price of every form field over the same
-  key.
+  `:monetary` rather than the obvious `:money`, which is a native type on PostgreSQL:
+  Rails raises `TypeConflictError` rather than let an app shadow an adapter's own, and
+  `override: true` would be the price of a word worth nothing to own. The dummy runs on
+  SQLite and would never have met that.
 
 * A menu no longer insists the table behind it keeps timestamps
 

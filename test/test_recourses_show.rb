@@ -4,7 +4,7 @@ require 'integration_case'
 # A record's own page, and the card the nested indexes hang off it by.
 class TestRecoursesShow < IntegrationCase
   # One pass over a record carrying a value of every kind, each read out as what its
-  # column holds rather than as what the database keeps: a price wears its currency
+  # column holds rather than as what the database keeps: money wears its currency
   # and a percentage its sign, both decimals underneath; a float keeps its own
   # precision; a date and a time are `time` tags a browser can localize; an enum is
   # a badge and a boolean is the word, not an icon; a URL is a link.

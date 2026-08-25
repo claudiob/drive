@@ -4,7 +4,7 @@ module Recourse
     # answers to.
     module Kinds
       # Numbers, which differ by what they are of rather than by how they are stored.
-      NUMERIC_KINDS = %i[integer decimal float phone price percentage].freeze
+      NUMERIC_KINDS = %i[integer decimal float phone monetary percentage].freeze
 
       # A payload, under both names an adapter has for one: SQLite and MySQL report a
       # JSON column as `json`, and PostgreSQL's own type reports `jsonb`. Two names for
@@ -20,7 +20,7 @@ module Recourse
       # column says, since no page may show one and no form may set one; an enum is
       # one however it is stored; a phone is a phone by its name, the convention the
       # placeholders and the pattern already follow; and everything else is the type
-      # the attribute itself reports — `:price` included, where a host has registered
+      # the attribute itself reports — `:monetary` included, where a host has registered
       # a type that says so.
       def attribute_kind(column)
         return :counter if resource_model.recourse_counters.key? column

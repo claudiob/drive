@@ -355,7 +355,7 @@ column named like an id — `uid`, a `user_id` held as a string — digits
 alone, an enum cycles the words it admits, a date and a time step
 back a random distance from today, and a reference reads a random row of the
 model it points at — an app's own attribute type counts as what it subclasses,
-so a `Price` seeds as the decimal it is. A row a validator with stricter
+so a `Monetary` seeds as the decimal it is. A row a validator with stricter
 opinions rejects (`ActiveRecord::RecordInvalid`), or the database itself
 refuses (`ActiveRecord::StatementInvalid`), is skipped rather than stopping the
 run, so the count the loader prints reports only the rows that stand — and
@@ -496,7 +496,7 @@ the word it is, `true` or `false` — a column the record never answered reads a
 dash any unanswered column does, and `false` never does, since what earns a dash is
 formatting to nothing rather than being falsy —
 an enum is a badge, an integer carries its delimiters, a decimal is rounded to its
-own scale, a `:price` wears the currency and a `:percentage` a `%`, and a phone is
+own scale, a `:monetary` wears the currency and a `:percentage` a `%`, and a phone is
 punctuated. A counter cache is not shown at all, being Rails' to keep rather than
 anyone's to read. The kinds and the helpers behind them are the table under
 ["What a field becomes"](#what-a-field-becomes), which the form reads too — one
@@ -764,7 +764,7 @@ case.
 | an `integer` | number field, `step="1"` |
 | a `float` | number field, `step="any"` |
 | a `decimal` | number field stepped by its scale and capped by its precision — `scale: 2, precision: 4` gives `step="0.01" max="99.99"` |
-| a `:price` | the same, with the currency in a `.form-adorn-text` before it |
+| a `:monetary` | the same, with the currency in a `.form-adorn-text` before it |
 | a `:percentage` | the same, with `%` after it, through `.form-adorn-end` |
 | a `date` or `datetime` attribute | date or `datetime-local` field |
 | anything else | text field |
@@ -773,48 +773,55 @@ The type comes from the model's own `type_for_attribute`, so an `attribute
 :opens_on, :date` override counts, and so do its `precision` and `scale` —
 `columns_hash` is never asked.
 
-`:price` and `:percentage` are types your app defines, not hooks this gem asks
+`:monetary` and `:percentage` are types your app defines, not hooks this gem asks
 for. A `decimal` says how many digits it keeps and nothing about what they mean,
 so if you want `$95.00` and `15.00%` on your pages, register the types that say
 so:
 
 ```ruby
-# app/types/price.rb
-class Price < ActiveRecord::Type::Decimal
+# app/types/money.rb
+class Monetary < ActiveRecord::Type::Decimal
   PRECISION = 10
   SCALE = 2
 
   def initialize(precision: PRECISION, scale: SCALE, **) = super
-  def type = :price
+  def type = :monetary
 end
 
 # config/initializers/types.rb
 ActiveSupport.on_load :active_record do
-  ActiveRecord::Type.register(:price) { |_name, **options| Price.new(**options) }
+  ActiveRecord::Type.register(:monetary) { |_name, **options| Monetary.new(**options) }
 end
 
 # and in the model
-attribute :hourly_rate, :price
+attribute :hourly_rate, :monetary
 ```
 
+`:monetary` rather than `:money`, which is a native type on PostgreSQL: Rails
+raises `TypeConflictError` rather than let an app shadow an adapter's own, and
+`override: true` would be the price of a word there is no need to take. The
+class is another matter — `Monetary` above is only what this example calls it.
+
 The gem asks the attribute what it is and formats what it hears, so a type of
-your own is all it takes. Give migrations the same word by extending
+your own is all it takes. What it hears is `def type`, not the class's name nor
+the name the type was registered under: any class reporting `:monetary` is drawn
+as money. Give migrations the same word by extending
 `ActiveRecord::ConnectionAdapters::TableDefinition` — Rails keeps
 `define_column_methods` private, so write the method out:
 
 ```ruby
-module MoneyColumns
-  def price(*names, **options)
-    names.each { |name| decimal name, precision: Price::PRECISION, scale: Price::SCALE, **options }
+module MonetaryColumns
+  def monetary(*names, **options)
+    names.each { |name| decimal name, precision: Monetary::PRECISION, scale: Monetary::SCALE, **options }
   end
 end
 
-ActiveRecord::ConnectionAdapters::TableDefinition.include MoneyColumns
+ActiveRecord::ConnectionAdapters::TableDefinition.include MonetaryColumns
 ```
 
-Then `t.price :hourly_rate` and `attribute :hourly_rate, :price` are the same
+Then `t.monetary :hourly_rate` and `attribute :hourly_rate, :monetary` are the same
 decision said twice, once to the database and once to the page. `test/dummy` does
-all of this, for `:price` and `:percentage` both.
+all of this, for `:monetary` and `:percentage` both.
 
 A phone is a phone before it is ciphertext: an encrypted `phone` gets the
 telephone field, which types its own separators as you go. Encryption settles what
@@ -1345,7 +1352,7 @@ Reading one out:
   `value` is what masks an encrypted one; this is the value itself
 - `formatted_value(column)` — the value formatted by what the column holds, with
   no em dash and no mask
-- `attribute_kind(column)` — what the column holds, as `:counter`, `:price`,
+- `attribute_kind(column)` — what the column holds, as `:counter`, `:monetary`,
   `:percentage`, `:enum`, `:phone` or the attribute's own type. The one question
   the show page and the form both answer
 - `icon_tag(concept, label: nil)` — one Bootstrap icon, by the concept Unicon

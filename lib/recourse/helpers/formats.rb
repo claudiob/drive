@@ -31,7 +31,7 @@ module Recourse
         case kind
         when :integer then number_with_delimiter value
         when :phone then number_to_phone value
-        when :price then number_to_currency value, **precision_option(column)
+        when :monetary then number_to_currency value, **precision_option(column)
         when :percentage then number_to_percentage value, **precision_option(column)
         when :decimal then number_with_precision value, **precision_option(column)
         else number_with_precision value

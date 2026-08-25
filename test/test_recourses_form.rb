@@ -15,7 +15,7 @@ class TestRecoursesForm < IntegrationCase
     assert_includes body, 'inputmode="numeric" required="required" step="1" type="number"'
     assert_includes body, 'step="any" type="number"'
     assert_includes body, 'step="0.01" max="999999.99"'
-    # A price and a percentage are decimals of their own precision, so their own max.
+    # Money and a percentage are decimals of their own precision, so their own max.
     assert_includes body, 'max="99999999.99"'
     assert_includes body, 'max="99.99"'
     # A format validator with no sample to show says the pattern itself.

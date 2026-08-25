@@ -18,7 +18,7 @@ class CreatePlaces < ActiveRecord::Migration[8.1]
       t.integer :capacity, null: false
       t.float :rating
       t.decimal :area, precision: 8, scale: 2
-      t.price :hourly_rate
+      t.monetary :hourly_rate
       t.percentage :commission_rate
 
       t.string :phone

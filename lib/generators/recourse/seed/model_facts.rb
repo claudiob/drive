@@ -8,7 +8,7 @@ module Recourse
     class ModelFacts
       include Gates
 
-      # What an app's own type is a kind of: a Price is a Decimal however it answers.
+      # What an app's own type is a kind of: a Monetary is a Decimal however it answers.
       KINDS = {
         ActiveModel::Type::Integer => :integer, ActiveModel::Type::Float => :float,
         ActiveModel::Type::Decimal => :decimal, ActiveModel::Type::Boolean => :boolean,
@@ -39,7 +39,7 @@ module Recourse
       def enum(column) = @model.defined_enums[column]
 
       # The kind a value is drawn for. An attribute reporting a name of its own —
-      # `:price` — is asked what it is a kind of; anything else answers for itself.
+      # `:monetary` — is asked what it is a kind of; anything else answers for itself.
       def kind(column)
         type = @model.type_for_attribute column
         return type.type if KINDS.value? type.type

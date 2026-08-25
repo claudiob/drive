@@ -30,7 +30,7 @@ module Recourse
       # which says how precise it is nowhere.
       def numeric_field(form, column, kind, **)
         return form.telephone_field(column, **) if kind == :phone
-        return adorned_field(form, column, **) if %i[price percentage].include? kind
+        return adorned_field(form, column, **) if %i[monetary percentage].include? kind
 
         form.number_field(column, **, **step_options(column, kind))
       end
