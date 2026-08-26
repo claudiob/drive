@@ -7,6 +7,45 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A write marks the row it landed on
+
+  A successful create or update redirects to the index and says so in a toast: `Place
+  was created.` The message names the model and never the record — interpolating one
+  prints `#<Place:0x…>` — so a reader who has just saved the eleventh of twenty rows
+  was told that it worked and left to find which one.
+
+  For as long as that toast stands, the row now says so too: a tint across it in the
+  success family, fading away over the second the message takes to go. Mixed into the
+  page rather than taken from `--bs-success-bg-subtle`, which is a ramp step a palette
+  builds by mixing toward white or black — the kept tint's own formula, one token
+  swapped, so a row that is both kept and just written wears two tints that differ by
+  hue rather than by shade. On the cells rather than the row, like
+  the kept tint beside it — the table collapses its borders, so the cells are what
+  paint, and one tint across all of them is what reads as a single row rather than as a
+  box around each cell.
+
+  One clock rather than two. The server names the row in a reserved flash key and the
+  `written` controller lets go of it on Bootstrap's own `hide.bs.toast`, so holding the
+  toast open by reading it holds the mark open too — `hide` and not `hidden`, which
+  fires only once the toast has finished fading and would leave the row lit after it. That reserved key is kept out
+  of the message loop on purpose: every other key in the flash becomes a toast of its
+  own, whoever invented it, so an id left in there would have been announced as one.
+
+  Doing it from the browser is also what keeps it clear of the table's fragment cache.
+  A write expires that fragment, so the next render is the one that gets kept — and a
+  highlight rendered into it would have been served to every later visitor until the
+  write after that.
+
+  The square that keeps a row leaves the same mark, through the same module: a
+  bookmark is a write whose only report was a tint, which says which rows are kept
+  rather than that this one just landed. With no toast to keep time with it runs the
+  shared delay on a clock of its own.
+
+  Every row gains a name of its own — `<tr id='place_4'>` — which is how a mark finds
+  its row, and which a square already reached for by walking the DOM. A host's
+  aggregate rows get none: they answer `to_key` with nil, and a name built from that
+  is `new_week` twenty times over on one page.
+
 * A heading over a foreign key says what the column is, not what a form would ask
 
   A key whose label is typed rather than picked took the field's own words wherever it

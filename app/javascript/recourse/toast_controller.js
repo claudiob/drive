@@ -1,5 +1,6 @@
 import { Controller } from '/recourse/stimulus.js'
 import { Toast } from '/recourse/bootstrap.bundle.min.js'
+import { DELAY } from '/recourse/written.js'
 
 // The toast arrives from the server already shown, so Bootstrap's show() must never
 // run: it re-adds `showing` and blinks the toast through transparent. But show() is
@@ -7,7 +8,7 @@ import { Toast } from '/recourse/bootstrap.bundle.min.js'
 // and only the hiding is Bootstrap's — the timed hide and the dismiss X then share
 // one code path and one fade.
 export default class extends Controller {
-  static values = { delay: { type: Number, default: 2000 } }
+  static values = { delay: { type: Number, default: DELAY } }
 
   connect() {
     // `autohide: false` keeps Bootstrap from arming a rival timer if anything ever

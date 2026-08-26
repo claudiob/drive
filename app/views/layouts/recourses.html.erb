@@ -46,6 +46,7 @@
       import ShortcutsController from '/recourse/shortcuts_controller.js'
       import TimezoneController from '/recourse/timezone_controller.js'
       import ToastController from '/recourse/toast_controller.js'
+      import WrittenController from '/recourse/written_controller.js'
       import TooltipController from '/recourse/tooltip_controller.js'
 
       // In the head, and guarded: Turbo re-runs body scripts on every visit, and a
@@ -68,6 +69,7 @@
         window.Stimulus.register('timezone', TimezoneController)
         window.Stimulus.register('toast', ToastController)
         window.Stimulus.register('tooltip', TooltipController)
+        window.Stimulus.register('written', WrittenController)
       }
     </script>
 
@@ -285,6 +287,46 @@
          lay over it. */
       .table > tbody > .recourse-kept > * {
         background-color: color-mix(in srgb, var(--bs-primary-fg) 12%, var(--bs-bg-body));
+      }
+
+      /* The row a write just landed on, tinted for as long as the message saying so
+         stands. On the cells rather than on the row, like the kept tint beside it: the
+         table collapses its borders, so the cells are what paint, and one tint across
+         all of them is what reads as a single row — where anything drawn per cell reads
+         as a box around each of them instead.
+         A background rather than a border. A border on a collapsing table is a width
+         the table then measures around, and taking it away again leaves the line it
+         drew sitting between two rows that no longer want one.
+         Mixed into the page exactly as the kept tint below is, and never
+         `--bs-success-bg-subtle`: that token is `light-dark(--bs-green-100,
+         --bs-green-900)`, and a palette builds those steps by mixing toward white or
+         black rather than toward the page — so how far it lands from the page is the
+         palette's business and not ours. Mixing here keeps it the same distance on all
+         nine. The success family rather than the primary one is what tells it apart
+         from the kept tint it may land on top of: a different hue reads as a different
+         thing, where a second shade of the primary would read as more of the same. */
+      .table > tbody > .recourse-written > *,
+      .table > tbody > .recourse-written-out > * {
+        --recourse-written: color-mix(in srgb, var(--bs-success-fg) 12%, var(--bs-bg-body));
+      }
+      .table > tbody > .recourse-written > * {
+        background-color: var(--recourse-written);
+      }
+      /* Let go of over the second the toast beside it takes to fade, and started by the
+         same event. The class above comes off as this one goes on, so the animation is
+         the only thing painting the row while it runs and nothing paints it afterwards
+         — which hands a kept row back its own tint rather than leaving it wearing this
+         one. */
+      .table > tbody > .recourse-written-out > * {
+        animation: recourse-written-out 1s linear;
+      }
+      @keyframes recourse-written-out {
+        from { background-color: var(--recourse-written); }
+        to { background-color: var(--bs-bg-body); }
+      }
+      /* The tint itself is not motion; only its going is. */
+      @media (prefers-reduced-motion: reduce) {
+        .table > tbody > .recourse-written-out > * { animation: none; }
       }
 
       /* The scheme toggle sits at the foot of the sidebar and centered across it while

@@ -22,8 +22,9 @@ class TestRecoursesBookmarks < IntegrationCase
     assert_includes body, '<input type="hidden" name="_method" value="delete" />'
     assert_includes body, %(action="/places/#{KEPT}/bookmark")
     # The row wears it too, not only the square in it: a page of twenty is scanned by
-    # the tint long before anybody reads a column of icons.
-    assert_includes body, '<tr class="recourse-kept">'
+    # the tint long before anybody reads a column of icons. And it answers to a name of
+    # its own, which is how a write that has just landed finds the row it landed on.
+    assert_includes body, %(<tr id="place_#{KEPT}" class="recourse-kept">)
     assert_equal %w[4 7 1], body.scan(%r{/places/(\d+)/edit}).flatten.first(3)
   end
 

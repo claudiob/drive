@@ -952,6 +952,51 @@ before writing or editing any layout, view or partial.
   rather than vanishing. Reduced-motion still wins — the vendored CSS sets
   `transition: none` outright under the media query, which no custom-property
   override can defeat.
+- The row a write landed on is marked for exactly as long as the toast says so. The
+  server names it in a reserved flash key, `Recourse::WRITTEN`, and `_flash` renders
+  it as `data-written-row-value` on the container rather than as a message — the loop
+  reads `flash.to_hash.except(Recourse::WRITTEN)`, because every other key there
+  becomes a toast of its own, whoever invented it. `FlashHash` has no `except`, hence
+  the `to_hash`.
+- It rides on the *container* rather than on a toast: that exists once per page,
+  `hidden.bs.toast` bubbles up to it from whichever toast hides, and
+  `data-turbo-temporary` already takes the whole thing away on a Back — so a mark
+  never replays from a snapshot any more than the message does.
+- The `written` controller marks the row and lets go on `hide.bs.toast`, so there is
+  one clock rather than two: hold the toast open by reading it and the mark holds too.
+  `hide`, never `hidden` — Bootstrap fires the first as the toast begins to fade and
+  the second only once it has finished, which is a mark still lit a second after the
+  message it belongs to has gone. It
+  marks nothing where the row is not on this page — written records land on pages that
+  are sorted, filtered or paged past them — and nothing where no toast is present,
+  since then nothing would ever end it.
+- **Every row carries a name**: `<tr id='place_4'>`, from `Recourse.row_id`, which is
+  `dom_id` guarded by an actual key. A host's aggregate rows answer `to_key` with nil
+  and `dom_id` turns that into `new_week` — one name for twenty rows, worse than none
+  — so those get no `id` at all. The name is deterministic per row, so it caches
+  exactly as safely as the rest of the fragment.
+- The mark is a tint on the cells, exactly like the kept tint beside it: the table
+  collapses its borders, so the cells are what paint, and one tint across all of them is
+  what reads as a single row. Anything drawn per cell — a border, a shadow — reads as a
+  box around each cell instead, which is what a first attempt at this got wrong.
+- A background and never a border. A border on a collapsing table is a width the table
+  measures around, and taking it away again leaves the line it drew standing between
+  two rows that no longer want one.
+- `color-mix(in srgb, var(--bs-success-fg) 12%, var(--bs-bg-body))` — the kept tint's
+  own formula with one token swapped. Never `--bs-success-bg-subtle`: that resolves to
+  `light-dark(--bs-green-100, --bs-green-900)`, and a palette builds those steps by
+  mixing toward white or black rather than toward the page, so how far the tint lands
+  from the page becomes the palette's business rather than ours. Mixing into the page
+  keeps it the same distance on all nine, which is the reason the kept tint is built
+  that way and the reason neither `-bg-subtle` token is used for either.
+- The success family rather than the primary one, and that is the whole of what tells
+  the two tints apart on a row that is both kept and just written. A different hue
+  reads as a different thing; a second shade of the primary would read as more of the
+  same.
+- Fading is an animation on a second class, and the first comes *off* as the second
+  goes on. Left on, it would paint the tint straight back the moment the animation
+  ended; off, what paints the row afterwards is whatever else the cascade says — a kept
+  row's own tint, or nothing.
 - `data-bs-dismiss='toast'` still needs the component loaded, so the X is dead
   without the bundle — a `modulepreload` in the head is what has it in flight at
   first paint instead of discovered at the end of the body.
@@ -1075,6 +1120,11 @@ before writing or editing any layout, view or partial.
   lands where the click happened rather than in a corner of the page, and a click
   that never reached the server never colours anything. Dropping a kept row reads the
   same way round: the tint stays until the delete is actually written.
+- A kept square leaves the same mark a create or an update leaves, through the same
+  `written.js`: the tint lasts and says which rows are kept, the mark passes and says
+  this row was written just now. With no toast to keep time with, the square runs the
+  shared `DELAY` on a clock of its own — one number, in one module, which is also the
+  toast controller's own default.
 - Which is why a click that *worked* says nothing at all. There is no success toast —
   the row is the message, and a toast per click on a column built for clicking twenty
   times would be twenty toasts. Only a failure speaks: the square goes back and the

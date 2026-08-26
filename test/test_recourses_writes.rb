@@ -21,6 +21,11 @@ class TestRecoursesWrites < IntegrationCase
 
     assert_equal ZIP.find_by!(code: '90002'), place.zip
     follow_and_assert_flash 'Place was created.'
+    # The page is told which row the write landed on, so it can mark it for as long as
+    # the message stands — and told as data rather than as a second message: every
+    # other key in the flash becomes a toast of its own, whoever invented it.
+    assert_includes body, %(data-written-row-value="place_#{place.id}")
+    refute_includes body, "place_#{place.id}</span>"
   end
 
   # A record that will not save redraws its own form rather than redirecting, with

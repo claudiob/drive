@@ -66,6 +66,14 @@ module Recourse
 
   private
 
+    # What marks the row a write just landed on, and nothing at all on a page no write
+    # brought about — which is every page but the one after a create or an update.
+    def written_data
+      row = flash[Recourse::WRITTEN]
+
+      { controller: 'written', written_row_value: row } if row.present?
+    end
+
     # `?q=anything` arrives as a String, which has no parameters to read — the
     # same test `Recourse::Search` makes, spelled the same way.
     def query_params

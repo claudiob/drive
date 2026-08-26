@@ -1,10 +1,10 @@
 import { Controller } from '/recourse/stimulus.js'
 import { flash } from '/recourse/flash.js'
+import { marked } from '/recourse/written.js'
 
 // The square that keeps a row, answered before the server does. The icon flips under
-// the cursor and the request goes in the background, so the table is never redrawn
-// and the row stays where the eye left it — until the next real page load, which is
-// where the kept-first order belongs.
+// the cursor and the request goes in the background, so the table is never redrawn and
+// the row stays where the eye left it — until the next load, where kept-first belongs.
 //
 // The form is still a real one. Without this controller it submits, redirects and
 // reloads, which is the same floor every other button here degrades to.
@@ -78,11 +78,13 @@ export default class extends Controller {
       })
       if (!response.ok) return this.revert(kept)
 
-      // The whole report, and the reason there is no toast: the row takes colour once
-      // it is actually written. The icon flipped on the click and would have flipped
-      // under a request that never landed, so the tint is the half only the server can
-      // give — said where the click happened rather than in a corner of the page.
+      // Two halves of one report, and the reason there is no toast. The tint lasts and
+      // says which rows are kept; the mark passes and says this one was written just
+      // now — the same outline a create or an update leaves while its message stands.
+      // The icon flipped on the click and would have flipped under a request that
+      // never landed, so both are the half only the server can give.
       this.row?.classList.toggle('recourse-kept', kept)
+      marked(this.row)
     } catch {
       this.revert(kept)
     }

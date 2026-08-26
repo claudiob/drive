@@ -29,6 +29,10 @@ class TestRecoursesAggregateIndex < IntegrationCase
     visit '/weeks'
 
     refute_includes body, 'data-cell="Bookmark"'
+    # Nor a name of its own, for the same reason: `to_key` is nil for every one of
+    # these, and a row named from that is `new_week` twenty times over — one name for
+    # twenty rows, which is worse than none. A record's row is named `place_4`.
+    refute_includes body, '<tr id='
   end
 
   # Paging is the one thing left of what an index does to a collection, and it is done:

@@ -12,17 +12,13 @@ module Recourse
     # `find` raises RecordNotFound, so an id that names nothing answers 404.
     before_action :find_resource, only: %i[show edit update destroy]
 
-    # The model served here broadcasts refreshes for its index — on the way into every
-    # action, before `create` commits so its own change is broadcast, and again after a
-    # dev reload hands it a fresh class. Where there is a model: an aggregate keeps none.
+    # The model broadcasts refreshes for its index, before `create` commits its own.
     before_action :broadcast_resource_changes
 
-    # The model behind the page, assigned rather than worked out twice: a view asking
-    # the name for itself would not know an attachment from a model of the app's own.
+    # The model behind the page, assigned rather than worked out twice.
     before_action { @recourse_model = resource_class }
 
-    # Lists one page of the model the route is named after. `@q` is Ransack's own
-    # name for a search, which is what its form and sort link helpers look for.
+    # Lists one page of the model the route is named after. `@q` is Ransack's own name.
     def index
       search = Search.new recourse_relation, params[:q], arranged: arranged?
       @q = search.query
@@ -40,8 +36,7 @@ module Recourse
       model = human_name
 
       if create_resource record
-        flash.notice = t 'recourse.created', model: model
-        redirect_to written_url, status: :see_other
+        wrote t('recourse.created', model: model), record
       else
         flash.now.alert = t 'recourse.created_error', model: model
         render :new, status: :unprocessable_entity
@@ -57,23 +52,29 @@ module Recourse
     # Saves changes to a record, then shows the index again or redraws the form.
     def update
       if update_resource @recourse
-        flash.notice = t 'recourse.updated', model: human_name
-        redirect_to written_url, status: :see_other
+        wrote t('recourse.updated', model: human_name), @recourse
       else
         flash.now.alert = t 'recourse.updated_error', model: human_name
         render :edit, status: :unprocessable_entity
       end
     end
 
-    # Deletes the record and shows the index without it. `destroy!` rather than
-    # `destroy`, so a callback that stops one says so rather than claiming it worked.
+    # Deletes the record and shows the index without it. `destroy!`, so a callback that
+    # stops one says so rather than leaving the page claiming it worked.
     def destroy
       @recourse.destroy!
-      flash.notice = t 'recourse.deleted', model: human_name
-      redirect_to written_url, status: :see_other
+      wrote t('recourse.deleted', model: human_name)
     end
 
   private
+
+    # What a write says once it has landed: the message, and the row it landed on where
+    # one survives, for the page to mark while that message stands.
+    def wrote(message, record = nil)
+      flash.notice = message
+      flash[Recourse::WRITTEN] = Recourse.row_id record if record
+      redirect_to written_url, status: :see_other
+    end
 
     # Where a write goes once it has landed: the index, or the record's own page where
     # the routes drew none — a singular resource is the collection of one.
@@ -88,9 +89,8 @@ module Recourse
     # The rows the index lists, before the search, the sort and the page reach them:
     # every row of the model, narrowed by the parent a nested route names. The one thing
     # a host overrides to put a scope of its own behind a screen the gem draws whole —
-    # `def recourse_relation = County.with_boosts_for(@recourse_parent)` — and a host
-    # that says what to list is not second-guessed. Private, so overriding it adds a
-    # query and never an action.
+    # `def recourse_relation = County.with_boosts_for(@recourse_parent)`. Private, so
+    # overriding it adds a query and never an action.
     def recourse_relation
       return attachment_relation if attachment_reflection
 
