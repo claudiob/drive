@@ -23,14 +23,20 @@ module Recourse
 
     private
 
-      # The heading a form and a table already agree on for the same column — except
-      # a counter's header row, which shows the counted model's icon: the cells
-      # under it are bare figures, and the icon is what says what they count.
+      # What the column is called — except a counter's header row, which shows the
+      # counted model's icon: the cells under it are bare figures, and the icon is what
+      # says what they count.
+      #
+      # The column's own name even where a foreign key is typed rather than picked. A
+      # form names the attribute it wants typed, `ZIP code` rather than `ZIP`, because
+      # a box has to say what goes in it; a heading stands over what a record is called
+      # and nobody types anything under it — and `Location address line 1` over a column
+      # of addresses reads as a form's question asked where there is no form.
       def sort_title(column)
         counted = resource_model.recourse_counters[column.to_s]
         return counter_title counted if counted && @recourse_headers
 
-        reference_title column.to_s, belongs_to_association(column.to_s)
+        resource_column_title column.to_s
       end
 
       # An arranged table offers no heading a reader can sort by: the order is one

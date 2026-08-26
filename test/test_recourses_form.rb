@@ -84,6 +84,9 @@ class TestRecoursesForm < IntegrationCase
     visit '/places/new'
 
     assert_includes body, 'name="place[zip_id]"'
+    # And the field says which attribute it wants, where the table's heading over the
+    # same column says only what the record is: a box has to name what goes in it.
+    assert_includes body, '>ZIP code</label>'
     # The label's own length and format, since that is what is being typed — and an
     # example read off the pattern, so the field names the shape it wants rather
     # than only reporting that what was typed is wrong.

@@ -4,12 +4,13 @@ module Recourse
     module Values
     private
 
-      # One labelled value in the show page's grid: the heading a form would give the
+      # One labelled value in the show page's grid: the heading the table gives the
       # column, and under it what the record says, formatted the way the table's cell
-      # for the same column is. `label:` overrides the heading.
+      # for the same column is — this page reads a record out, so it names its columns
+      # the way the page of every record does. `label:` overrides the heading.
       def value(name, **options)
         column = name.to_s
-        label = options.fetch :label, reference_title(column, belongs_to_association(column))
+        label = options.fetch :label, resource_column_title(column)
 
         tag.div class: ROW do
           safe_join [tag.div(label, class: 'form-label'), value_control(column)]

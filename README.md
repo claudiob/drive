@@ -754,6 +754,12 @@ the controller looks the record up on the way in — `ZIP.find_by code: '90210'`
 so no model needs a virtual attribute and no strong parameter needs a special
 case.
 
+The field names the attribute it wants typed — `ZIP code`, not `ZIP` — since a
+box has to say what goes in it. A heading does not: the table and the show page
+call the column what it is, `ZIP`, because nothing is typed under one and
+`Location address line 1` over a column of addresses reads as a question asked
+where there is no form.
+
 | Column | Field |
 | --- | --- |
 | a foreign key whose label is typed, or whose table is too long to list | text field, resolved to an id on submit |
