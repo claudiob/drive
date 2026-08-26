@@ -33,19 +33,20 @@ class TestRecoursesActions < IntegrationCase
     assert_equal 'Noted', person.memos.order(:id).last.body
   end
 
-  # And the same for one drawn `recourse` rather than `recourses`: a single record
-  # reached with no id, whose destroy is an action on the record it hangs off.
-  def test_a_singular_nested_action_gets_a_button_too
+  # And the same for a singular `recourse`, whose delete stands on the page that reads
+  # it, and stands there only while there is one to delete.
+  def test_a_singular_nested_page_carries_its_own_delete
     place = Place.order(:id).first
     Memo.create! body: 'About this place', about: place
-    visit "/places/#{place.id}"
+    visit "/places/#{place.id}/memo"
 
-    assert_includes body, %(action="/places/#{place.id}/memo")
     assert_includes body, 'Delete memo'
     @session.delete "/places/#{place.id}/memo"
-
     assert_equal 303, @session.response.status
     assert_empty Memo.where(about: place)
+    visit "/places/#{place.id}/memo"
+
+    refute_includes body, 'Delete memo'
   end
 
   # And a name this app has no class for at all. An action is a verb, so most of

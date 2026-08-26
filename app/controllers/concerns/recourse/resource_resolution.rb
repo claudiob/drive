@@ -7,8 +7,8 @@ module Recourse
     # A singular resource is reached with no id — `/places/5/memo` names the record by
     # the path it hangs off rather than by a key of its own — so it is read off the
     # parent instead, under the name the route already gives it. Where the parent has
-    # no association of that name the record is still the host's to find, which is what
-    # leaves a `recourse :memo` hanging off a polymorphic key to its own controller.
+    # no association of that name the record is still the host's to find, in a
+    # controller of its own.
     def find_resource
       return assign resource_class.find(params.expect(:id)) if params.key? :id
       return unless singular_reflection

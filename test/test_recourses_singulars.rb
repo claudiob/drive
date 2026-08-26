@@ -53,10 +53,11 @@ class TestRecoursesSingulars < IntegrationCase
     place = Place.order(:id).first
     visit "/places/#{place.id}"
 
-    refute_includes body, %(href="/places/#{place.id}/memo")
     refute_includes body, %(href="/places/#{place.id}/sweep")
     # The button is still there, which is the whole difference between the two.
-    assert_includes body, %(action="/places/#{place.id}/memo")
+    assert_includes body, %(action="/places/#{place.id}/sweep")
+    # And one routed a page does earn a tab, which is the other half of the same rule.
+    assert_includes body, %(href="/places/#{place.id}/memo")
   end
 
   # A singular resource the gem serves whole: no controller of this app's own finds the

@@ -10,9 +10,9 @@ Rails.application.routes.draw do
     # All seven, and the model that has a column of every kind.
     recourses :places do
       # `recourse` rather than `recourses`: one memo about this place, reached with
-      # no id of its own. Routed `destroy` alone, so it is an action rather than a
-      # page, and its button sits on the place.
-      recourse :memo, only: :destroy
+      # no id of its own. Routed `show` as well, so it is a page with a tab of its
+      # own, and the delete stands on that page only while there is one to delete.
+      recourse :memo, only: %i[show destroy]
       # A name this app has no class for at all: an action is a verb, and the button
       # still needs a word.
       recourse :sweep, only: :create

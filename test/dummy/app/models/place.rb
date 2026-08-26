@@ -23,6 +23,9 @@ class Place < ApplicationRecord
   # The same, and made by pressing a button rather than by filling in a form.
   has_one :seal, dependent: :destroy
 
+  # And the one a place is written about, which points back polymorphically.
+  has_one :memo, as: :about
+
   # 101 of them, so a form asks for a code; three teams, so a form lists them.
   belongs_to :zip, counter_cache: true
   belongs_to :team, counter_cache: true, touch: true
