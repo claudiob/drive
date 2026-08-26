@@ -11,11 +11,10 @@ module Recourse
         'recourse-counter' if resource_model.recourse_counters.key? column
       end
 
-      # A figure, and the word saying what it counts. The heading says that word too,
-      # but by the twentieth row the heading has scrolled off — so the tooltip repeats
-      # it where the cursor is. The `aria-label` carries both, since a link whose whole
-      # text is a number announces as `10` and nothing else. A span where there is no
-      # index to link to, so an unlinked count is named the same as a linked one.
+      # A figure, and the word saying what it counts. The `aria-label` carries both,
+      # since a link whose whole text is a number announces as `10` and nothing else.
+      # A span where there is no index to link to, so an unlinked count is named the
+      # same as a linked one.
       def counter_cell(resource, value, association)
         # Delimited like every other count on the page: the filter menu beside the
         # table already reads 38,405, and one figure in two spellings reads as two.
@@ -29,22 +28,28 @@ module Recourse
         turbo_link_to counted, nested_url(resource, path, nested, :index), **named
       end
 
-      # The figure and the word it counts, which only a table with the room for it
-      # draws. The space belongs to the word rather than sitting between the two, so
-      # that hiding one hides the gap it left. `count:` is what makes it `1 place`
-      # rather than `1 places`, and `lower:` what leaves it reading as a phrase.
+      # The two forms of one count, of which a stylesheet ever shows one: the bare
+      # figure where the column is a square, and the figure with the counted model's
+      # own word where the table is wide enough to read it. `count:` is what makes it
+      # `1 place` rather than `1 places`, and `lower:` what leaves it reading as a
+      # phrase. Written out twice rather than as a figure and a suffix, so that each
+      # is a whole thing to show or hide — which is what lets the tooltip ride on the
+      # first of them and keep quiet beside the second.
       def counter_counted(count, value, association)
+        title = Recourse.model_title association.klass
         word = Recourse.model_title association.klass, count: value, lower: true
 
-        safe_join [count, tag.span(" #{word}", class: 'recourse-counter-word')]
+        safe_join [
+          tag.span(count, class: 'recourse-counter-figure', data: tooltip_on_top(title)),
+          tag.span("#{count} #{word}", class: 'recourse-counter-word'),
+        ]
       end
 
-      # The tooltip reads the word alone — the figure is already on the page — and the
-      # label reads both, which is the order somebody hearing it needs them in.
+      # The label reads the figure and the word, which is the order somebody hearing it
+      # needs them in — and it is on the link either way, since nothing is hidden from
+      # a screen reader by a width.
       def counter_naming(count, association)
-        title = Recourse.model_title association.klass
-
-        { aria: { label: "#{count} #{title}" }, data: tooltip_on_top(title) }
+        { aria: { label: "#{count} #{Recourse.model_title association.klass}" } }
       end
 
       # Where the counted rows were nested under this resource, read off the routes

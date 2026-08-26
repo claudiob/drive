@@ -1185,7 +1185,8 @@ before writing or editing any layout, view or partial.
   its options: `count:` for `1 place` against `3 places`, and `lower:` for a word
   that follows a figure rather than opening a line — which is also what keeps
   `8 ZIPs` from becoming `8 zips`. The space in front of it belongs to the word
-  rather than sitting between the two, so hiding one hides the gap it left.
+  rather than sitting between the two — and each form carries its own figure, so
+  hiding one hides the whole of it.
 - Each cell says what it counts twice over besides, without drawing anything: a
   tooltip reading the counted model's plural, for the row where the heading has
   scrolled off the top, and an `aria-label` reading `38,405 ZIPs`, because a link
@@ -1193,12 +1194,17 @@ before writing or editing any layout, view or partial.
   the word alone, the label takes both, and that is the order somebody hearing it
   needs them in. An unlinked count is a `<span>` carrying the same pair, so a
   counter with no index behind it is named like one that has.
-- The heading's tooltip needs no such rule to know when to keep quiet: it rides on
-  the icon, and an icon that is `display: none` is one nobody can hover. The cell's
-  rides on the link, which is on the page either way — so at `xl` a cell reading
-  `38,405 ZIPs` still offers `ZIPs` under the cursor. Left as it is: the redundancy
-  is a hover away and costs a reader nothing, where suppressing it would mean
-  teaching JavaScript a breakpoint the stylesheet already owns.
+- Neither tooltip needs a rule of its own to know when to keep quiet, because both
+  ride on an element the stylesheet is already hiding. The heading's is on the icon.
+  The cell's is on `.recourse-counter-figure`, the bare figure — so at `xl`, where
+  the figure gives way to `38,405 ZIPs`, there is nothing left to hover and the
+  tooltip says nothing a cell reading its own word has already said.
+- Which is why the cell writes the count out **twice**: `38,405` in
+  `.recourse-counter-figure` and `38,405 ZIPs` in `.recourse-counter-word`, each a
+  whole thing to show or hide, rather than a figure with a suffix hung off it. The
+  figure appearing in the markup twice is what buys a breakpoint JavaScript never
+  has to learn — the stylesheet already owns it. Only one is ever displayed, so
+  nothing is read out twice either.
 - Every other numeric cell reads the way the show page reads it, through the one
   `formatted_number` ladder Formats keeps: integers delimited, money as
   currency, percentages and decimals at their column's own precision. Only text

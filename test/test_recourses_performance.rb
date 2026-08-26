@@ -82,9 +82,10 @@ class TestRecoursesPerformance < IntegrationCase
     team = Team.order(:id).first
     visit '/teams'
     # The figure links to wherever the counted rows were nested, which here is under
-    # a namespace — read off the routes rather than joined onto the parent's path. The
-    # word after it is the one only a wide table shows, so the figure is read up to it.
-    cell = %r{<td data-cell="Places"[^>]*><a[^>]*href="/teams/#{team.id}/visited/places">(\d+)<}
+    # a namespace — read off the routes rather than joined onto the parent's path, and
+    # unique enough on its own to find the cell by. It is the first of the count's two
+    # forms, the bare one a narrow table shows, so the figure is read out of its span.
+    cell = %r{href="/teams/#{team.id}/visited/places"><span[^>]*>(\d+)<}
     before = body[cell, 1].to_i
     place = team.places.create! zip: ZIP.order(:id).first, name: 'Counted', slug: 'counted',
                                 capacity: 1, active: true
