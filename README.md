@@ -424,7 +424,7 @@ lands before the comment, not inside it.
 
 | Action | What it answers |
 | --- | --- |
-| `index` | one page of the model — 20 rows, `?page=2` for the next |
+| `index` | one page of the model — 20 rows or 100, as the reader chose, `?page=2` for the next |
 | `show` | the record the id names, read out |
 | `new` | a blank record's form |
 | `create` | the index again, or the form with the errors on it |

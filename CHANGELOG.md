@@ -7,6 +7,26 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A reader says how much of a table one page shows
+
+  Every index paginated at twenty rows and nobody could say otherwise. `?limit=` in
+  the address bar was ignored on purpose — pagy's `max_limit` is unset, so a stranger
+  cannot ask a host for a page of 100,000 rows — but that closed the door on the
+  reader as well as on the stranger. Scanning 101 ZIPs meant six pages of twenty.
+
+  There is now a switch after `Displaying items 1-20 of 101 in total`, past a dot,
+  reading `100 per page`. Clicking it makes that the size, and it then reads
+  `20 per page` — it always names where a click goes, since the sentence beside it
+  already says where the reader is. The choice is kept in a cookie of the reader's
+  own and used by every index in the app from then on: no parameter in any address,
+  nothing written to the host's database, and `max_limit` still unset. The cookie is
+  checked against the two sizes we offer on the way in, since a cookie is a value a
+  stranger can write too.
+
+  The switch appears only while there is a second page to reach, alongside the page
+  links it belongs with. Clicking it goes back to the first page: page five of
+  twenty is past the end of a hundred to a page.
+
 * The navbar and the sidebar hold still while a long page scrolls
 
   A table of any length took the whole page down with it: the breadcrumb, the buttons,

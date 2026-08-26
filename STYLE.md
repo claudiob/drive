@@ -1545,10 +1545,33 @@ before writing or editing any layout, view or partial.
 ## Pagination
 
 - Paginate with the `pagy` gem, never hand-rolled offsets.
-- The page limit is 20, which is already pagy's own default — so never pass
-  `limit:` to restate it.
-- Below the table, in this order: `info_tag` for the item count, then
-  `series_nav :bootstrap` for the links. Both need `<%==` rather than `<%=`,
-  since they return HTML.
-- Leave `max_limit` unset. Without it pagy ignores a `?limit=` in the query
-  string, so a visitor cannot ask for a page of 100,000 rows.
+- Two page sizes and no more, named once in `Recourse::LIMITS`: 20, which is
+  pagy's own default and what every table opens at, and 100 for a reader
+  scanning rather than reading. `index` passes the one in force as `limit:`.
+- Which of the two is the reader's own, kept in their browser under
+  `Recourse::LIMIT_STORAGE` — a *cookie*, not local storage, which is where the
+  palette goes. Pagy decides the page on the server, and a cookie is the only
+  storage the server is sent, so every index answers to it with no `?limit=` in
+  any address and nothing written to the host's database.
+- `Recourse::Paging#recourse_limit` checks that cookie against `LIMITS` and falls
+  back to 20. Never skip that check: a cookie is a value a stranger can write, and
+  an unchecked one is `?limit=100000` by another route.
+- Which is also why `max_limit` stays unset. Without it pagy ignores a `?limit=`
+  in the query string outright, so the only way to ask for a page size is the one
+  we check.
+- Below the table, in this order: the count, then — only while `pagy.last > 1` — a
+  `&middot;` and the switch after it, then `series_nav :bootstrap` at the right for
+  the links. `series_nav` needs `<%==` rather than `<%=`, since it returns HTML. A
+  table that fits on one page is not being paginated, so it says how many items it
+  has and offers neither the dot nor the switch.
+- The switch names the size it is **not** showing: at twenty to a page it reads
+  `100 per page`, and having been clicked it reads `20 per page`. The sentence
+  beside it already says how much of the table is on the page, so what is left for
+  a control to say is where a click goes, not where the reader is.
+- It is a `<button>` wearing `.btn-link`, never an `<a>`: it performs something
+  rather than leading anywhere, and there is no address to give it — the query
+  string is not asked for a page size. `p-0 align-baseline` and a `min-height: 0`
+  of its own keep it a word in the sentence rather than a control beside one.
+- Which size a click writes is worked out on the server and handed over as
+  `data-limit-to-value`, so the page and the cookie can only ever disagree if one
+  of them is forged — and the read is checked anyway.

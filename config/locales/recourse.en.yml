@@ -52,6 +52,7 @@ en:
     no_results: No results found
     none: "No %{models}."
     optional: Optional
+    per_page: "%{limit} per page"
     position_updated: Position updated
     remove: Remove
     reference: "%{model} %{attribute}"

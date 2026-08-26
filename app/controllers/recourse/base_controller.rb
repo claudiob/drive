@@ -3,8 +3,8 @@ module Recourse
   # its own behavior above it — `class RecoursesController < Recourse::BaseController`
   # with a `before_action :authenticate!` guards every screen the gem serves.
   class BaseController < ApplicationController
-    include Pagy::Method, AttachmentResolution, AttachmentWriting, ParentResolution,
-            PolymorphicParents, ReferenceResolution, ResourceResolution
+    include Pagy::Method, AttachmentResolution, AttachmentWriting, Paging,
+            ParentResolution, PolymorphicParents, ReferenceResolution, ResourceResolution
 
     helper Helpers
 
@@ -25,7 +25,7 @@ module Recourse
     def index
       search = Search.new recourse_relation, params[:q], arranged: arranged?
       @q = search.query
-      @pagy, @resources = pagy search.scope
+      @pagy, @resources = pagy search.scope, limit: recourse_limit
     end
 
     # Builds a blank record under the name Rails would use: @contact for contacts.

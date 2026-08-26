@@ -36,6 +36,7 @@
       import ComboboxController from '/recourse/combobox_controller.js'
       import DeselectController from '/recourse/deselect_controller.js'
       import FaviconController from '/recourse/favicon_controller.js'
+      import LimitController from '/recourse/limit_controller.js'
       import PhoneController from '/recourse/phone_controller.js'
       import RevealController from '/recourse/reveal_controller.js'
       import SchemeController from '/recourse/scheme_controller.js'
@@ -54,6 +55,7 @@
         window.Stimulus.register('combobox', ComboboxController)
         window.Stimulus.register('deselect', DeselectController)
         window.Stimulus.register('favicon', FaviconController)
+        window.Stimulus.register('limit', LimitController)
         window.Stimulus.register('phone', PhoneController)
         window.Stimulus.register('reveal', RevealController)
         window.Stimulus.register('scheme', SchemeController)
@@ -194,6 +196,10 @@
          as a flex item would otherwise mean the whole form. */
       .recourse-search-box { flex: 2 1 16rem; min-width: 8rem; }
       .recourse-search .combobox-toggle { flex: 0 1 10rem; }
+      /* The per-page switch is a word in the sentence beside it rather than a control
+         next to one, so it takes the line's height and not `.btn`'s own minimum —
+         which would leave the row under every table taller than the words in it. */
+      .recourse-limit { min-height: 0; }
       /* Stacked, each control is a row of its own rather than a fragment of one:
          there is no second control beside it to share the line with. */
       @media (width < 768px) {

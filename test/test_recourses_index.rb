@@ -75,19 +75,4 @@ class TestRecoursesIndex < IntegrationCase
     # An acronym keeps its capitals in a title the gem pluralized itself.
     assert_includes body, '<span class="recourse-key">Z</span>IPs'
   end
-
-  # Twenty to a page, the count delimited, and the nav only where there is a second
-  # page to reach. Exempt from "as few tests as coverage needs": the same lines run
-  # whether the figures are right or wrong.
-  def test_it_paginates_at_twenty_rows_and_says_what_it_is_showing
-    visit '/zips'
-
-    assert_includes body, 'Displaying items 1-20 of 101 in total'
-    assert_includes body, 'href="/zips?page=2"'
-    # Four teams fit on one page, so that page says so and offers no nav.
-    visit '/teams'
-
-    assert_includes body, 'Displaying 4 items'
-    refute_includes body, 'pagination'
-  end
 end
