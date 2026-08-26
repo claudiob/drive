@@ -79,11 +79,17 @@ module Recourse
   # else to go on, so a name that resolves to no model is a routes file to fix
   # rather than a `NameError` from somewhere inside a view.
   def self.model(name)
-    # A namespaced resource is `admin/sources`, and the model it lists is a Source.
-    model = name.to_s.split('/').last.classify
-
-    model.safe_constantize || raise(Error, I18n.t('recourse.missing_model', name:, model:))
+    model?(name) || raise(Error, I18n.t('recourse.missing_model', name:, model: model_name(name)))
   end
+
+  # The same, answering nil where there is no such model rather than raising. A bare
+  # action is a verb — `recourse :sweep, only: :create` — and the gem labels its button
+  # from the path alone, so whether a name has a model behind it has to be a question
+  # and not an accusation.
+  def self.model?(name) = model_name(name).safe_constantize
+
+  # A namespaced resource is `admin/sources`, and the model it lists is a Source.
+  def self.model_name(name) = name.to_s.split('/').last.classify
 
   # Raised for every failure the gem reports, so hosts can rescue one type.
   class Error < StandardError; end

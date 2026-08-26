@@ -49,13 +49,20 @@ class TestRecoursesActions < IntegrationCase
   end
 
   # And a name this app has no class for at all. An action is a verb, so most of
-  # them are: the button takes the word the route used.
+  # them are: the button takes the word the route used, and posting it is answered
+  # like any other — the questions the gem asks of every request are asked of the
+  # model behind the page, and this page has none to ask them of.
   def test_a_bare_action_needs_no_model_behind_it
     place = Place.order(:id).first
     visit "/places/#{place.id}"
 
     assert_includes body, %(action="/places/#{place.id}/sweep")
     assert_includes body, 'Add sweep'
+
+    @session.post "/places/#{place.id}/sweep"
+
+    assert_equal 303, @session.response.status
+    assert_equal "Swept #{place.name}", @session.request.flash[:notice]
   end
 
   # The sidebar lists what the routes declared. An app's own way out of it is not

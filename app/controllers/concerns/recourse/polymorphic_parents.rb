@@ -28,7 +28,8 @@ module Recourse
     # host's to scope, exactly as it was before.
     def parent_has_many
       parent = Recourse.parent_of listing_path
-      return unless parent && resource_class.respond_to?(:reflect_on_association)
+      return unless parent && resource_model? &&
+                    resource_class.respond_to?(:reflect_on_association)
 
       model = Recourse.model parent
       return unless path_names? model.model_name.singular

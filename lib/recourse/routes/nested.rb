@@ -9,12 +9,30 @@ module Recourse
       # writes, and whatever the host's own block declared — each under the resource's
       # own module, which is what every nested page relies on.
       def draw_within(keepable, arrangeable, through, block)
+        addressable = addressable_rows?
+
         scope module: parent_resource.name do
-          draw_bookmark if keepable
-          draw_position if arrangeable
+          draw_bookmark if keepable && addressable
+          draw_position if arrangeable && addressable
           draw_join through if through
           instance_exec(&block) if block
         end
+      end
+
+      # Whether this resource has rows to address one at a time. A bookmark names one
+      # row and a position names one row, so neither means anything for a page a host
+      # assembles — an aggregate has no ids to name — nor for a name with no class
+      # behind it at all. Both were drawn for those anyway, at `/weeks/:week_id/bookmark`
+      # and `/placeholders/:placeholder_id/bookmark`, where nothing linked to them and
+      # anything reaching one raised.
+      #
+      # Answered from the class and nothing else. What a model keeps in the way of a
+      # position column is a question for a request, not for this: it would reach for a
+      # database before the routes are even finished.
+      def addressable_rows?
+        !Recourse.model(parent_resource.name).include? Recourse::Aggregate
+      rescue Error
+        false
       end
 
       # The place a row of an arranged table holds, at `/teams/5/position`. Recorded

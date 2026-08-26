@@ -7,6 +7,29 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A bare action can be answered at all
+
+  `recourse :sweep, only: :create` draws a button, labels it from the path — the gem
+  goes out of its way to name an action whose word this app has no class for — and then
+  raised on the way in, because everything running before the action asked what model
+  the page was about and a verb has none. Nothing in the dummy ever posted one, so the
+  button had never been clicked in a test.
+
+  What runs on every request now asks whether there is a model before reaching for one:
+  the assign, the broadcast, and the two places the parent lookup asks a resource about
+  its keys. The actions the gem serves still raise where the model is missing, which is
+  a routes file to fix. A host's controller for such an action stays a
+  `RecoursesController`, which matters — that is where a host keeps the filters guarding
+  its admin.
+
+* No bookmark or position route for a resource that can hold neither
+
+  Both name one row by its id, and both were drawn for every top-level resource whether
+  or not it had rows to name: `/weeks/:week_id/bookmark` for a page assembled out of
+  other models' records, `/placeholders/:placeholder_id/bookmark` for a name with no
+  model at all. Nothing linked to either, so they were dead rather than broken, and
+  anything reaching one raised. They are no longer drawn.
+
 * A write marks the row it landed on
 
   A successful create or update redirects to the index and says so in a toast: `Place

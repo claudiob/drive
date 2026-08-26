@@ -46,10 +46,13 @@ module Recourse
     end
 
     # A host may serve a page over something that is no Active Record model at all --
-    # an aggregate it assembles itself -- and such a class answers no questions about
-    # keys. The routes still named a parent, and the host still finds it.
+    # an aggregate it assembles itself, or a verb with no class behind it whose action
+    # the host answers itself -- and neither answers a question about keys. The routes
+    # still named a parent, and the host still finds it.
     def own_references
-      resource_class.respond_to?(:recourse_references) ? resource_class.recourse_references : []
+      return [] unless resource_model? && resource_class.respond_to?(:recourse_references)
+
+      resource_class.recourse_references
     end
 
     def join_references

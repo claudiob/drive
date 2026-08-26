@@ -38,6 +38,18 @@ module Recourse
       instance_variable_set "@#{controller_name.singularize}", record
     end
 
+    # Whether there is a model behind this page at all. A bare action has none: it is a
+    # verb the host answers itself — `recourse :sweep, only: :create` — labelled from the
+    # path alone, and still a `RecoursesController`, that being where a host keeps the
+    # filters guarding its admin. So what runs on every request asks this first, and the
+    # actions the gem serves reach for the model again and raise where it is missing.
+    # Asked of `resource_class`, which a position and a bookmark answer from the listing.
+    def resource_model?
+      resource_class.present?
+    rescue Error
+      false
+    end
+
     # The model the route is named after — or Active Storage's, where the name is
     # something the parent has attached rather than a model of this app's own.
     def resource_class

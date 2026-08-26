@@ -79,6 +79,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # What the sidebar's own way out posts to, `recourse_extra_links` naming this path.
+  resource :session, only: :destroy
+
   # Outside the module, and with an index template of the host's own.
   recourses :memos, except: :show
 

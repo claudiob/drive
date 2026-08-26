@@ -12,11 +12,11 @@ module Recourse
     # `find` raises RecordNotFound, so an id that names nothing answers 404.
     before_action :find_resource, only: %i[show edit update destroy]
 
+    # The model behind the page, assigned once, and only where the route names one.
+    before_action { @recourse_model = resource_class if resource_model? }
+
     # The model broadcasts refreshes for its index, before `create` commits its own.
     before_action :broadcast_resource_changes
-
-    # The model behind the page, assigned rather than worked out twice.
-    before_action { @recourse_model = resource_class }
 
     # Lists one page of the model the route is named after. `@q` is Ransack's own name.
     def index
@@ -83,7 +83,7 @@ module Recourse
     end
 
     def broadcast_resource_changes
-      resource_class.recourse_broadcast if resource_class.respond_to? :recourse_broadcast
+      @recourse_model.recourse_broadcast if @recourse_model.respond_to? :recourse_broadcast
     end
 
     # The rows the index lists, before the search, the sort and the page reach them:
