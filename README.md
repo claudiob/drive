@@ -1237,14 +1237,14 @@ redirects and says `Bookmark added.`, which is the floor every button here
 degrades to. Either way the row is written by `BookmarksController`, which a host
 overrides the way it overrides `RecoursesController`.
 
-## Recolouring it
+## Recoloring it
 
 ```ruby
 # config/initializers/recourse.rb
 Recourse.color = :orange
 ```
 
-Bootstrap's primary colour is blue, which is what the pages are drawn in when nothing
+Bootstrap's primary color is blue, which is what the pages are drawn in when nothing
 says otherwise — `Recourse.color` is nil by default, and nil means exactly that. One
 line makes it one of the other five:
 
@@ -1253,9 +1253,9 @@ Recourse::COLORS # => [:blue, :gray, :orange, :purple, :pink, :brown]
 ```
 
 Every button, link, sorted heading, focus ring and favicon follows, because `.theme-primary`
-and everything else Bootstrap draws in that colour read the nine `--bs-primary-*`
-custom properties that the gem's layout redefines under `:root` when a colour is
-set. Nothing is emitted when no colour is named, which is the default — a palette
+and everything else Bootstrap draws in that color read the nine `--bs-primary-*`
+custom properties that the gem's layout redefines under `:root` when a color is
+set. Nothing is emitted when no color is named, which is the default — a palette
 names its own lead accent in its own file instead.
 
 Six of the sixteen families Bootstrap ships, and the other ten are left out
@@ -1287,7 +1287,7 @@ two locals.
 Recourse.theme = :solarized
 ```
 
-Eight colour schemes from code editors, and Bootstrap's own beside them, so one line
+Eight color schemes from code editors, and Bootstrap's own beside them, so one line
 draws every page in any of nine:
 
 ```ruby
@@ -1302,7 +1302,7 @@ nothing. It is named all the same, because the toggle below rotates through this
 and a reader who cannot find the palette the pages started in cannot undo a click.
 
 This reaches further than `Recourse.color` does. Bootstrap derives every surface,
-border and text colour it ships from one neutral ramp, and names each of its
+border and text color it ships from one neutral ramp, and names each of its
 meanings after a family — `danger` is red, `success` green, `warning` yellow,
 `info` cyan — so repainting the ramps carries a scheme to the page itself, its
 rules, its headings, its muted text and every accent on it. `Recourse.color` still
@@ -1319,11 +1319,11 @@ light arm derived from its own foreground.
 A scheme is a stylesheet rather than a block in the page, served from the engine
 at `/recourse/themes/<name>.css`, so a browser is asked for it once instead of on
 every request. It restates all thirteen steps of each family it repaints, because
-Bootstrap inlines a family's base colour into every step rather than holding it in
+Bootstrap inlines a family's base color into every step rather than holding it in
 a variable, and it repaints `--bs-white` and `--bs-black` too — those are the two
-colours every step is mixed with, and the light page reads `--bs-white` directly.
+colors every step is mixed with, and the light page reads `--bs-white` directly.
 
-Each scheme also declares the primary colour itself, from the family its own accents
+Each scheme also declares the primary color itself, from the family its own accents
 lead with, so `Recourse.theme` on its own is enough: Dracula publishes no blue, so it
 leads with purple, and Monokai leads with its pink. `Recourse.color` still wins where
 a host names one, its block coming after the palette's file. And each scheme says
@@ -1515,10 +1515,10 @@ Written in an initializer:
 
 - `Recourse.bookmarks` / `Recourse.bookmarks=` — how a viewer's bookmarks are
   stored, as a Proc answering their rows; nil for no bookmarks anywhere
-- `Recourse.color` / `Recourse.color=` — the Bootstrap colour family the pages
+- `Recourse.color` / `Recourse.color=` — the Bootstrap color family the pages
   call primary, one of `Recourse::COLORS`, or nil for Bootstrap's own blue
 - `Recourse::COLORS` — `%i[blue gray orange purple pink brown]`
-- `Recourse.theme` / `Recourse.theme=` — the code-editor colour scheme the pages
+- `Recourse.theme` / `Recourse.theme=` — the code-editor color scheme the pages
   are drawn in, one of `Recourse::THEMES`, or nil for Bootstrap's own palette
 - `Recourse::THEMES` — the nine palettes, each mapped to the families whose 500 step
   it puts a dark label on rather than a white one

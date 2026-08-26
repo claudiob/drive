@@ -91,7 +91,7 @@ export default class extends Controller {
   }
 
   // Put the square back, and say why — the one time this column speaks, since a click
-  // that worked is reported by the row taking colour. Nothing to put back but the
+  // that worked is reported by the row taking color. Nothing to put back but the
   // square: the tint is never laid on until the row is written.
   revert(kept) {
     this.render(!kept)

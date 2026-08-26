@@ -1,6 +1,6 @@
 module Recourse
   module Helpers
-    # The colour scheme a host named, and the reader's own say in which one it is.
+    # The color scheme a host named, and the reader's own say in which one it is.
     module Themes
     private
 

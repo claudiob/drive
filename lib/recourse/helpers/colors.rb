@@ -1,11 +1,11 @@
 module Recourse
   module Helpers
-    # The primary colour, where a host has named one.
+    # The primary color, where a host has named one.
     module Colors
     private
 
       # The `:root` block that makes `Recourse.color` the primary one, or nothing at all
-      # where no colour is named — Bootstrap's own blue is already there, and a palette
+      # where no color is named — Bootstrap's own blue is already there, and a palette
       # names its own lead accent in its own file. It wins on being later rather than on
       # being more specific, every selector being `:root`, so it belongs after both the
       # stylesheet link and the palette's, and never before either.

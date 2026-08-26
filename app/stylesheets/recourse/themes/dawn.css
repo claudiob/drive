@@ -9,7 +9,7 @@
    one. Upstream's order and upstream's shapes with only the base swapped,
    so a later Bootstrap diffs against this file. */
 :root {
-  /* The page, and the two colours every ramp below is mixed with.
+  /* The page, and the two colors every ramp below is mixed with.
      `--bs-bg-body` reads `--bs-white` in light mode and `--bs-gray-975` in
      dark, so repainting these two is what moves the page itself. */
   --bs-white: #faf4ed;
@@ -172,11 +172,11 @@
   --bs-warning-contrast: var(--bs-gray-975);
   --bs-info-contrast: var(--bs-gray-975);
 
-  /* The accent this palette leads with, as the primary colour: the same nine
+  /* The accent this palette leads with, as the primary color: the same nine
      `_color.html.erb` writes, from blue and the label that reads on it. Here
      rather than only in the page because a reader may swap this file for
      another one, and the primary has to travel with it. A host naming its
-     own colour still wins, its block coming after this file. */
+     own color still wins, its block coming after this file. */
   --bs-primary-base: var(--bs-blue-500);
   --bs-primary-fg: light-dark(var(--bs-blue-600), var(--bs-blue-400));
   --bs-primary-fg-emphasis: light-dark(var(--bs-blue-800), var(--bs-blue-200));

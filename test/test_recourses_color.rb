@@ -8,7 +8,7 @@ class TestRecoursesColor < IntegrationCase
   # `var(--bs-purpel-500)` into every page and go unnoticed until somebody looked,
   # so a name the gem does not know is refused at the point it is set — and says
   # which names there are, rather than only that this one is wrong.
-  def test_a_host_picks_a_primary_colour_and_a_name_nobody_has_is_refused
+  def test_a_host_picks_a_primary_color_and_a_name_nobody_has_is_refused
     Recourse.color = :pink
     visit '/places'
 

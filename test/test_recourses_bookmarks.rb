@@ -36,7 +36,7 @@ class TestRecoursesBookmarks < IntegrationCase
     assert_includes body, 'data-controller="bookmark"'
     assert_includes body, 'aria-pressed="true"'
     # The one word the browser cannot look up, and only the one: a click that worked is
-    # reported by the row taking colour, so a failure is all there is left to say.
+    # reported by the row taking color, so a failure is all there is left to say.
     assert_includes body, 'data-bookmark-error-value="Bookmark could not be saved."'
     refute_includes body, 'data-bookmark-messages-value'
     # No tooltip on a square that repeats down every row, unlike every other icon
@@ -55,7 +55,7 @@ class TestRecoursesBookmarks < IntegrationCase
     refute_includes body, 'data-cell="Bookmark"'
     # And no row is tinted, which is the branch that would otherwise ask a model with
     # no bookmarks for the ids of the ones it keeps. The attribute rather than the bare
-    # word: the rule that colours it is in the layout of every page, tinted rows or not.
+    # word: the rule that colors it is in the layout of every page, tinted rows or not.
     refute_includes body, 'class="recourse-kept"'
   end
 end

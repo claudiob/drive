@@ -1,6 +1,6 @@
 # Reopened for the other thing a host says about how every page looks.
 module Recourse
-  # Palettes a host may draw its pages in: eight colour schemes from code editors, and
+  # Palettes a host may draw its pages in: eight color schemes from code editors, and
   # Bootstrap's own — which is what a page wears when none is named at all, so nil and
   # `:bootstrap` are two spellings of one look. It is named all the same, because the
   # sidebar's toggle rotates through this list and a reader who never finds upstream's

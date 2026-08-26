@@ -43,15 +43,15 @@ before writing or editing any layout, view or partial.
 - The engine serves them with `Rack::Static`, since a host may run no asset
   pipeline at all — see CLAUDE.md, "Vendor what a page cannot render without".
 
-## The primary colour
+## The primary color
 
 - Bootstrap's primary is blue, and `Recourse.color` is what changes it — nil by
   default, and one of `blue`, `gray`, `orange`, `purple`, `pink` or `brown`.
 - Six of the sixteen families. The other ten are declined rather than forgotten,
   and anything else raises.
-- Never restyle a component to recolour it. `.theme-primary` maps all nine
+- Never restyle a component to recolor it. `.theme-primary` maps all nine
   `--bs-primary-*` properties onto `--bs-theme-*`, so redefining those nine is what
-  carries a colour to every button, link, sorted heading and focus ring at once.
+  carries a color to every button, link, sorted heading and focus ring at once.
 - The nine live in `_color.html.erb`, copied from `bootstrap.min.css` in upstream's
   order and upstream's shapes with only the family swapped — including the
   two-branch `light-dark` focus ring, which is worth keeping verbatim so a later
@@ -59,7 +59,7 @@ before writing or editing any layout, view or partial.
 - The block goes *after* the stylesheet link in the head. Both selectors are
   `:root`, so it wins on being later and nothing else; put it before and it does
   nothing at all.
-- `--bs-primary-contrast` is the one of the nine that names a *colour* rather than
+- `--bs-primary-contrast` is the one of the nine that names a *color* rather than
   a family, which is exactly why it is the one a palette can break. It is
   `var(--bs-white)` or `var(--bs-gray-975)`, decided per family by `Recourse.ink`
   and handed to the partial as its second local. Both are shapes upstream ships:
@@ -74,17 +74,17 @@ before writing or editing any layout, view or partial.
   takes the family and its ink as its two locals, so a host's version can ignore
   both entirely.
 
-## The colour scheme
+## The color scheme
 
 - `Recourse.theme` is the second thing a host says about how every page looks, and
   it reaches much further than `Recourse.color`. A scheme repaints Bootstrap's
-  ramps; the colour still only says which repainted ramp is primary. They compose,
+  ramps; the color still only says which repainted ramp is primary. They compose,
   and neither knows about the other.
 - That composition is free, and this is why: every other line of
   `_color.html.erb` is a `var()` into a family the palette has already repainted,
   so a ramp declared later still reaches a primary declared earlier. A custom
   property is substituted where it is *used*, not where it is written.
-- Which makes order between the palette and the colour a reading order and nothing
+- Which makes order between the palette and the color a reading order and nothing
   more. What matters absolutely is that neither comes *before* the Bootstrap link,
   every selector involved being `:root`.
 - A palette is a stylesheet under `app/stylesheets/recourse/themes/`, served at
@@ -114,7 +114,7 @@ before writing or editing any layout, view or partial.
 - A palette declares the nine `--bs-primary-*` too, from the family it leads with.
   Not only so `Recourse.theme` alone looks right, but because a reader can swap the
   file for another one — the primary has to travel with it, and a block written into
-  the page would stay behind. A host's own colour still wins, coming after the file.
+  the page would stay behind. A host's own color still wins, coming after the file.
 - `:bootstrap` is in the list and declares nothing. The eight work by overriding
   upstream's `:root`, so dropping their block is the whole of what brings upstream's
   palette back — and swapping this link in is how the toggle drops it. nil and
@@ -127,7 +127,7 @@ before writing or editing any layout, view or partial.
   `primary:` key here outlived its reader once already and went quietly stale.
 - Check the numbers when adding one. Every accent of all eight clears 3:1 against
   the label it is given, and every text tone clears 4:1 in both modes. Nothing in
-  the suite can see this: the same lines run whichever colour is written.
+  the suite can see this: the same lines run whichever color is written.
 
 ## The scheme toggle
 
@@ -149,7 +149,7 @@ before writing or editing any layout, view or partial.
   keeps the sidebar's column and its centring, and needs no `z-index` because the two
   columns never overlap. The offset is `--bs-spacer-3`, the padding the sidebar already
   carries, so it does not sit flush against the edge of the window.
-- It carries the page's own background colour, which is invisible at rest and is there
+- It carries the page's own background color, which is invisible at rest and is there
   for the short viewport: where the links themselves reach the foot, the toggle sticks
   over one, and a transparent icon on top of a link reads as neither.
 - The icon names where a click *goes*, not where the page is. A click moves to another
@@ -237,7 +237,7 @@ before writing or editing any layout, view or partial.
   `btn theme-primary btn-sm btn-outline ms-3`.
 - Where `create` is routed with no `new`, the same spot holds a `Create` button
   instead: a `button_to` posting the record whole — `.btn-solid`, being a button
-  and not a link dressed as one — in the Add link's size and colour, with the
+  and not a link dressed as one — in the Add link's size and color, with the
   `ms-3` on its form, which is the flex item. Routing it that way is the host's
   word that a bare record can stand — the gem checks nothing further.
 
@@ -328,16 +328,16 @@ before writing or editing any layout, view or partial.
 - Nothing is drawn until `document.fonts.load` resolves. `connect` runs long
   before the font arrives, and a character the font has not brought is a blank
   box, which is exactly what would end up in the tab.
-- 64 pixels square, in the page's primary colour: an app that sets
+- 64 pixels square, in the page's primary color: an app that sets
   `Recourse.color = :pink` gets a pink tab as well as pink buttons. `--bs-primary-fg`
   rather than `-bg`, since that is the one a link is drawn in and the one that adapts
-  to the colour scheme — `light-dark(600, 400)`, darker on a light page and lighter
+  to the color scheme — `light-dark(600, 400)`, darker on a light page and lighter
   on a dark one, which is what a tab strip wants too.
 - Resolved by painting rather than by reading. `getPropertyValue` on a custom
   property hands back `light-dark(var(--bs-pink-600), var(--bs-pink-400))`, which a
   canvas cannot parse, so the probe that already reads the codepoint wears
   `color: var(--bs-primary-fg)` and its computed `color` is read off the same call.
-  A host without those properties falls back to the inherited colour, which is where
+  A host without those properties falls back to the inherited color, which is where
   this started. A tab asks for 16 and twice
   that on a retina display; a glyph scaled down reads better than one scaled up.
 
@@ -483,7 +483,7 @@ before writing or editing any layout, view or partial.
 - One rule between rows, so a heading and its value read as one thing and the next
   pair as another. It sits on the cells rather than between them — a column's gutter
   is padding inside it, so two side by side draw one unbroken line — and it is
-  `.recourse-values > .recourse-row` that colours it in.
+  `.recourse-values > .recourse-row` that colors it in.
 - Every row on *both* pages reserves the width that rule takes, in `transparent`, and
   carries the same `pb-2 mb-3`. That is what leaves a field at exactly the height of
   the value it edits, row after row: the two pages line up to the pixel, so switching
@@ -626,7 +626,7 @@ before writing or editing any layout, view or partial.
   `--bs-form-text-margin-top` and then never applies it — `.25rem` is what that variable
   holds, so `mt-1` is the gap the class already meant and not a choice of ours.
   `fg-secondary` for a line answering a question nobody asked: quieter than the value
-  above it, and quieter than `.form-text`'s own `--bs-fg-2`, which a colour utility
+  above it, and quieter than `.form-text`'s own `--bs-fg-2`, which a color utility
   later in the cascade is what overrides.
 - The note carries an id off the field's own — `place_capacity_help` — and the control
   points at it with `aria-describedby`, so it is announced when the field takes focus
@@ -710,7 +710,7 @@ before writing or editing any layout, view or partial.
   column of empty space.
 - The submit is `btn btn-solid theme-primary`. In v6 the fill is a separate class
   from the base: `.btn` sizes, `.btn-solid` / `.btn-outline` / `.btn-subtle`
-  fill, and `theme-*` colours.
+  fill, and `theme-*` colors.
 - The fill is what tells a link from a button, so it never lies: `.btn-outline`
   is the dress of the navbar's *links* — `Add <resource>`, after the breadcrumb —
   and a real `<button>` that performs, like Create or Delete, is `.btn-solid`.
@@ -924,8 +924,8 @@ before writing or editing any layout, view or partial.
 
 - That is what tints the whole toast. `.toast-header` takes its background from
   `--bs-theme-bg-subtle` while `.toast` itself takes the plain body background, so
-  a message in the body would sit on white below a coloured strip. With the body
-  hidden the toast *is* the header, and the theme colours all of it.
+  a message in the body would sit on white below a colored strip. With the body
+  hidden the toast *is* the header, and the theme colors all of it.
 - `border-0` removes the header's `border-block-end`, which would otherwise rule a
   line under the message with nothing beneath it.
 - `me-auto` on the message is what pushes the X to the right. Inside a header the
@@ -1074,7 +1074,7 @@ before writing or editing any layout, view or partial.
   which is the column the page exists for: `Add` where the two are not joined and
   `Remove` where they are, one `button_to` either way, since the path names both
   records and neither needs submitting. `btn btn-sm btn-solid`, and no `theme-*` —
-  solid because it performs, and neutral because a column of coloured buttons would
+  solid because it performs, and neutral because a column of colored buttons would
   shout over the rows it is about. Not the delete's danger either, a join being taken
   back by clicking again, which is the bookmark square's argument above.
 - The bookmark square carries **no** tooltip, and the line is drawn on whether the
@@ -1095,7 +1095,7 @@ before writing or editing any layout, view or partial.
   costs a whole page load more, since this square answers without one.
 - The row is tinted as well as squared: a kept `<tr>` wears `recourse-kept`, which
   paints its cells a twelfth of `--bs-primary-fg` mixed into `--bs-bg-body`, so the
-  tint follows every palette and both modes without naming a colour. Twenty rows are
+  tint follows every palette and both modes without naming a color. Twenty rows are
   scanned by it long before anybody reads a column of icons, and the square is still
   what says the same thing to a reader who cannot see a tint.
 - Mixed into the *page*, not taken from the ramp. `--bs-primary-bg-subtle` is a fixed
@@ -1104,13 +1104,13 @@ before writing or editing any layout, view or partial.
   proves it. Mixing into the page holds the tint the same distance from it whatever
   the palette is.
 - A `background-color`, deliberately, and not `.table-active`. That class sets the
-  very variable `.table-hover` sets — 10% of the row's own text colour against
+  very variable `.table-hover` sets — 10% of the row's own text color against
   hover's 7.5%, the same grey twice — so a kept row would read as the row under the
   cursor and would lose its tint the moment it became one. A background sits under
   the hover shadow instead, so a kept row hovers like any other.
 - Not `theme-primary` on the `<tr>` either, tempting as it looks: that sets
   `--bs-theme-*` for everything inside the row, and `.btn-link` and `.badge` both
-  read those before their own defaults. The tint would have recoloured every button
+  read those before their own defaults. The tint would have recolored every button
   and badge in the row with it.
 - The click does not wait for the server. The `bookmark` Stimulus controller flips
   the icon, posts in the background and never renders the response, so the table is
@@ -1118,9 +1118,9 @@ before writing or editing any layout, view or partial.
   where the kept-first order belongs, rather than yanking a row to the top of the
   table under the cursor that just clicked it.
 - **The tint is the report, and it waits for the server.** The icon flips on the
-  click; the row takes colour only once the write comes back. So the confirmation
+  click; the row takes color only once the write comes back. So the confirmation
   lands where the click happened rather than in a corner of the page, and a click
-  that never reached the server never colours anything. Dropping a kept row reads the
+  that never reached the server never colors anything. Dropping a kept row reads the
   same way round: the tint stays until the delete is actually written.
 - A kept square leaves the same mark a create or an update leaves, through the same
   `written.js`: the tint lasts and says which rows are kept, the mark passes and says

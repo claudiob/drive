@@ -5,8 +5,8 @@ import { Controller } from '/recourse/stimulus.js'
 const SIZE = 64
 
 // The tab wears the same icon as the page, drawn from the same font and in the same
-// colour: no image to ship, no second place to change, and a model that renames its
-// icon — or an app that recolours itself — renames this too.
+// color: no image to ship, no second place to change, and a model that renames its
+// icon — or an app that recolors itself — renames this too.
 export default class extends Controller {
   static values = { icon: String }
 
@@ -27,7 +27,7 @@ export default class extends Controller {
   // One element answers both questions. The codepoint is in the stylesheet and
   // nowhere JavaScript can ask for it, so the way to read it is to have an element
   // wear the class and say what its `::before` would have said; and the primary
-  // colour is `light-dark()` until something is painted in it, so the way to resolve
+  // color is `light-dark()` until something is painted in it, so the way to resolve
   // it is to paint something. Rendered rather than `display: none`, since a box that
   // is never generated has no pseudo-element to report on.
   #painting() {

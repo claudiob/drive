@@ -1,6 +1,6 @@
 # Reopened for the one thing a host says about how every page looks.
 module Recourse
-  # Colour families a host may call primary. Six of the sixteen Bootstrap ships; the
+  # Color families a host may call primary. Six of the sixteen Bootstrap ships; the
   # other ten are declined rather than forgotten.
   COLORS = %i[blue gray orange purple pink brown].freeze
 
@@ -15,7 +15,7 @@ module Recourse
     attr_reader :color
   end
 
-  # Picks the primary colour, and says which six there are when handed anything else. A
+  # Picks the primary color, and says which six there are when handed anything else. A
   # typo would otherwise write `var(--bs-purpel-500)` into every page and go unnoticed
   # until somebody looked at a button.
   def self.color=(color)

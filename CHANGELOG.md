@@ -619,13 +619,13 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
   A table whose model keeps bookmarks now paints the whole `<tr>` of a row the viewer
   has kept — a twelfth of the primary mixed into the page, so it follows every palette
-  and both colour modes. Twenty rows are scanned by it long before anybody reads a
+  and both color modes. Twenty rows are scanned by it long before anybody reads a
   column of icons. It is a background rather than Bootstrap's `.table-active`, which
   sets the same variable `.table-hover` does and would leave a kept row looking like
   the row under the cursor.
 
   The square's success toast is gone with it. The icon still flips on the click, but
-  the row takes colour only when the write comes back, so the confirmation lands where
+  the row takes color only when the write comes back, so the confirmation lands where
   the click happened instead of in a corner of the page — and a column built to be
   clicked twenty times no longer answers with twenty toasts. Only a failure speaks
   now. The no-JavaScript path still flashes `Bookmark added` and `Bookmark removed`,
@@ -649,16 +649,16 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
   model as before, forms still never offer them, and every heading a table shows can
   still be sorted by.
 
-* `Recourse.theme` draws every page in a code-editor colour scheme
+* `Recourse.theme` draws every page in a code-editor color scheme
 
   Eight of them — `dawn`, `dracula`, `gruvbox`, `monokai`, `nord`, `one_dark`,
   `solarized` and `tokyo_night` — set from an initializer with one line. Bootstrap
-  derives every surface, border and text colour from one neutral ramp and names each
+  derives every surface, border and text color from one neutral ramp and names each
   of its meanings after a family, so repainting the ramps carries a scheme to the page
   itself rather than only to its accents. Each is a stylesheet the engine serves at
   `/recourse/themes/<name>.css`, and each fills both arms of every ramp, so a page
   still follows the reader's system setting. `Recourse.color` composes with it: the
-  scheme repaints the ramps, the colour says which repainted ramp is primary.
+  scheme repaints the ramps, the color says which repainted ramp is primary.
 
 * The sidebar ends with a moon or a sun, and a reader picks their own palette
 

@@ -3,9 +3,9 @@
 # accent on it — is visible in a browser rather than only in a test.
 Recourse.theme = :dracula
 
-# And deliberately no colour, so each palette leads with the accent of its own that it
+# And deliberately no color, so each palette leads with the accent of its own that it
 # names, which is what a reader rotating through them from the sidebar sees. A host that
-# wants one says `Recourse.color = :blue`; the test about the colour is what exercises
+# wants one says `Recourse.color = :blue`; the test about the color is what exercises
 # that, since nothing here would.
 
 # And its one line about how a viewer keeps a row. A Proc rather than the relation

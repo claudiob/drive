@@ -16,7 +16,7 @@
         module the toast controller and the dismiss X import is already in flight. -%>
     <link rel='modulepreload' href='/recourse/bootstrap.bundle.min.js'>
     <%# Both after the stylesheet, which is what makes them win: every selector is
-        `:root`. The palette repaints the ramps and the colour says which repainted ramp
+        `:root`. The palette repaints the ramps and the color says which repainted ramp
         is primary, so the palette comes first and the head reads outside in. Between
         the two it is only a reading order: a custom property is substituted where it is
         used, so a ramp written later still reaches a primary written earlier. What
@@ -138,7 +138,7 @@
          and the next pair as another. On the cells rather than between them: a column's
          gutter is padding inside it, so two side by side draw one unbroken line.
          Every row reserves the width a rule takes, in `transparent`, and the show page
-         only colours it in — which is what leaves a field at exactly the height of the
+         only colors it in — which is what leaves a field at exactly the height of the
          value it edits, row after row down two pages. */
       .recourse-row {
         border-block-end: var(--bs-border-width) solid transparent;
@@ -342,7 +342,7 @@
            sidebar scrolls on its own now, so the toggle is sticky within it rather than
            within the page. Offset by the padding the sidebar already carries, so it
            does not sit flush against the edge of the window, and painted the page's own
-           colour, which is seen only where it masks a link it sits over. */
+           color, which is seen only where it masks a link it sits over. */
         .recourse-sidebar .recourse-scheme {
           position: sticky;
           inset-block-end: var(--bs-spacer-3);
