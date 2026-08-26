@@ -8,8 +8,11 @@
     join, where the buttons are of rows this relation knows nothing about. And the
     bookmarks, which are the viewer's rather than the relation's — so this is what
     keeps one person's kept rows off another person's page as well as what expires
-    the fragment when a square is clicked. -%>
-<% key = [recourses, row_digest, resource_columns, join_digest, bookmark_digest] -%>
+    the fragment when a square is clicked. And the zone, for the same reason again:
+    a timestamp is drawn against the reader's own clock, so without it the first
+    person to load a table would settle what hour everybody else read. -%>
+<% key = [recourses, row_digest, resource_columns, join_digest, bookmark_digest,
+          Time.zone.name] -%>
 <% cache_if params[:q].blank?, key do %>
   <% actions = resource_actions %>
   <% arranged = arranged? %>

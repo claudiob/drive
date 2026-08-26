@@ -7,6 +7,43 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A page is read against the reader's own clock
+
+  Every time the gem printed was drawn in `config.time_zone`, so a reader in
+  California read `Jun 1 at 09:30am EDT` and did the arithmetic themselves.
+
+  The browser now reports its zone into a cookie, and the server renders in it: the
+  same row reads `Jun 1 at 06:30am PDT` in California and `Jun 1 at 10:30pm JST` in
+  Tokyo. Moving the zone rather than the text is what makes this worth having — the
+  edit form is drawn in the same zone as the page beside it and reads a typed value
+  back in it, so the record keeps the instant it would have kept anywhere else.
+  Localizing in the browser would have left the form behind, saying `9:30 AM PDT` on
+  one page and `12:30 PM` on the next.
+
+  A date is untouched, in every zone. It is a day rather than a moment and has no
+  hour to shift; the browser-side version of this would have read `Jan 1` as `Dec 31`
+  for everybody west of Greenwich.
+
+  Nothing of the host's is written. `Time.use_zone` restores the old zone in an
+  `ensure` and `Time.zone` is per-thread state rather than config, so a host's own
+  screens are drawn against its setting as before. A cookie naming no zone anyone
+  knows is nil, which falls back to that setting too. Storage stays UTC throughout.
+
+  A table's cache key gains the zone, for the reason it already carries the viewer's
+  bookmarks: without it the first reader to load one would settle what hour everybody
+  else read.
+
+* A timestamp says how far off it is
+
+  Hovering a datetime now reads `3 minutes ago`, or `in 9 years`. The server
+  writes those words with Rails' own helper, which is what a reader without
+  JavaScript gets, and the browser says them again on the way to the tooltip — a
+  table is cached and a page is left open, so words rendered on the server are only
+  true at the moment they are drawn.
+
+  Only a datetime. A date is a day and a time is a time of day, and neither is a
+  moment for a distance to count against.
+
 * A reader says how much of a table one page shows
 
   Every index paginated at twenty rows and nobody could say otherwise. `?limit=` in
@@ -26,6 +63,19 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
   The switch appears only while there is a second page to reach, alongside the page
   links it belongs with. Clicking it goes back to the first page: page five of
   twenty is past the end of a hundred to a page.
+
+* A counter cell keeps its tooltip for the width that needs one
+
+  A cell counting what a row holds reads `3` where the table is narrow and `3 places`
+  where it is wide, and it offered `Places` under the cursor in both — repeating, on
+  the wide table, the word already printed in the cell.
+
+  The tooltip now rides on the bare figure rather than on the link around it. The
+  stylesheet hides that figure at `xl` in favour of the phrase, and an element that
+  is `display: none` is one nobody can hover, so the tooltip goes quiet exactly where
+  it had nothing left to add — the same mechanism the icon heading above it already
+  used. The cell writes the count out twice to make this possible, once bare and once
+  with its word, each a whole thing to show or hide.
 
 * The navbar and the sidebar hold still while a long page scrolls
 

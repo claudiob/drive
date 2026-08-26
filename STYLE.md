@@ -1525,8 +1525,29 @@ before writing or editing any layout, view or partial.
   of its own.
 - The `datetime` attribute is `rfc3339`, so it carries seconds and the offset.
   The visible text drops both; the attribute is what a machine reads.
-- Zone comes from `config.time_zone`, so `%Z` reads `EDT` or `EST` depending on
-  the date, never `UTC`.
+- Zone comes from `Time.zone`, so `%Z` reads `EDT`, `PDT` or `JST` — never `UTC`,
+  and never a zone the reader is not in.
+- Which zone that is belongs to the reader. `timezone_controller.js` reports
+  `Intl.DateTimeFormat().resolvedOptions().timeZone` into a cookie, and
+  `Recourse::Zoning` wraps every action in `Time.use_zone` of it, so the *server*
+  renders in the reader's zone — the page, the table and the field that edits one,
+  all from one place.
+- Never localize a timestamp in the browser instead. Rewriting `<time>` with
+  `Intl.DateTimeFormat` leaves the form behind, so a reader would read `9:30 AM
+  PDT` on a record's page and find `12:30 PM` in the box that edits it. Moving the
+  zone rather than the text is what keeps the two pages saying one thing.
+- The host's setting is never written. `Time.use_zone` takes a block and restores
+  the old zone in an `ensure`, and `Time.zone` is per-thread state rather than
+  config — so a host's own screens are drawn against `config.time_zone` as before,
+  in the same process and the same second. A cookie naming a zone
+  `ActiveSupport::TimeZone[]` does not know is nil, and `Time.zone = nil` falls
+  back to that setting too, so a forged cookie changes nothing.
+- Storage stays UTC. Never touch `config.active_record.default_timezone` — the
+  database keeps UTC and Rails converts on the way in and out, which is the whole
+  reason the zone can be a per-request decision at all.
+- A table's fragment key carries `Time.zone.name` for the same reason it carries
+  the viewer's bookmarks: without it the first reader to load one would settle what
+  hour every other reader saw.
 - A date with no time of its own reads `Aug 12, 2026`, never `2026-08-12`. The
   ISO form is a value rather than something a reader takes in at a glance, and it
   already has a place on the page:
@@ -1547,6 +1568,28 @@ before writing or editing any layout, view or partial.
 - A locale with no `recourse` format raises rather than degrading: `l` looks its
   format up with `raise: true`, unlike `t`. A host translating these pages
   translates those two keys as well, or turns `i18n.fallbacks` on.
+- A *datetime* also says how far off it is, in a tooltip: `3 minutes ago`,
+  `in 9 years`. Only a datetime — a date is a day and a time is a time of day, and
+  neither is a moment for a distance to count against.
+- That one is placed `left`, not `top` like every other tooltip here. The icons that
+  take `top` head a column and have the page's chrome above them; a timestamp has
+  another row of the table above it, or another value of the same record, and either
+  is something a reader may be reading this one against. Bootstrap's `AttachmentMap`
+  resolves `left` through `isRTL()`, so it is the reading-order side rather than a
+  hard direction.
+- The server writes those words with Rails'
+  `distance_of_time_in_words_to_now`, which says how far and never which way, so
+  the direction comes from the `ago` and `from_now` keys. Those two are worded the
+  way `Intl.RelativeTimeFormat` words them — `in 9 years`, not `9 years from now` —
+  because the browser says the same phrase again a moment later, and two spellings
+  of one phrase read as two. The server's is what a reader without JavaScript gets.
+- The browser says them again on the way to the tooltip, through
+  `Intl.RelativeTimeFormat`. It has to: a table is cached and a page is left open,
+  so words rendered on the server are only true at the moment they are drawn —
+  `3 minutes ago` would still read `3 minutes ago` tomorrow. Bootstrap reads a
+  tooltip's words once when it makes one, so the refresh goes through
+  `setContent` on `mouseenter`, registered before the `tooltip` controller beside
+  it makes the instance.
 
 ## Pagination
 

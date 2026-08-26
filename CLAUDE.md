@@ -661,10 +661,26 @@ two is filed under the one a reader would look in first.
 #### Eastern time
 
 - `config.time_zone = 'Eastern Time (US & Canada)'`. That is what `Time.zone`
-  means, what a form reads, and what a timestamp renders as.
+  means, and what a form reads and a timestamp renders as for anyone whose browser
+  has not said otherwise.
+- Since 2026-08-25 it is the *fallback* rather than the answer. On the gem's own
+  screens the reader's browser reports its zone into a `recourse-zone` cookie and
+  `Recourse::Zoning` wraps the action in `Time.use_zone` of it, so a page, the
+  table on it and the field that edits a value are all drawn against the reader's
+  clock. A browser that has not said, or has named a zone
+  `ActiveSupport::TimeZone[]` does not know, gets the line above.
+- That is still not the gem setting a host's time zone, and the rule below stands.
+  `Time.use_zone` takes a block and puts the old zone back in an `ensure`, and
+  `Time.zone` is per-thread state rather than config — `config.time_zone` is never
+  written, and a host's own screens are drawn against it as before.
+- Move the zone, never the text. Rewriting a rendered `<time>` in the browser
+  localizes what a page *reads* and leaves what it *writes* behind, so a reader
+  would find one time on a record's page and another in the box that edits it. The
+  server knowing the zone is what keeps the two agreeing — and is why a `date`
+  never shifts, having no hour for a zone to move it by.
 - Storage stays UTC. Never touch `config.active_record.default_timezone` — the
-  database keeps UTC and Rails converts on the way in and out, so the app zone
-  is a display concern only.
+  database keeps UTC and Rails converts on the way in and out, which is the whole
+  reason the zone can be a per-request decision at all.
 - A rule for apps we write. The gem never sets a host's time zone.
 
 #### Every user-facing string is in the locale file

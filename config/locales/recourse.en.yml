@@ -8,6 +8,7 @@ en:
       recourse: "%b %-d at %I:%M%P %Z"
   recourse:
     add: Add %{model}
+    ago: "%{distance} ago"
     ambiguous_position: "%{model} points several ways, so which of them its position is
       counted within is its own to say: `def recourse_siblings` returning the rows it
       is arranged among."
@@ -41,6 +42,7 @@ en:
     displaying_slice: Displaying items %{from}-%{to} of %{total} in total
     edit: Edit
     format: Please match the format %{example}
+    from_now: "in %{distance}"
     lighten: A lighter palette
     missing_model: You declared `recourses :%{name}` in your routes file, but this app
       has no %{model} model.

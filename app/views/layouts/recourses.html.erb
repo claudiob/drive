@@ -38,11 +38,13 @@
       import FaviconController from '/recourse/favicon_controller.js'
       import LimitController from '/recourse/limit_controller.js'
       import PhoneController from '/recourse/phone_controller.js'
+      import RelativeTimeController from '/recourse/relative_time_controller.js'
       import RevealController from '/recourse/reveal_controller.js'
       import SchemeController from '/recourse/scheme_controller.js'
       import SearchController from '/recourse/search_controller.js'
       import SortableController from '/recourse/sortable_controller.js'
       import ShortcutsController from '/recourse/shortcuts_controller.js'
+      import TimezoneController from '/recourse/timezone_controller.js'
       import ToastController from '/recourse/toast_controller.js'
       import TooltipController from '/recourse/tooltip_controller.js'
 
@@ -57,11 +59,13 @@
         window.Stimulus.register('favicon', FaviconController)
         window.Stimulus.register('limit', LimitController)
         window.Stimulus.register('phone', PhoneController)
+        window.Stimulus.register('relative-time', RelativeTimeController)
         window.Stimulus.register('reveal', RevealController)
         window.Stimulus.register('scheme', SchemeController)
         window.Stimulus.register('search', SearchController)
         window.Stimulus.register('sortable', SortableController)
         window.Stimulus.register('shortcuts', ShortcutsController)
+        window.Stimulus.register('timezone', TimezoneController)
         window.Stimulus.register('toast', ToastController)
         window.Stimulus.register('tooltip', TooltipController)
       }
@@ -164,6 +168,7 @@
          shrinks it to one — so `main` kept its own height and took the page with it.
          Below that width the sidebar is a band across the top, the row wraps to stack
          the two, and the page scrolls as one, which is the only thing that reads on a
+         phone.
          phone. */
       @media (width >= 768px) {
         .recourse-shell { min-height: 0; height: 100dvh; }
@@ -332,7 +337,10 @@
     </style>
   </head>
 
-  <body class='recourse-shell d-flex flex-column min-vh-100'>
+  <%# The reader's zone is told to the server here rather than from a page of its
+      own: every screen the gem draws is one to read against their clock. -%>
+  <body class='recourse-shell d-flex flex-column min-vh-100'
+        data-controller='timezone' data-timezone-storage-value='<%= Recourse::ZONE_STORAGE %>'>
     <nav class='navbar border-bottom'>
       <%# `row-gap` rather than a margin on the search: a margin is there whether the
           form wrapped or not, and on the line it shares with the breadcrumb it drops

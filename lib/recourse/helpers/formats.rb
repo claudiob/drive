@@ -42,7 +42,7 @@ module Recourse
       def formatted_text(kind, value, &)
         case kind
         when :enum then value && enum_badge(marked(value, &))
-        when :date, :datetime, :time then value && localized(value)
+        when :date, :datetime, :time then value && localized(kind, value)
         when *Kinds::JSON_KINDS then value.presence && json_block(value)
         else linked_or_marked(value, &)
         end
@@ -58,13 +58,6 @@ module Recourse
       # matched, and a show page, which no search reached, has nothing to mark.
       def marked(value, &)
         block_given? ? yield(value) : value
-      end
-
-      # A date or a time, in words and in the attribute a machine reads. `l` picks
-      # the date format or the time one by what it is handed, so nothing here has to
-      # ask which it has — and a `DateTime`, which is both, still keeps its time.
-      def localized(value)
-        time_tag value, l(value, format: :recourse)
       end
 
       # A payload read as the JSON it is rather than as the Hash Ruby prints. In a block
