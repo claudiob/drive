@@ -12,6 +12,7 @@ require_relative 'helpers/comboboxes'
 require_relative 'helpers/constraints'
 require_relative 'helpers/counters'
 require_relative 'helpers/deletions'
+require_relative 'helpers/details'
 require_relative 'helpers/examples'
 require_relative 'helpers/fields'
 require_relative 'helpers/filters'
@@ -43,6 +44,7 @@ module Recourse
   module Helpers
     include Actions, Arrangements, Attachments, Blobs, Bookmarks, Buttons, Cards,
             Cells, Choices, Colors, Comboboxes, Constraints, Counters, Deletions,
+            Details,
             Examples, Fields, Filters, Formats, Inputs, Joins, Kinds, Limits,
             Navigation, Parents, Pictures, Previews, References, Refreshes, Routing,
             Resources, Rows, Searches, Shortcuts, Sidebars, Sorts, Tabs, Themes,

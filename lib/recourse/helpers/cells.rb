@@ -85,6 +85,10 @@ module Recourse
         # counts — linking to the counted rows where a block nested their index here.
         return counter_cell resource, value, counted if counted
 
+        # A list is counted rather than drawn: the values are the record's own page to
+        # read out, and a column of them inside a column of them is not a table.
+        return listed_count value if attribute_kind(column) == :list
+
         # The same ladder the show page comes down, with the search's own marking
         # handed in: a table is the only page a search ever reached.
         formatted_attribute(column, value) { |text| search_highlight text, column }

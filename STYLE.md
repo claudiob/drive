@@ -551,6 +551,36 @@ before writing or editing any layout, view or partial.
   inline at all — which is the right answer here for the same reason it is there.
 - Everything else stays the plain link it was. A spreadsheet is a download and there is
   nothing to open in place.
+- A **list** takes the same `<details>`, and for the same reason: a column of values
+  inside a column of values would push the rest of the page down every time it opened.
+  The summary reads how many — `3 items`, `1 item` — since the values are what opening
+  it is for, and inside is a `<ul class='mb-0 mt-2'>`. The `mb-0` matters: the row below
+  draws the rule between them, and a list's own bottom margin would push that rule away
+  from the values it closes.
+- Both shapes come from one `detailed(summary, body)` helper. A picture and a list are
+  the same markup, and neither should be spelling it out.
+- An empty list reads as the dash every other empty value reads as, never as a summary
+  with nothing behind it: `listed` answers nil, which is what `resource_value` already
+  turns into the dash.
+- **A table counts a list rather than drawing one**: the cell reads `3 items` as plain
+  text, no `<details>`, and blank where the list is empty like every other empty cell.
+  The values belong to the record's own page — a column of values inside a column of
+  values is not a table — and the same words serve both, so a cell and a summary never
+  disagree about how many there are.
+- **A form takes a list one value to a line**, in a `rows='3'` textarea. A newline is
+  the one separator a value cannot itself contain, where a comma can sit inside a tag.
+  The field is handed its value rather than left to read the attribute, which would
+  print the Array's brackets, and `ListResolution` splits the lines back into values on
+  the way in — the same seam a typed reference is looked up at, so no host model needs
+  a virtual attribute and no host needs a strong parameter of its own. Blank lines are
+  dropped: pressing return is not a value.
+- Which columns those are is `Recourse.list_column?`, a type that wraps a subtype — a
+  PostgreSQL array reports one, and so does a `serialize` of an Array — asked that way
+  rather than by an adapter's own class, which only exists where that adapter is
+  loaded. **An enum answers the same way and is not a list**: Rails wraps the column's
+  own type to map the words onto it, so `defined_enums` is ruled out first, and
+  `attribute_kind` asks `:enum` before `:list` for the same reason. Miss that and a
+  status stops being a word, on the table and on the form both.
 - A counter cache is not on the page at all. Rails keeps it, so there is nothing to
   read and nothing to set; the index table is where a count belongs.
 - Nor is the column an arranged model is ordered by, for the same reason read the

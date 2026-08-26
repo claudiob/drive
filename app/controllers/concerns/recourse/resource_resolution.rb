@@ -82,7 +82,7 @@ module Recourse
       key = controller_name.singularize.to_sym
       return {} unless params.key? key
 
-      resolve_references params.expect(key => permitted)
+      resolve_lists resolve_references(params.expect(key => permitted))
     end
   end
 end

@@ -49,6 +49,12 @@ class Place < ApplicationRecord
   attribute :founded_year, :year
   attribute :commission_rate, :percentage
 
+  # A list of values rather than one, which is what SQLite has no column type for: on
+  # PostgreSQL this would be `t.text :tags, array: true`, and `serialize` is the same
+  # thing said where that option raises. Both report a type wrapping a subtype, which
+  # is the only question the gem asks about either.
+  serialize :tags, type: Array, coder: JSON
+
   # Queried and unique, so its ciphertext has to be the same every write.
   encrypts :secret, deterministic: true
   # Neither, so it need not be.

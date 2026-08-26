@@ -345,9 +345,21 @@ two is filed under the one a reader would look in first.
   saying what that state means, and the model declares
   `enum :status, STATUSES.index_by(&:itself)`. The migration reads the same constant,
   so the type and the model cannot drift at creation time.
-- No array columns, on any adapter, and no code for them: the dummy's one such
-  column (`media_urls`) went on 2026-08-14 and the gem's array rendering and
-  seeding went with it. A list of values is a table of its own.
+- A list of values is a table of its own. That is the rule for the apps we write and
+  it stands: none of them models a list as an array column, which is why the dummy's
+  one such column (`media_urls`) went on 2026-08-14 along with the gem's array
+  rendering and seeding.
+- What changed on 2026-08-26 is the other half. The gem *reads* a list a host already
+  has, because hosts have them — houston's `providers.technologies` is a `text[]`, and
+  the gem had already been taught to keep one out of a search box before it could
+  draw one. A record's page shows it behind a `<details>`, a table counts it as
+  `3 items`, and a form takes it one value to a line.
+- The dummy carries one for that code to be covered by, and it is a fixture rather
+  than a change of mind: `Place#tags`. SQLite has no array column — `array: true` is a
+  PostgreSQL-only option and every other adapter raises on it — so it is a `text`
+  column with `serialize :tags, type: Array, coder: JSON`, which reports the same
+  wrapped type a real `text[]` does. That is the only question the gem asks about
+  either, so the fixture is not a stand-in for the behaviour, only for the storage.
 
 #### Trailing comma on a multiline hash or array
 

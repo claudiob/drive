@@ -24,6 +24,17 @@ module Recourse
     # And the ones that are a point in time, whichever part of one they keep.
     DATE_KINDS = %i[date datetime time].freeze
 
+    # Whether a column holds a list of values rather than one. A PostgreSQL array
+    # reports a type wrapping a subtype, and so does a `serialize` of an Array; asked
+    # that way rather than by an adapter's own class, which only exists where that
+    # adapter is loaded. An enum answers the same way and is not a list — Rails wraps
+    # the column's own type to map the words onto it — so it is ruled out first.
+    def list_column?(model, column)
+      return false if model.defined_enums.key? column
+
+      model.type_for_attribute(column).respond_to? :subtype
+    end
+
     # The columns of a model in the order a row reads them, given whichever of them the
     # caller is drawing. Grouped rather than sorted: `group_by` keeps the order it was
     # given inside each group, which is what leaves an order the schema already carries

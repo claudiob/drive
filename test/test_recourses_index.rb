@@ -17,6 +17,9 @@ class TestRecoursesIndex < IntegrationCase
     assert_includes body, '<td data-cell="Team">Blue Crew</td>'
     # Its own status, as the word the column holds rather than a number.
     assert_includes body, '<td data-cell="Status"><span class="badge">draft</span></td>'
+    # A list is counted rather than drawn: the values belong to the record's own page,
+    # and a column of them inside a column of them is not a table.
+    assert_includes body, '<td data-cell="Tags">3 items</td>'
     # `Details` among them: a JSON payload is one value as wide as the page, so no
     # table draws one until a model names it back with `recourse_displayed`.
     %w[Id Secret Notes Webhook Details].each do |column|
@@ -34,7 +37,7 @@ class TestRecoursesIndex < IntegrationCase
     assert_equal [
       'Bookmark', 'Show', 'Edit', 'Status', 'ZIP code', 'Team', 'Person', 'Name', 'Slug',
       'Capacity', 'Rating', 'Area', 'Hourly rate', 'Commission rate', 'Phone', 'Website',
-      'Busiest month', 'Founded year', 'Active', 'Verified', 'About', 'Opens on',
+      'Busiest month', 'Founded year', 'Active', 'Verified', 'About', 'Tags', 'Opens on',
       'Audited at', 'Created at', 'Updated at',
     ], headings
   end

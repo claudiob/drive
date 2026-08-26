@@ -35,6 +35,10 @@ class TestRecoursesShow < IntegrationCase
     # And the payload the index leaves out: a record's own page is where a value too
     # wide for a column of them still belongs.
     assert_includes body, 'step_free_access'
+    # A list is the other of those, and it reads as how many before it reads as what:
+    # closed, so a column of values a reader scans is not pushed down by one of them.
+    assert_includes body, '<details><summary>3 items</summary><ul class="mb-0 mt-2">' \
+                          '<li>Riverside</li><li>Terrace</li><li>Wheelchair access</li></ul>'
     # A single file is a value here rather than a table of one row, and nothing
     # attached reads as the dash every other empty value reads as. A shelf of them is
     # not: `photos` has a page of its own, where a column of filenames says more.

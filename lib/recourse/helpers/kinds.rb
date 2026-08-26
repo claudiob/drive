@@ -31,13 +31,15 @@ module Recourse
 
       # Asked in the order that settles it. A counter cache is a counter whatever its
       # column says, since no page may show one and no form may set one; an enum is
-      # one however it is stored; a phone is a phone by its name, the convention the
-      # placeholders and the pattern already follow; and everything else is the type
-      # the attribute itself reports — `:monetary` included, where a host has registered
-      # a type that says so.
+      # one however it is stored, and is asked before a list because Rails wraps a
+      # column's type to map an enum's words onto it, which reads as a list otherwise;
+      # a phone is a phone by its name, the convention the placeholders and the pattern
+      # already follow; and everything else is the type the attribute itself reports —
+      # `:monetary` included, where a host has registered a type that says so.
       def attribute_kind(column)
         return :counter if resource_model.recourse_counters.key? column
         return :enum if resource_model.defined_enums.key? column
+        return :list if Recourse.list_column? resource_model, column
         return :phone if column == 'phone'
 
         attribute_type column

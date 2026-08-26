@@ -43,6 +43,11 @@ en:
     edit: Edit
     format: Please match the format %{example}
     from_now: "in %{distance}"
+    # How many values a list holds, which is what its summary reads before anybody
+    # opens it.
+    items:
+      one: 1 item
+      other: "%{count} items"
     lighten: A lighter palette
     missing_model: You declared `recourses :%{name}` in your routes file, but this app
       has no %{model} model.

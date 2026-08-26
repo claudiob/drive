@@ -4,7 +4,8 @@ module Recourse
   # with a `before_action :authenticate!` guards every screen the gem serves.
   class BaseController < ApplicationController
     include Pagy::Method, AttachmentResolution, AttachmentWriting, Paging,
-            ParentResolution, PolymorphicParents, ReferenceResolution, ResourceResolution, Zoning
+            ListResolution, ParentResolution, PolymorphicParents, ReferenceResolution,
+            ResourceResolution, Zoning
 
     helper Helpers
 
@@ -65,8 +66,7 @@ module Recourse
     end
 
     # Deletes the record and shows the index without it. `destroy!` rather than
-    # `destroy`, so a callback that stops one says so instead of leaving the page
-    # claiming it worked.
+    # `destroy`, so a callback that stops one says so rather than claiming it worked.
     def destroy
       @recourse.destroy!
       flash.notice = t 'recourse.deleted', model: human_name

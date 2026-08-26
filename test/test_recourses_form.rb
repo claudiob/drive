@@ -47,6 +47,12 @@ class TestRecoursesForm < IntegrationCase
     %w[capacity active status zip_id].each do |column|
       assert_includes body, %(aria-describedby="place_#{column}_help")
     end
+    # A list is typed one value to a line, and reads back the same way: a box left to
+    # fetch an Array for itself would print the brackets.
+    # The leading newline is Rails': a browser strips one from inside a `<textarea>`,
+    # so the helper writes one to keep a value that genuinely starts blank.
+    assert_includes body, %(rows="3" name="place[tags]" id="place_tags">) +
+                          %(\nRiverside\nTerrace\nWheelchair access</textarea>)
   end
 
   # What a model keeps as files rather than as columns gets a field of its own, after

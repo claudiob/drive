@@ -22,11 +22,19 @@ module Recourse
         when :enum then enum_combobox form, column
         when :date then form.date_field(column, **options)
         when :datetime then form.datetime_local_field(column, **options)
-        # One row, like the text box beside it: a text column says the value may
-        # grow long, not that it starts big — the resize handle is for when it does.
-        when :text then form.text_area(column, **options, rows: 1)
+        when :text, :list then area_field(form, column, kind, **options)
         else form.text_field(column, **options)
         end
+      end
+
+      # A list is typed one value to a line, a newline being the one separator a value
+      # cannot itself contain. Handed its value, since a box left to read an Array off
+      # the record would print the brackets.
+      def area_field(form, column, kind, **)
+        return form.text_area(column, **, rows: 1) if kind == :text
+
+        values = Array form.object&.attributes&.fetch(column, nil)
+        form.text_area column, **, rows: 3, value: values.join("\n")
       end
 
       # `step` is what limits a field to whole numbers, and what admits the decimals a

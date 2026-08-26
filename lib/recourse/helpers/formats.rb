@@ -23,6 +23,7 @@ module Recourse
       # marks the search terms inside whichever arm ends up as words.
       def formatted_attribute(column, value, &)
         kind = attribute_kind column
+        return listed Array(value) if kind == :list
         return formatted_number kind, column, value if numeric_kind? kind
 
         formatted_text kind, value, &

@@ -38,9 +38,7 @@ module Recourse
       def attached_file(blob)
         return blob_link blob, blob.filename.to_s unless previewable? blob
 
-        tag.details do
-          safe_join [tag.summary(blob.filename.to_s), attachment_preview(blob)]
-        end
+        detailed blob.filename.to_s, attachment_preview(blob)
       end
 
       # Active Storage's own list of what a browser renders natively, so a host adding
