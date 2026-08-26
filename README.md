@@ -1028,7 +1028,22 @@ class Message
 end
 ```
 
-Write its `index.html.erb` and the gem draws the chrome around it.
+Its controller says what the rows are, the same way any other narrows what it lists:
+
+```ruby
+class MessagesController < RecoursesController
+private
+
+  def recourse_relation = Message.assembled
+end
+```
+
+Write its `index.html.erb` and the gem draws the chrome around it. A collection that is
+no Active Record relation is listed as it was handed over — there is nothing to search
+it by, to sort it by or to eager-load, which is what `Aggregate` answers — and it is
+paged like any other index, so return every row and let the page take the slice it
+shows. Return them as an `Array`: that is what pagy counts and slices without asking a
+database.
 
 No cache stands in the way. The index table renders inside a fragment, and its
 key carries the digest of whichever `_row` the lookup resolved — so a row

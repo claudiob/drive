@@ -7,6 +7,24 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* [Feature] A page a host assembles out of its own records can be an index
+
+  `Recourse::Aggregate` describes a resource with no rows of its own — the weeks memos
+  were written in, the periods a subscription was billed for — and answered every
+  question the gem asks a model. It could not be listed: the index put its collection
+  through `Search`, which asks a relation for its class and for a ransack query, and an
+  Array of anything answers neither. A host wanting such a page had to override `index`
+  outright and give up the paging with it.
+
+  A collection that is no relation now passes through untouched — no box above it, no
+  sortable heading, nothing eager-loaded, which is what `Aggregate` already said it had
+  none of — and is paged like any other index. The rows are the host's own template,
+  since there are no columns to lay a table out from; everything around them is the
+  gem's.
+
+  The two generators pass such a resource over rather than asking a class with no table
+  what its keys are, and say so as they go.
+
 * A typed foreign key naming more than one row is refused rather than guessed at
 
   A label offered to be typed is short enough to say, which is not the same as saying

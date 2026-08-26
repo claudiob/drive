@@ -12,7 +12,21 @@ module Recourse
         # and a second load costs nothing in a one-shot generator process.
         Rails.application.reload_routes!
 
-        Recourse.declared.filter_map { |path| declared_model path }.uniq
+        Recourse.declared.filter_map { |path| declared_model path }.uniq.select do |model|
+          keeps_rows? model
+        end
+      end
+
+      # Whether there is a table behind the resource at all. An aggregate keeps no
+      # columns, having no rows of its own — it is a page a host assembles out of other
+      # models' records — so there is nothing to seed into it and no count to keep on
+      # it, and a generator writing either passes it over rather than asking a class
+      # with no table what its keys are.
+      def keeps_rows?(model)
+        return true unless model.column_names.empty?
+
+        say_status :skip, "#{model} keeps no rows of its own"
+        false
       end
 
       # A declared resource with no model — drawn for a controller of the host's

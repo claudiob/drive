@@ -1,0 +1,8 @@
+<%# An aggregate draws its own rows: there are no columns to lay a table out from. %>
+<% content_for :title, 'Weeks' %>
+
+<ul class='list-group'>
+  <% @resources.each do |week| %>
+    <li class='list-group-item'><%= week %> — <%= week.memos %> memos</li>
+  <% end %>
+</ul>

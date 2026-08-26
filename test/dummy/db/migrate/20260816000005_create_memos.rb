@@ -3,6 +3,11 @@ class CreateMemos < ActiveRecord::Migration[8.1]
   # word where that one carries a figure.
   PER_PERSON = 6
 
+  # Written over the past half year rather than all in the same instant, which is what
+  # lets a page assembled by week have rows to assemble — more than one page of them,
+  # and holding two or three memos each rather than the same number every week.
+  WEEKS = 26
+
   def change
     create_table :memos do |t|
       # Optional, and nullified rather than destroyed when the person goes: a memo
@@ -26,8 +31,9 @@ private
   def memo_rows
     values = (1..Person.count).flat_map do |person|
       (1..PER_PERSON).map do |number|
-        "(#{person}, 'Memo #{number} about person #{person}.', " \
-          'current_timestamp, current_timestamp)'
+        days = ((person * PER_PERSON) + number) % WEEKS * 7
+        written = "datetime(current_timestamp, '-#{days} days')"
+        "(#{person}, 'Memo #{number} about person #{person}.', #{written}, #{written})"
       end
     end
 
