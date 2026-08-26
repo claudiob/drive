@@ -7,6 +7,24 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A bare action lands somewhere
+
+  A nested `recourses :sweeps, only: :create` drew its button, posted it, and wrote the
+  record — then raised `No route matches {action: "show"}` on the way back. `create`
+  came home to the index where one was routed and to the record's own page where none
+  was, on the reading that a write with no index to return to is a singular resource's,
+  and a singular resource is the collection of one. A plural nesting is the case that
+  reading forgets: it routes no index to return to *and* no page of its own to land on,
+  so both arms named a route nobody drew.
+
+  It now goes back to the record it hangs off, which for a bare action is the page its
+  button stood on — the only page it is ever drawn on. The record was written either
+  way, so what this fixes is a 500 after a successful write, on every click.
+
+  A host that answered such an action in a controller of its own never saw this, which
+  is why the dummy app did not: it had one. That controller is gone, and the gem
+  answers the action instead.
+
 * A bare action can be answered at all
 
   `recourse :sweep, only: :create` draws a button, labels it from the path — the gem

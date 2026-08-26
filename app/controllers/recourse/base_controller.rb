@@ -3,7 +3,7 @@ module Recourse
   # its own behavior above it — `class RecoursesController < Recourse::BaseController`
   # with a `before_action :authenticate!` guards every screen the gem serves.
   class BaseController < ApplicationController
-    include Pagy::Method, AttachmentResolution, AttachmentWriting, Paging,
+    include Pagy::Method, AttachmentResolution, AttachmentWriting, Landing, Paging,
             ListResolution, ParentResolution, PolymorphicParents, ReferenceResolution,
             ResourceResolution, Zoning
 
@@ -67,20 +67,6 @@ module Recourse
     end
 
   private
-
-    # What a write says once it has landed: the message, and the row it landed on where
-    # one survives, for the page to mark while that message stands.
-    def wrote(message, record = nil)
-      flash.notice = message
-      flash[Recourse::WRITTEN] = Recourse.row_id record if record
-      redirect_to written_url, status: :see_other
-    end
-
-    # Where a write goes once it has landed: the index, or the record's own page where
-    # the routes drew none — a singular resource is the collection of one.
-    def written_url
-      url_for action: Recourse.routed?(controller_path, 'index') ? :index : :show
-    end
 
     def broadcast_resource_changes
       @recourse_model.recourse_broadcast if @recourse_model.respond_to? :recourse_broadcast

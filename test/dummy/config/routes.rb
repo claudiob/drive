@@ -48,9 +48,9 @@ Rails.application.routes.draw do
       # which is what `through:` says and what the buttons in it write.
       recourses :teams, only: :index, through: :memberships
       # An action rather than a page: `create` with no index to reach it from, so
-      # its button sits on the person instead, beside the breadcrumbs. The gem draws
-      # the button; where a bare action goes afterwards is the host's to say, which
-      # is why this one has a controller of its own.
+      # its button sits on the person instead, beside the breadcrumbs. Nothing here
+      # answers it, so the gem does — and a write with no page of its own to land on
+      # goes back to the record the button stood on.
       namespace(:quick) { recourses :memos, only: :create }
     end
 

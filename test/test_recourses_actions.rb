@@ -7,21 +7,20 @@ class TestRecoursesActions < IntegrationCase
   # This suite runs against a database that keeps whatever a test wrote, so what
   # these tests write they also take back.
   def teardown
-    Memo.where(body: 'Noted').destroy_all
+    Memo.where(body: [nil, 'Noted']).destroy_all
     Membership.find_or_create_by! person: Person.order(:id).first, team: Team.order(:id).first
   end
 
   # A nested resource routed `create` with no page of its own is reached from nowhere,
-  # so the gem puts its button on the record's own page -- and on that page only, every
-  # other page of the record being about something else.
+  # so the gem puts its button on the record's own page, on that page alone -- and with
+  # no index to return to, lands the write back on the very page it stood on.
   def test_a_nested_action_with_no_page_gets_a_button_on_its_parent
     person = Person.order(:id).first
     visit "/people/#{person.id}"
 
     assert_includes body, %(action="/people/#{person.id}/quick/memos")
-    # Led by the namespace the routes put between the person and the action. Without
-    # it this button and the `memos` index's own read the same words, and the two post
-    # different memos to different controllers.
+    # Led by the namespace the routes put between the person and the action: without
+    # it this button and the `memos` index's own Add would read the same words.
     assert_includes body, 'Add quick memo'
 
     visit "/people/#{person.id}/places"
@@ -30,7 +29,8 @@ class TestRecoursesActions < IntegrationCase
     @session.post "/people/#{person.id}/quick/memos"
 
     assert_equal 303, @session.response.status
-    assert_equal 'Noted', person.memos.order(:id).last.body
+    assert_equal "http://localhost/people/#{person.id}", @session.response.location
+    assert_nil person.memos.order(:id).last.body
   end
 
   # And the same for a singular `recourse`, whose delete stands on the page that reads
