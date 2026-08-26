@@ -18,7 +18,7 @@ class CreateMemos < ActiveRecord::Migration[8.1]
       # other. Optional, and never filled — what it proves is that the gem asks
       # what a key points at before reaching for it.
       t.references :about, polymorphic: true
-      t.text :body, null: false
+      t.text :body
 
       t.timestamps
     end

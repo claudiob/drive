@@ -8,8 +8,6 @@ class Memo < ApplicationRecord
   # a class that is not there.
   belongs_to :about, polymorphic: true, optional: true
 
-  validates :body, presence: true
-
   # Two keys, so which one a position is counted within is this model's to say and not
   # the gem's to guess: a memo is ordered among the ones about the same person, and
   # what it happens to be about has no bearing on where it sits.

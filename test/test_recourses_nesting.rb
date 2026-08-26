@@ -5,7 +5,7 @@ require 'integration_case'
 # what the routes file may and may not put between the two.
 class TestRecoursesNesting < IntegrationCase
   def teardown
-    Memo.where(body: 'Memo').destroy_all
+    Memo.where(body: nil).destroy_all
   end
 
   # A nested index lists the parent record's own rows and nothing else — no column
@@ -87,9 +87,9 @@ class TestRecoursesNesting < IntegrationCase
     assert_includes body, %(action="/people/#{person.id}/memos")
     assert_includes body, 'Create'
     refute_includes body, %(href="/people/#{person.id}/memos/new")
-    @session.post "/people/#{person.id}/memos", params: { memo: { body: 'Memo' } }
+    @session.post "/people/#{person.id}/memos"
 
     assert_equal 303, @session.response.status
-    assert_equal person, Memo.find_by!(body: 'Memo').person
+    assert_equal person, Memo.find_by!(body: nil).person
   end
 end
