@@ -1,8 +1,5 @@
-<%# An aggregate draws its own rows: there are no columns to lay a table out from. %>
+<%# The rows are worked out rather than read off a table; the table drawing them is the
+    gem's, and so are the paging under it and the chrome around it. %>
 <% content_for :title, 'Weeks' %>
 
-<ul class='list-group'>
-  <% @resources.each do |week| %>
-    <li class='list-group-item'><%= week %> — <%= week.memos %> memos</li>
-  <% end %>
-</ul>
+<%= render 'table', recourses: @resources, pagy: @pagy %>

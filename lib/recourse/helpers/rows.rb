@@ -16,6 +16,21 @@ module Recourse
 
         ActionView::Digestor.digest name: row.virtual_path, format: :html, finder: lookup_context
       end
+
+      # Whether the table may be kept at all. A sorted or filtered one never is: two
+      # requests can ask for one relation and want different rows, and only one of them
+      # clicked a heading to say so.
+      #
+      # Nor a page of rows a host assembled. An aggregate keeps no columns, so its rows
+      # are plain objects rather than records — and a plain object is asked for its
+      # cache key the same way, which for anything built on `ActiveModel::Model` is a
+      # `to_param` of nil. Every row of every page then reads as the same key, so the
+      # second page of one would be served the first page of another. A host can answer
+      # `cache_key` itself and be right, but nothing makes it, and being wrong here is
+      # somebody else's page — so these are drawn each time instead.
+      def cacheable_table?
+        params[:q].blank? && resource_model.column_names.any?
+      end
     end
   end
 end

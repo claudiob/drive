@@ -2,7 +2,7 @@
 # weeks are counted out of the memos rather than read off a table, so there is nothing
 # to search by, to sort by or to point a key at — which is what `Aggregate` answers.
 class Week
-  include Recourse::Aggregate
+  include ActiveModel::Model, Recourse::Aggregate
 
   attr_reader :starting_on, :memos
 

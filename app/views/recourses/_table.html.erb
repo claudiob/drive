@@ -13,7 +13,7 @@
     person to load a table would settle what hour everybody else read. -%>
 <% key = [recourses, row_digest, resource_columns, join_digest, bookmark_digest,
           Time.zone.name] -%>
-<% cache_if params[:q].blank?, key do %>
+<% cache_if cacheable_table?, key do %>
   <% actions = resource_actions %>
   <% arranged = arranged? %>
   <div class='table-responsive'>

@@ -1051,6 +1051,26 @@ paged like any other index, so return every row and let the page take the slice 
 shows. Return them as an `Array`: that is what pagy counts and slices without asking a
 database.
 
+That template can draw the rows itself, or hand them to the gem's own table and write a
+`_row` for the cells, which is the same seam any resource has:
+
+```erb
+<% content_for :title, 'Weeks' %>
+
+<%= render 'table', recourses: @resources, pagy: @pagy %>
+```
+
+```erb
+<%# locals: (week:) -%>
+<%= column header: 'Week' do %><%= week %><% end %>
+<%= column header: 'Memos' do %><%= week.memos %><% end %>
+```
+
+Such a table is never kept, where every other one is. A record says when it last changed
+and a cached fragment is filed under that; an object assembled in Ruby says nothing, so
+a key built from a page of them cannot tell one page from the next — and the reader after
+this one would be served this one's page.
+
 No cache stands in the way. The index table renders inside a fragment, and its
 key carries the digest of whichever `_row` the lookup resolved — so a row
 partial added, edited or deleted expires the table by itself, with nothing to

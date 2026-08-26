@@ -58,9 +58,18 @@ module Recourse
       # No counter cache, there being no association to count and no column to hold it.
       def recourse_counters = {}
 
+      # No column reserved for single table inheritance: there is no table to reserve
+      # one in, and no subclass to be filed under it.
+      def inheritance_column = nil
+
       # No key to follow: a key points at a row, and an aggregate keeps none — so
       # nothing to label, to list, to filter by or to eager-load.
       def recourse_references = []
+
+      # Nor an association of any other shape, which is asked for more widely than
+      # those keys are: a bookmark is looked for along a `has_many`, and a generator
+      # asks what rows could be counted through one.
+      def reflect_on_all_associations(*) = []
 
       # And no polymorphic key either, for the same reason.
       def recourse_reference_types = []

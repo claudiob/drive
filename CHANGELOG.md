@@ -15,6 +15,61 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
   what a record is called, and nothing is typed under one. So the table and the show
   page now say `ZIP` and `Location`, and only the field still says `ZIP code`.
 
+* An aggregate can be drawn with the gem's own table, and such a table is never kept
+
+  `Recourse::Aggregate` answered what a table asks about columns and keys, but not two
+  questions asked a little wider: the column Rails reserves for single table
+  inheritance, and the associations a bookmark or a counter is looked for along. Both
+  are now answered as the nothing an aggregate has, so its page can render through the
+  gem's table with a `_row` of the host's rather than a template written out by hand.
+
+  And no such table is cached. A record says when it last changed and a fragment is
+  filed under that; an object a host assembled in Ruby says nothing — `to_param` is nil
+  for anything built on `ActiveModel::Model` — so a page of twenty of them was filed
+  under a key that could not tell it from any other page of twenty, and the next reader
+  of one was served the last reader's. Which no host had to notice: it looks like a
+  page that will not refresh, on the reader's screen rather than in a test.
+
+* A list of values reads behind the details an image already used
+
+  A record's page draws a browser-renderable attachment as a `<details>`: the filename
+  in the summary, the picture inside, closed to begin with, because a page is a column
+  of values a reader scans and an image sitting open in one pushes the rest of them
+  down. An array attribute wants exactly that, and until now got nothing: nothing kept
+  one off a table, so a `text[]` fell through to the cell and printed the Ruby array's
+  own inspect output, brackets and quotes and all.
+
+  It now reads as `3 items` — or `1 item` — and opens to its values as a list. An empty
+  one reads as the dash every other empty value reads as, rather than as a summary with
+  nothing behind it. Both shapes come from one `detailed` helper, so a picture and a
+  list are the same markup rather than the same markup written twice.
+
+  A table counts one instead of drawing it — `3 items`, as plain text — since a column
+  of values inside a column of values is not a table, and the values are a click away
+  on the row's own page. The same words serve the cell and the summary, so the two
+  never disagree about how many there are.
+
+  A form takes a list one value to a line, in a textarea, and `ListResolution` splits
+  the lines back into values on the way in — the same seam a typed reference is looked
+  up at, so no host model needs a virtual attribute and no host needs a strong
+  parameter of its own. A newline is the one separator a value cannot itself contain,
+  where a comma can sit inside a tag, and a blank line is somebody pressing return
+  rather than a value they meant to keep.
+
+  Which columns those are is a type that wraps a subtype, which is what a PostgreSQL
+  array reports and what a `serialize` of an Array reports too — the same question the
+  search box already asked to pass a list over, asked the same way, since an adapter's
+  own class only exists where that adapter is loaded. An enum answers that question the
+  same way and is not a list: Rails wraps the column's own type to map the words onto
+  it. Asking `defined_enums` first is what keeps a status a word rather than a list, on
+  the table and on the form both.
+
+  The dummy carries `Place#tags` for this to be covered by. SQLite has no array column
+  — `array: true` is a PostgreSQL-only option and every other adapter raises on it — so
+  it is a `text` column with `serialize`, which reports the same wrapped type the real
+  thing does. CLAUDE.md's rule is split rather than dropped: our own apps still model a
+  list as a table of its own, and the gem reads one a host already has.
+
 * [Feature] A page a host assembles out of its own records can be an index
 
   `Recourse::Aggregate` describes a resource with no rows of its own — the weeks memos
