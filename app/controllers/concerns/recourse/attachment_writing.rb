@@ -7,14 +7,21 @@ module Recourse
 
   private
 
-    # A new record, then the files that came with it.
+    # A new record, then the files that came with it — unless a typed label named more
+    # than one row, which is answered on the form rather than by writing a guess.
     def create_resource(record)
+      return false if ambiguous_references? record
+
       record.save && attach_submitted_files(record)
     end
 
-    # The same for one that already exists.
+    # The same for one that already exists. The parameters are read before the refusal
+    # is asked about, since reading them is what notices an ambiguous label.
     def update_resource(record)
-      record.update(resource_params) && attach_submitted_files(record)
+      attributes = resource_params
+      return false if ambiguous_references? record
+
+      record.update(attributes) && attach_submitted_files(record)
     end
 
     # Attached rather than assigned, which is the whole reason this exists. Rails'

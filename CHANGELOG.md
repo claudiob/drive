@@ -7,6 +7,18 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A typed foreign key naming more than one row is refused rather than guessed at
+
+  A label offered to be typed is short enough to say, which is not the same as saying
+  which row it means — and nothing in the schema promises it does. Where two rows
+  answered to the same words the first of them was written, and the page said it had
+  worked: a key pointing somewhere nobody asked for, quietly, and in a host's data
+  something belonging to one owner reassigned to another's.
+
+  Such a write is refused now, and the field that asked says what the words matched.
+  Nothing else moves: a label naming one row resolves as before, and one naming none
+  leaves the key empty for `belongs_to` to answer for.
+
 * [Feature] A month reads as its name, and a year is not a quantity
 
   Two kinds a `decimal` and an `integer` could not tell apart on their own. A `:month`

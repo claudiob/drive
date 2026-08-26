@@ -5,6 +5,9 @@ class Reading < ApplicationRecord
   include Recoursive
 
   belongs_to :previous_reading, optional: true, class_name: 'Reading'
+  # A key typed rather than picked for the other reason: the name is bounded, not the
+  # table long — and two sensors answer to one of the names.
+  belongs_to :sensor, optional: true
 
   validates :depth, presence: true
 end

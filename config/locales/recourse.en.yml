@@ -57,6 +57,8 @@ en:
     per_page: "%{limit} per page"
     position_updated: Position updated
     remove: Remove
+    # What a typed foreign key says when the words in it name more than one row.
+    ambiguous: "matches more than one record, so it does not say which: %{label}"
     reference: "%{model} %{attribute}"
     reveal: Show
     search: Search…
