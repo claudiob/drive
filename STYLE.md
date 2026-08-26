@@ -932,7 +932,7 @@ before writing or editing any layout, view or partial.
   close button needs nothing else: v6 gives it margins through
   `.toast-header .btn-close`, which a headerless toast would have had to supply
   itself.
-- It autohides after five seconds, but not through the Toast default: the `toast`
+- It autohides after two seconds, but not through the Toast default: the `toast`
   Stimulus controller owns the timer (see below), and hovering or focusing the
   toast holds it open — Bootstrap's own pause-on-hover only guards the timer *it*
   armed, so the controller's actions redo it.
@@ -945,7 +945,9 @@ before writing or editing any layout, view or partial.
   and run. Bootstrap's `show()` must never run on one — it re-adds `showing` and
   blinks the toast through transparent — and it is also the only place Bootstrap
   arms its autohide, which is why the `toast` controller keeps `autohide: false`
-  and runs its own five-second timer. Only the *hiding* is Bootstrap's, so the
+  and runs its own two-second timer. That number is `DELAY` in `written.js` rather
+  than the controller's own, because the square that keeps a row runs the same one
+  with no toast to keep time with. Only the *hiding* is Bootstrap's, so the
   timer and the dismiss X share one code path and one fade.
 - The exit is slower than the entrance it no longer has: the layout stretches
   `--bs-transition-fade` to one second on `.toast`, so the toast fades away
