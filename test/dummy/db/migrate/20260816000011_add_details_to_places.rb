@@ -21,6 +21,9 @@ class AddDetailsToPlaces < ActiveRecord::Migration[8.1]
     # type, so handing it a string would encode an already-encoded value and read back
     # as one. No validation and no callback either, over rows a migration has no
     # business putting through them twice.
-    up_only { Place.update_all details: DETAILS }
+    up_only do
+      Place.reset_column_information
+      Place.update_all details: DETAILS
+    end
   end
 end
