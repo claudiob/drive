@@ -28,4 +28,18 @@ class TestRecoursesSingularActions < IntegrationCase
     assert_includes body, %(href="/places/#{sealed.id}/seal")
     refute_includes body, %(action="/places/#{sealed.id}/seal")
   end
+
+  # A bare action has no form to send a refusal back to, its button standing on a page
+  # about something else, so what turned the write down is said in a flash on the page
+  # the button was on. The model's own words rather than the gem's `could not be
+  # created`, which names the model and not the reason.
+  def test_a_refused_bare_action_says_why_where_its_button_was
+    sealed = Seal.order(:id).first.place
+    @session.post "/places/#{sealed.id}/seal"
+
+    assert_equal 303, @session.response.status
+    assert_equal "http://localhost/places/#{sealed.id}/seal", @session.response.location
+    assert_equal 'Place has already been taken', @session.request.flash[:alert]
+    assert_equal 1, Seal.where(place: sealed).count
+  end
 end

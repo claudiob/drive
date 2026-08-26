@@ -30,7 +30,7 @@ module Recourse
       assign resource_class.new(parent_columns)
     end
 
-    # Saves a submitted record, then shows the index again or redraws the form.
+    # Saves a submitted record, then shows the index again or says what turned it down.
     def create
       record = assign resource_class.new(resource_params)
       model = human_name
@@ -38,8 +38,7 @@ module Recourse
       if create_resource record
         wrote t('recourse.created', model: model), record
       else
-        flash.now.alert = t 'recourse.created_error', model: model
-        render :new, status: :unprocessable_entity
+        rejected record, :new, t('recourse.created_error', model: model)
       end
     end
 
@@ -49,13 +48,12 @@ module Recourse
     # Shows the form for the record the id names, which is already known to exist.
     def edit; end
 
-    # Saves changes to a record, then shows the index again or redraws the form.
+    # Saves changes to a record, then shows the index again or says what turned it down.
     def update
       if update_resource @recourse
         wrote t('recourse.updated', model: human_name), @recourse
       else
-        flash.now.alert = t 'recourse.updated_error', model: human_name
-        render :edit, status: :unprocessable_entity
+        rejected @recourse, :edit, t('recourse.updated_error', model: human_name)
       end
     end
 

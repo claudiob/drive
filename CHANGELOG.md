@@ -7,6 +7,26 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* A refused bare action says why
+
+  A write the model turns down re-renders the form with the errors beside the fields
+  that earned them, which is the whole of what a rejection is for — where there is a
+  form. A bare action has none: `recourses :sweeps, only: :create` routes no `new`, so
+  `render :new` found the gem's own form template through the `recourses/` prefix and
+  drew a page of fields for a resource that offers none, under a flash reading
+  `Sweep could not be created.` and nothing about why.
+
+  Such a write now goes back to the page its button stood on, saying what turned it
+  down: the model's own `full_messages`, rather than the gem's sentence naming the
+  model and not the reason. A validation on `:base` — a throttle, a guard against a
+  double click — reaches a reader for the first time; the per-field rendering never
+  drew one, having no field to draw it beside.
+
+  Which makes a refusal worth writing where a button cannot be disabled. The gem draws
+  a bare action's button and a host cannot dress it, so a model that refuses is how an
+  app says not yet — and it holds against a second tab and two people clicking at once,
+  which no disabled button does.
+
 * A bare action lands somewhere
 
   A nested `recourses :sweeps, only: :create` drew its button, posted it, and wrote the
