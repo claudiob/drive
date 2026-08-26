@@ -2,6 +2,10 @@ module Recourse
   module Helpers
     # The control an attribute is typed into, chosen by what the attribute holds.
     module Inputs
+      # Numbers a field takes whole. A month and a year are counted in no smaller unit
+      # than themselves, so neither admits the decimals a `step` would otherwise allow.
+      WHOLE_KINDS = %i[integer month year].freeze
+
     private
 
       # A field for a column whose kind is what decides it, the fallback being a text
@@ -36,7 +40,7 @@ module Recourse
       end
 
       def step_options(column, kind)
-        return { step: 1 } if kind == :integer
+        return { step: 1 } if WHOLE_KINDS.include? kind
 
         scale = attribute_scale column
         return { step: :any } unless scale

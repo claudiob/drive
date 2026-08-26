@@ -7,6 +7,19 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
 
 ## Unreleased
 
+* [Feature] A month reads as its name, and a year is not a quantity
+
+  Two kinds a `decimal` and an `integer` could not tell apart on their own. A `:month`
+  is drawn as the word for one — `August`, not `8` — and a `:year` as the digits it is,
+  since a year counts nothing and `2,025` is never what anybody meant. Both take the
+  whole-number step an integer does, where a kind the gem had not heard of would fall
+  through to a text box that admits `2025.5`.
+
+  Types your app registers, like `:monetary` beside them: what a month may *be* is the
+  app's to say, a type being unable to validate. The dummy's `Place` gains one of each,
+  told apart from the counts beside them by the type each attribute reports rather than
+  by the name of the column.
+
 * A page is read against the reader's own clock
 
   Every time the gem printed was drawn in `config.time_zone`, so a reader in

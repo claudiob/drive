@@ -8,6 +8,8 @@
 ActiveSupport.on_load :active_record do
   ActiveRecord::Type.register(:monetary) { |_name, **options| Monetary.new(**options) }
   ActiveRecord::Type.register(:percentage) { |_name, **options| Percentage.new(**options) }
+  ActiveRecord::Type.register(:month) { Month.new }
+  ActiveRecord::Type.register(:year) { Year.new }
 end
 
 # The migration side of the same two words: `t.monetary :hourly_rate` writes the

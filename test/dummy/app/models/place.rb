@@ -43,6 +43,10 @@ class Place < ApplicationRecord
 
   # Money and a share of it, told apart by their types and not by their names.
   attribute :hourly_rate, :monetary
+  # Two numbers that count nothing, and are told apart from the counts above by their
+  # types rather than by their names: one reads as a word, the other as its digits.
+  attribute :busiest_month, :month
+  attribute :founded_year, :year
   attribute :commission_rate, :percentage
 
   # Queried and unique, so its ciphertext has to be the same every write.

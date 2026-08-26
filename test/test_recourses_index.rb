@@ -34,7 +34,8 @@ class TestRecoursesIndex < IntegrationCase
     assert_equal [
       'Bookmark', 'Show', 'Edit', 'Status', 'ZIP code', 'Team', 'Person', 'Name', 'Slug',
       'Capacity', 'Rating', 'Area', 'Hourly rate', 'Commission rate', 'Phone', 'Website',
-      'Active', 'Verified', 'About', 'Opens on', 'Audited at', 'Created at', 'Updated at',
+      'Busiest month', 'Founded year', 'Active', 'Verified', 'About', 'Opens on',
+      'Audited at', 'Created at', 'Updated at',
     ], headings
   end
 

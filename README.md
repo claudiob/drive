@@ -496,7 +496,8 @@ the word it is, `true` or `false` — a column the record never answered reads a
 dash any unanswered column does, and `false` never does, since what earns a dash is
 formatting to nothing rather than being falsy —
 an enum is a badge, an integer carries its delimiters, a decimal is rounded to its
-own scale, a `:monetary` wears the currency and a `:percentage` a `%`, and a phone is
+own scale, a `:monetary` wears the currency and a `:percentage` a `%`, a `:month`
+reads as the word for one and a `:year` as its digits, and a phone is
 punctuated. One whole web address is a link to itself, and reads as its host: no
 protocol, no leading `www.`, and `/…` where a path follows — the href carries the rest,
 which is what a click needs and a column has no room for. A counter cache is not shown at all, being Rails' to keep rather than
@@ -775,7 +776,7 @@ The type comes from the model's own `type_for_attribute`, so an `attribute
 :opens_on, :date` override counts, and so do its `precision` and `scale` —
 `columns_hash` is never asked.
 
-`:monetary` and `:percentage` are types your app defines, not hooks this gem asks
+`:monetary`, `:percentage`, `:month` and `:year` are types your app defines, not hooks this gem asks
 for. A `decimal` says how many digits it keeps and nothing about what they mean,
 so if you want `$95.00` and `15.00%` on your pages, register the types that say
 so:
@@ -823,7 +824,13 @@ ActiveRecord::ConnectionAdapters::TableDefinition.include MonetaryColumns
 
 Then `t.monetary :hourly_rate` and `attribute :hourly_rate, :monetary` are the same
 decision said twice, once to the database and once to the page. `test/dummy` does
-all of this, for `:monetary` and `:percentage` both.
+all of this, for all four.
+
+A `:month` is the number of one and reads as `August`; a `:year` is digits and reads
+as `2025` rather than `2,025`, a year counting nothing. Both take a whole-number
+step in a form. What either may *be* is your app's: a type cannot validate, so a
+concern that declares the attribute and validates its range — and a `t.month` column
+method writing the check constraint — is what says it once.
 
 A phone is a phone before it is ciphertext: an encrypted `phone` gets the
 telephone field, which types its own separators as you go. Encryption settles what

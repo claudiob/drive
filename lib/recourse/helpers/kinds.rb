@@ -4,7 +4,11 @@ module Recourse
     # answers to.
     module Kinds
       # Numbers, which differ by what they are of rather than by how they are stored.
-      NUMERIC_KINDS = %i[integer decimal float phone monetary percentage].freeze
+      NUMERIC_KINDS = %i[integer decimal float phone monetary percentage month year].freeze
+
+      # The two of those that count nothing, and so are neither delimited nor rounded:
+      # a month is a word for one and a year is when something happened.
+      UNCOUNTED_KINDS = %i[month year].freeze
 
       # A payload, under both names an adapter has for one: SQLite and MySQL report a
       # JSON column as `json`, and PostgreSQL's own type reports `jsonb`. Two names for
@@ -15,6 +19,15 @@ module Recourse
 
       # Whether a kind is one of those, which is what both pages branch on first.
       def numeric_kind?(kind) = NUMERIC_KINDS.include?(kind)
+
+      # A month read as the word for one, and a year as the digits it is. Neither counts
+      # anything, so neither wears the delimiter a quantity does: 2,025 is a number of
+      # things, and 2025 is when they happened.
+      def uncounted(kind, value)
+        return unless value
+
+        kind == :month ? Date::MONTHNAMES[value] : value.to_s
+      end
 
       # Asked in the order that settles it. A counter cache is a counter whatever its
       # column says, since no page may show one and no form may set one; an enum is

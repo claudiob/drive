@@ -16,6 +16,11 @@ class TestRecoursesShow < IntegrationCase
     assert_includes body, '100.25'
     assert_includes body, '0.500'
     assert_includes body, '415-555-0000'
+    # A month is the word for one, and a year the digits it is: neither counts
+    # anything, so neither wears the delimiter `capacity` beside them would.
+    assert_includes body, 'February'
+    assert_includes body, '1991'
+    refute_includes body, '1,991'
     assert_includes body, '<time datetime="2026-01-01">Jan 1, 2026</time>'
     assert_includes body, 'datetime="2026-06-01T09:30:00-04:00"'
     assert_includes body, '<span class="badge">draft'

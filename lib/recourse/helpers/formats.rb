@@ -29,6 +29,8 @@ module Recourse
       end
 
       def formatted_number(kind, column, value)
+        return uncounted kind, value if Kinds::UNCOUNTED_KINDS.include? kind
+
         case kind
         when :integer then number_with_delimiter value
         when :phone then number_to_phone value
