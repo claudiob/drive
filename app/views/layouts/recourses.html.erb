@@ -169,12 +169,17 @@
          Below that width the sidebar is a band across the top, the row wraps to stack
          the two, and the page scrolls as one, which is the only thing that reads on a
          phone.
-         phone. */
+         Named by the path down to it rather than as any `.row` in the shell: a show
+         page lays its values out in one and a form lays its fields out in another, and
+         `flex-wrap: nowrap` reaches those too as a descendant — which is three `col-6`
+         values squeezed onto one line instead of two rows of two. Only the row holding
+         the sidebar and the content is meant here, and only it is a child of the
+         container. */
       @media (width >= 768px) {
         .recourse-shell { min-height: 0; height: 100dvh; }
         .recourse-shell > .container-fluid,
-        .recourse-shell .row { min-height: 0; }
-        .recourse-shell .row { flex-wrap: nowrap; }
+        .recourse-shell > .container-fluid > .row { min-height: 0; }
+        .recourse-shell > .container-fluid > .row { flex-wrap: nowrap; }
         .recourse-shell main,
         .recourse-shell .recourse-sidebar { overflow-y: auto; }
       }

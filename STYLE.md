@@ -380,6 +380,13 @@ before writing or editing any layout, view or partial.
   only ever grows an item to the line it is on — it never shrinks one to fit. So with
   the row left wrapping, `main` kept its content height, the line grew to match, and
   the page scrolled after all, however bounded everything above it was.
+- Every one of those rules names the row by the path down to it —
+  `.recourse-shell > .container-fluid > .row` — and never as `.recourse-shell .row`.
+  There are other rows inside the shell: a show page lays its values out in one and a
+  form lays its fields out in another, both inside `main`. A descendant selector
+  reaches them, and `flex-wrap: nowrap` on a row of `lg:col-6` values is three of them
+  squeezed onto one line where there should be two rows of two. The row this is about
+  is the only `.row` that is a child of that container, so the path says exactly it.
 - Below 768px none of it applies: the sidebar is a band across the top, and a phone
   scrolls the page as one.
 - Only while they are one line, though: the row is

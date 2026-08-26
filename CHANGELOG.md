@@ -94,6 +94,11 @@ For more information about changelogs, check [Keep a Changelog](http://keepachan
   against the foot of a sidebar that scrolls itself rather than against the foot of
   the page.
 
+  Every rule here names the row it is about by the path down to it rather than as any
+  `.row` inside the shell. A show page lays its values out in one of those and a form
+  lays its fields out in another, and stopping *those* from wrapping puts three
+  half-width values on one line where there should be two rows of two.
+
 * [BREAKING CHANGE] A link reads as its host rather than as the whole address
 
   A value that is one web address has always been a link to itself, and what it said
